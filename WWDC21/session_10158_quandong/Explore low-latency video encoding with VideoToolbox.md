@@ -4,6 +4,10 @@
 
 本文讲述通过 VideoToolbox 最新功能实现低延迟 H.264 硬件编码，最大限度地减少端到端的延迟，并提高性能，实现最佳的实时通信和高质量的视频播放。
 
+知识目录：
+
+![](https://gitee.com/bqlin/image-land/raw/master/%E4%BD%BF%E7%94%A8%20VideoToolbox%20%E6%8E%A2%E7%B4%A2%E4%BD%8E%E5%BB%B6%E8%BF%9F%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81.png)
+
 ## 低延迟编码的目标
 
 低延迟编码对许多视频 App 非常重要，尤其是实时视频通信 App。VideoToolbox 带来一种新的编码模式，以实现低延迟编码，其目标是为实时 App 优化现有的编码管线。首先，我们确定最终优化的目标。
