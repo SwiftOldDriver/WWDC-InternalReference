@@ -33,7 +33,8 @@ author: "土土Edmond木"
 ![10019-01-doc](../session_10019_edmond/10019/10019-01-doc.png)
 
 众所周知，在计算机领域并发是很棘手的一个难题，现在您拥有了管理应用程序中这种复杂性的工具。我们希望您喜欢并了解 Swift 5.5 和 SwiftUI 中出色的新并发工具，我们期待看到您使用它们解决应用程序中棘手问题。
-该 Session 主要包括三个方面的内容，分别为：`Concurrent Data Models`、`SwiftUI & MainActor`、`New concurrency tools`。我们通过一个星云图片浏览的 Demo 向您展示了在 SwiftUI 中，现有的异步工具在 SwiftUI 中存在的问题，并最终运用新的并发工具来解决这些问题。最后我们会介绍 SwiftUI 中新引入的并发工具。
+该 Session 主要包括三个方面的内容，分别为：`Concurrent Data Models`、`SwiftUI & MainActor`、`New concurrency tools`。
+我们将通过一个星云图片浏览的 Demo 向您展示在 SwiftUI 中，现有的异步工具存在的问题，并运用新的并发工具来解决这些问题。最后我们会介绍 SwiftUI 中新引入的并发工具。
 
 
 
@@ -107,7 +108,7 @@ extension Identifiable where Self: AnyObject {
 
 ![10019-03-model-photos](https://gitee.com/looseyi/blog-image/raw/master/uPic/10019-03-model-photos.png)
 
-当有数据变更时，`ObservableObject` 中声明了 **@Published** 的属性将会收到 publisher 将通过 `objectWillChange` 发来的通知。
+当有数据变更时，`ObservableObject` 中声明了 **@Published** 的属性将会收到 publisher 通过 `objectWillChange` 发来的通知。
 
 我们先提供一个简单的 PhotoView 来展示每个星云的 title：
 
@@ -196,7 +197,7 @@ run loop 过程，应用会不断接收用户事件，更新模型，最终将 S
 - 橙色部分：表示获取到新数据后，会通过 publiser 的 `objectWillChange` 通知观察者有 photos 更新；
 - 绿色 Snapshot：SwiftUI 在收到数据更新的通知后会对当前状态进行快照，为后续对比准备；
 - 紫色部分：表示 items 数据已更新；
-- 绿色 tick：在下一个 run loop tick 节点，SwiftUI 进行同样进行 items 快照，并与之前快照对比。
+- 绿色 tick：在下一个 run loop tick 节点，SwiftUI 同样进行 items 快照，并与之前快照对比。
 
 从 SwiftUI 视图中调用 updateItems 时，这些逻辑均在 `MainActor` 上被顺序执行。不过上面描述的属于理想状态，很多时候您的数据更新会产生延迟。
 
@@ -278,7 +279,7 @@ updateItems() async ->
 
 可以看到三个方法都是使用了 async 关键字来声明其为异步执行。而对于 async 声明的方法，对应的需要配上 **await** 关键字。
 
-最后就差 updateItems 的调用，让您在 CatalogView 中来完成最后一步。
+最后就差 updateItems 的调用，让我们在 CatalogView 中来完成最后一步。
 
 
 
@@ -342,7 +343,7 @@ AsyncImage 可以帮助您实现异步下载和展示图片，再结合上 Progr
 
 ## Custom Button Action
 
-同 AsyncImage 一样的思路，您可以为 SaveButton 添加 ProgressView，当图片正在保存时以展示 ProgeessView。
+同 AsyncImage 一样的思路，您可以为 SaveButton 添加 ProgressView，当图片正在保存时以展示 ProgeessView 作为中间状态。
 
 ```swift
 struct SavePhotoButton: View {
@@ -390,9 +391,9 @@ struct SavePhotoButton: View {
 这里您看到了 SwiftUI 与 Swift 的并发特性很好地集成在一起，默认情况下为用户提供了最佳行为。
 在许多情况下，您只需要使用 `await` 来使用并发的能力。将 `ObservableObject` 标记为 `@MainActor`，以便更可靠地检查您的对象是否以适合您的视图的方式更新。
 
-- 利用 SwiftUI 的 API 附加功能，以最少的工作量编写安全且高性能的并发应用程序。
-- 使用 AsyncImage 并发加载图像。
-- 将 `refreshable` 修饰符添加到视图层次结构中，以允许用户手动刷新数据。
+- 使用 SwiftUI 的 API 附加功能，以最少的工作量编写安全且高性能的并发应用程序。
+- 使用 `AsyncImage` 并发加载图像。
+- 使用 `refreshable` 修饰符添加到视图层次结构中，以允许用户手动刷新数据。
 - 就像您在 Save 按钮上看到的那样，您可以在自己的自定义视图中使用 Swift 的新并发功能。
 
 众所周知，在计算机领域并发是很棘手的一个难题，现在您拥有了管理应用程序中这种复杂性的工具。我们希望您喜欢并了解 Swift 5.5 和 SwiftUI 中出色的新并发工具，我们期待看到您使用它们解决应用程序中棘手问题。
