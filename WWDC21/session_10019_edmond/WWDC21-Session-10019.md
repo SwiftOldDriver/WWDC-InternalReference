@@ -30,7 +30,7 @@ author: "土土Edmond木"
 
 # 引言
 
-![10019-01-doc](https://gitee.com/looseyi/blog-image/raw/master/uPic/10019-01-doc.png)
+![10019-01-doc](../session_10019_edmond/10019/10019-01-doc.png)
 
 众所周知，在计算机领域并发是很棘手的一个难题，现在您拥有了管理应用程序中这种复杂性的工具。我们希望您喜欢并了解 Swift 5.5 和 SwiftUI 中出色的新并发工具，我们期待看到您使用它们解决应用程序中棘手问题。
 该 Session 主要包括三个方面的内容，分别为：`Concurrent Data Models`、`SwiftUI & MainActor`、`New concurrency tools`。我们通过一个星云图片浏览的 Demo 向您展示了在 SwiftUI 中，现有的异步工具在 SwiftUI 中存在的问题，并最终运用新的并发工具来解决这些问题。最后我们会介绍 SwiftUI 中新引入的并发工具。
@@ -116,7 +116,7 @@ struct PhotoView: View {
     var photo: SpacePhoto
     var body: some View {
         Text(photo.title)
-	}
+	  }
 }
 ```
 
@@ -284,7 +284,7 @@ updateItems() async ->
 
 # New concurrency tools
 
-最后一节，您介绍几个支持异步更新的 API 为您的程序添加更友好的用户体验。
+最后一节，我们来介绍几个支持异步更新的 API，为您的程序添加更友好的用户体验。
 
 
 
@@ -328,9 +328,9 @@ extension View {
 }
 ```
 
-另外一个 New API 是 `refreshable`，这里您给 NavigationView 添加 `refreshable` 后，它就能响应用户的下拉刷新动作。
+另外一个 New API 是 `refreshable`，本质上是一个 [ViewModifier](https://developer.apple.com/documentation/swiftui/viewmodifier)，这里我们给 List 添加上 `refreshable` 后，它就能响应用户的下拉刷新动作。
 
-<video width="365" height="768" href="https://gitee.com/looseyi/blog-image/raw/master/mov/10019-14-refreshable.mov"></video>
+<video width="365" height="768" src="./10019/10019-14-refreshable.mov"></video>
 
 
 
@@ -342,7 +342,7 @@ AsyncImage 可以帮助您实现异步下载和展示图片，再结合上 Progr
 
 ## Custom Button Action
 
-同 AsyncImage 一样的思路，您可以为 SaveButton 添加 ProgressView，在用户点击按钮时进行展示。
+同 AsyncImage 一样的思路，您可以为 SaveButton 添加 ProgressView，当图片正在保存时以展示 ProgeessView。
 
 ```swift
 struct SavePhotoButton: View {
@@ -375,7 +375,7 @@ struct SavePhotoButton: View {
 
 效果如下：
 
-<video width="365" height="768" href="https://gitee.com/looseyi/blog-image/raw/master/mov/10019-15-save.mov"></video>
+<video width="365" height="768" src="./10019/10019-15-save.mov"></video>
 
 
 
@@ -388,7 +388,7 @@ struct SavePhotoButton: View {
 # 总结
 
 这里您看到了 SwiftUI 与 Swift 的并发特性很好地集成在一起，默认情况下为用户提供了最佳行为。
-在许多情况下，您只需要使用 `await` 来利用并发的力量。将 `ObservableObject` 标记为 `@MainActor`，以便更可靠地检查您的对象是否以适合您的视图的方式更新。
+在许多情况下，您只需要使用 `await` 来使用并发的能力。将 `ObservableObject` 标记为 `@MainActor`，以便更可靠地检查您的对象是否以适合您的视图的方式更新。
 
 - 利用 SwiftUI 的 API 附加功能，以最少的工作量编写安全且高性能的并发应用程序。
 - 使用 AsyncImage 并发加载图像。
