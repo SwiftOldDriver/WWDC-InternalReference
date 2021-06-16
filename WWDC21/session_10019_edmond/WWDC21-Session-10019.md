@@ -14,7 +14,7 @@ author: "土土Edmond木"
 
 
 
-# 本文知识目录
+## 本文知识目录
 
 ![Build SwiftUI views for widgets](https://gitee.com/looseyi/blog-image/raw/master/uPic/10019-Discover-concurrency-in-SwiftUI.png)
 
@@ -28,18 +28,16 @@ author: "土土Edmond木"
 
 
 
-# 引言
+## 引言
 
-![10019-01-doc](../session_10019_edmond/10019/10019-01-doc.png)
-
-众所周知，在计算机领域并发是很棘手的一个难题，现在您拥有了管理应用程序中这种复杂性的工具。我们希望您喜欢并了解 Swift 5.5 和 SwiftUI 中出色的新并发工具，我们期待看到您使用它们解决应用程序中棘手问题。
+![10019-01-table](https://gitee.com/looseyi/blog-image/raw/master/uPic/10019-01-table.png)众所周知，在计算机领域并发是很棘手的一个难题，现在您拥有了管理应用程序中这种复杂性的工具。我们希望您喜欢并了解 Swift 5.5 和 SwiftUI 中出色的新并发工具，我们期待看到您使用它们解决应用程序中棘手问题。
 该 Session 主要包括三个方面的内容，分别为：`Concurrent Data Models`、`SwiftUI & MainActor`、`New concurrency tools`。
 我们将通过一个星云图片浏览的 Demo 向您展示在 SwiftUI 中，现有的异步工具存在的问题，并运用新的并发工具来解决这些问题。最后我们会介绍 SwiftUI 中新引入的并发工具。
 
 
 
 
-# Concurrent Data Models
+## Concurrent Data Models
 
 在 Swift 中想要使用并发编程，对数据模型有哪些要求呢 ？让我们从零开始造火箭。
 
@@ -47,7 +45,7 @@ author: "土土Edmond木"
 
 首先，定义了 `SpacePhoto`，它需要遵循 Codable 和 [Identifiable](https://developer.apple.com/documentation/swift/identifiable) 这两个协议。Codeable 自不必多说，用于将原始数据解析成您定义的数据模型。而 Identifiable 协议则最早是在 SwiftUI 中出现的，在 Swift 5.1 被加入到 Swift 标准库中的。
 
-## Identifiable
+### Identifiable
 
 从字面看应该不难理解，它用来表示所关联的数据结构具有唯一标识。其定义如下：
 
@@ -96,13 +94,13 @@ extension Identifiable where Self: AnyObject {
 
 
 
-## User Interface
+### User Interface
 
 展开下一个 Model 前，预览一下您要做出的星云 Demo 的效果：
 
 ![10019-02-view-spacephoto](https://gitee.com/looseyi/blog-image/raw/master/uPic/10019-02-view-spacephoto.png)
 
-## ObservableObject
+### ObservableObject
 
 接着使用 `ObservableObject` 来声明 Photos 用于监听数据的变更。
 
@@ -138,7 +136,7 @@ struct PhotoView: View {
 
 
 
-# SwiftUI & MainActor
+## SwiftUI & MainActor
 
 ![10019-06-run-loop](https://gitee.com/looseyi/blog-image/raw/master/uPic/10019-06-run-loop.png)
 
@@ -146,7 +144,7 @@ struct PhotoView: View {
 
 
 
-## Actor
+### Actor
 
 > 关于 Actior 详细信息，可查看 “[Protect mutable state with Swift actors](https://developer.apple.com/videos/play/wwdc2021/10133/)”。
 
@@ -181,7 +179,7 @@ Actor 在概念上类似于在并发环境中可以安全使用的类。 因为 
 
 
 
-## SwiftUI run loop
+### SwiftUI run loop
 
 run loop 过程，应用会不断接收用户事件，更新模型，最终将 SwiftUI 视图呈现到屏幕上。这里把每次循环的更新称作 “ticks of the run loop“。让我们展开这个循环，每个刻度表示一个循环，以便您可以连续查看多个刻度。
 
@@ -223,7 +221,7 @@ run loop 过程，应用会不断接收用户事件，更新模型，最终将 S
 
 
 
-## Using await
+### Using await
 
 ![10019-12-await-code](https://gitee.com/looseyi/blog-image/raw/master/uPic/10019-12-await-code.png)
 
@@ -283,13 +281,13 @@ updateItems() async ->
 
 
 
-# New concurrency tools
+## New concurrency tools
 
 最后一节，我们来介绍几个支持异步更新的 API，为您的程序添加更友好的用户体验。
 
 
 
-## Task & Refreshable
+### Task & Refreshable
 
 SwiftUI 为 View 提供了新的入口来执行任务。
 
@@ -331,17 +329,17 @@ extension View {
 
 另外一个 New API 是 `refreshable`，本质上是一个 [ViewModifier](https://developer.apple.com/documentation/swiftui/viewmodifier)，这里我们给 List 添加上 `refreshable` 后，它就能响应用户的下拉刷新动作。
 
-<video width="365" height="768" src="./10019/10019-14-refreshable.mov"></video>
+![10019-14-refreshable](https://gitee.com/looseyi/blog-image/raw/master/uPic/10019-14-refreshable.gif)
 
 
 
-## AsyncImage
+### AsyncImage
 
 AsyncImage 可以帮助您实现异步下载和展示图片，再结合上 ProgressView 让 Image 在下载过程中作为 placeholder 展示。
 
 ![10019-13-fetch-image](https://gitee.com/looseyi/blog-image/raw/master/uPic/10019-13-fetch-image.png)
 
-## Custom Button Action
+### Custom Button Action
 
 同 AsyncImage 一样的思路，您可以为 SaveButton 添加 ProgressView，当图片正在保存时以展示 ProgeessView 作为中间状态。
 
@@ -376,17 +374,15 @@ struct SavePhotoButton: View {
 
 效果如下：
 
-<video width="365" height="768" src="./10019/10019-15-save.mov"></video>
+<img src="https://gitee.com/looseyi/blog-image/raw/master/uPic/10019-15-save.gif" alt="10019-15-save" style="zoom:50%;" />
 
-
-
-### Tips
+#### Tips
 
 由于本文脱水过程 Apple 还未提供 Session 中的示例工程，这里作者参照视频中的代码提供了功能完备的 [Demo Project](https://github.com/looseyi/WWDC-SampleCode.git)，有兴趣的小伙伴自取。记得用 Xcode 13 打开 😊。
 
 
 
-# 总结
+## 总结
 
 这里您看到了 SwiftUI 与 Swift 的并发特性很好地集成在一起，默认情况下为用户提供了最佳行为。
 在许多情况下，您只需要使用 `await` 来使用并发的能力。将 `ObservableObject` 标记为 `@MainActor`，以便更可靠地检查您的对象是否以适合您的视图的方式更新。
