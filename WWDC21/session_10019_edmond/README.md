@@ -1,5 +1,7 @@
 ### About Me
-Edmond, [CocoaPods 历险记](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzA5MTM1NTc2Ng==&action=getalbum&album_id=1477103239887142918) 作者，Swift & 长跑爱好者。
+作者：Edmond, [CocoaPods 历险记](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzA5MTM1NTc2Ng==&action=getalbum&album_id=1477103239887142918) 作者，Swift & 长跑爱好者。
+
+审核：MetaSky，全能创作者，bilibili Up 主，频道名：聊有料
 
 ### 标题
 
