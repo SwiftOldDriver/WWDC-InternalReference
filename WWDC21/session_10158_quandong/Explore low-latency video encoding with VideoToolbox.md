@@ -99,7 +99,7 @@ VTSessionSetProperty(compressionSession,
                      kVTProfileLevel_H264_ConstrainedHigh_AutoLevel)
 ```
 
-要使用 CBP，只需把 ProfileLevel 会话属性设置为 ContrainedBaseLine_AutoLevel。类似地，使用 CHP 则将其设备为 ContrainedHigh_AutoLevel。
+要使用 CBP，只需把 ProfileLevel 会话属性设置为 ContrainedBaseLine_AutoLevel。类似地，使用 CHP 则将其设置为 ContrainedHigh_AutoLevel。
 
 > Profile 是 H.264 定义的一套功能集。每个 Profile 都是为特定的应用场景设计的。例如上述的 CBP 就是为低功耗的视频会议和移动 App 设计的。不同的 H.264 编码器有自己不同的实现，VideoToolbox 只是其中一种。与本文的其他技术一样，这些技术并不是苹果提出的，准确的说是苹果实现的。更多详细信息可参阅 [Advanced Video Coding - Wikipedia](https://en.wikipedia.org/wiki/Advanced_Video_Coding)。
 >
@@ -111,7 +111,7 @@ VTSessionSetProperty(compressionSession,
 
 使用时域分层，可以提高多方视频通话的效率。
 
-假设有一个简单的三方视频会议的场景。在这个场景中，接收方 A 带宽较低，为 600 kbps，接收方 B 带宽较高，为为 1,000 kbps。
+假设有一个简单的三方视频会议的场景。在这个场景中，接收方 A 带宽较低，为 600 kbps，接收方 B 带宽较高，为 1,000 kbps。
 
 ![](https://cdn.nlark.com/yuque/0/2021/jpeg/1239802/1623647884239-9614c8d7-7bd9-46e7-bfb1-2cf040291d12.jpeg)
 
