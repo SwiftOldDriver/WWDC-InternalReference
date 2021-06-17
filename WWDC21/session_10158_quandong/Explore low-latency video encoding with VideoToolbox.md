@@ -52,6 +52,8 @@
 3. 通过 `VTCompressionSessionEncodeFrame()` 把 `CVImageBuffer` 传递给会话。
 4. 从创建会话时提供的输出 handler 中获取编码后的结果。
 
+更多详细内容可参阅 [`VTCompressionSession` 官方文档](https://developer.apple.com/documentation/videotoolbox/vtcompressionsession-7bn) 中的创建过程。
+
 在压缩会话中启用低延迟编码很简单，只需修改会话的创建方式：
 
 ```swift
@@ -80,7 +82,7 @@ VTCompressionSessionCreate(
 
 这样创建的压缩会话就会在低延迟模式下运行。
 
-配置步骤没有在上面列出，和原来使用流程的一样，例如可以用 AverageBitRate 属性设置目标码率。
+配置步骤没有在上面列出，和原来使用流程的一样，例如可以用 AverageBitRate 属性设置目标码率。详细配置可参阅 [官方文档](https://developer.apple.com/documentation/videotoolbox/vtcompressionsession/compression_properties)。
 
 ## 低延迟模式下引入的多种新功能
 
