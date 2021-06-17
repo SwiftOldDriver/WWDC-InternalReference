@@ -54,25 +54,24 @@
 
 在压缩会话中启用低延迟编码很简单，只需修改会话的创建方式：
 
-```c
+```swift
  // VTCompressionSession creation
-CFMutableDictionaryRef encoderSpecification = 
-            CFDictionaryCreateMutable(kCFAllocatorDefault, 0, NULL, NULL);
-CFDictionarySetValue(encoderSpecification, 
-                     kVTVideoEncoderSpecification_EnableLowLatencyRateControl, 
-                     kCFBooleanTrue);
+let encoderSpecification = [
+    kVTVideoEncoderSpecification_EnableLowLatencyRateControl: true
+]
 
-VTCompressionSessionRef compressionSession;
-OSStatus err = VTCompressionSessionCreate(kCFAllocatorDefault,
-                                          width,
-                                          height,
-                                          kCMVideoCodecType_H264,
-                                          encoderSpecification,
-                                          NULL,
-                                          NULL,
-                                          outputHandler,
-                                          NULL,
-                                          &compressionSession);
+var compressionSession: VTCompressionSession? = nil
+VTCompressionSessionCreate(
+    allocator: kCFAllocatorDefault,
+    width: width, height: height,
+    codecType: kCMVideoCodecType_H264,
+    encoderSpecification: encoderSpecification as CFDictionary,
+    imageBufferAttributes: nil,
+    compressedDataAllocator: nil,
+    outputCallback: outputHandler,
+    refcon: nil,
+    compressionSessionOut: &compressionSession
+)
 ```
 
 1. 创建 `CFMutableDictionary` 作为 encoderSpecification。encoderSpecification 用于指定会话中必须使用的视频编码器。
