@@ -81,10 +81,10 @@
 
 profile 定义了解码器能够支持的一组编码算法。为了与接收方通信，编码后的码流应符合解码器支持的特定 profile。
 
-原有支持的的 profile：Baseline profile、Main Profile 和 High profile。现引入了两个新的 profile：
+原有支持的的 profile：Baseline Profile、Main Profile 和 High Profile。现引入了两个新的 profile：
 
-- **C**onstrained **b**aseline **p**rofile (CBP)
-- **C**onstrained **h**igh **p**rofile (CHP)
+- **C**onstrained **B**aseline **P**rofile (CBP)
+- **C**onstrained **H**igh **P**rofile (CHP)
 
 CBP 主要用于低功耗（low-cost）的 App；而 CHP 有更先进的算法以获得更好的压缩率。使用前应先检查解码器的能力，以便知道应该使用哪种 profile。
 
