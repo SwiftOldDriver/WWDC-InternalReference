@@ -183,11 +183,28 @@ VTSessionSetProperty(compressionSession,
 启用时域分层：
 
 - `kVTCompressionPropertyKey_BaseLayerFrameRateFraction`，设为 0.5。
-- `CMSampleAttachmentKey_IsDependedOnByOthers`，基础层设为 `true`，增强层设为 `false`。
 
-使用时域分层的方法非常直接，在低延迟模式下设置 BaseLayerFrameRateFraction 会话属性为 0.5，这意味着一半的输入帧被分配到基础层，剩下的分配到增强层。另外，对于基础层，设置 `CMSampleAttachmentKey_IsDependedOnByOthers` 属性为 `true`，增强层设为 `false`。
+使用时域分层的方法非常直接，在低延迟模式下设置 BaseLayerFrameRateFraction 会话属性为 0.5，这意味着一半的输入帧被分配到基础层，剩下的分配到增强层。
 
-为分层设置目标码率：
+设置后，通过查询 `kCMSampleAttachmentKey_IsDependedOnByOthers` key 来验证结果，该 key-value 是 sample buffer sample-level 的一个 attachment，当为基础层的帧时，值为 `true`，而当为增强层的帧时，值为 `false`。查询方式如下：
+
+```swift
+var sampleBuffer: CMSampleBuffer!
+if let attachments = CMSampleBufferGetSampleAttachmentsArray(
+    sampleBuffer, createIfNecessary: false
+) as? [[CFString: Any]], attachments.count > 0 {
+    let attachment = attachments.first!
+    let value = attachment[kCMSampleAttachmentKey_IsDependedOnByOthers] as? Bool
+}
+```
+
+当然这是用传统的方式获取，iOS 13.0 或 macOS 10.15 之后，这些操作可以从全局的 C 函数转移到 CMSampleBuffer 对象属性中，获取 attachment 更加方便。但目前 CMSampleBuffer 该类文档不全，要查用法还是需用通过上面的 API 查询。上面的代码可以转变为：
+
+```swift
+let value = sampleBuffer.sampleAttachments.first?[.isDependedOnByOthers] as? Bool
+```
+
+为各层设置目标码率：
 
 - `kVTCompressionPropertyKey_AverageBitRate`，目标码率（CFNumber）。
 - `kVTCompressionPropertyKey_BaseLayerBitRateFraction`，控制基础层需要的码率占比，默认 60%。
