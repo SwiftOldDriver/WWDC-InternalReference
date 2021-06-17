@@ -10,9 +10,9 @@
 
 VideoToolbox 是苹果底层主要用于视频编解码的 C 语言 API。这里所说的视频是狭义的视频，简单可以理解为我们常用的 mp4、mov 文件中的视频轨、在线视频中的视频流。对于要获取视频流进行高效处理的业务，尤其是硬解码、硬编码，典型的如直播，我们就需要直接用到 VideoToolbox 进行视频编解码。对 VideoToolbox 还不了解的小伙伴，可以先参阅以下文章：
 
-- [ObjC 中国 - 视频工具箱和硬件加速](https://objccn.io/issue-23-3/)，对 VideoToolbox 做了详细的介绍。
-- [WWDC20 10090 - 使用 AVFoundation 和 VideoToolBox 做视频处理 － 小专栏](https://xiaozhuanlan.com/topic/7219405386)，对视频解码整个过程及其相关概念都做了详细的介绍。
-- [H264 Encode And Decode Using VideoToolBox - Mobisoft Infotech](https://mobisoftinfotech.com/resources/mguide/h264-encode-decode-using-videotoolbox/)，详细介绍 VideoToolbox 的具体使用。
+- [视频工具箱和硬件加速 - ObjC 中国](https://objccn.io/issue-23-3/)：详细介绍了 VideoToolbox。
+- [WWDC20 10090 - 使用 AVFoundation 和 VideoToolBox 做视频处理 － 小专栏](https://xiaozhuanlan.com/topic/7219405386)：详细介绍了视频解码整个过程及其相关概念。
+- [H264 Encode And Decode Using VideoToolBox - Mobisoft Infotech](https://mobisoftinfotech.com/resources/mguide/h264-encode-decode-using-videotoolbox/)：详细介绍了 VideoToolbox 的具体使用。
 
 当然，由于 VideoToolbox 是直接对视频进行编解码，如果要详细配置各个参数，各种支持的视频格式编解码细节也要有一定的了解。
 
