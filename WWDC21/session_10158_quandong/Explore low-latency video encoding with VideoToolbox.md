@@ -26,7 +26,7 @@
 
 ![](https://cdn.nlark.com/yuque/0/2021/jpeg/1239802/1623647877895-1d5357f3-115f-4125-a580-949d7e4d606d.jpeg)
 
-以上是苹果平台上视频编码器管线的主要过程。VideoToolbox 把 CVImagebuffer 作为输入图像。它要求视频编码器执行压缩算法，如 H.264，以减少原始数据的大小。输出的压缩数据包裹在 CMSampleBuffer 中，它可以通过网络进行视频通信传输。
+以上是苹果平台上视频编码器管线的主要过程。VideoToolbox 把 CVImagebuffer/CVPixelBuffer 作为输入图像。它要求视频编码器执行压缩算法，如 H.264，以减少原始数据的大小。输出的压缩数据包裹在 CMSampleBuffer 中，它可以通过网络进行视频通信传输。
 
 从上面的图可以注意到，端到端的延迟会受两个因素影响：
 
