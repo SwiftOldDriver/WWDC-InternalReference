@@ -200,9 +200,8 @@ VTSessionSetProperty(compressionSession,
 var sampleBuffer: CMSampleBuffer!
 if let attachments = CMSampleBufferGetSampleAttachmentsArray(
     sampleBuffer, createIfNecessary: false
-) as? [[CFString: Any]], attachments.count > 0 {
-    let attachment = attachments.first!
-    let value = attachment[kCMSampleAttachmentKey_IsDependedOnByOthers] as? Bool
+) as? [[CFString: Any]], let attachment = attachments.first {
+    let isDependedOnByOthers = attachment[kCMSampleAttachmentKey_IsDependedOnByOthers] as? Bool
 }
 ```
 
