@@ -113,14 +113,16 @@ task.taskDescription = "Load Thumbnail"
 task.taskIdentifier = 42
 ```
 
-当我们調用了 resume 方法，表示 task 開始，直到收到 API response 回调後，task 结束。你可以替每个 task 命名以及编号，它方便我们在 instruments 上区分。
+当我们调用了 resume 方法，表示 task 开始，直到收到 API response 回调后，task 结束。你可以替每个 task 命名以及编号，它方便我们在 instruments 上分辨。
 
 比如：
 	![transaction_success](https://gitee.com/franklol/session_10212_images/raw/master/wwdc-transaction-success.png)
 如果请求失败（自动带入错误信息，方便调适）：
 	![transaction_failure](https://gitee.com/franklol/session_10212_images/raw/master/wwdc-transaction-failure.png)
 
-如上述提到的，一个 task 可以包含多个 transactions，假设我们发送一个 GET 请求到 apple.com，但这个网址不是一个标准的 URL 格式，因为实际上 domain 位置是在 www.apple.com。所以当我们建立了这样的一个任务时，URL loading system 会建立一个发送到 apple.com 的请求，随即收到由服务器返回的转址响应，然后转址至 www.apple.com。
+如上述提到的，一个 task 可以包含多个 transactions，假设我们发送一个 GET 请求到 apple.com，但这个网址不是一个标准的 URL 格式，因为实际上 domain 位置是在 www.apple.com。
+
+所以当我们建立了这样的一个任务时，URL loading system 会建立一个发送到 apple.com 的请求，随即收到由服务器返回的转址响应，然后转址至 www.apple.com。
 
 ![multi_transactions](https://gitee.com/franklol/session_10212_images/raw/master/wwdc-multi-transactions.png)
 
