@@ -17,12 +17,11 @@ watchOS 7 中引入 Family Setup，用户比以往任何时候都更独立，因
 
 随着 Apple Watch 不断更新，我们已经有了很多种数据传输的策略。 这些策略方式广泛的可以分为以下几类：
 
-1. Keychain with iCloud
-2. Synchronization
-3. CoreData with CloudKit
-4. Watch Connectivity
-5. URL Sessions
-6. Sockets
+1. Keychain with iCloud Synchronization
+2. CoreData with CloudKit
+3. Watch Connectivity
+4. URL Sessions
+5. Sockets
 
 为了能够更好的选择适合我们的业务场景工具，我们还需要知道以下几点信息：
 
@@ -101,7 +100,7 @@ struct LoginView: View {
 
 ![密码自动填充效果](https://cdn.nlark.com/yuque/0/2021/png/269131/1623722865540-6566beea-652a-4ac6-809e-1ba94affb6b3.png)
 
-有关使用密码自动填充的更多信息，请查看 "Autofill everywhere"。
+有关使用密码自动填充的更多信息，请查看 "[Autofill everywhere](https://developer.apple.com/wwdc20/10115)"。
 
 ### 共享 Keychain items
 
@@ -270,7 +269,7 @@ struct CoreDataView: View {
 
 CloudKit 和 CoreData 是功能强大的工具。CoreData 与 SwiftUI 的集成使您在应用程序中更容易使用 CoreData 功能。可以使用 `@Environment` 向 "View" 提供托管 Context，并从数据库中获取结果。这些结果可以在 SwiftUI 列表和其他视图中使用。使用 CloudKit 的 CoreData 为我们提供了一种共享结构化数据的方法，它可以同步到个人的所有设备并备份到 iCloud 上。它并不依赖于有一个配套的 iPhone 应用程序，而是支持 Family Setup。根据网络可用性和系统条件进行同步。不要期望它是即时的，但 CloudKit 将为您的应用程序处理优化同步性能。
 
-要了解更多关于在应用程序中使用 Core Data with CloudKit，请查看 "Build apps that share data through CloudKit and Core Data" 和 "Bring Core Data concurrency to Swift and SwiftUI"。
+要了解更多关于在应用程序中使用 Core Data with CloudKit，请查看 "[Build apps that share data through CloudKit and Core Data](https://developer.apple.com/wwdc21/10015)" 和 "[Bring Core Data concurrency to Swift and SwiftUI](https://developer.apple.com/wwdc21/10017)"。
 
 ## Watch Connectivity
 
@@ -320,7 +319,7 @@ Application Context 是一个单一的属性列表字典，它被发送到后台
 
 我们最好在使用消息发送方法时，指定相应的 `replyHandler` 操作。简短回复允许我们验证对应 App 是否收到消息以及数据是否正确。当我们在发送消息中包含 `replyHandler` 时，则要确保在 `replyHandler` 中实现了 delegate 中的 `didReceiveMessage:` 或 `didReceiveData:` 方法。
 
-有关 "Watch Connectivity" 的更多信息，请查看 "Introducing Watch Connectivity"。
+有关 "Watch Connectivity" 的更多信息，请查看 "[Introducing Watch Connectivity](https://developer.apple.com/wwdc15/713)"。
 
 ## URL Sessions
 
@@ -510,7 +509,7 @@ extension BackgroundURLSession : URLSessionDownloadDelegate {
 2. 需要服务端的快速响应
 3. 在 App 交互中需要及时的数据交互
 
-更多关于 URL SEssions 相关资料，请查看 "Keep your complications up to date" 和 "Background execution demystified"。
+更多关于 URL SEssions 相关资料，请查看 "[Keep your complications up to date](https://developer.apple.com/wwdc20/10049)" 和 "[Background execution demystified](https://developer.apple.com/wwdc20/10063)"。
 
 ## Sockets
 
@@ -519,7 +518,7 @@ Sockets 是直接与服务器通信的另一个选项。在具体实际中主要
 * HLS
 * Web Sockets
 
-有关 Socket 的更多相关资料，请查看 "Streaming Audio on watchOS 6"。
+有关 Socket 的更多相关资料，请查看 "[Streaming Audio on watchOS 6](https://developer.apple.com/wwdc19/716)"。
 
 ## 小结
 
