@@ -1,0 +1,120 @@
+# WWDC21苹果为了你的隐私又做了什么
+
+基于 [Session 10096](https://developer.apple.com/videos/play/wwdc2021/10096?time=29) 梳理。
+
+> 众所周知，苹果一直着力重视用户隐私，近几年在WWDC上不断退出新的隐私特性。在今年WWDC 2021，苹果围绕用户隐私推出了一系列创新功能：隐藏邮件地址、家庭安全监控和iCloud Private Relay。这篇文章主要介绍iCloud Private Relay。
+
+![](https://www.hualigs.cn/image/60cf62504035c.jpg)
+**iCloud Private Relay（iCloud私人中继）**是苹果新推出的网络隐私功能；它可以阻止网络或者服务器监控用户网络行为。作为iCloud+订阅的一部分。iCloud Private Relay可以在用户浏览网页和使用APP时，防止不经意间泄露个人信息或置身于安全攻击中。
+
+- 什么是 iCloud Private Relay？</br>
+- 它对APP会有什么影响?</br>
+- 怎么确保我的应用在它生效时运行良好？</br>
+- 网站和服务器需要做哪些适配工作？</br>
+- 在Private Relay运行下，如何管理网络并监控传输?
+
+带着这些疑问，接下来就来了解一下苹果在本届开发者大会新推出的网络隐私特性——iCloud Private Relay。
+
+## 什么是iCloud Private Relay
+iCloud Private Relay内置在iOS和MacOS系统中，这样你不需要为你的app做任何事情就可以使用它。但是，需要注意的是它并不是持续影响你的应用，只有在用户订阅了iCloud Plus并且开启Private Relay权限时才能生效。
+
+你可能好奇：Private Relay做了什么？我们先了解一下现在网络传输过程存在的问题。
+
+![Without iCloud Private Relay](https://i.loli.net/2021/06/16/EhnWvPXsmziqDxQ.png)
+
+ 1. 当我们访问网络，在本地网络的任何人都可以通过检查DNS查询记录来看到我们访问的所有网站的名称。这个信息可以用来获取用户的浏览器“指纹”并建立他们访问活动的历史记录。无论是公共Wi-Fi的运营商、网络中的其他用户，亦或者网络服务器供应商都不应该有悄无声息地收集用户访问的网站信息能力。
+2. 当网络访问连接到运行网站的服务器，服务器就知道了访问用户的IP地址，这将使服务器能够在没有明确允许的情况下判断用户位置。更糟糕的是：即使使用像Sarari中的Intelligent Tracking Prevention(智能反追踪)工具，通过阻断Cookie关联性，服务器还是可以识别用户身份并且识别不同网站的用户。
+
+这些都是很严重的用户隐私问题，为了摆脱这些问题，我们需要一种从设计之初就内置隐私处理的新方法——iCloud Private Relay。iCloud Private Relay增加了多重安全代理帮助用户控制传输路由且保证其私密性。这些代理由独立的实体运行：一个是苹果，一个是内容提供商。
+![With iCloud Private Relay step 1](https://i.loli.net/2021/06/16/kqHPCd3pJTy2W5f.png)
+![With iCloud Private Relay step 2](https://i.loli.net/2021/06/16/p3jlJuiFRaEAU7m.png)
+
+
+现在，当访问网络时，客户端IP地址只对网络服务商和第一个代理是可见的。第二个代理只能获取到用户当前请求的名称，然后使用它去建立和服务器的连接。需要注意的是，在这个过程中，没有任何节点（包括苹果公司）可以同时获取客户端IP地址和用户正在访问的内容。这样，用户完整信息构建的机会就被消除了。
+
+
+为了确保传输的安全和高效，Private Relay使用最新的传输代理和隐私保护身份验证。（更多内容详见[“Apple's privacy pillars in focus” session.](https://developer.apple.com/videos/play/wwdc2021/10085)。Private Relay专注于在不影响用户体验的情况下保护系统上最敏感的信息传输。
+
+在iOS 15和MacOS 12中, Private Relay会适用于所有的Safari网页浏览、所有的DNS名称解析查询以及一小部分来自于APP的网络传输。特别需要注意的是，这将包含所有不安全的HTTP传输，例如通过TCP 80端口的网络传输。
+
+如果你的APP提供了内容过滤或者家长控制，网络传输在通过Private Relay之前仍可被查看，所有你提供的过滤不会受到任何影响。你可以在[ "Meet the Screen Time API" session](https://developer.apple.com/videos/play/wwdc2021/10123/)了解更多。
+
+应用中的网络连接不是都在公共网络发生，所有有几种类型的网络传输是不受Private Relay影响的：
+
+![](https://www.hualigs.cn/image/60cb580bd7e08.jpg)
+
+- 应用中任何通过本地网络或者私有域名的连接都不会受影响。
+- 应用提供了网络拓展来添加VPN或应用代理能力，使用拓展和代理的传输不会受影响。
+
+## 如何使用Private Relay
+### 客户端准备工作
+对于大部分应用，是不需要做任何事情的，Private Relay会正常运行。不过，有许多很棒的实践还是需要了解一下。
+
+无论你正在使用的是什么网络API，Private Relay都会运行。几年来，苹果一直建议应用使用最新的API，例如`URLSession`和`NWConnection`。这些API是了解“Private Relay如何处理网络传输”最好的工具。对于`URLSession`可以使用`Network Xcode Instrument`来监测网络任务，即使是这些网络任务是通过Private Relay处理的也可以监测，详细的内容在[Analyze HTTP traffic in Instruments" session](https://developer.apple.com/videos/play/wwdc2021/10212/)。
+
+同时可以使用`URLSession`和`Network.framework`中的度量API来连接何时使用了Private Relay。在`TaskTransactionMetrics`中，你可以检查任务是否使用了代理。在`NWConnection.EstablishmentReport`，可以检查DNS域名解析时间和代理连接的每个阶段。
+
+Private Relay对于过去使用未加密和不安全的HTTP连接是迈出了很大的一步。如果你还在通过TCP 80端口使用不安全的HTTP连接，现在就是你做出改变的时间了。当Private Relay生效时，这些不安全的连接将被其代理，从而在客户端和代理之间的本地网络上保护连接免受攻击。但是，最好还是确认服务器支持TLS并且将URL从`http://`转换为`https://`，让连接对所有用户都是安全的。
+为了允许访问不安全的链接，应用中可能有App Transport Security的排除项，你可以浏览这个列表并确定他们的去留。
+
+如果应用提供了基于地理位置的功能，这也是个很好的机会来确认你正在使用`Core Loacation`的API而不是依赖于服务器从IP地址推断位置。IP地址定位通常是不可靠的。`Core Location`允许你指定你需要的定位精度并且它是基于明确的用户授权。你可以在[“Apple's privacy pillars in focus” session](https://developer.apple.com/videos/play/wwdc2021/10085)学习更多关于位置访问的最新特性。
+
+如果你确认应用已经准备好使用Private Relay，登录一个包含iCloud Plus订阅的iPhone、iPad或者Mac，并且确认在【设置】-【iCloud分区】或者系统偏好设置中开启Private Relay。
+
+![](https://www.cnet.com/a/img/Ad8nz0wlyx5Gs6OCN811iGB-sWw=/644x0/2021/06/11/153efbcb-1ef9-4f80-b362-949556f9f08d/apple-developer-screenshot-private-relay-gui-enable.png)
+
+### 服务器准备工作
+对于通过应用程序或者Safari访问服务器，服务器需要为Private Relay做一些准备工作。
+
+- 识别Private Relay
+
+服务器可以通过识别代理IP地址来确认使用Private Relay访问的连接，这些代理IP地址可以在域内多用户共享，每一个地址都被映射到指定的城市或地区。因此，如果您应用了正确的地理IP映射数据库，您的服务器将仍然拥有相关信息。Private Relay确保用户不能够使用系统来仿造来自不同区域，因此可以继续使用基于地区的访问权限。
+
+- 使用Private Relay的网络连接
+
+![](https://www.hualigs.cn/image/60cb5bf619a03.jpg)
+
+1. 当设备将要访问服务器，首先他将建立一个与入口代理的连接（连接是使用网络供应者分配的IP地址建立的）；
+2. 接下来设备使用入口代理将网络请求通过入口代理IP地址转发给出口代理；
+3. 出口代理通过选择映射到设备所在城市或地区的IP地址，将这些请求转发到目标服务器；
+
+通常，服务器和网站应该停止单独依赖客户端IP地址来判断用户地理位置或身份。如果需要访问地理位置，请考虑显式地请求需要精度的用户位置；如果你需要识别用户，请求用户登录或者其他形式的明确标识，而不是假定IP地址绑定标识。
+
+## Private Relay生效时管理网络的注意点
+当使用Private Relay时，如果你正在本地网络上追踪包，将看到一些新的传输模式：
+
+ - 你将看到更多的传输运行在UDP 443端口。这是用于与Private Relay代理通信的`QUIC（或HTTP/3）`传输。您可以通过允许网络UDP 443端口以及确保路由器或网络地址转换器能够很好地处理，来确保网络传输工作良好。
+ - 网络中会有更少的明文UDP DNS查询
+
+下面是不使用Private Relay时，一个来自设备典型的网络连接请求
+![](https://i.loli.net/2021/06/16/SPwaeHvQUc7Cf9g.png)
+当设备尝试访问服务器，首先它发送了一个服务器主机名的DNS查询。一旦主机名被解析为一个IP地址，设备会使用传输协议（例如TCP）连接到服务器的IP地址。然后设备和服务器执行`TCP三次握手`，进行TLS交换以建立和服务器的安全连接。
+![](https://www.hualigs.cn/image/60cb5f4e25a9c.jpg)
+但是如你所见，如果没有Private Relay，通过简单地观察网络上的数据包，服务器的主机名和连接到服务器的设备IP地址都是可见的。
+
+当使用Private Relay
+![](https://i.loli.net/2021/06/16/Pca6I7m5kqSEyij.png)
+
+首先设备使用`QUIC`或者`HTTP/3`建立与入口代理的连接。通过捕获的数据包，可以注意到发送到入口代理端口443的UDP数据包。一旦确立了到入口代理的网络连接，对服务器的访问就在入口代理的连接中得到了保护。对于服务端，协议没有任何变化。`TCP/TLS`交换与没有使用Private Relay时类似，唯一的区别是服务器是从代理IP地址而不是设备的IP地址接收传入的连接。
+
+![](https://www.hualigs.cn/image/60cb6082622fa.jpg)
+大多数网络不需要审计或者监控所有用户传输。然而如果是运行在企业或者学校的网络，你的网络可能需要有拦截所有传输的策略。因此，你可以阻止iCloud Private Relay代理服务器的主机名。接下来当一台设备连接你的网络，用户将收到一个提示，表明Private Relay在当前网络上是被阻止的。用户可以选择是在这个网络禁用Private Relay还是切换到其他网络。对于家长控制，最好的解决方式是使用`NetworkExtension`框架提供的内容过滤API。即使使用Private Relay，也会允许设备审核传输。
+
+## 与VPN的对比
+有些人会将iCloud Private Relay理解为苹果的“VPN”，这么理解还是有一些偏颇，相较于VPN两者还是有区别的。
+
+1. 传统的VPN会在传输整个传输过程中隐藏IP地址，Private Relay并非如此；
+2. VPN会将设备传输的所有信息加密，Private Relay加密只会覆盖Safari、设备上与DNS相关、部分APP的传输；
+3. VPN可以越过地理位置封锁，但是Private Relay明确是遵守地理位置封锁的，没有隐藏设备所属地区或城市；
+4. VPN提供商本身知道你的真实IP和你正在访问的网站，这样对于VPN供应商的信任就成了新的问题。Private Relay使用双跳架构：iCloud 专用中继会获取用户的 IP 地址，但知道将要访问的服务名称；第三方提供商知道访问的服务名称，但不知道用户的IP地址。
+
+## 结语
+苹果公司一直对于用户隐私特别重视，可以说每届WWDC都会有关于用于隐私的功能特性。当人们创造出最强的盾时紧随其后的可能就是最强的矛，技术的进步就是在相互碰撞中不断衍化、提升。隐私安全就像猫捉老鼠，隐私追踪、发现安全漏洞的相关技术，在各行业需求的推动下不断进步。
+
+PS. iCloud+ 的 Private Relay 功能（加密所有网络访问）在以下国家不提供：中国、白俄罗斯、哥伦比亚、埃及、哈萨克斯坦、沙特阿拉伯、南非、土库曼斯坦、乌干达、菲律宾。
+
+## 相关内容
+
+- [WWDC 中提到的浏览器 Fingerprinting 有多可怕？](https://zhuanlan.zhihu.com/p/37778645)
+- [Intelligent Tracking Prevention 1.0（ITP 1.0）—2017](https://zhuanlan.zhihu.com/p/111897748)
+- [Intelligent Tracking Prevention](https://webkit.org/blog/7675/intelligent-tracking-prevention/)
