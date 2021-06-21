@@ -323,4 +323,4 @@ RewriteRule ^(css|js|data|images|downloads|favicon\.ico|favicon\.svg|img|theme-s
 
 [Building an Interactive Tutorial](https://developer.apple.com/documentation/docc/building-an-interactive-tutorial)
 
-[Distributing Documentation to External Developers](Distributing Documentation to External Developers)
+[Distributing Documentation to External Developers](https://developer.apple.com/documentation/Xcode/distributing-documentation-to-external-developers)
