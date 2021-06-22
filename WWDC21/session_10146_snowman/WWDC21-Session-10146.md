@@ -14,7 +14,7 @@ What’s new in AVFoundation
 先了解一下 AVAsset 的背景知识：
 >AVAsset 是 AVFoundation 的核心模型对象，用于表示存储在用户设备上或远程服务器的媒体文件内容，当然也包括流媒体（例如 HTTP Live Streams ）或其他形式的视听内容
 
-![](https://images.xiaozhuanlan.com/photo/2021/006873e54a66272bf1e214468f7acca5.png =800)
+<img src="https://images.xiaozhuanlan.com/photo/2021/006873e54a66272bf1e214468f7acca5.png" width=600>
 
 当我们拥有媒体资源时，除了播放之外，经常遇到的场景是检查它的元数据，比如
 - 它的持续时间是多少？
