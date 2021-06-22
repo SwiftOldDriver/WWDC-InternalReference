@@ -6,7 +6,7 @@ What’s new in AVFoundation
 本Session会介绍三个主题：音频元信息，视频元数据合成和字幕创作
 
 # 音频元信息
-我们将花大部分时间讨论 AVAsset 检查元数据的新能力，然后我们将快速介绍另外两个功能：视频合成与元数据和字幕文件创作。
+在这一部分，我们会多花一些时间讨论 AVAsset 检查元数据的新能力，然后再快速介绍另外两个功能：视频合成与元数据和字幕文件创作。
 
 事不宜迟，让我们进入我们的第一个主题：
 **AVAsset 异步查看元信息**
@@ -14,7 +14,7 @@ What’s new in AVFoundation
 先了解一下 AVAsset 的背景知识：
 >AVAsset 是 AVFoundation 的核心模型对象，用于表示存储在用户设备上或远程服务器的媒体文件内容，当然也包括流媒体（例如 HTTP Live Streams ）或其他形式的视听内容
 
-![](https://images.xiaozhuanlan.com/photo/2021/006873e54a66272bf1e214468f7acca5.png)
+![](https://images.xiaozhuanlan.com/photo/2021/006873e54a66272bf1e214468f7acca5.png =800)
 
 当我们拥有媒体资源时，除了播放之外，经常遇到的场景是检查它的元数据，比如
 - 它的持续时间是多少？
