@@ -146,7 +146,7 @@ struct PhotoView: View {
 
 ### Actor
 
-> 关于 Actior 详细信息，可查看 “[Protect mutable state with Swift actors](https://developer.apple.com/videos/play/wwdc2021/10133/)”。
+> 关于 Actor 详细信息，可查看 “[Protect mutable state with Swift actors](https://developer.apple.com/videos/play/wwdc2021/10133/)”。
 
 这里做简单了解，Actor 是定义成一个遵循 Sendable 的协议：
 
