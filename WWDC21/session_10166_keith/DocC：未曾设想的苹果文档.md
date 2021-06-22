@@ -240,13 +240,15 @@ habitat.
 @Step {
     Create a new project using the iOS App template.
 
-    @Image(source: image-Tutorial1-Section1-Step1.png)
+    @Image(source: image-Tutorial1-Section1-Step1.png, alt: "")
 }
 ```
 
 效果如下：
 
 ![image-step.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1624337016253-bcc344c2-3485-43a6-91c0-8d726721c916.png)
+
+需要注意的是 `@Image(source: image.png, alt: "")` 中的 `alt` 参数是不可以省略的，上面的图片中的示例代码由于缺少该参数会被 Xcode 报错。**alt** 的全称是 alternative text，这段文字将会被读屏器 VoiceOver 朗读，用于给视障人士提供帮助。
 
 ## 文档的发布
 
