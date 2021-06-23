@@ -8,9 +8,9 @@
 
 ## 前言
 
-苹果在 WWDC 视频上投入的精力有目共睹，但留开发者的官方文档常常惨不忍睹，甚至于有一个[专门的网站](https://nooverviewavailable.com)统计 No Overview Available 的苹果文档。据调查只有 **30%** 左右的 iOS 开发者通过官方文档学习 API，Paul Hudson 也在 WWDC 21 前许愿写下 [Reimagining Apple’s documentation](https://www.hackingwithswift.com/articles/231/reimagining-apples-documentation) 一文。
+苹果在 WWDC 视频上投入的精力有目共睹，但留给开发者的官方文档常常惨不忍睹，甚至于有一个[专门的网站](https://nooverviewavailable.com)统计了 No Overview Available 的苹果文档。据调查只有 **30%** 左右的 iOS 开发者通过官方文档学习 API，Paul Hudson 也在 WWDC 21 前许愿写下 [Reimagining Apple’s documentation](https://www.hackingwithswift.com/articles/231/reimagining-apples-documentation) 一文。
 
-但 [SwiftUI Tutorials](https://developer.apple.com/tutorials/SwiftUI) 和 [Catalyst Tutorials](https://developer.apple.com/tutorials/mac-catalyst) 依然如同两股清流，是开发者们在文档沙漠中的绿洲。苹果很明显没有时间为每项技术提供如此生动的教程，于是将这个能力通过 DocC 开放给了开发者们（和 iPad 没有计算器有异曲同工之妙）。当然 DocC 也可以用来给自己的**开源项目**编写文档，文档文件会和源代码将一起被 Xcode 编译。
+但 [SwiftUI Tutorials](https://developer.apple.com/tutorials/SwiftUI) 和 [Catalyst Tutorials](https://developer.apple.com/tutorials/mac-catalyst) 依然如同两股清流，是开发者们在文档沙漠中的绿洲。苹果很明显没有时间为每项技术提供如此生动的教程，于是将这个能力通过 **DocC** (Cocumentation Compiler) 开放给了开发者们（和 iPad 没有计算器有异曲同工之妙）。当然 DocC 也可以用来给自己的**开源项目**编写文档，文档文件会和源代码一起被 Xcode 编译。
 
 ## 文档的编译
 
@@ -26,7 +26,7 @@ Xcode 首先会编译代码源文件，并提取**可识别注释**中的公共 
 
 ![docc-compilation-catalog@2x.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1623407888910-0eb1673a-45b3-489e-b19a-a264473b7d83.png)
 
-当你如下需求时，可以考虑使用 documentation catalog 为源码注释进行补充：
+当你有如下需求时，可以考虑使用 documentation catalog 为源码注释进行补充：
 
 - 通过文档**首页**介绍框架和主要接口。
 - 需要自定义组织文档的**结构**。
@@ -34,11 +34,11 @@ Xcode 首先会编译代码源文件，并提取**可识别注释**中的公共 
 - 通过**教程**逐步指导最佳实践。
 - 文档中包含图片视频等内容。
 
-你可以新建一个 **documentation catalog**，将其放到 Swift package 中的，与源码相同的文件夹下。也可以在新建 Swift framework project 时，勾选 Include Documentation。
+你可以新建一个 **documentation catalog**，将其放到 Swift package 中，与源码相同的文件夹下。也可以在新建 Swift framework project 时，勾选 Include Documentation。
 
 ## 可识别注释
 
-摁住 Command 键点击接口名称并选择 **Add Documentation** 可以自动生成**可识别注释**的模版。你可以在模版中依次填写接口的概要、说明、参数说明、返回值说明、抛出说明等内容。这些内容的编写格式为 **markup**，markup 会在文档的编写中多次使用，可以在 [Formatting Your Documentation Content](https://developer.apple.com/documentation/Xcode/formatting-your-documentation-content) 一文中进行学习。
+按住 Command 键点击接口名称并选择 **Add Documentation** 可以自动生成**可识别注释**的模版。你可以在模版中依次填写接口的概要、说明、参数说明、返回值说明、抛出说明等内容。这些内容的编写格式为 **markup**，markup 会在文档的编写中多次使用，可以在 [Formatting Your Documentation Content](https://developer.apple.com/documentation/Xcode/formatting-your-documentation-content) 一文中进行学习。
 
 ```swift
 /// Eat the provided specialty sloth food.
@@ -69,7 +69,7 @@ mutating public func eat(_ food: Food, quantity: Int) throws -> Int {...}
 
 ## 文档的编写
 
-DocC 中的文档一共分为三类：在之前的官方文档中被普遍，用于具体介绍接口的**参考文档**（Reference）。形式更加自由，用于介绍框架背后构造（如不同组件之间的联系）的**文章**（Articles）。通过交互式的逐步指导，帮助用户完成最佳实践的**教程**（Tutorials）。
+DocC 中的文档一共分为三类：在官方文档中被普遍使用，用于具体介绍接口的**参考文档**（Reference）。形式更加灵活自由，用于介绍框架背后构造（如不同组件之间的联系）的**文章**（Articles）。通过交互式的逐步指导，帮助用户完成最佳实践的**教程**（Tutorials）。
 
 ![map.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1623672903501-1ce180b0-2581-47a7-9cd6-1e5f66cc395b.png)
 
@@ -95,7 +95,7 @@ Catalog sloths you find in nature and create new adorable virtual sloths.
 
 ### 重写结构
 
-在我们刚刚编写的文档内容之后，你会发现共接口默认按类型罗列在 **Topic** 主题中，如果你希望按照自己的想法重新组织，可以在主页文件中追加 Topic 部分：
+在我们刚刚编写的文档内容之后，你会发现公共接口默认按类型罗列在 **Topic** 主题中，如果你希望按照自己的想法重新组织，可以在主页文件中追加 Topic 部分：
 
 ![topics.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1624337319780-36ae01b0-ff0a-4c03-ba99-f924655f7519.png)
 
@@ -107,7 +107,7 @@ Topics 被重构后，可以发现左侧**导航栏**的结构也随之改变：
 
 如果自行编写的 Topics 中**遗漏**了部分公共接口或 DocC 的文章和教程目录等，它们依旧会以默认（按类型分组）的方式**追加**到自定义的结构之后，以保证文档的完整性。
 
-除了主页可以自定义，各个接口的**参考文档**同样可以自定义。只需新建一个 Documentation 中的 **Extension File**，将**文件名**改为**接口名**，并在第一行 ` ```` ` 中填写接口的**完整路径**。文档内容和 Topics 的编写方式与主页相同，它们会接在**可识别注释**生成的文档内容之后。
+除了主页可以自定义，各个接口的**参考文档**同样可以自定义。只需新建一个 Documentation 中的 **Extension File**，将**文件名**改为**接口名**，并在第一行 ` ```` ` 中填写接口的**完整路径**。文档内容和 Topics 的编写方式与主页相同，它们会被添加到**可识别注释**生成的文档内容之后。
 
 ```markdown
 # ``SlothCreator/Sloth``
@@ -172,13 +172,13 @@ habitat.
 
 ## 交互式教程
 
-交互式教程的效果难以言传，没有体验过的读者可以参考 [SwiftUI Tutorials](https://developer.apple.com/tutorials/SwiftUI) 和 [Catalyst Tutorials](https://developer.apple.com/tutorials/mac-catalyst)。教程是 DocC 中的一大亮点，它主要由**目录**和**教程页**两部分组成：
+交互式教程的效果难以言传，没有体验过的读者可以参考 [SwiftUI Tutorials](https://developer.apple.com/tutorials/SwiftUI) 和 [Catalyst Tutorials](https://developer.apple.com/tutorials/mac-catalyst)。教程是 DocC 中的一大亮点，它主要由**教程目录**和**教程页**两部分组成：
 
 ![building-tutorial@2x.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1623466144476-28e9a7f3-b050-4a23-bea2-62837ac50f7f.png)
 
 ### 文件格式
 
-教程需要被建立在 documentation catalog 之中。你可以通过新建 Documentation 中的 **Tutorial Table of Contents** 或 **Tutorial File** 来创建目录和教程页，它们都是 .tutorial 文件。只有教程目录能跳转到教程页，所以即使只有一个教程也**必须**编写教程目录。默认情况下 documentation catalog 会包含一个 **Resources** 文件夹，用于储存 DocC 的文档、文章、教程中所使用到的图片、视频、代码等资源。
+教程需要被建立在 documentation catalog 之中。你可以通过新建 Documentation 中的 **Tutorial Table of Contents** 和 **Tutorial File** 来创建教程目录和教程页，它们都是 .tutorial 文件。只有教程目录能跳转到教程页，所以即使只有一个教程也**必须**编写教程目录。默认情况下 documentation catalog 会包含一个 **Resources** 文件夹，用于储存 DocC 的文档、文章、教程中所使用到的图片、视频、代码等资源。
 
 ![tutorial-structure@2x.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1623466691617-3233fbea-2658-44d8-a4ab-499ce7b7aa4e.png)
 
@@ -196,17 +196,17 @@ habitat.
 
 ### 目录编写
 
-在新建目录后 Xcode 会自动填写模版，以帮助开发者入门。**目录的文件名**和 `@Tutorials(name: )` 中的内容一般为**项目名**。
+在新建教程目录后 Xcode 会自动填写模版，以帮助开发者入门。目录**文件名**和 `@Tutorials(name: )` 中的内容一般为**项目名**。
 
 ![Intro.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1623671771965-31d3509a-d2d0-4c33-a9c7-ddd66e93af08.png)
 
-`@Intro` 指令后紧接着目录的**标题**，教程的**简介**，和一张**封面**图片。预计用时和 Get Started 按钮是基于之后提供的教程页信息**自动生成**的。
+`@Intro` 指令后紧接着目录的**标题**，教程的**概述**，和一张**封面**图片。预计用时和 Get Started 按钮是基于之后提供的教程页信息**自动生成**的。
 
 ![Chapter.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1623671810120-43412206-deb9-406a-a2fe-47e8949e4f8c.png)
 
 `@Chapter` 指令用于分类和组织教程，包括了**篇名**，**篇目图片**，**教程引用**。其中 `@TutorialReference` 可以用**文件名**链接到对应的教程页。
 
-一个**目录**（`@Tutorials`）包含一个介绍（`@Intro`）和多个**篇目**（`@Chapter`），一个篇目又可以包含多个**教程页**的引用（`@TutorialReference`）。
+一个**教程目录**（`@Tutorials`）包含一个介绍（`@Intro`）和多个**篇目**（`@Chapter`），一个篇目又可以包含多个**教程页**的引用（`@TutorialReference`）。
 
 ### 教程编写
 
@@ -214,7 +214,7 @@ habitat.
 
 ![interactive-tutorials@2x.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1623489284480-12bde795-cc10-47d7-93e4-d6e4a912f23e.png)
 
-教程页的**文件名**没有特殊要求，仅在链接时使用。`@Tutorial(time: )` 中填写浏览该教程页的**预计使时**。该教程所处的篇目名（SlothCreator Essentials）会自动显示。教程页 `@Intro` 的格式和目录的一样。
+教程页的**文件名**没有特殊要求，仅在链接时使用。`@Tutorial(time: )` 中填写浏览该教程页的**预计用时**。该教程所处的篇目名（SlothCreator Essentials）会自动显示。教程页 `@Intro` 的格式和目录的一样。
 
 ![Tutorial.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1623671936867-31854d00-d05b-46f2-ae59-9f39a216c77f.png)
 
@@ -222,7 +222,7 @@ habitat.
 
 ![Section.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1623672069702-0d173390-5cbc-4529-bb41-4558a60054c2.png)
 
-`@Step` 中包含一段在左边逐步展示的**说明**，开发者希望文档中**显示的文件名**，代码段**正真的文件名**，和一张**预览图**：
+`@Step` 中包含一段在左边逐步展示的**说明**，开发者希望文档中**显示的文件名**，代码段**真正的文件名**，和一张**预览图**：
 
 ![explain.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1624337422881-9318c701-654f-4223-a01f-c94551a221b4.png)
 
@@ -271,7 +271,7 @@ find ~/Desktop/SlothCreatorBuild
     -type d -name '*.doccarchive'
 ```
 
-只需将 .doccarchive 文件包发给其他开发者，就可以用 **Xcode** 将其打开。文件包中主要含有 css、html、js、文档、图片、视频等内容：
+只需将 .doccarchive 文件包发送给其他开发者，对方就可以用 **Xcode** 将其打开以查看文档。文件包中主要含有 css、html、js、文档、图片、视频等内容：
 
 ![archive.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1623487047750-c0080ce3-b4b1-42c8-bbde-4174536144c2.png)
 
@@ -279,7 +279,7 @@ find ~/Desktop/SlothCreatorBuild
 
 1. 将 .doccarchive 文件**拷贝**到服务器用于提供文件的目录。
 2. 在服务器上添加一条规则将以 `/documentation` 或 `/tutorials` 开头的 URL **路由**到 index.html。
-3. 再添加一条规则以**支持**文件中的 CSS 和图片等资源。
+3. 再添加一条规则以**支持**访问文件中的 CSS 和图片等资源。
 
 为了定位到文档，**参考文档**和**文章**的 URL 需要以 `/documentation` 开头，**教程**的 URL 需要以 `/tutorials` 开头。举例来说，如果需要定位到 SlothCreator 文档中一个名为 `SlothGenerator` 的协议，**URL** 如下：
 
@@ -300,7 +300,7 @@ RewriteRule ^(documentation|tutorials)\/.*$ SlothCreator.doccarchive/index.html 
 RewriteRule ^(css|js|data|images|downloads|favicon\.ico|favicon\.svg|img|theme-settings\.json|videos)\/.*$ SlothCreator.doccarchive/$0 [L]
 ```
 
-苹果承诺将在今年内**开源** DocC，同时发布一个可以托管非官方文档的应用程序，届时即使不用 Xcode 也可以享用 DocC 的文档工作流程，以上复杂的配置过程也将得到简化。然而，积极主动的第三方已经开始研究 DocC 的**托管服务**了：[Becquer](https://becquer.cloud) 正在施工中。
+苹果承诺将在今年内**开源** DocC，同时发布一个可以托管非官方文档的应用程序，届时即使不用 Xcode 也可以享用 DocC 的文档工作流程，以上复杂的配置过程也将得到简化。
 
 ## 后记
 
