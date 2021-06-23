@@ -164,7 +164,7 @@ What’s new in AVFoundation
 
 *例如，假设我们有一系列 GPS 数据，并且该数据带有时间戳并与视频同步，如果希望使用这些 GPS 数据来影响帧的组合方式，第一步需要先把 GPS 数据写入源电影中的定时元数据轨道。*
 
-可以使用 AVAssetWriter 来做（建议了解 ![AVAssetWriterInputMetadataAdaptor](https://developer.apple.com/documentation/avfoundation/avassetwriterinputmetadataadaptor)的工作方式作为参考）
+可以使用 AVAssetWriter 来做（建议了解 [AVAssetWriterInputMetadataAdaptor](https://developer.apple.com/documentation/avfoundation/avassetwriterinputmetadataadaptor)的工作方式作为参考）
 
 *让我们从一部特别的电影资源开始：假设它有一个音频轨道、两个视频轨道和三个定时元数据轨道。*
 <br /><img src="https://images.xiaozhuanlan.com/photo/2021/8b233f5ff876028d620b26d633a760fe.png" width=600>
@@ -200,7 +200,7 @@ What’s new in AVFoundation
 1.  iTunes 定时文本（.itt 文件），包含普通字幕
 2. Scenarist Closed Captions （.scc 文件），包含隐藏式字幕（Closed Captioning）
 
->关于隐藏式字幕的更多介绍，可以参考 ![你所不知道的 CC：隐藏式字幕](https://sspai.com/post/39683)
+>关于隐藏式字幕的更多介绍，可以参考 [你所不知道的 CC：隐藏式字幕](https://sspai.com/post/39683)
 
 本次AVFoundation的增强，既可以从这些类型的文件中提取字幕，也可以预览字幕检查它们在播放期间的展示
 
@@ -209,7 +209,7 @@ What’s new in AVFoundation
 
 >它具有诸如文本、位置、样式和其他相关字幕的属性
 
-*我们可以自己创建 AVCaption 并使用 ![AVAssetWriterInputCaptionAdaptor](https://developer.apple.com/documentation/avfoundation/avassetwriterinputcaptionadaptor?changes=_8) 将字幕写入这两种文件格式之一*
+*我们可以自己创建 AVCaption 并使用 [AVAssetWriterInputCaptionAdaptor](https://developer.apple.com/documentation/avfoundation/avassetwriterinputcaptionadaptor?changes=_8) 将字幕写入这两种文件格式之一*
 
 此外，我们在 AVCaptionConversionValidator 类中有一个新的校验能力，它会帮助我们确保编写的字幕实际上与所选择的文件格式兼容——这为什么这很重要呢？
 
@@ -219,10 +219,10 @@ What’s new in AVFoundation
 
 *上面我们说了创作字幕，下面我们再说说读取字幕*
 
-可以使用新 API  ![AVAssetReaderOutputCaptionAdaptor](https://developer.apple.com/documentation/avfoundation/avassetreaderoutputcaptionadaptor?language=o_5)来读取字幕，它允许我们从字幕文件中读出 AVCaption 对象：
+可以使用新 API  [AVAssetReaderOutputCaptionAdaptor](https://developer.apple.com/documentation/avfoundation/avassetreaderoutputcaptionadaptor?language=o_5)来读取字幕，它允许我们从字幕文件中读出 AVCaption 对象：
 <br /><img src="https://images.xiaozhuanlan.com/photo/2021/4328db3224838b48aa3ff885111c4905.png" width=600>
 
-除此之外，还有 ![AVCaptionRenderer](https://developer.apple.com/documentation/avfoundation/avcaptionrenderer) 类，它允许我们获取单个字幕或一组字幕并将它们渲染到 CGContext 预览它们在播放期间的外观。
+除此之外，还有 [AVCaptionRenderer](https://developer.apple.com/documentation/avfoundation/avcaptionrenderer) 类，它允许我们获取单个字幕或一组字幕并将它们渲染到 CGContext 预览它们在播放期间的外观。
 
 但以上只是新的字幕文件创作 API 的冰山一角，大家可以自己试试看！
 
