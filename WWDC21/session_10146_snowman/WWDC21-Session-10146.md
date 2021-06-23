@@ -28,6 +28,7 @@ What’s new in AVFoundation
 其次媒体资源检查是一个<u>异步过程</u>——这非常重要，因为网络 I/O 也有开销；如果媒体资源存储在网络中， AVAsset 将在准备好时通过异步回调告知结果
 
 关于上面，我们有一个用于检查媒体资源属性的新 API，如下：
+
 <br/><img src="https://images.xiaozhuanlan.com/photo/2021/d76ce0f29a542df78936f0db214277a3.png" width=600 />
 
 *需要注意的是这是新的 load 方法，它接受一个属性标识符——在本例中为.duration(持续时间)*
@@ -57,6 +58,7 @@ What’s new in AVFoundation
 除此之外，还可以一次加载多个属性的值，只需将多个属性标识符传递给 load 方法即可完成此操作：
 
 比如，我们可以同时加载持续时间和曲目，这不仅方便，而且还可以更高效：
+
 <br/><img src="https://images.xiaozhuanlan.com/photo/2021/76359d4f7b2bbf94059e99caf18c9e72.png" width=600 />
 
 当AVAsset明确了需要的所有属性，它会自动进行批量处理
@@ -69,6 +71,7 @@ What’s new in AVFoundation
 除此之外，还可以随时使用新的 status(of:) 方法检查属性的状态，而无需等待值加载
 
 *我们传入的是用于加载的相同属性标识符，返回的是一个包含四种可能情况的枚举*
+
 <br/><img src="https://images.xiaozhuanlan.com/photo/2021/a91a5c384402fbee11e2e1fbfaaef148.png" width=600 />
 
 
@@ -106,9 +109,9 @@ What’s new in AVFoundation
 
 在 AVAsset 和 AVAssetTrack 上都有几个这样的新方法：
 
-<br/><img src="https://images.xiaozhuanlan.com/photo/2021/0d7aae3721b23cf910322782cfef4f51.png" width=600 />
-
-<br/><img src="https://images.xiaozhuanlan.com/photo/2021/ccbb109cbd2f301a387ae6d3b1f5ed2d.png" width=600 />
+<br /><img src="https://images.xiaozhuanlan.com/photo/2021/0d7aae3721b23cf910322782cfef4f51.png" width=600 />
+<br />
+<br /><img src="https://images.xiaozhuanlan.com/photo/2021/ccbb109cbd2f301a387ae6d3b1f5ed2d.png" width=600 />
 
 以上就是本session所有关于异步检查媒体资源的所有新 API
 
@@ -128,6 +131,7 @@ What’s new in AVFoundation
 **这很冗长还容易被误用**
 
 *例如，容易忘记一些基本的检查步骤：*
+
 <br/><img src="https://images.xiaozhuanlan.com/photo/2021/5ca9524990ba9d0315fba8bb52dcdd3a.png" width=600 />
 
 而如果我们在没有完成加载的情况下使用这些同步的属性/方法，就会最终阻塞 I/O！
@@ -137,10 +141,12 @@ What’s new in AVFoundation
 >新 API 除了更易用，会还消除上面这些常见的误用，而iOS也可能在未来版本中逐渐废弃旧的同步 API
 
 为了更方便地迁移到这些新接口，这里有一个简短的迁移指南：
+
 <br/><img src="https://images.xiaozhuanlan.com/photo/2021/084ef84992ab7e6e2fcc365c70998353.png" width=600 />
 
 
 1. 如果我们的代码符合加载值 -> 检查状态 -> 获取同步属性的三步模式，那就可以简单地调用 load 方法并在异步步骤中完成所有操作
+
 <br/><img src="https://images.xiaozhuanlan.com/photo/2021/c4640d869ae120309e5eebb7d5ff0d8e.png" width=600 />
 
 2. 如果我们还在使用旧的 statusOfValue(forKey:) 方法并通过switch分发不同状态，现在推荐使用新的状态枚举来完成工作
@@ -153,6 +159,7 @@ What’s new in AVFoundation
 我们将新的属性加载 API 设计得与获取简单属性一样易用——推荐大家迁移到新 API ！
 
 # 视频元数据合成
+
 <br/><img src="https://images.xiaozhuanlan.com/photo/2021/407665a9fac5b0858978e518ddd72d32.png" width=600 />
 
 
@@ -167,6 +174,7 @@ What’s new in AVFoundation
 可以使用 AVAssetWriter 来做（建议了解 [AVAssetWriterInputMetadataAdaptor](https://developer.apple.com/documentation/avfoundation/avassetwriterinputmetadataadaptor)的工作方式作为参考）
 
 *让我们从一部特别的电影资源开始：假设它有一个音频轨道、两个视频轨道和三个定时元数据轨道。*
+
 <br /><img src="https://images.xiaozhuanlan.com/photo/2021/8b233f5ff876028d620b26d633a760fe.png" width=600>
 
 *假设轨道 4 和轨道 5 包含对这次视频合成有用的元数据，但轨道 6 不相关。*
@@ -178,6 +186,7 @@ What’s new in AVFoundation
 **执行这两个设置步骤很重要，否则我们无法在合成回调中获得任何元数据。**
 
 现在让我们看看回调本身，我们可以使用两个新 API 来获取视频合成的元数据：
+
 <br /><img src="https://images.xiaozhuanlan.com/photo/2021/41179caeea4de397e0526b8bb705880e.png" width=600>
 
 - sourceSampleDataTrackIDs 属性，指明该请求需要播放的元数据轨道 ID
@@ -205,6 +214,7 @@ What’s new in AVFoundation
 本次AVFoundation的增强，既可以从这些类型的文件中提取字幕，也可以预览字幕
 
 我们先从 AVCaption 开始——代表单个标题的对象：
+
 <br/><img src="https://images.xiaozhuanlan.com/photo/2021/827885fb732ccbe5c16425ac6c35c150.png" width=600 />
 
 >它具有诸如文本、位置、样式和其他相关字幕的属性
@@ -220,6 +230,7 @@ What’s new in AVFoundation
 *上面我们说了创作字幕，下面我们再说说读取字幕*
 
 可以使用新 API  [AVAssetReaderOutputCaptionAdaptor](https://developer.apple.com/documentation/avfoundation/avassetreaderoutputcaptionadaptor?language=o_5)来读取字幕，它允许我们从字幕文件中读出 AVCaption 对象：
+
 <br /><img src="https://images.xiaozhuanlan.com/photo/2021/4328db3224838b48aa3ff885111c4905.png" width=600>
 
 除此之外，还有 [AVCaptionRenderer](https://developer.apple.com/documentation/avfoundation/avcaptionrenderer) 类，它允许我们获取单个字幕或一组字幕并将它们渲染到 CGContext 预览它们在播放期间的外观。
