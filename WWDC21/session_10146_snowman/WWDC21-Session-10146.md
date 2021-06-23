@@ -202,10 +202,10 @@ What’s new in AVFoundation
 
 >关于隐藏式字幕的更多介绍，可以参考 [你所不知道的 CC：隐藏式字幕](https://sspai.com/post/39683)
 
-本次AVFoundation的增强，既可以从这些类型的文件中提取字幕，也可以预览字幕检查它们在播放期间的展示
+本次AVFoundation的增强，既可以从这些类型的文件中提取字幕，也可以预览字幕
 
-关于创作，我们先从 AVCaption 开始——它是代表单个标题的模型对象：
-<img src="https://images.xiaozhuanlan.com/photo/2021/827885fb732ccbe5c16425ac6c35c150.png" width=600 />
+我们先从 AVCaption 开始——代表单个标题的对象：
+<br/><img src="https://images.xiaozhuanlan.com/photo/2021/827885fb732ccbe5c16425ac6c35c150.png" width=600 />
 
 >它具有诸如文本、位置、样式和其他相关字幕的属性
 
@@ -223,6 +223,8 @@ What’s new in AVFoundation
 <br /><img src="https://images.xiaozhuanlan.com/photo/2021/4328db3224838b48aa3ff885111c4905.png" width=600>
 
 除此之外，还有 [AVCaptionRenderer](https://developer.apple.com/documentation/avfoundation/avcaptionrenderer) 类，它允许我们获取单个字幕或一组字幕并将它们渲染到 CGContext 预览它们在播放期间的外观。
+
+<br /><img src="https://images.xiaozhuanlan.com/photo/2021/78d2823c9fbffbd14b417c834439480f.png" width=600/>
 
 但以上只是新的字幕文件创作 API 的冰山一角，大家可以自己试试看！
 
