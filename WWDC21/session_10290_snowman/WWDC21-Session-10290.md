@@ -1,4 +1,4 @@
-#What's new in AVKit
+# What's new in AVKit
 
 
 >本篇来源为WWDC2021 中 [What’s new in AVKit](https://developer.apple.com/videos/play/wwdc2021/10290/) 
@@ -40,7 +40,7 @@
 
 当用户尝试通过交互切换画中画时，我们需要在控制器对象上调用启动或停止画中画
 
-<br /><img src="https://images.xiaozhuanlan.com/photo/2021/f8c48bf23ec3302cdf3c760c3e362d44.png" />
+<br /><img src="https://images.xiaozhuanlan.com/photo/2021/f8c48bf23ec3302cdf3c760c3e362d44.png" width =600 />
 
 上面介绍的画中画体验是使用 AVPlayer 来构建的，但自定义UI应该怎么办？
 
