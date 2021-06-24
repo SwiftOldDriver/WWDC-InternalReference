@@ -6,27 +6,31 @@
 
 作者将本教程和部分 WWDC 中的代码实践，通过 DocC 技术编译成教程放在 [WWDocC](https://github.com/KeithBird/WWDocC) 代码库中
 
+[TOC]
+
 ## 前言
 
 苹果在 WWDC 视频上投入的精力有目共睹，但留给开发者的官方文档常常惨不忍睹，甚至于有一个[专门的网站](https://nooverviewavailable.com)统计了 No Overview Available 的苹果文档。据调查只有 **30%** 左右的 iOS 开发者通过官方文档学习 API，Paul Hudson 也在 WWDC 21 前许愿写下 [Reimagining Apple’s documentation](https://www.hackingwithswift.com/articles/231/reimagining-apples-documentation) 一文。
 
-但 [SwiftUI Tutorials](https://developer.apple.com/tutorials/SwiftUI) 和 [Catalyst Tutorials](https://developer.apple.com/tutorials/mac-catalyst) 依然如同两股清流，是开发者们在文档沙漠中的绿洲。苹果很明显没有时间为每项技术提供如此生动的教程，于是将这个能力通过 **DocC** (Cocumentation Compiler) 开放给了开发者们（和 iPad 没有计算器有异曲同工之妙）。当然 DocC 也可以用来给自己的**开源项目**编写文档，文档文件会和源代码一起被 Xcode 编译。
+但 [SwiftUI Tutorials](https://developer.apple.com/tutorials/SwiftUI) 和 [Catalyst Tutorials](https://developer.apple.com/tutorials/mac-catalyst) 依然如同两股清流，是开发者们在文档沙漠中的绿洲。苹果很明显没有时间为每项技术提供如此生动的教程，于是将这个能力通过 **DocC** (Documentation Compiler) 开放给了开发者们（和 iPad 没有计算器有异曲同工之妙）。当然 DocC 也可以用来给自己的**开源项目**编写文档，编写的文档文件会和源代码一起被 Xcode 编译。
 
 ## 文档的编译
 
-Xcode 编译 DocC 的材料分别来自于：源码中的**注释**和 DocC **专属的文件**。这两者将通过我们接下来要编写的**链接**，和源码编译后产生的**接口结构**，组合在一起形成最终的文档。通过点击菜单栏的 Product > Build Documentation 可以完成编译。也可以将此步骤添加到 Build 过程中，只需在 Building Settings 的 Documentation Compiler 中，将 Build Documentation during 'Build' 设为 Yes。
+DocC 通过编译源码中的**文档注释**和 DocC 专属的**文档文件**生成文档的文本内容。文本内容通过我们接下来要编写的**链接**，和源码编译后提取的**接口结构**，组织在一起，形成最终的文档。
 
-### 编译注释中的文档
+通过点击菜单栏的 Product > Build Documentation 可以完成编译。也可以将此步骤添加到 Build 过程中，只需在 Building Settings 的 Documentation Compiler 中，将 Build Documentation during 'Build' 设为 Yes。想了解如何使用命令行编译，可以查看「文档的发布」一节。
+
+### 编译文档注释
 
 ![docc-compilation-default@2x.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1623487697418-020d4063-89a0-42b5-8fce-1a84f1a22ce9.png)
 
-Xcode 首先会编译代码源文件，并提取**可识别注释**中的公共 API 信息（如概要、参数说明、返回值说明等)，以生成一些文档内容，作为生产 **DocC Archive** 的部分材料。因此，在默认情况下，DocC 仅靠编译源码，就可以生成按**接口类型**和**接口结构**组织的文档。
+Xcode 首先会编译代码源文件，并提取**文档注释**中的公共 API 信息（如概要、参数说明、返回值说明等)，以生成一些文档内容，作为生产 **DocC Archive** 的部分材料。因此，在默认情况下，DocC 仅靠编译源码，就可以生成按**接口类型**和**接口结构**组织的文档。
 
-### 编译 DocC 的文件
+### 编译文档文件
 
 ![docc-compilation-catalog@2x.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1623407888910-0eb1673a-45b3-489e-b19a-a264473b7d83.png)
 
-当你有如下需求时，可以考虑使用 documentation catalog 为源码注释进行补充：
+当你有如下需求时，可以考虑使用 documentation catalog 为文档注释进行补充：
 
 - 通过文档**首页**介绍框架和主要接口。
 - 需要自定义组织文档的**结构**。
@@ -36,9 +40,9 @@ Xcode 首先会编译代码源文件，并提取**可识别注释**中的公共 
 
 你可以新建一个 **documentation catalog**，将其放到 Swift package 中，与源码相同的文件夹下。也可以在新建 Swift framework project 时，勾选 Include Documentation。
 
-## 可识别注释
+## 注释的格式
 
-按住 Command 键点击接口名称并选择 **Add Documentation** 可以自动生成**可识别注释**的模版。你可以在模版中依次填写接口的概要、说明、参数说明、返回值说明、抛出说明等内容。这些内容的编写格式为 **markup**，markup 会在文档的编写中多次使用，可以在 [Formatting Your Documentation Content](https://developer.apple.com/documentation/Xcode/formatting-your-documentation-content) 一文中进行学习。
+按住 Command 键点击接口名称并选择 **Add Documentation** 可以自动生成**文档注释**的模版。你可以在模版中依次填写接口的概要、说明、参数说明、返回值说明、抛出说明等内容。这些内容的编写格式为 **markup**，markup 会在文档的编写中多次使用，可以在 [Formatting Your Documentation Content](https://developer.apple.com/documentation/Xcode/formatting-your-documentation-content) 一文中进行学习。
 
 ```swift
 /// Eat the provided specialty sloth food.
@@ -59,7 +63,7 @@ Xcode 首先会编译代码源文件，并提取**可识别注释**中的公共 
 mutating public func eat(_ food: Food, quantity: Int) throws -> Int {...}
 ```
 
-通过编写上面的注释并进行编译，你可以在对应的**接口文档**中看到以下信息：
+通过编写上面的文档注释并进行编译，你可以在对应的**接口文档**中看到以下信息：
 
 ![reference-doc.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1624336814666-965ed059-968d-4368-8d8e-17792dc30b43.png)
 
@@ -81,11 +85,11 @@ DocC 中的文档一共分为三类：在官方文档中被普遍使用，用于
 
 ![home-page.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1624337102089-2f41cefa-6079-42c2-b650-24fbb739d8d1.png)
 
-但我们也可以通过以下步骤进行**自定义**。首先新建一个 Documentation 中的 **Empty** 文件：
+但我们也可以通过以下步骤进行**自定义**。首先所有 DocC 文件必须在**与项目同名**的 **documentation catalog** 中才有效，我们可以在其中新建一个 Documentation 中的 **Empty** 文件作为首页：
 
 ![empty-markdown-file@2x.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1623416020798-e85d0ad1-47df-4b15-9822-762df4e2187d.png)
 
-用**项目名**给将这个 .md 文件**重命名**，且**标题**  ` ```` ` 中的内容也要是项目名，这样 Xcode 才能在编译时将它们关联起来。标题下方是一段**概要**，接着你可以用 **markup** 语法为文档的主页添加文字、代码、图片、视频等内容。
+同样用**项目名**给这个 .md 文件**重命名**，且**标题**  ` ```` ` 中的内容也要是项目名，这样 Xcode 才能在编译时将它们关联起来。标题下方是一段**概要**，接着你可以用 **markup** 语法为文档的主页添加文字、代码、图片、视频等内容。
 
 ```markdown
 # ``SlothCreator``
@@ -107,7 +111,7 @@ Topics 被重构后，可以发现左侧**导航栏**的结构也随之改变：
 
 如果自行编写的 Topics 中**遗漏**了部分公共接口或 DocC 的文章和教程目录等，它们依旧会以默认（按类型分组）的方式**追加**到自定义的结构之后，以保证文档的完整性。
 
-除了主页可以自定义，各个接口的**参考文档**同样可以自定义。只需新建一个 Documentation 中的 **Extension File**，将**文件名**改为**接口名**，并在第一行 ` ```` ` 中填写接口的**完整路径**。文档内容和 Topics 的编写方式与主页相同，它们会被添加到**可识别注释**生成的文档内容之后。
+除了主页可以自定义，各个接口的**参考文档**同样可以自定义。只需新建一个 Documentation 中的 **Extension File**，将**文件名**改为**接口名**，并在第一行 ` ```` ` 中填写接口的**完整路径**。文档内容和 Topics 的编写方式与主页相同，它们会被添加到**文档注释**生成的文档内容之后。
 
 ```markdown
 # ``SlothCreator/Sloth``
@@ -125,7 +129,7 @@ Topics 被重构后，可以发现左侧**导航栏**的结构也随之改变：
 
 ### 覆盖注释
 
-Extension File 中的内容默认会**追加**在源码注释编译生成的内容之后，但在某些时候我们希望**完全重写**参考文档，这时我们需要在标题下方注明采用**覆盖**方式：
+Extension File 中的内容默认会**追加**在源码文档注释编译生成的内容之后，但在某些时候我们希望**完全重写**参考文档，这时我们需要在标题下方注明采用**覆盖**方式：
 
 ```markdown
 # ``SlothCreator/Sloth``
