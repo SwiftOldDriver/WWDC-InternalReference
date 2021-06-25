@@ -4,7 +4,7 @@
 
 ## 概览
 
-在 WWDC 2021 中，Swift 迎来了一次重要的版本更新 —— Swift 5.5。Swift 的此次更新为 Swift 并发编程带来了非常大的改变，通过 `async/await`（ [SE-0296](https://github.com/apple/swift-evolution/blob/main/proposals/0296-async-await.md)）、Actors （[SE-0306](https://github.com/apple/swift-evolution/blob/main/proposals/0306-actors.md)）以及 Task Group，Swift 在语言层面上增加了更为抽象的结构化并发模型（Structured concurrency），同时保障了并发场景下的性能和安全性，使开发者可以在更抽象的层面上思考并发场景的解决方式，而无需面对使用 GCD 等传统并发模型时可能出现的多线程问题。
+在 WWDC 2021 中，Swift 迎来了一次重要的版本更新 —— Swift 5.5。Swift 的此次更新为 Swift 并发编程带来了非常大的改变，通过 `async/await`（[SE-0296](https://github.com/apple/swift-evolution/blob/main/proposals/0296-async-await.md)）、Structured concurrency（[SE-0304](https://github.com/apple/swift-evolution/blob/main/proposals/0304-structured-concurrency.md)）以及 Actors （[SE-0306](https://github.com/apple/swift-evolution/blob/main/proposals/0306-actors.md)），Swift 让开发者可以在更抽象的层面上思考并发场景的解决方式，同时保障了并发场景下的性能和安全性，避免了使用 GCD 等传统并发模型时可能出现的多线程问题。
 
 为了更好地理解 Swift 并发模型所解决的问题以及其背后的原理，本 Session 将通过一个开发新闻浏览 App 的例子，探究 Swift 并发模型的实现原理，以及使用 Swift 并发模型编码过程中，如何获得更好的性能和效率。
 
@@ -75,7 +75,7 @@
 
 > 合理使用 Swift 并发模型，可以把线程控制在与 CPU 核心数相等的数量，同时极大程度地降低了在多个任务切换时的损耗。
 
-Swift 并发模型的设计理念，是为了保证在运行时控制线程的数量，在理想状态下使线程数量不超过 CPU 核心数量，而 Swift 引入的结构化并发模型，例如`async/await`、Actors、Task Group 等结特性，都可以帮助我们完成此目标。
+Swift 并发模型的设计理念，是为了保证在运行时控制线程的数量，在理想状态下使线程数量不超过 CPU 核心数量，而 Swift 引入的结构化并发模型，例如`async/await`、Task Group、Actors 等特性，都可以帮助我们完成此目标。
 
 ### `async/await` 
 
@@ -148,19 +148,17 @@ Task 和 Task group 是 Swift 并发模型中引入的另一个抽象概念，Ta
 
 
 
-## 运行时合约
+## 运行时约定
 
-不管是开发者还是苹果本身，在 Swift 并发模型中，所需要遵循的原则，被称为**运行时合约（Runtime Contract）**：
-- 保证线程可持续执行
-- 保证线程数量不超过 CPU 核心数量
+Swift 并发模型的最终目标是为了保证线程数量不超过 CPU 核心数量，为了达成此目标，苹果的工程师和其他开发者都需要遵循一定的原则：保证线程可持续执行，不被阻塞。这个原则被称为**运行时约定（Runtime Contract）**。
 
-在 Swift 和操作系统的更新中，苹果提供了一个新的线程池：协作式线程池（Cooperative thread pool）来支持上述提到的运行时合约，保证线程可持续执行和线程数量限制。通过这个线程池，Swift 运行时本身就可以保障线程不会被阻塞，且避免了线程爆炸时出现的性能问题。
+在 Swift 和操作系统的更新中，苹果提供了一个新的线程池：协作式线程池（Cooperative thread pool），并作为 Swift 并发模型的默认线程调度器。通过协作式线程池，Swift 在运行时就可以保障线程不会被阻塞，且避免了线程爆炸时出现的性能问题，从而达到线程数里不超过 CPU 核心数量的目标。
 
 ![](https://images.xiaozhuanlan.com/photo/2021/67b431eff76f3578d93e7a6932c19895.png)
 
 之前的 WWDC 中，[WWDC17 - Modernizing Grand Central Dispatch Usage](https://developer.apple.com/videos/play/wwdc2017/706/) 和 [WWDC16 - Concurrent Programming With GCD in Swift 3](https://developer.apple.com/videos/play/wwdc2016/720) 都曾讨论过如何改善 GCD 的使用，从而尽量避免多线程性能问题，这些讨论都建议开发者需要遵守一定的规则来使用 GCD，例如在系统的每个子模块中最多使用一个 GCD 串行队列。
 
-在 Swift 并发模型中，这些约定和规范都下沉到了 Runtime 层面（Swift 运行时默认保证了线程数量的限制），**也就是说，当我们使用 Swift 结构化并发模型中的语言特性进行开发时，我们无需在代码层面上地关注多线程性能问题。**
+在 Swift 并发模型中，这些约定和规范都下沉到了 Runtime 层面（Swift 运行时默认保证了线程数量的限制），**也就是说，当我们使用 Swift 结构化并发模型中的语言特性进行开发时，我们无需在代码层面上过多地关注多线程性能问题。**
 
 
 ## 如何使用 Swift 并发模型
@@ -170,11 +168,11 @@ Task 和 Task group 是 Swift 并发模型中引入的另一个抽象概念，Ta
 接下来我们会围绕几个部分，讨论开发过程中，如何更好地使用 Swift 并发模型：
 - 并发编程中的性能问题
 - `await` 导致原子性被破坏
-- 遵循运行时合约
+- 遵循运行时约定
 
 ### 性能
 
-任何的并发都会带来一定的性能损耗，虽然 Swift 并发模型在性能上有较大优化，但仍然会存在内存损耗和运行时效率损耗，因此我们在考虑是否需要引入并发编程时，必须优先考量**性能上的收益是否远大于损耗**。 
+前面我们提到了并发编程相关的损耗，例如额外的内存占用和运行时逻辑，虽然 Swift 并发模型在性能上有较大优化，但仍然会存在内存损耗和运行时效率损耗，因此我们在考虑是否需要引入并发编程时，必须优先考量**性能上的收益是否远大于损耗**。 
 
 ![](https://images.xiaozhuanlan.com/photo/2021/7eec45afaaac10bc6673cc79f6f73649.png)
 
@@ -191,13 +189,13 @@ Task 和 Task group 是 Swift 并发模型中引入的另一个抽象概念，Ta
 
 
 
-### 遵循运行时合约
+### 遵循运行时约定
 
-在使用 Swift 并发模型进行编码时，我们需要时刻保证我们的代码不会破坏 Swift 并发模型的运行时合约，即保证线程的可持续执行。
+在使用 Swift 并发模型进行编码时，我们需要时刻保证我们的代码不会破坏 Swift 并发模型的运行时约定，即保证线程的可持续执行。
 
 - **绝对安全类型：**`await`、Actors 和 Task group 等 Swift 结构化并发模型特性。由于使用这些类型时，我们的代码直接显式定义了其依赖关系，所以在 Swift 可以在编译期得到这些依赖关系，并在运行时能给合理地调度线程，因此我们可以放心使用这些类型。
 
-- **需要小心使用的安全类型：** `os_unfair_lock`、`NSLock`。在 Swift 并发模型中使用锁也是安全的，但由于编译器并不支持对使用锁的代码做特殊处理，因此我们在使用时需要进行充分的考量。这里我们区分同步和异步两种场景：同步场景下，使用锁是绝对安全的，因为在同步场景下，持有锁的线程，必定会继续执行任务并释放锁，因此并不违法 Swift 并发模型的运行时合约；异步场景下，如果持有锁的线程只会阻塞比较短的时间，那这种场景下也可以认为此线程是可继续执行任务的。
+- **需要小心使用的安全类型：** `os_unfair_lock`、`NSLock`。在 Swift 并发模型中使用锁也是安全的，但由于编译器并不支持对使用锁的代码做特殊处理，因此我们在使用时需要进行充分的考量。这里我们区分同步和异步两种场景：同步场景下，使用锁是绝对安全的，因为在同步场景下，持有锁的线程，必定会继续执行任务并释放锁，因此并不违法 Swift 并发模型的运行时约定；异步场景下，如果持有锁的线程只会阻塞比较短的时间，那这种场景下也可以认为此线程是可继续执行任务的。
 
 - **不安全类型：**`DispatchSemaphore`、`pthread_cond`、`NSCondition` 以及 `pthread_rw_lock` 等。使用这些并发类型时，其依赖关系并不会在代码中显式声明，而是在代码执行时才可以确定，因此 Swift 运行时无法判断在这些场景中，应该如何调度线程，因此使用这些不安全类型，并不能保证线程可持续执行任务。
 	
@@ -205,17 +203,15 @@ Task 和 Task group 是 Swift 并发模型中引入的另一个抽象概念，Ta
 	
   ![](https://images.xiaozhuanlan.com/photo/2021/e4f7a844e8e4855841cbf496824e02a0.png)
 	
-	例如，在上图的代码中，我们无法确定信号量会在哪个线程被释放，因此这种类型的代码违背了 Swift 并发模型的运行时合约，无法保证线程可以持续执行任务不被阻塞。
+	例如，在上图的代码中，我们无法确定信号量会在哪个线程被释放，因此这种类型的代码违背了 Swift 并发模型的运行时约定，无法保证线程可以持续执行任务不被阻塞。
 
-> 在运行代码时增加环境变量 `LIBDISPATCH_COOPERATIVE_POOL_STRICT=1` 可以开启强制使用协作式线程池，如此一来，如果代码运行中出现阻塞线程的情况，我们可以立刻得到相关调用栈信息
->
-> 注：由于没有实际调试过，暂时不能确定这里是不是会直接抛出异常
+> 在 debug 模式下时增加环境变量 `LIBDISPATCH_COOPERATIVE_POOL_STRICT=1` 可以开启强制使用协作式线程池，如果代码运行中出现不完全类型和 Swift 并发模型同时使用的情况，会立即触发 `semaphore_waite_trap`。
 
 
 
 ## 使用 Actors 进行同步操作
 
-[Actors](https://docs.swift.org/swift-book/LanguageGuide/Concurrency.html#ID645) 是 Swift 并发模型中新增的语言特性，与 Class 一样，Actor 也是基本类型，并且为引用类型。Actors 最重要的一个特性是，任何 Actors 类型中的可变状态，在同一时间只运行一个任务（Swift 结构化并发模型中的 Task 概念）访问，也就是说 Actors 本身不允许并发修改，避免了资源竞争（Data Races）的多线程问题。
+[Actors](https://docs.swift.org/swift-book/LanguageGuide/Concurrency.html#ID645) 是 Swift 并发模型中新增的语言特性，与 Class 一样，Actor 也是基本类型，并且为引用类型。Actors 最重要的一个特性是，任何 Actors 类型中的可变状态，在同一时间只运行一个任务（Swift 结构化并发模型中的 Task 概念）访问，也就是说 Actors 本身不允许并发访问，避免了资源竞争（Data Races）的多线程问题。
 
 > 在访问 Actors 的可变状态时，我们需要增加 `await` 关键字，因为任何访问 Actors 中可变状态的操作，都有可能形成一个挂起点（suspension point）。
 
@@ -289,7 +285,7 @@ Task 和 Task group 是 Swift 并发模型中引入的另一个抽象概念，Ta
 
 ![](https://images.xiaozhuanlan.com/photo/2021/7b8de652eea5bdca4a78fc0036ebd0b9.png)
 
-这里便涉及到了 Actors 的一个重要特性——**可重入性（Reentrancy）**，即同一个 Actor 即使有暂时挂起的旧的任务，它仍然可以创建并执行其他新任务，而不会一直等待旧的任务完成。
+这里便涉及到了 Actors 的一个重要特性——**可重入性（Reentrancy）**，一个可重入的 Actor 即使有暂时挂起的旧的任务，它仍然可以创建并执行其他新任务，而不会一直等待挂起的任务完成。
 
 > 注：这里的关键点是*有暂时挂起的旧的任务*，并不代表同一个 Actor 可以同时并行地执行多个任务。Actors 的可重入性意味着 Actors 不会像 GCD 串行队列一样严格遵循 FIFO，而是可以先完成一个较晚加入的任务（例如上文的 D2），并无需等待较早加入的任务完成（例如上文的 D1）。
 
@@ -299,7 +295,7 @@ Task 和 Task group 是 Swift 并发模型中引入的另一个抽象概念，Ta
 
 > 注：关于 Actors 的可重入性和优先级问题，[SE-0306](https://github.com/apple/swift-evolution/blob/main/proposals/0306-actors.md#actor-reentrancy) 和 [SE-0304](https://github.com/apple/swift-evolution/blob/main/proposals/0304-structured-concurrency.md#priority-escalation) 中有详细的讨论。
 >
-> Actors 的可重入特定，更多地是出于对性能和安全性的考虑，以及提高线程利用率，在使用 Actors 时，我们必须要考虑到可重入性带来的不确定因素，具体的例子可以参考 [SE-0306](https://github.com/apple/swift-evolution/blob/main/proposals/0306-actors.md#actor-reentrancy)，其中也提到了可重入性也减小了死锁发生的可能性，并对非可重入的 Actor 可能发生死锁的场景作了详细的阐述。
+> Actors 的可重入性，更多地是出于对性能和安全性的考虑，以及提高线程利用率，在使用 Actors 时，我们必须要考虑到可重入性带来的不确定因素，具体的例子可以参考 [SE-0306](https://github.com/apple/swift-evolution/blob/main/proposals/0306-actors.md#actor-reentrancy)，其中也提到了可重入性可以减小了死锁发生的可能性，并对非可重入的 Actor 可能发生死锁的场景作了详细的阐述。
 
 
 
@@ -315,7 +311,7 @@ Task 和 Task group 是 Swift 并发模型中引入的另一个抽象概念，Ta
 
 ![](https://images.xiaozhuanlan.com/photo/2021/a3697da73d1780b812ef365aa8780452.png)
 
-在这种情况下，我们必须对代码做一定的重构，来避免频繁切换上下文带来的性能损害。
+在这种情况下，我们需要对代码做一定的重构，来避免频繁切换上下文带来的性能损害。
 
 ![](https://images.xiaozhuanlan.com/photo/2021/a3697da73d1780b812ef365aa8780452.png)
 
