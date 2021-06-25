@@ -2,7 +2,9 @@
 
 本文基于 Session [10166](https://developer.apple.com/videos/play/wwdc2021/10166/) [10167](https://developer.apple.com/videos/play/wwdc2021/10167/) [10235](https://developer.apple.com/videos/play/wwdc2021/10235/) [10236](https://developer.apple.com/videos/play/wwdc2021/10236/) 梳理
 
-作者信息：旷明，iOS Dev。GitHub：[KeithBird](https://github.com/KeithBird) Twitter：[@KeithBirdKTH](https://twitter.com/KeithBirdKTH) [个人技术博客](https://www.notion.so/keithbird/Kth-34dc6a2e55fc40c9b22f170fdcc2c5cc)。
+作者：旷明，iOS Dev。GitHub: [KeithBird](https://github.com/KeithBird)  Twitter: [@KeithBirdKTH](https://twitter.com/KeithBirdKTH)  Blog: [Kth](https://www.notion.so/keithbird/Kth-34dc6a2e55fc40c9b22f170fdcc2c5cc)  App: [语法树](https://apps.apple.com/cn/app/%E8%AF%AD%E6%B3%95%E6%A0%91-%E7%94%A8%E6%A0%91%E5%BD%A2%E5%9B%BE%E9%80%8F%E8%A7%86%E8%AF%AD%E6%B3%95%E7%BB%93%E6%9E%84/id1567895588)
+
+审核：示晔，iOS 开发。就职于京东科技-移动平台研发部。
 
 作者将本教程和部分 WWDC 中的代码实践，通过 DocC 技术编译成教程放在 [WWDocC](https://github.com/KeithBird/WWDocC) 代码库中
 
