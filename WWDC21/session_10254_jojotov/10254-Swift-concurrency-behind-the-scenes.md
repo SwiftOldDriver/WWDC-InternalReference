@@ -236,7 +236,7 @@ Swift 并发模型的最终目标是为了保证线程数量不超过 CPU 核心
 
 当我们需要请求最新的新闻信息流，并保存到数据库时，各类别的 feed actor 会首先开始工作，并在完成后直接与数据库 actor 进行交互，把信息流保存在数据库中。这种 actor 之间的交互发生在协作式线程池中，称之为 **Actor hopping。**
 
-> 注：Actor hopping 可以理解为线程在不同 actor 之间跳跃地执行任务，并由协作式线程池来完成调度。理解这个行为，可以帮助我们更好地理解 Swift 并发模型中的协作式线程池（Cooperative thread pool）是如何让不同线程进行 ”协作“ 的。
+> 注：Actor hopping 可以理解为线程在不同 actor 之间跳跃地执行任务，并由协作式线程池来完成调度。理解这个行为，可以帮助我们更好地理解 Swift 并发模型中的协作式线程池（Cooperative thread pool）是如何让不同线程进行 “协作” 的。
 
 那么，Actor hopping 背后究竟是如何工作的呢？我们假设第一个完成的任务是 Sports feed actor（S1），此时 S1 会调用 `database.save` 来进行数据存储，假设此时数据库处于空闲状态（非竞争状态的场景），那么当前线程会直接跳到 Database actor 去执行任务（D1）。
 
