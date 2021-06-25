@@ -28,9 +28,7 @@ Xcode 首先会编译代码源文件，并提取**文档注释**中的公共 API
 
 ### 编译文档文件
 
-![docc-compilation-catalog@2x.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1623407888910-0eb1673a-45b3-489e-b19a-a264473b7d83.png)
-
-当你有如下需求时，可以考虑使用 documentation catalog 为文档注释进行补充：
+当你有如下需求时，可以考虑使用 **documentation catalog** 为文档注释进行补充：
 
 - 通过文档**首页**介绍框架和主要接口。
 - 需要自定义组织文档的**结构**。
@@ -38,7 +36,11 @@ Xcode 首先会编译代码源文件，并提取**文档注释**中的公共 API
 - 通过**教程**逐步指导最佳实践。
 - 文档中包含图片视频等内容。
 
-你可以新建一个 **documentation catalog**，将其放到 Swift package 中，与源码相同的文件夹下。也可以在新建 Swift framework project 时，勾选 Include Documentation。
+你可以新建一个 documentation catalog，将其放到 Swift package 中与**源码**相同的目录下。也可以在新建 Swift framework project 时，勾选 **Include Documentation**。
+
+![docc-compilation-catalog@2x.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1623407888910-0eb1673a-45b3-489e-b19a-a264473b7d83.png)
+
+DocC 将会结合 **Swift compiler** 中的公共 API 信息，和 **documentation catalog** 中的文档文件，以生成更加丰富的 DocC Archive 文档文件。
 
 ## 注释的格式
 
@@ -129,7 +131,7 @@ Topics 被重构后，可以发现左侧**导航栏**的结构也随之改变：
 
 ### 覆盖注释
 
-Extension File 中的内容默认会**追加**在源码文档注释编译生成的内容之后，但在某些时候我们希望**完全重写**参考文档，这时我们需要在标题下方注明采用**覆盖**方式：
+Extension File 中的内容默认会**追加**到文档注释编译生成的内容之后，但在某些时候我们希望**完全重写**参考文档，这时我们需要在标题下方注明采用**覆盖**方式：
 
 ```markdown
 # ``SlothCreator/Sloth``
