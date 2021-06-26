@@ -180,7 +180,7 @@ habitat.
 
 ## 交互式教程
 
-[交互式教程](https://developer.apple.com/documentation/docc/building-an-interactive-tutorial)的效果难以言传，没有体验过的读者可以参考 [SwiftUI Tutorials](https://developer.apple.com/tutorials/SwiftUI) 和 [Catalyst Tutorials](https://developer.apple.com/tutorials/mac-catalyst)。教程是 DocC 中的一大亮点，它主要由**教程目录**和**教程页**两部分组成：
+[交互式教程](https://developer.apple.com/documentation/docc/building-an-interactive-tutorial)的效果难以言传，没有体验过的读者可以参考 [SwiftUI Tutorials](https://developer.apple.com/tutorials/SwiftUI) 和 [Catalyst Tutorials](https://developer.apple.com/tutorials/mac-catalyst)。教程同时也是 DocC 中的一大亮点，它主要由**教程目录**和**教程页**两部分组成：
 
 ![building-tutorial@2x.png](https://cdn.nlark.com/yuque/0/2021/png/1246974/1623466144476-28e9a7f3-b050-4a23-bea2-62837ac50f7f.png)
 
