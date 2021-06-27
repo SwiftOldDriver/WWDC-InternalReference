@@ -158,7 +158,7 @@ for product in storeProducts {
 ```
 
 ### Purchase
-发起购买，不得不过，新 API 这个只需要一句话就能发起调用还是很舒服的，感觉也不需要解释些什么，替代了 ``SKPayment`` 与 ``SKPaymentQueue`` 的职责。直接上代码 :
+发起购买，不得不说，新 API 这个只需要一句话就能发起调用还是很舒服的，感觉也不需要解释些什么，替代了 ``SKPayment`` 与 ``SKPaymentQueue`` 的职责。直接上代码 :
 ```swift
 let result = try await product.purchase()
 ```
@@ -285,6 +285,8 @@ extension Transaction {
     public func beginRefundRequest(in scene: UIWindowScene) async throws -> Transaction.RefundRequestStatus
 }
 ```
+
+
 
 
 ## Transaction history
@@ -418,3 +420,11 @@ JSON 内容要经 ``Base64`` 编码生成字符串成为 ``Header``。
 ## 结语
 感谢大家能看到这里，这次能够实际使用的部分并不多。主要还是只有 ``iOS15`` 可以用，等到最低兼容到 ``iOS15`` 的话，起码也是 5 年以后了。    
 给我的感觉就是终于把之前设计的一塌糊涂的 ``SK`` 系列 API 整理得清楚了一些，然后把 ``autoRenewable`` （自动续期订阅）补强了，看来苹果后续还会继续强推这种购买形式。同时这次的改动可谓考虑周到与全面，解决了消费者退款的需求，也考虑了开发者被黑产恶意薅羊毛的痛苦。十分得用心。  
+
+## 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**

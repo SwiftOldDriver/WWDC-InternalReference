@@ -30,9 +30,8 @@ author: "土土Edmond木"
 
 ## 引言
 
-![10019-01-table](https://gitee.com/looseyi/blog-image/raw/master/uPic/10019-01-table.png)众所周知，在计算机领域并发是很棘手的一个难题，现在您拥有了管理应用程序中这种复杂性的工具。我们希望您喜欢并了解 Swift 5.5 和 SwiftUI 中出色的新并发工具，我们期待看到您使用它们解决应用程序中棘手问题。
-该 Session 主要包括三个方面的内容，分别为：`Concurrent Data Models`、`SwiftUI & MainActor`、`New concurrency tools`。
-我们将通过一个星云图片浏览的 Demo 向您展示在 SwiftUI 中，现有的异步工具存在的问题，并运用新的并发工具来解决这些问题。最后我们会介绍 SwiftUI 中新引入的并发工具。
+![10019-01-table](https://gitee.com/looseyi/blog-image/raw/master/uPic/10019-01-table.png)
+随着Swift 5.5 及 SwiftUI 的更新，您将拥有一系列新的并发编程工具。本文将重点介绍在 SwiftUI 中的相关新特性，主要包括三个方面，分别为：`Concurrent Data Models`、`SwiftUI & MainActor`、`New concurrency tools`。我们将通过一个星云图片浏览的 Demo 向您展示在 SwiftUI 中，现有的异步工具存在的问题，并运用新的并发工具来解决这些问题。最后我们会介绍 SwiftUI 中新引入的并发工具。
 
 
 
@@ -146,7 +145,7 @@ struct PhotoView: View {
 
 ### Actor
 
-> 关于 Actior 详细信息，可查看 “[Protect mutable state with Swift actors](https://developer.apple.com/videos/play/wwdc2021/10133/)”。
+> 关于 Actor 详细信息，可查看 “[Protect mutable state with Swift actors](https://developer.apple.com/videos/play/wwdc2021/10133/)”。
 
 这里做简单了解，Actor 是定义成一个遵循 Sendable 的协议：
 
