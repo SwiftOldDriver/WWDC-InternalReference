@@ -1,0 +1,230 @@
+# WWDC21 - 10252 Make blazing fast lists and collection views
+
+> 本文基于 [Session 10252](https://developer.apple.com/videos/play/wwdc2021/10252/) 梳理
+
+​		继 iOS 13、14 为 `UICollectionView` 等列表视图带来更现代化的 API 后，iOS 15 为它们带来了更流畅的滚动体验。不仅从 cell prefetching 、cell reloading 机制上做了底层优化工作，还充分吸取了优秀开源项目的优化经验，提供 `UIImage` 生成缩略图、解码为 bitmap 等官方 API 支持，避免直接设置大尺寸的为解码 `UIImage` 对象给 cell 而导致卡顿。下面我们聊一聊这些改进。
+
+## Diffable Data Source
+
+​		早在 WWDC 2019，Apple 在发布 iOS 13, macOS Catalina 之际便推出了 Diffable Data Source 作为可靠的 UI 与数据同步技术，旨在解决使用 `insertItems(at:)` 等 API 更新视图时会碰到的 NSInternalInconsistencyException 问题。如果对 Diffable Data Source 还不了解，可以补番 [WWDC 2019 Advances in UI data source](https://developer.apple.com/videos/play/wwdc2019/220/) 或[《Data Source 新特性：基于 Diffable 实现局部刷新》]( https://xiaozhuanlan.com/topic/9158203647)。
+
+​		为了能让读者能在查看该 session 对应的演示程序 [Building High-Performance Lists and Collection Views](https://developer.apple.com/documentation/uikit/uiimage/building_high-performance_lists_and_collection_views) 并理解本次的改进点，下面简单重温一下 diffable data source。		
+
+### Recap
+
+​		在过去，上古时期的 iOS 开发者，需要手动计算变动数据的 `NSIndexPath` 集合，然后调用 collectionView 的批量刷新接口更新 UI，而 buggy 的计算逻辑很容易抛出 UI 操作结果与数据不一致的 NSInternalInconsistencyException 异常。当然，粗暴地调用 `reloadData` 全量刷新可以解决这个问题，但这会丢失 cell 动画以致用户体验下降，并且这种冗余的刷新工作还有会带来性能下降的表现。很长一段时间开发者们会使用 [IGListKit ](https://github.com/Instagram/IGListKit) 这样的 data-driven 框架，用 diff 算法察觉数据变动刷新 UI，来应付这样的异常。直到 Apple 在 iOS 13 上推出 diffable data source, 开发者才能使用原生的技术品尝到 diff 刷新带来的好处。
+
+![Diffable Data Source](https://cdn.nlark.com/yuque/0/2021/jpeg/21817760/1624816704722-986dab67-1aa8-4c9b-97b1-4da6f151db75.jpeg?x-oss-process=image%2Fresize%2Cw_1496)
+
+​		Diffable data source 采用了闭包来配置 cell 和 supplementary view，使用 snapshot 的概念描述 data source 的状态，而数据的变动只需对其 snapshot 进行操作，然后 data source 就能计算出前后两个 snapshot 的 diff，从而执行 UI 的插入、移除等相关更新。其用法比较简单：
+
+首先是摒弃传统的 UICollectionViewDataSource 的代理方法：
+
+```
+// 不再需要实现 UICollectionViewDataSource 协议
+func numberOfSecions
+func collectionView(_:numberOfItemsInSection:)
+func collectionView(_:cellForItemAt:)
+```
+
+改用 `UICollectionViewDiffableDataSource` 泛型结构体持有数据，需要指定 seciton 和 item 的类型，两者必须为 hashable 对象。初始化只需绑定 collectionView 并提供一个名为 cellProvider 的闭包用来配置 cell 即可：
+
+    let collectionView = // 创建 UICollectionView
+    let dataSource = UICollectionViewDiffableDataSource<SectionType>, ItemType>(collectionView: collectionView) {
+        (collectionView: UICollectionView, indexPath: IndexPath, item: ItemType) -> UICollectionViewCell? in
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier:CellID, for: indexPath)
+        // 一般业务场景中，这里需要 cell 类型转换，然后配置 cell
+        return cell
+    }
+
+然后用 `NSDiffableDataSourceSnapshot` 生成当前数据的状态，让 data source 对象调用 `apply(:animatingDifferences)` 函数即可。
+
+    var snapshot = NSDiffableDataSourceSnapshot<SectionType, ItemType>()
+    let firstSectionObject: SecionType = ...
+    snapshot.appendSections(firstSecionObject)
+    let firstSetionItems: [ItemType] = ...
+    snapshot.appendItems(firstSetionItems)
+    dataSource.apply(snapshot, animatingDifferences: false)
+
+看，这就能实现一个列表的初始化，是不是非常简单？
+
+数据状态的变动，通过改动 snapshot 后再让 datasource 使用，UIKit 就能自动计算 diff，不再需要 `perfrombatchUpate`, `insertItems` 更新 UI，不用再担心操作数据后和 UI 更新不一致的异常出现。 简单回顾了下 diffable data source 后，下面介绍两个~~偷懒两年才改进的~~ diffable data source API。
+
+![new_two_api.png](https://cdn.nlark.com/yuque/0/2021/png/21817760/1624816793597-77182e8b-4c38-47d0-bd97-e2386ddba2a0.png?x-oss-process=image%2Fresize%2Cw_1496)
+
+### API - apply(_:animatingDifferences:)
+
+​		在 iOS 15 之前，调用 `apply(_:animatingDifferences:completion:)` 刷新时，如果传递的动画参数为 `false`，那么 UIKit 内部将其转为 `reloadData` 调用，这导致 collection view 全量刷新所有屏幕上的 cell。由于官方提供的 demo 有比较多 iOS 15 的 API 逻辑耦合，为了能在 iOS 14/15 上对比，笔者自己随便整了个 demo 测试，在从 snapshot 移除一个 item 之后，调用 `dataSource.apply(snapshot, animatingDifferences: false)`，iOS 14（左）、15（右） 在控制台中的输出如下：
+
+
+
+![new_two_api.png](https://cdn.nlark.com/yuque/0/2021/png/21817760/1624816820877-de7fee82-180d-4d0c-ab75-fcc7f2039b61.png?x-oss-process=image%2Fresize%2Cw_1496)
+
+留意 cell 对象和 indexPath 之间的对应关系：
+
+​	在移除并刷新后，iOS 14 中屏幕上的所有 cell 走完 enqueue\dequeue\configure 流程，所以 cell 与的 indexPath 对应关系在刷新前后发生了较大的变化；
+
+​	而 iOS 15 在同样的调用下，会计算 diff 实现数据刷新，移除最后一个 cell（0x12ce4ed90），而不再做额外的工作。**理论上是这样的，但显然上面的 log 出现了冗余的调用（即便是官方的 demo 也有这样的问题） ， 一个在屏幕上不可见的 cell（0x12cf36680） 配置了多次，此[问题](https://developer.apple.com/forums/thread/683775)已 post 在开发者论坛 ）**。
+
+### API - reconfigureItems(_:)
+
+​		过去在操作 diffable data source 的 snapshot 更新特定 items 时，只能使用 `reloadItems(_:)` 函数，这同样导致对应 item 的 cell 被 enqueue，然后从重用池 dequeue cell 来配置。iOS 15 推出 `reconfigureItems(_:)` API 实现局部更新。同样的操作（更新最后一个 cell），在 iOS 14（左）、15（右）下控制台的输出：
+
+![](https://cdn.nlark.com/yuque/0/2021/png/21817760/1624816841383-38eeeaa4-9ec4-403b-ba4e-e5f692875f59.png?x-oss-process=image%2Fresize%2Cw_1496)
+
+可以看到，在 iOS 15 之前，reload 后 cell<0, 5> 由原来的 0x143021c10 变成了 0x141510db0；而在 iOS 15 之后，cell<0,5> 在 reconfigure 前后都是 0x12352cd10 对象。**（至于 0x12355de90 的多次 configure 应该是和前面一样是 bug 吧😓）**
+
+**总之，除非需要显式替换 cell 对象，否则你应该使用 iOS 15 推出的  `reconfigureItems(_:)` 实现 cell 的内容更新。**
+
+### 重申 CellRegistration 的用法
+
+​		`UICollectionCellRegistration` 是在 iOS 14 上推出的 cell 注册及配置 API，通过声明一个泛型结构体就能包揽 register cell, configure cell 等工作，不同类型的 cell 的注册配置能分割开，不会在 cellProvider 闭包中糅合在一起，让 `UICollectionView` 的 API 更加现代化。
+
+```
+let cellRegistration = UICollectionView.CellRegistration<CellClass, Item> { cell, indexPath, item in
+	// 配置 cell
+}
+        
+dataSource = UICollectionViewDiffableDataSource<SectionID, Item>(collectionView: collectionView) {
+	(collectionView, indexPath, item) in
+	// 直接传递 registration，无需手动注册 cell、无需添加 cell identifier 
+	return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: item)
+}
+```
+
+本 session 没有提及针对改 API 的改进，只是提出**不要在 cellProvider 中不断创建 cell registeration，否者不能实现 cell 复用机制**。这确实也是一个值得注意的点，否则也不会**在 iOS 15 中增加这么一个 Assertion**，详情参考社区讨论的帖 [UICollectionView raises an exception when dequeuing a cell using a registration on iOS 15](https://developer.apple.com/forums/thread/681739)，可能在 Apple 的眼里，还是有比较多的开发者误用这个 API。
+
+## Cell Prefetching
+
+​		iOS 10 开始便引入了 cell prefetching 机制，UIKit 会就根据用户的手势预先判断哪些 indexPath 的 cell 可能要显示，对比 iOS 9 会更早地，在 cell 还未抵达屏幕边缘前就调用 cell 的配置方法，如果提供了  `prefetchDataSource` 实例，那么还会调用相关方法，通知开发者提前开始加载所需资源。iOS 15 在此基础上，充分利用 commit 的空隙去获取 cell，避免 hitchs。
+
+​		等等，什么 commit？什么 hitchs？
+
+### Recap Hitchs
+
+​		Hitchs 就是我们通常说的卡顿，这个词从上次 Apple 发布 tech talk [Explore UI animation hitches and the render loop](https://developer.apple.com/videos/play/tech-talks/10855/) 之后流行开来。Hitchs 是怎么出现的，需要回顾这个 tech talk 了解 iOS Render Loop 的基本原理。
+
+​		单取一个渲染流程，从时序上看，VSYNC 信号按照 1/60 或 1/120 秒的周期不断触发（对应下图白色竖线），三个阶段（App， Render server，On the Display）都必须在周期内完成自己的任务，否则就会出现 hitchs。
+
+![three_stage.png](https://cdn.nlark.com/yuque/0/2021/png/21817760/1624816885047-f5ec913a-00cf-46cd-b60b-903a605ebdca.png?x-oss-process=image%2Fresize%2Cw_1496)
+
+这三个阶段在渲染流水线中具体要完成什么任务呢？
+
+  		1. App 阶段接收 **Event**（比如触摸），在下一个 commit deadline，也就是下一个 VSYNC 信号来临之前，向 render server **Commit** 需要 UI 改动；如果无法及时完成提交，那么就会延迟到下一个 deadline；
+  		2. Render Sever 阶段接收到来自 App 阶段的提交后 ，进入 **Render prepare** 阶段为 GPU 准备绘制的内容，然后进入 **Render execute** 阶段把 UI 渲染成位图；如果无法及时完成渲染，那么一会顺延到下一个 deadline；
+  		3. On the dispaly 接收来自 Render server 的位图，展示到屏幕上。
+
+![](https://cdn.nlark.com/yuque/0/2021/png/21817760/1624816892265-197734bc-c776-4ad6-b416-b29730bdc944.png?x-oss-process=image%2Fresize%2Cw_1496)
+
+​		**所以我们可以看到，要保证不出现 hitchs，需要在 App 和 Render sever 两个阶段都保证任务不能在当前 VSYNC 周期 deadline 之后完成。**
+
+### Back to prefetching
+
+​	现在回到 iOS 15 的 cell prefetching，看它是怎么提高 cell 的获取效率的：
+
+![](https://cdn.nlark.com/yuque/0/2021/png/21817760/1624816916843-577d1bcd-e02c-49d3-9810-20c372651d87.png?x-oss-process=image%2Fresize%2Cw_1496)
+
+**Without prefetching**
+
+​	UIKit 会在需要 cell 的 VSYNC 抵达后才获取 cell，对于开销较大的 cell（上图 Expensive cell 方块），就有可能无法及时在 deadline 之前提交任务给 Render server，导致掉帧；
+
+**With prefetching**
+
+​	在 iOS 15 的 prefetching 机制下，UIKit 会检测 App 阶段的 commit 耗时，如果是耗时较短的 short commit，那么就可以在这个commit 发生之后，进行 cell 的 prefetching（上图蓝色方块），即便的这会导致下一个 short commit （上图蓝色方块的右侧绿色方块）延迟提交，但依然在当前周期的 commit deadline 之前，不会出现 hitchs。
+
+### Cell Lifecycle
+
+​	新的 cell pretching 机制会让 cell 的声明周期增加多一个 prepared 阶段（如下图右边红色块所示），等待展示。
+
+![](https://cdn.nlark.com/yuque/0/2021/png/21817760/1624816950620-752fc051-6453-44a3-9755-ce64adfb2ab6.png?x-oss-process=image%2Fresize%2Cw_748)
+
+​		处于 prepared 阶段的 cell，是有可能因为用户滑动屏幕的方向变化，所以不被展示的，所以**如果业务逻辑中存在「configure cell」与「cell willDisplay」相关联的业务，需要重新考虑这样的变化；基于同样的理由，还必须意识到，cell 有可能重复被展示，所以在划出屏幕在外后，不会马上被放入重用池。**
+
+​		不过 cell prefeching 只是给我们更多的时间去完成任务，而当设备的屏幕刷新率变得更高的情况下，依然可能出现 hitchs，所以接下来看看关于 cell 的配置，还有什么可以优化。
+
+## API for UIImage 
+
+​		在 UI 线程上，设置未解码的 `UIImage` 对象给 `UIImageView` 会触发解码行为，如果这个行为非常耗时，那么就会导致无法及时渲染当前帧。开源社区的许多异步图片加载库，都会提供类似的优化选项，允许库在子线程中解码并缓存位图，然后再回到主线程设置给 `UIImageView`。而 iOS 15 增加了新的 API 帮助我们完成这件事。
+
+### API -  Decode
+
+`UIImage` 新增的 `preparingForDisplay()` 函数，提供了以下的多种形式：
+
+![](https://cdn.nlark.com/yuque/0/2021/png/21817760/1624816974754-012278dd-282e-4331-b6a7-6081733f6d15.png?x-oss-process=image%2Fresize%2Cw_748)
+
+​		除了基础的同步版本的函数之外，还有支持 Swift asyn/await 特性及使用闭包的异步版本。**值得注意的是，异步版本解码图片发生在 UIKit 内部的串行队列中，所以有并发需求的情况就要自己处理。**简单与 `draw(in:)` 绘制对比，循环只运行一次，就能说明问题了：
+
+```
+for _ in 0..<1 {
+	UIGraphicsBeginImageContextWithOptions(tragetSize, false, 1.0)
+	image.draw(in: CGRect(origin: .zero, size: image.size))
+	let _ = UIGraphicsGetImageFromCurrentImageContext()!
+	UIGraphicsEndImageContext()
+}
+
+for _ in 0..<1 {
+	let _ = image.preparingForDisplay()
+}
+
+// 测试
+drawInCtx cost:           	0.042748093605041504 seconds
+preparingForDisplay cost: 	0.0029109716415405273 seconds
+```
+
+​		相比 `draw(in:)` 需在 CPU 绘制再上传位图给 GPU 渲染，笔者有理由相信新 API 在时间上和内存用量上拥有更好的效率，毕竟掌握渲染实现的 Apple 能更好地利用 GPU 。**值得注意的是，`preparingForDisplay` 返回的是 `UIImage?` 类型**，如果我们仔细看看注释，就会发现它也有无能为力的时候：
+
+>  If the system can’t decode the image, such as an image created from a [CIImage](doc://com.apple.documentation/documentation/coreimage/ciimage), the method returns `nil`.
+
+​		出于节省计算资源的考虑，解码后的图片应该缓存在内存中，避免在滚动列表的时候不断得消耗 CPU。对于整个列表都是大尺寸图片的情况，缓存所有图片位图对内存会造成很大的压力，导致 App 响应变慢，有什么办法能够缓存足够多的图片，又能控制内存用量呢？根据「总内存消耗 = 位图消耗 * 位图数目」我们可以知道，单个位图的消耗足够小，能够实现我们的目的。
+
+### API - Thumbnail
+
+​		App 通常不需要在列表上的 cell 显示过大图片，只需和 `UIImageView` 的尺寸相近即可，所以在解码之前，可以使用下面的 API 生成缩略图之后解码、缓存。
+
+![](https://cdn.nlark.com/yuque/0/2021/png/21817760/1624816987817-83a3251f-cc8f-4c25-9bb0-4b7b1733e8fd.png?x-oss-process=image%2Fresize%2Cw_748)
+
+​		与准备位图的 API 一样，生成缩略图的 API 也有多个版本。我们再简单对比一下绘制原图 1/4 尺寸的缩略图：
+
+```
+let imageSize = image.size
+let tragetSize = CGSize.init(width: imageSize.width / 2.0, height: imageSize.height / 2.0);
+        
+for _ in 0..<1 {
+	let _ = image.preparingThumbnail(of: tragetSize)!
+}
+
+for _ in 0..<1 {
+	UIGraphicsBeginImageContextWithOptions(tragetSize, false, 1.0)
+	image.draw(in: CGRect(origin: .zero, size: tragetSize))
+	let _ = UIGraphicsGetImageFromCurrentImageContext()!
+	UIGraphicsEndImageContext()
+}
+
+// 测试
+drawInCtx cost:          	 0.04196906089782715 seconds
+preparingThumbnail cost:	 0.005650997161865234 seconds
+```
+
+可以看到，这样的基础功能交给 UIKit 来做真是最好不过。同样地，留意`preparingThumbnail(of:)` 的注释，看来这两个 API 对 `CIImage` 创建出来的 `UIImage` 都不大友好：
+
+>Returns `nil` if the original image isn’t backed by a [CGImage](doc://com.apple.documentation/documentation/coregraphics/cgimage) or if the image data is corrupt or malformed
+
+
+
+## 总结
+
+​		本文我们回顾了往年的 diffable data source 基础和关于 hitchs 的 tech talk，了解 iOS 15 在 diffable data source 和 prefetching 上的改进，也试用了 `UIImage` 两个甜品 API，希望这些知识都能被大家实践到产品上，构建性能更优的 collection view。
+
+
+
+## 参考
+
+Diffable data source：[WWDC 2019 Session 220 - Advances in UI data sources](https://developer.apple.com/videos/play/wwdc2019/220/) 
+
+CellRegistration：[Advances in UICollectionView](https://developer.apple.com/videos/play/wwdc2020/10097/)
+
+本文对应 Session：[WWDC 2021 Session 10252 - Make blazing fast lists and collection views](https://developer.apple.com/videos/play/wwdc2021/10252/)
+
+Hitchs： [Tech talk - Explore UI animation hitches and the render loop](https://developer.apple.com/videos/play/tech-talks/10855/) 
+
+小专栏 Diffable Data Source[《Data Source 新特性：基于 Diffable 实现局部刷新》]( https://xiaozhuanlan.com/topic/9158203647)
