@@ -77,7 +77,7 @@
 
 Swift 并发模型的设计理念，是为了保证在运行时控制线程的数量，在理想状态下使线程数量不超过 CPU 核心数量，而 Swift 引入的结构化并发模型，例如`async/await`、Task Group、Actors 等特性，都可以帮助我们完成此目标。
 
-### `async/await` 
+### `async/await`
 
 基于我们的新闻 App，我们尝试使用 Swift 并发模型来改写新闻刷新的逻辑。首先，标记 `updateDatabase()` 函数为 `async` ，并在调用处增加 `await` 标识：
 
@@ -166,13 +166,14 @@ Swift 并发模型的最终目标是为了保证线程数量不超过 CPU 核心
 与使用 GCD 进行并发编程相比，Swift 提供的并发模型在性能、开发效率和代码可维护性都有非常大的提升，但这并不代表我们在开发过程中可以完全不加思索地去使用并发模型进行编程。
 
 接下来我们会围绕几个部分，讨论开发过程中，如何更好地使用 Swift 并发模型：
+
 - 并发编程中的性能问题
 - `await` 导致原子性被破坏
 - 遵循运行时约定
 
 ### 性能
 
-前面我们提到了并发编程相关的损耗，例如额外的内存占用和运行时逻辑，虽然 Swift 并发模型在性能上有较大优化，但仍然会存在内存损耗和运行时效率损耗，因此我们在考虑是否需要引入并发编程时，必须优先考量**性能上的收益是否远大于损耗**。 
+前面我们提到了并发编程相关的损耗，例如额外的内存占用和运行时逻辑，虽然 Swift 并发模型在性能上有较大优化，但仍然会存在内存损耗和运行时效率损耗，因此我们在考虑是否需要引入并发编程时，必须优先考量**性能上的收益是否远大于损耗**。
 
 ![](https://images.xiaozhuanlan.com/photo/2021/7eec45afaaac10bc6673cc79f6f73649.png)
 
@@ -295,7 +296,7 @@ Swift 并发模型的最终目标是为了保证线程数量不超过 CPU 核心
 
 > 注：关于 Actors 的可重入性和优先级问题，[SE-0306](https://github.com/apple/swift-evolution/blob/main/proposals/0306-actors.md#actor-reentrancy) 和 [SE-0304](https://github.com/apple/swift-evolution/blob/main/proposals/0304-structured-concurrency.md#priority-escalation) 中有详细的讨论。
 >
-> Actors 的可重入性，更多地是出于对性能和安全性的考虑，以及提高线程利用率，在使用 Actors 时，我们必须要考虑到可重入性带来的不确定因素，具体的例子可以参考 [SE-0306](https://github.com/apple/swift-evolution/blob/main/proposals/0306-actors.md#actor-reentrancy)，其中也提到了可重入性可以减小了死锁发生的可能性，并对非可重入的 Actor 可能发生死锁的场景作了详细的阐述。
+> Actors 的可重入性，更多地是出于对性能和安全性的考虑，以及提高线程利用率，在使用 Actors 时，我们必须要考虑到可重入性带来的不确定因素，具体的例子可以参考 [SE-0306](https://github.com/apple/swift-evolution/blob/main/proposals/0306-actors.md#actor-reentrancy)，其中提到了可重入性可以减小死锁发生的可能性，并对非可重入的 Actor 可能发生死锁的场景作了详细的阐述。
 
 
 
@@ -303,7 +304,7 @@ Swift 并发模型的最终目标是为了保证线程数量不超过 CPU 核心
 
 ### Main actor
 
-最后，我们还需要了解一个特殊的 Actor——Main Actor（可以理解为 GCD 中的主队列）。当我们需要执行完一个异步操作并需要刷新 UI 时，我们便涉及到与 Main actor 相关的 Actor hopping 操作，在这种情况下，我们需要额外留意其带来的上下文切换损耗，因为 Main actor 的任务必定会由主线程来执行，因此在发生 Actor hopping 时，极大可能会有线程上下文切换所带来的损耗。
+最后，我们还需要了解一个特殊的 Actor——Main Actor（可以理解为 GCD 中的主队列）。当我们执行完一个异步操作并需要刷新 UI 时，我们便涉及到与 Main actor 相关的 Actor hopping 操作，在这种情况下，我们需要额外留意其带来的上下文切换损耗，因为 Main actor 的任务必定会由主线程来执行，因此在发生 Actor hopping 时，极大可能会有线程上下文切换所带来的损耗。
 
 ![](https://images.xiaozhuanlan.com/photo/2021/5d59696c602f6dafae0039654dca5c46.png)
 
@@ -313,7 +314,7 @@ Swift 并发模型的最终目标是为了保证线程数量不超过 CPU 核心
 
 在这种情况下，我们需要对代码做一定的重构，来避免频繁切换上下文带来的性能损害。
 
-![](https://images.xiaozhuanlan.com/photo/2021/a3697da73d1780b812ef365aa8780452.png)
+![](https://images.xiaozhuanlan.com/photo/2021/3de9f1b6a573e62d7227c41c18385814.png)
 
 > 注：上面的代码中，虽然 `updateUI()` 操作需要等待 `database.loadArticle()` 完成后才触发，但我们需要理解这并不会阻塞主线程或者其他任何线程。
 
