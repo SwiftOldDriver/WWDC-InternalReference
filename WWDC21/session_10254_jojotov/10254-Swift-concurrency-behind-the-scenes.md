@@ -1,5 +1,9 @@
 # WWDC21 - 10254  Swift 并发编程：原理探究
 
+> 作者：jojotov, iOS 开发，SwiftGG 翻译组成员，目前任职字节跳动，负责抖音直播客户端相关工作。
+>
+> 审核：四娘，iOS 开发，老司机技术周报成员。目前就职于格隆汇，对 Swift 和编译器相关领域感兴趣
+
 > 本文基于 [Session 10254 - Swift concurrency: Behind the scenes](https://developer.apple.com/videos/play/wwdc2021/10254/) 整理
 
 ## 概览
@@ -144,9 +148,6 @@ Task 和 Task group 是 Swift 并发模型中引入的另一个抽象概念，Ta
 > - [Session 10134 - Explore structured concurrency in Swift](https://developer.apple.com/videos/play/wwdc2021/10134)
 > - [The Swift Programming Language: Concurrency](https://docs.swift.org/swift-book/LanguageGuide/Concurrency.html#ID642)
 > - [Task Group | Apple Developer Document](https://developer.apple.com/documentation/swift/taskgroup)
-
-
-
 
 ## 运行时约定
 
@@ -318,10 +319,6 @@ Swift 并发模型的最终目标是为了保证线程数量不超过 CPU 核心
 
 > 注：上面的代码中，虽然 `updateUI()` 操作需要等待 `database.loadArticle()` 完成后才触发，但我们需要理解这并不会阻塞主线程或者其他任何线程。
 
-
-
-
-
 ## 结语
 
 在了解了背后的原理之后，我们会发现 Swift 提供的并发模型，不仅仅是表面上更抽象的一个结构化并发编程模型，Swift 在编译层面和运行时层面，都对并发编程的性能、效率和开发体验做了很大程度的优化，例如协作式线程池的引入，以及新增的语言特性等。
@@ -337,5 +334,10 @@ Swift 并发模型的最终目标是为了保证线程数量不超过 CPU 核心
 - [Session 10133 - Protect mutable state with Swift actors](https://developer.apple.com/videos/play/wwdc2021/10133)
 - [Session 10134 - Explore structured concurrency in Swift](https://developer.apple.com/videos/play/wwdc2021/10134)
 
+## 关注我们
 
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
 
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
