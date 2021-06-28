@@ -91,7 +91,7 @@ Let's get it started!
 	
 	另外，你可以对每个 URLSession 命名，如：这边的 Main Session。
 	
-	```
+	```swift
 	let session = URLSession(configuration: .default)
 	session.sessionDescription = "Main Session"
 	```
@@ -104,7 +104,8 @@ Let's get it started!
 
 这里引入了 Task 以及 Transaction 的概念，一个 task 可以包括了许多 transactions，你可以想像每个 transaction 就是一个请求，它是由 request + response 组成，也就是请求发起直到收到响应为主。
 
-```
+```swift
+let session = URLSession(configuration: .default)
 let task = session.dataTask(with: url) { data, response, error in
 	// Task end!
 }
@@ -170,7 +171,7 @@ task.taskIdentifier = 42
 
 接下来我们藉由一个实际的 APP 操作，了解如何利用 HTTP Instrument 检测你的网络请求，并且了解如何修复问题及提升效能。
 
-![instrument-dogs-demo](https://gitee.com/franklol/session_10212_images/raw/master/wwdc-instrument-dogs-demo.png)
+<center>![instrument-dogs-demo](https://gitee.com/franklol/session_10212_images/raw/master/wwdc-instrument-dogs-demo.png)</center>
 
 这个 demo APP 是一个给喜爱狗狗的目标族群使用，用户可以分享上传爱狗的照片到平台上，你也可以看到你最近上传的图像。
 
