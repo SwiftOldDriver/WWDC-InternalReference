@@ -81,7 +81,7 @@ spotlightDelegate.startSpotlightIndexing()
 
 让我们来改变这种情况吧！
 
-![ip12shot](https://gitee.com/happts/pics/raw/master/wwdc21_10098/image-20210620221905568.png)
+![ip12shot](https://gitee.com/happts/pics/raw/dd783ff6a624a921fd9afc4e8a3511ef4922b2bd/wwdc21_10098/simulator_screenshot_670F012A-3C7E-4394-82F3-C4396F6666A9.png))
 
 ### 设置索引内容
 
