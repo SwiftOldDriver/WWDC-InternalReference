@@ -14,7 +14,7 @@
 - `WKWebView`（适用于iOS 8及以上）
 - `SFSafariViewController`（适用于iOS 9及以上）
 
-# 二、UIWebView & WKWebView
+# 二、UIWebView & WKWebView & SFSafariViewController
 
 `UIWebView`是苹果在iOS 2中推出用来展示网页的UI控件，同时也是最占内存的控件。UIWebView有以下特点：
 - 1、加载速度慢；
@@ -49,24 +49,9 @@
 - 3、加载网页
 - 4、将webView添加到界面中
 
-```Swift
-<!--UIWebView的简单使用-->
+下面以`WKWebView`为例，除了使用的控制不一样，其他都是一致的。
 
-func createUIWebView(){
-    //1、创建WebView，并设置大小
-    let uiWebView = UIWebView(frame: self.view.bounds)
-    //2、创建请求
-    let request = URLRequest(url: URL(string: "https://www.baidu.com")!)
-    //3、加载网页
-    uiWebView.loadRequest(request)
-    //4、添加到界面
-    self.view.addSubview(uiWebView)
-}
-
-
-  
-<!--WKWebView的简单使用-->
-
+```Swift 
 func createWKWebView(){
     //1、创建WebView，并设置大小
     let wkWebView = WKWebView(frame: self.view.bounds)
@@ -90,91 +75,43 @@ func createWKWebView(){
 
 - 相比UIWebView而言，`WKWebView`也支持各种文件格式，并新增了`加载本地文件`，即新增了`LoadFileURL`函数。
 
-```Swift
-<!--UIWebView的加载函数-->
-//加载网页请求
-open func loadRequest(_ request: URLRequest)
-//加载本地HTML文件
-open func loadHTMLString(_ string: String, baseURL: URL?)
-//加载文件，并指定MIME类型和编码类型
-open func load(_ data: Data, mimeType MIMEType: String, textEncodingName: String, baseURL: URL)
+如下表所示
 
-
-<!--WKWebView的加载函数-->
-//加载网页请求
-open func load(_ request: URLRequest) -> WKNavigation?
-//加载本地文件
-@available(iOS 9.0, *)
-open func loadFileURL(_ URL: URL, allowingReadAccessTo readAccessURL: URL) -> WKNavigation?
-//加载本地HTML文件
-open func loadHTMLString(_ string: String, baseURL: URL?) -> WKNavigation?
-//加载文件，并指定MIME类型和编码类型
-@available(iOS 9.0, *)
-open func load(_ data: Data, mimeType MIMEType: String, characterEncodingName: String, baseURL: URL) -> WKNavigation?
-```
+| UIWebView加载函数 | WKWebVIew加载函数 | 说明 |
+|---------------|---------------|----|
+|     loadRequest(_:) | load(_:)              |  加载网页请求  |
+|loadHTMLString(_:baseURL:)|loadHTMLString(_:baseURL:)|加载本地HTML文件|
+|load(_:mimeType:textEncodingName:baseURL:)|load(_:mimeType:characterEncodingName:baseURL:)|加载文件，并指定MIME类型和编码类型|
+| -|loadFileURL(_:allowingReadAccessTo:)|加载本地文件(适用于iOS9及以上)|
 
 #### 1-2-2、网页导航刷新相关函数
 
-- UIWebView和WKWebView都有3个属性（`canGoBack`、`canGoForward`、`isLoading`）+ 4个方法（`reload`、`stopLoading`、`goBack`、`goForward`），区别在于WKWebView的方法是有返回值的（stopLoading除外）。
+- UIWebView和WKWebView都有3个属性（`canGoBack`、`canGoForward`、`isLoading`）
+
+| UIWebView网页导航相关 | WKWebView网页导航相关 | 说明 |
+|-----------------|-----------------|----|
+|canGoBack|canGoBack|是否可以后退|
+|canGoForward|canGoForward|是否可以前进|
+|isLoading|isLoading|是否正在加载|
+
+- 除了属性之外，还有4个方法（`reload`、`stopLoading`、`goBack`、`goForward`），区别在于WKWebView的方法是有返回值的（stopLoading除外），返回值类型为`WKNavigation`，主要用于`跟踪网页加载进度`。
 
 - 同时`WKWebView`还增加了两个函数`reloadFromOrigin`和`go(to item:)`。
 
-```Swift
-<!--UIWebView网页导航刷新相关函数-->
-//刷新
-open func reload()
-//停止加载
-open func stopLoading()
-//后退
-open func goBack()
-//前进
-open func goForward()
-//是否可以后退
-open var canGoBack: Bool { get }
-//是否可以前进
-open var canGoForward: Bool { get }
-//是否正在加载
-open var isLoading: Bool { get }
+| UIWebView网页导航相关 | WKWebView网页导航相关 | 说明 |
+|-----------------|-----------------|----|
+|reload|reload|刷新|
+|stopLoading|stopLoading|停止加载|
+|goBack|goBack|后退|
+|-|reloadFromOrigin|会比较网络数据变化，如果没有变化，则使用缓存，否则重新请求|
+|-|go(to item:)|跳转到某个指定的历史界面|
 
-
-<!--WKWebView网页导航刷新相关函数-->
-//刷新
-open func reload() -> WKNavigation?
-//停止加载
-open func stopLoading()
-//后退
-open func goBack() -> WKNavigation?
-//前进
-open func goForward() -> WKNavigation?
-//是否可以后退
-open var canGoBack: Bool { get }
-//是否可以前进
-open var canGoForward: Bool { get }
-//是否正在加载
-open var isLoading: Bool { get }
-//会比较网络数据变化，如果没有变化，则使用缓存，否则重新请求
-open func reloadFromOrigin() -> WKNavigation?
-//跳转到某个指定的历史界面
-open func go(to item: WKBackForwardListItem) -> WKNavigation?
-```
-
-
-### 1-3、WKWebVIew常用属性
-
-| **属性** | **说明** |
-| --- | --- |
-| title | Web页面标题 |
-| estimatedProgress | 加载进度条，取值范围是0~1 |
-| allowsBackForwardNavigationGestures | BOOL类型，是否允许左右划手势导航，默认不允许 |
-| scrollView.scrollEnabled  | 是否允许上下滑动，默认允许 |
-| backForwardList | WKBackForwardList类型，访问历史列表，可以通过前进后退按钮访问，或者通过goToBackForwardListItem函数跳到指定页面 |
-
-### 1-4、代理协议
+### 1-3、代理协议
 
 - UIWebView的代理协议主要是`UIWebViewDelegate`；
 - WKWebView的代理协议主要有3个，分别是`WKNavigationDelegate、WKUIDelegate`和`WKScriptMessageHandler`。
 
-#### 1-4-1、UIWebViewDelegate & WKNavigationDelegate
+#### 1-3-1、UIWebViewDelegate & WKNavigationDelegate
 
 其中`UIWebViewDelegate`和`WKNavigationDelegate`的等效项如下所示
 
@@ -187,20 +124,14 @@ open func go(to item: WKBackForwardListItem) -> WKNavigation?
 | webView(_:shouldStartLoadWith:navigationType:) | webView(_:decidePolicyFor:decisionHandler:) | 是否允许加载网页，或者获取JS即将打开的URL，通过截取此URL可与JS交互 |
 ||**或** webView(_:decidePolicyFor:decisionHandler:)||
 
-
 > 注意：
 > - 1、`webView(_:decidePolicyFor:decisionHandler:)`并不像`UIWebViewDelegate`中等效的函数返回BOOL，而是通过`decisionHandler`决定是否可以跳转，返回allow或者cancel。
 >    - `WKNavigationActionPolicy.cancel` ：取消跳转
-> 
 >    - `WKNavigationActionPolicy.allow` ：允许跳转
-> 
-
 
 > - 2、两个`webView(_:decidePolicyFor:decisionHandler:)`外表看着差不多，其实质的区别在于第一个参数
 >    - `WKNavigationAction`：网页信息
-> 
 >    - `WKNavigationResponse`：网页响应
-
 
 除此之外，`WKNavigationDelegate`还有一个代理函数。
 
@@ -209,29 +140,54 @@ open func go(to item: WKBackForwardListItem) -> WKNavigation?
 func webView(WKWebView, didCommit: WKNavigation!)
 ```
 
-#### 1-4-2、WKNavigationDelegate & WKScriptMessageHandler
+**演示**
 
-- `WKScriptMessageHandler`是必须实现的函数，是用于`App与JS的交互`，提供从网页中收消息的回调方法；
+下面分别以UIWebView和WKWebView来进行网页拦截的演示
+- UIWebView拦截网络请求
+
+```
+func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebView.NavigationType) -> Bool {
+    let url = request.url
+    if url?.scheme == "xxx" {
+        //拦截相应请求后的操作
+        
+        return false
+    }
+    return true
+}
+```
+- WKWebView拦截网络请求
+
+```
+func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    let url = navigationAction.request.url
+    if url?.scheme == "xxx" {
+        //拦截相应请求后的操作
+        
+        decisionHandler(.cancel)
+    }
+    decisionHandler(.allow)
+}
+```
+
+#### 1-3-2、WKNavigationDelegate & WKScriptMessageHandler
+
+- `WKScriptMessageHandler`是必须实现的函数，是用于`App与JS的交互`，提供从网页中收消息的回调方法，如下所示；
+
+| WKScriptMessageHandler代理方法           | 说明 |
+|--------------------------------------|----|---|
+| userContentController(_:didReceive:) |    响应从网页的 JavaScript 代码发送的消息。使用 message 参数获取消息内容并确定原始 Web 视图。|
+
 - `WKUIDelegate`是UI界面相关的代理协议，主要用于处理三种提示框：输入、确认、警告。因为在UIWebView中，Alert、Confirm、Prompt等视图是可以直接执行的，但在WKWebView上，需要通过这个协议接收通知，然后通过iOS原生执行，即需要将web提示框拦截然后再通过原生做处理。
 
-```Swift
-<!--WKScriptMessageHandler-->
-//响应从网页的 JavaScript 代码发送的消息。使用 message 参数获取消息内容并确定原始 Web 视图。
-func userContentController(_ userContentController: WKUserContentController, 
-                didReceive message: WKScriptMessage)
+| WKUIDelegate代理方法 | 说明 |
+|------------------|----|
+| webView(_:createWebViewWith:for:windowFeatures:)    |  创建一个新的webView  |
+|webView(_:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:)|调用JS的alert方法|
+|webView(_:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:)|调用JS的confirm方法|
+|webView(_:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:)|调用JS的prompt方法|
+|webViewDidClose(_:)|通知App，DOM窗口已成功关闭 |
 
-<!--WKUIDelegate-->
-//创建一个新的webView
-func webView(WKWebView, createWebViewWith: WKWebViewConfiguration, for: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView?
-//调用JS的alert方法
-func webView(WKWebView, runJavaScriptAlertPanelWithMessage: String, initiatedByFrame: WKFrameInfo, completionHandler: () -> Void)
-//调用JS的confirm方法
-func webView(WKWebView, runJavaScriptConfirmPanelWithMessage: String, initiatedByFrame: WKFrameInfo, completionHandler: (Bool) -> Void)
-//调用JS的prompt方法
-func webView(WKWebView, runJavaScriptTextInputPanelWithPrompt: String, defaultText: String?, initiatedByFrame: WKFrameInfo, completionHandler: (String?) -> Void)
-//通知App，DOM窗口已成功关闭 
-func webViewDidClose(WKWebView)
-```
 其中`webView(_:createWebViewWith:for:windowFeatures:)`经常用于在项目中处理H5界面中含有`target = __blank`标签（表示新建一个页面打开网页）或者网页中`点击无响应`的情况，其处理逻辑主要是判断目标主视图是否为空，如果不为空则允许导航。
 
 ```Swift
@@ -281,11 +237,11 @@ func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt:
 }
 ```
 
-### 1-5、与JavaScript的交互
+### 1-4、与JavaScript的交互
 
 分别讲解UIWebView与WKWebView是如何与JS交互的。
 
-#### 1-5-1 UIWebView与JS交互
+#### 1-4-1 UIWebView与JS交互
 - iOS 6之前，`UIWebView`是不支持共享对象的，Web端需要通知Native，需要通过修改location.url，利用跳转询问协议来间接实现，通过定义URL元素组成来规范协议。
 - iOS 7之后，新增了`JavaScriptCore`库，内部有一个`JSContext`对象，可以用它来实现共享。
 
@@ -337,7 +293,7 @@ func webViewDidFinishLoad(_ webView: UIWebView)
 }
 ```
 
-#### 1-5-2、WKWebView与JS交互
+#### 1-4-2、WKWebView与JS交互
 - 在WKWebView上，web的window对象提供`WebKit`对象实现共享；
 - 而WKWebView绑定共享对象，是通过特定的构造方法实现，即通过指定`WKUserContentController` 对象的 `ScriptMessageHandler` 经过 `Configuration` 参数构造时传入；
 - 而Handler对象需要实现指定协议，实现指定的协议方法，当 JS 端通过 `window.webkit.messageHandlers` 发送 Native 消息时，handler对象的协议方法被调用，然后通过协议方法的相关参数传值。
@@ -405,8 +361,7 @@ let noneSelectScript = WKUserScript(source: jsString, injectionTime: .atDocument
 userCC.addUserScript(noneSelectScript)
 ```
 
-
-## 1-3、UIWebView & WKWebView的性能分析
+### 1-5、UIWebView & WKWebView的性能分析
 分别使用UIWebVIew和WKWebView加载网页，查看其内存情况。
 
 - UIWebView加载网页时的内存情况
@@ -419,7 +374,61 @@ userCC.addUserScript(noneSelectScript)
 
 从图中可以看出，UIWebView相比WKWebVIew几乎有10倍之差，当涉及的H5界面较多时，如果使用UIWebView，其占用的内存可想而知是很大的，所以这也是为什么苹果弃用UIWebView，改用WKWebView的原因。
 
-## 1-4、SFSafariViewController的使用
+### 1-6、H5与App的动态交互
+目前App的多数点击事件都是在代码中写死的。例如点击一个区域需要弹框，或者跳转一个界面等，这些在最初是写死的，如果要更改就需要进行代码修改。为了更加灵活的测试、发版，在项目中引入了`Command`方案。
+
+Command的本质就是一条`scheme格式`的字符串指令，主要通过后端下发或者前端通过JS交互传递给App。然后App通过解析这条指令，执行相应的行为，从而实现动态的事件处理。
+
+#### 1-6-1、基本格式
+command的基本格式如下所示
+
+```
+cjl://CJLXXXXCommand?action=xxxx&params=xxxxx&callback=xxxx
+```
+- `CJLXXXXCommand`：App中的执行Command的类名
+- `action`：command执行的动作，是CJLXXXXCommand类中的一个函数
+- `params`：执行command所需的参数，简单来说就是函数的形参
+- `callback`：command执行完后的回调，由h5任意命令，用于将执行结果告知h5，
+
+**演示**
+
+例如，想在App中打开一个浏览器
+
+- 1、服务器下发的command如下所示
+
+```
+cjl://CJLUniversalCommand?action=openWebView&params=%7b%22url%22%3a%22https%3a%2f%2fwww.qq.com%22%7d&callback=result
+```
+
+- 2、在`CJLUniversalCommand`类中的处理如下所示
+
+```
+struct OpenCommandModel{
+    var url: String
+    var scheme: String
+    var params: [String: String]
+}
+
+protocol OpenCommandDelegate {
+    func handleOpenCommand(_ model: OpenCommandModel)
+}
+
+class CJLUniversalCommand: NSObject, OpenCommandDelegate{
+    var openCommandM: OpenCommandModel!
+    
+    func handleOpenCommand(_ model: OpenCommandModel){
+        self.openCommandM = model
+        let sel = NSSelectorFromString(self.openCommandM.params["action"] as! String)
+        self.perform(sel, with: self)
+    }
+    
+    private func openWebView(){
+        //处理command
+    }
+}
+```
+
+## 2、SFSafariViewController的使用
 
 - `SFSafariViewController`是iOS 9以后推出的一种视图控制器，继承于`UIViewController`，主要用于浏览web页面，其浏览H5页面的效果与Safari浏览器类似。简单来说，就是相当于用WKWebView加载web页面且不用跳转到Safari就拥有了Safari浏览器的所有功能；
 - `SFSafariViewController`视图控制器包括了Safari的一些功能，例如阅读器、自动填充、欺诈网站检测和内容拦截等。在iOS 9和 iOS 10中，它与Safari共享cookie和其他网站数据；
@@ -429,7 +438,7 @@ userCC.addUserScript(noneSelectScript)
 > 注意：根据App Store Review Guidelines（App Store审查指南），这个视图控制器必须用于向用户可见地呈现信息，控制器不得被其他视图或图层隐藏或遮挡。此外，未经用户知情和同意，App不得使用`SFSafariViewController`跟踪用户。
 
 
-### 1-4-1、使用
+### 2-1、使用
 
 具体的属性及方法请参考[SFSafariViewController](https://developer.Apple.com/documentation/safariservices/sfsafariviewcontroller)。以下是对其简单的使用
 
@@ -454,7 +463,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate
 
 ```
 
-### 1-4-2、优缺点
+### 2-2、优缺点
 
 **优点**
 - 不用跳转Safari就可以打开网页；
@@ -466,7 +475,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate
 - 跳转方式导致了适用的场景有限，简单来说就是互动范围有限；
 - 只能用于iOS 9及以上的版本，且在[iOS 9,iOS 11)和[iOS 11, *)的版本中的操作有所区别。
 
-## 1-5、三者之间的关系
+## 3、三者之间的关系
 
 下面梳理下 `UIWebView`、`WKWebView`、`SFSafariViewController` 3者之间的关系：
 - iOS 2-iOS 12： 支持 UIWebView；
@@ -474,7 +483,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate
 - iOS 9及以上  ： 支持 UIWebView、WKWebView、SFSafariViewController；
 - iOS12及以上  ： 支持 WKWebView、SFSafariViewController。
 
-# 二、WWDC21 中WKWebView的新增功能
+# 三、WWDC21 中WKWebView的新增功能
 
 根据[Explore WKWebView additions](https://developer.Apple.com/videos/play/wwdc2021/10032/)中解读可以知道，主要新增了以下两点：
 
@@ -782,7 +791,7 @@ download.delegate = self
 
 以上就是Safari浏览器相关的API，这些API为用户提供了更多的选择性，让App拥有更好的网络体验。
 
-# 三、总结
+# 四、总结
 
 综上所述，在iOS 15中新增的API主要有以下：
 ![iOS 15 WKWebView新增功能.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624428188156-50e90d56-021f-4c65-ba64-d5a943456ab5.png#clientId=u04b88f42-3b8f-4&from=ui&id=u7a20433b&margin=%5Bobject%20Object%5D&name=iOS%2015%20WKWebView%E6%96%B0%E5%A2%9E%E5%8A%9F%E8%83%BD.png&originHeight=2192&originWidth=3245&originalType=binary&ratio=2&size=694678&status=done&style=none&taskId=u66bff002-1350-49ab-97e5-c68b1ba8695)
