@@ -29,11 +29,11 @@
 
 在 macOS 上，整体的 Shortcuts UI 风格和 iOS 基本一致，并且已有的 shortcuts 可直接通过 iCloud 同步。除了可以浏览以外，Shortcuts Editor 还可以创建自己的 shortcuts。相信无论是 iOS Shortcuts 用户，还是 Automator 用户，对这个界面都非常熟悉。并且，整个 Shortcuts app 基于 SwiftUI，降低了多端代码的维护成本。 
 
-![img](https://qjzigk1xgq.feishu.cn/space/api/box/stream/download/asynccode/?code=MmE5MTI5ZWQ5ZTUyMmY5ZWVmOTliYmU3MjVmMGI2NDNfNDl0YVNkQzQ4bFpCWEoxY1E1blBrcHpoNE5GbHJEWmdfVG9rZW46Ym94Y25Qek9wSGNQa1NjWDlVSVRYejZISFdmXzE2MjQ3NzA4Njc6MTYyNDc3NDQ2N19WNA)
+![img](https://gitee.com/tangjr/public-resources/raw/master/wwdc2021/shortcuts/iShot2021-06-28%2008.56.50.jpg)
 
 Shortcuts Editor 页面：
 
-![img](https://qjzigk1xgq.feishu.cn/space/api/box/stream/download/asynccode/?code=OWExZjkzYjE4Zjg0ZWE1Njc2ZjdlZWE2ZTcwM2Y1ZjVfYVN6MkdoMEk3ZEpjeXRRNUJuaHBwU0dLVHBtcjRMSURfVG9rZW46Ym94Y25zSHpObUhLTldUMEY4aTUwOFlKbkplXzE2MjQ3NzA4Njc6MTYyNDc3NDQ2N19WNA)
+![img](https://gitee.com/tangjr/public-resources/raw/master/wwdc2021/shortcuts/iShot2021-06-28%2008.57.03.jpg)
 
 ### 在 action 方面的更新
 
