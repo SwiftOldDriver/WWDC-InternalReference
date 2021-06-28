@@ -171,7 +171,7 @@ task.taskIdentifier = 42
 
 接下来我们藉由一个实际的 APP 操作，了解如何利用 HTTP Instrument 检测你的网络请求，并且了解如何修复问题及提升效能。
 
-<center>![instrument-dogs-demo](https://gitee.com/franklol/session_10212_images/raw/master/wwdc-instrument-dogs-demo.png)</center>
+![instrument-dogs-demo](https://gitee.com/franklol/session_10212_images/raw/master/wwdc-instrument-dogs-demo.png)
 
 这个 demo APP 是一个给喜爱狗狗的目标族群使用，用户可以分享上传爱狗的照片到平台上，你也可以看到你最近上传的图像。
 
