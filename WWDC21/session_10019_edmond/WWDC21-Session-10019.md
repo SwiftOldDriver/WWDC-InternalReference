@@ -6,7 +6,9 @@
 
 ![10019-01-table](https://images.xiaozhuanlan.com/photo/2021/75781e66f98d60d5869160b896664c33.png)
 
-随着Swift 5.5 及 SwiftUI 的更新，您将拥有一系列新的并发编程工具。本文将重点介绍在 SwiftUI 中的相关新特性，主要包括三个方面，分别为：`Concurrent Data Models`、`SwiftUI & MainActor`、`New concurrency tools`。我们将通过一个星云图片浏览的 Demo 向您展示在 SwiftUI 中，现有的异步工具存在的问题，并运用新的并发工具来解决这些问题。最后我们会介绍 SwiftUI 中新引入的并发工具。
+本文属于 WWDC21 中 SwiftUI 与 Concurrency 结合应用的文章。
+
+关于 SwiftUI 可以查看这篇介绍：[Introduction to SwiftUI](https://wwdc.io/share/wwdc20/10119)，而 Swift Concurrency 算是今年 WWDC 的重头戏，从使用层面来看，就是引入了 [Async / Await](https://developer.apple.com/videos/play/wwdc2021/10132/) 这一语法，但是解决的却是软件工程中最令人头疼的问题之一。
 
 > Tips：文末有示例代码地址。
 
