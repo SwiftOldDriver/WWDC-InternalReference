@@ -16,9 +16,11 @@
 
 **为了更好的用户体验。**
 
-[^Memory footprint]: 这里的 Memory Footprint 指的是虚拟内存：Virtual Memory。
+[^Memory footprint]: 这里的 Memory Footprint 指的是：Dirty + Compressed。
 
-> iOS 以及 macOS 都采用了虚拟内存技术来突破物理内存(RAM) 的大小限制，每个进程都拥有一段由多个大小相同的 page 所构成的逻辑地址空间。处理器和内存管理单元 MMU(Memory Management Unit) 维护着由逻辑地址空间到物理地址的 page 映射表，当程序访问逻辑内存地址时由 MMU 根据映射表将逻辑地址转换为真实的物理地址。在早期的苹果设备中，每个 page 的大小为 4KB；基于 A7 和 A8 处理器的系统为 64 位程序提供了 16KB 的虚拟内存分页和 4KB 的物理内存分页；而在A9之后，虚拟内存和物理内存的分页大小都达到了 16KB。
+> Your app's memory footprint consists of the data that you allocated in RAM, and that must stay in RAM (or the equivalent) at all times.
+
+> [RAM](https://zh.wikipedia.org/wiki/%E9%9A%8F%E6%9C%BA%E5%AD%98%E5%8F%96%E5%AD%98%E5%82%A8%E5%99%A8):随机存取存储器（英语：Random Access Memory）是与 [CPU](https://zh.wikipedia.org/wiki/CPU) 直接交换数据的内部存储器
 
 **主要从四个方面来提升用户体验**
 
