@@ -322,13 +322,3 @@ CSSearchableIndex
 ## 总结
 
 总结一下，我们首先了解到 `NSCoreDataCoreSpotlightDelegate`。了解到它如何帮助你的用户在 app 的内外通过 Spotlight 搜索找到 app 的内容；接着学习如何快速轻松地定制 `SpotlightDelegate`，使用这个版本提供给的一些新的 API 来自定义 `SpotlightDelegate`，使用了更少的代码实现了对数据的索引。
-
-## 相关参考
-
-这里给出往年关于 Core Spotlight 的相关介绍作为参考
-
-[App Search Programming Guide](https://developer.apple.com/library/archive/documentation/General/Conceptual/AppSearch/index.html)
-
-[What's New in Core Data - WWDC 2017 - Videos - Apple Developer](https://developer.apple.com/videos/play/wwdc2017/210/)
-
-[What's New in Core Spotlight for iOS and macOS - WWDC 2017 - Videos - Apple Developer](https://developer.apple.com/videos/play/wwdc2017/231)
