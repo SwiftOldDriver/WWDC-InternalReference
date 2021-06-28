@@ -37,7 +37,7 @@ Album 是一个由三部分组成的数据结构：
 
 第一个部分为 Attributes （基本属性），其中包含了 title （名称）、isCompilation（是否是精选），以及一些其他的数据结构比如 Artwork（专辑图片），Artwork 中包含了可以访问的图片 URLs 以及尺寸、颜色等信息。
 
-第二个部分为 Relationships（关系），Relationships 是一些与 Album 本身强相关的属性，比如 atists（艺人）、genres（曲风）以及tracks（专辑中所有的歌）。Track 是一种表示音乐的数据结构，而 tracks 则是一个 Track 的集合。
+第二个部分为 Relationships（关系），Relationships 是一些与 Album 本身强相关的属性，比如 atists（艺人）、genres（曲风）以及 tracks（专辑中所有的歌）。Track 是一种表示音乐的数据结构，而 tracks 则是一个 Track 的集合。
 
 第三个部分为 Associations（关联），Associations 是一些与 Album 联系较弱的属性，Associations 与 Relationships 十分相似，但是他们更像是人为主观划分的一些属性，而不是 Album 的固有属性。比如 appearsOn 字段会返回一个 Playlist（歌单）集合，relatedAlbums 则返回与此专辑相关的其他专辑。
 
