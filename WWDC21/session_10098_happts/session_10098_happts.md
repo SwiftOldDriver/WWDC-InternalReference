@@ -198,7 +198,7 @@ CSSearchableIndex
 
 在我们没有进行任何配置的情况下，`NSCoreDataCoreSpotlightDelegate` 根据我们对 Model 配置生成了Spotlight 的属性集。这时只能通过 `Display Name` 搜得结果，Spotlight 的搜索结果也只会展示 `Display Name`。
 
-接下来我们将增加一些用于索引的属性。 指定恰当的属性被索引，可以更明确地展示被索引的内容，增加搜得结果的方式。
+接下来我们将增加一些用于索引的属性。指定恰当的属性被索引，可以更明确地展示被索引的内容，增加搜得结果的方式。
 
 ![attribute_sets](https://gitee.com/happts/pics/raw/master/wwdc21_10098/image-20210621182900194.png)
 
@@ -280,7 +280,7 @@ CSSearchableIndex
 
 ![delete](https://gitee.com/happts/pics/raw/master/wwdc21_10098/image-20210621203134121.png)
 
-* 首先,停止索引， `stopSpotlightIndexing`
+* 首先，停止索引， `stopSpotlightIndexing`
 * 然后调用 `deleteSpotlightIndex`
 * 处理错误
   * 这里可能会返回来自底层的错误，比如 `Core Data` 和 `Core Spotlight`
@@ -321,7 +321,7 @@ CSSearchableIndex
 
 ## 总结
 
-总结一下，我们首先了解到`NSCoreDataCoreSpotlightDelegate`。了解到它如何帮助你的用户在 app 的内外通过 Spotlight 搜索找到 app 的内容；接着学习如何快速轻松地定制 `SpotlightDelegate`，使用这个版本提供给的一些新的 API 来自定义 `SpotlightDelegate`，使用了更少的代码实现了对数据的索引。
+总结一下，我们首先了解到 `NSCoreDataCoreSpotlightDelegate`。了解到它如何帮助你的用户在 app 的内外通过 Spotlight 搜索找到 app 的内容；接着学习如何快速轻松地定制 `SpotlightDelegate`，使用这个版本提供给的一些新的 API 来自定义 `SpotlightDelegate`，使用了更少的代码实现了对数据的索引。
 
 ## 相关参考
 
