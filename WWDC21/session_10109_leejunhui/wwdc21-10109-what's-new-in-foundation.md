@@ -118,6 +118,91 @@
 我们只需要下方代码即可实现：
 ![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1624888738092-c4bc8b55-bcda-4193-9657-7291e6057acd.png#clientId=uca4b5ec3-d888-4&from=paste&height=153&id=ue91c6fdb&margin=%5Bobject%20Object%5D&name=image.png&originHeight=306&originWidth=2262&originalType=binary&ratio=2&size=241421&status=done&style=none&taskId=uc93fd77c-81b0-4f09-9944-7b661423b8e&width=1131)
 
+## 1.5 AttributedString 本地化
+
+`Swift` 中的 `AttributedString` 以及 `Objective-C` 中的 `NSAttributedString` 现在都已支持本地化。在本地化的场景下，`AttributedString` 就像普通的字符串一样位于你的 App 的字符串文件中。
+在 `Swift` 中，现在支持通过字符串插值对 `String` 和 `AttributedString` 进行本地化的格式化工作，就像 `SwiftUI` 中的 `text view` 一样。
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1624889940848-7bc45467-806f-4e45-892f-a384d5105b1f.png#clientId=u7f0c6343-d450-4&from=paste&height=324&id=u777b2f33&margin=%5Bobject%20Object%5D&name=image.png&originHeight=648&originWidth=2100&originalType=binary&ratio=2&size=640437&status=done&style=none&taskId=u2d1047a5-9ad6-4ce1-8ee1-333a934bb17&width=1050)
+如上图代码所示：
+
+- `prompt` 方法接收一个字符串参数 `document` 并返回一个本地化之后的字符串。不需要通过字符串格式化函数并使用 `%@` 或 `%d` 等格式化说明符，你只需要直接传入具体的值即可。
+- `attributePrompt` 同上。
+
+​
+
+> ​`Xcode` 可以通过编译器自动生成字符串文件，只需要开启位于 `Build Settings` 下的 `Localization` 设置中的 `Use Compiler to Extract Swift Strings` 选项。
+
+## 1.6 AttributedString & Markdown
+
+`AttributedString` 支持 `Markdown` 语法，下面是一个 `SwiftUI` 中 `Text` 组件使用本地化的属性字符串的例子：
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1624890483866-7f054866-be90-483c-8ef2-3a4f2d35f3cd.png#clientId=u7f0c6343-d450-4&from=paste&height=323&id=ud290c319&margin=%5Bobject%20Object%5D&name=image.png&originHeight=646&originWidth=1436&originalType=binary&ratio=2&size=267935&status=done&style=none&taskId=udeea7580-56c1-4e5a-bc18-45faf40b225&width=718)
+
+- 通过在 `Thank you` 两侧插入两个星号，右侧的实时预览区域就直观的显示出了加粗的效果。
+
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1624890604903-8b91a71b-87a5-42c7-9a60-40c1fb86892b.png#clientId=u7f0c6343-d450-4&from=paste&height=307&id=u8648e15b&margin=%5Bobject%20Object%5D&name=image.png&originHeight=614&originWidth=1412&originalType=binary&ratio=2&size=262446&status=done&style=none&taskId=u7d252a2f-1d50-453a-96eb-6d5b58b707a&width=706)
+
+- 通过在文本两侧插入下划线，Text 组件接收后会以斜体进行渲染。
+
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1624890706370-252f0387-0355-4435-a443-542cda7b6ccb.png#clientId=u7f0c6343-d450-4&from=paste&height=320&id=ud63e4218&margin=%5Bobject%20Object%5D&name=image.png&originHeight=640&originWidth=1430&originalType=binary&ratio=2&size=261458&status=done&style=none&taskId=u032e4fc0-f2ab-4f85-b8b2-116500849b3&width=715)
+
+- 除此之外，还支持 `Markdown` 中链接的语法，也就是说 可以为不同的语言提供不同的 `URL`。
+  > `Markdown` 中的删除线以及代码块语法也得到了支持。
+
+## 1.7 AttributedString 转换操作
+
+要对 `AttributedString` 进行归档，我们需要能够在 `AttributedString` 与 `NSAttributedString` 这一引用类型之间进行相互转换。
+`AttributedString` 有可能是你的数据 `model` 中的一部分，因此，我们需要能够对其进行编码与解码。  
+最后，我们希望能够在 `Markdown` 中设置自定义的字符串属性。
+​
+
+上述三种场景都涉及到了属性字符串的转换操作，我们依次进行分析。
+​
+
+### 1.7.1 从结构体类型转换为类类型
+
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1624891336971-29dca061-5bab-496b-a1be-96c61cd61c90.png#clientId=u7f0c6343-d450-4&from=paste&height=215&id=u0ded317a&margin=%5Bobject%20Object%5D&name=image.png&originHeight=430&originWidth=1652&originalType=binary&ratio=2&size=152758&status=done&style=none&taskId=u4759d623-84b4-424a-8204-1cb9479cb28&width=826)
+只需要将属性字符串 `AttribuedString` 传入 `NSAttributedString` 的构造方法中即可，至于属性如何关联则交给 SDK 完成。
+​
+
+### 1.7.2 编码与解码
+
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1624891510892-6003e477-aae4-4f38-a3d4-118f4f273fd9.png#clientId=u7f0c6343-d450-4&from=paste&height=192&id=u0dee2085&margin=%5Bobject%20Object%5D&name=image.png&originHeight=384&originWidth=852&originalType=binary&ratio=2&size=112848&status=done&style=none&taskId=u432df0c1-9cea-4002-8b14-4ffed5b309a&width=426)
+因为 `AttribuedString` 有默认的 `Codable` 实现，这里的 `Receipt` 结构体只需要遵循 `Codable` 协议即可。
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1624891634212-6f4b093a-3ddf-44c8-9731-637aca72a48c.png#clientId=u7f0c6343-d450-4&from=paste&height=177&id=uce5a9900&margin=%5Bobject%20Object%5D&name=image.png&originHeight=354&originWidth=878&originalType=binary&ratio=2&size=151057&status=done&style=none&taskId=u4c76c56d-afb4-4c2b-be8b-045655461ac&width=439)
+那么如何对自定义的字符串属性进行编解码呢？我们可以对属性进行更深入的了解。一个属性由两部分组成：一个 `key` 和一个 `value`。`key` 是一个遵循 `AttributedStringKey` 协议的类型，它定义了需要什么类型的值以及用于归档的属性名称。`key` 还可以遵循其他协议以自定义 `value` 的编解码方式。
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1624892057686-729b5864-7792-423c-a9b0-52eeea7e0af6.png#clientId=u7f0c6343-d450-4&from=paste&height=270&id=uea224c9c&margin=%5Bobject%20Object%5D&name=image.png&originHeight=540&originWidth=950&originalType=binary&ratio=2&size=169569&status=done&style=none&taskId=ua3ac2b26-c518-41be-8881-3c98d14f1ac&width=475)
+如上代码所示：`AttributedStringKey` 协议只需要定义关联类型 `Value` 以及静态的变量 `name` 即可。现在假设我们希望这个 `RainbowAttribute` 属性 `Codable`。
+​
+
+> `Codable` 其实是 `Swift` 标准库中的一个类型别名，它代表的是 `Decodable` 和 `Encodable` 协议。
+
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1624892784883-a5b189ac-ee8e-4728-acea-187d9b00af63.png#clientId=u7f0c6343-d450-4&from=paste&height=267&id=uc6334397&margin=%5Bobject%20Object%5D&name=image.png&originHeight=534&originWidth=996&originalType=binary&ratio=2&size=161380&status=done&style=none&taskId=uf5d844e9-2ea4-4d44-9b4c-68bdabfae5d&width=498)
+只需要像上面代码一样，让属性遵循 `CodableAttributedStringKey` 协议，该协议同样的也是 `DecodableAttributedStringKey` 和 `EncodableAttributedStringKey` 的类型别名。同时，让 `Value` 类型遵循 `Codable` 协议即可。
+​
+
+而如果想要上面的属性是我们的本地化字符串的一部分的话，只需要再遵循一个 `MarkdownDecodableAttributedStringKey` 协议即可。![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1624893096157-fde51b1d-6896-4dba-a4e7-70da73088f96.png#clientId=u7f0c6343-d450-4&from=paste&height=263&id=u094ad9ad&margin=%5Bobject%20Object%5D&name=image.png&originHeight=526&originWidth=1592&originalType=binary&ratio=2&size=201963&status=done&style=none&taskId=u2681535b-af51-4eb7-9865-4bbaea4b836&width=796)
+通过声明一个属性字符串属性遵循 `MarkdownDecodableAttributedStringKey` 协议，我们就可以直接从 `Markdown` 中解码出该属性，并插入到一个属性字符串中，这一切的前提还需要 `Value` 是 `Codable` 的。
+​
+
+### 1.7.3 自定义的 `Markdown` 属性![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1624893288547-25edb1c5-4ea6-44fc-a197-0429ee7f5229.png#clientId=u7f0c6343-d450-4&from=paste&height=201&id=u5b017da5&margin=%5Bobject%20Object%5D&name=image.png&originHeight=402&originWidth=1662&originalType=binary&ratio=2&size=222313&status=done&style=none&taskId=u7afc4f6d-c811-4cb4-acf0-f949def17c4&width=831)
+
+上图中前两行代码在 `Markdown` 中十分常见，中括号中表示的是描述文本，括号中表示的是实际的 `URL`。带感叹号前缀的话就是直接渲染图片出来，不带感叹号前缀的话将会渲染一个链接出来。而第三行代码展示了自定义属性的语法。
+自定义属性首先会以 `^` 开头，然后是一个中括号来接收文本，最后是一个括号来表示属性。属性以 `JSON5`格式表示。
+
+> [JSON5](https://json5.org) 与 JSON 兼容，并允许使用不带引号的 `key`、注释和一些其它功能。
+
+> Foundation 中的 JSON 相关的 API 也已经添加了对 JSON5 的支持。
+
+​
+
+因为自定义属性通过 `JSON` 进行表示，所以任何可以被 `JSONDecoder` 解码的内容自动与新的自定义 `Markdown` 语法兼容。![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1624893806902-f72b7f3a-b173-4ffe-8cd1-2d35d3bb3f36.png#clientId=u7f0c6343-d450-4&from=paste&height=202&id=uc7c9e187&margin=%5Bobject%20Object%5D&name=image.png&originHeight=404&originWidth=1614&originalType=binary&ratio=2&size=188720&status=done&style=none&taskId=u0002e3eb-ecc8-4eac-a92c-8dc276c691b&width=807)
+上图代码中，第一行包含了一个自定义属性，第二行包含了两个自定义属性，第三行包含了一个具有多个子属性的属性。
+​
+
+## 1.8 AttributedString Scopes
+
+`Scopes` 是属性 `key` 的集合。
+
 # 二、 格式化器 - Formatters
 
 # 三、 语法协议引擎 - Grammar agreement
