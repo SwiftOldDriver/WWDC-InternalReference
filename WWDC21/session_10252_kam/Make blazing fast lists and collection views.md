@@ -54,27 +54,23 @@ func collectionView(_:cellForItemAt:)
 
 ### API - apply(_:animatingDifferences:)
 
-​		在 iOS 15 之前，调用 `apply(_:animatingDifferences:completion:)` 刷新时，如果传递的动画参数为 `false`，那么 UIKit 内部将其转为 `reloadData` 调用，这导致 collection view 全量刷新所有屏幕上的 cell。由于官方提供的 demo 有比较多 iOS 15 的 API 逻辑耦合，为了能在 iOS 14/15 上对比，笔者自己随便整了个 demo 测试，在从 snapshot 移除一个 item 之后，调用 `dataSource.apply(snapshot, animatingDifferences: false)`，iOS 14（左）、15（右） 在控制台中的输出如下：
+​		在 iOS 15 之前，调用 `apply(_:animatingDifferences:completion:)` 刷新时，如果传递的动画参数为 `false`，那么 UIKit 内部将其转为 `reloadData` 调用，这导致 collection view 全量刷新所有屏幕上的 cell。由于官方提供的 demo 有比较多 iOS 15 的 API 逻辑耦合，为了能在 iOS 14/15 上对比，笔者自己随便整了个 demo 测试，在从 snapshot 移除一个 item 之后，调用 `dataSource.apply(snapshot, animatingDifferences: false)`， 在控制台中的输出如下：
 
-
-
-![new_two_api.png](https://cdn.nlark.com/yuque/0/2021/png/21817760/1624816820877-de7fee82-180d-4d0c-ab75-fcc7f2039b61.png?x-oss-process=image%2Fresize%2Cw_1496)
+![new_two_api.png](https://cdn.nlark.com/yuque/0/2021/png/21817760/1624873951255-90b3c656-d916-44ca-8fd9-0b421eafa5da.png?x-oss-process=image%2Fresize%2Cw_1496)
 
 留意 cell 对象和 indexPath 之间的对应关系：
 
 ​	在移除并刷新后，iOS 14 中屏幕上的所有 cell 走完 enqueue\dequeue\configure 流程，所以 cell 与的 indexPath 对应关系在刷新前后发生了较大的变化；
 
-​	而 iOS 15 在同样的调用下，会计算 diff 实现数据刷新，移除最后一个 cell（0x12ce4ed90），而不再做额外的工作。**理论上是这样的，但显然上面的 log 出现了冗余的调用（即便是官方的 demo 也有这样的问题） ， 一个在屏幕上不可见的 cell（0x12cf36680） 配置了多次，此[问题](https://developer.apple.com/forums/thread/683775)已 post 在开发者论坛 ）**。
+​	而 iOS 15 在同样的调用下，会计算 diff 实现数据刷新，移除最后一个 cell（0x15bd115f0），而不再做额外的工作。（笔者先前在测试期间，发现 cell 的配置存在冗余调用，相关[问题](https://developer.apple.com/forums/thread/683775)已 post 在开发者论坛 ，Apple 工程师已确认这些优化不存在 iOS 15 beta 1 上，需要 beta 2 来验证）。
 
 ### API - reconfigureItems(_:)
 
-​		过去在操作 diffable data source 的 snapshot 更新特定 items 时，只能使用 `reloadItems(_:)` 函数，这同样导致对应 item 的 cell 被 enqueue，然后从重用池 dequeue cell 来配置。iOS 15 推出 `reconfigureItems(_:)` API 实现局部更新。同样的操作（更新最后一个 cell），在 iOS 14（左）、15（右）下控制台的输出：
+​		过去在操作 diffable data source 的 snapshot 更新特定 items 时，只能使用 `reloadItems(_:)` 函数，这同样导致对应 item 的 cell 被 enqueue，然后从重用池 dequeue cell 来配置。iOS 15 推出 `reconfigureItems(_:)` API 实现局部更新。测试更新 cell<0,3> 后，查看控制台的输出：
 
-![](https://cdn.nlark.com/yuque/0/2021/png/21817760/1624816841383-38eeeaa4-9ec4-403b-ba4e-e5f692875f59.png?x-oss-process=image%2Fresize%2Cw_1496)
+![](https://cdn.nlark.com/yuque/0/2021/png/21817760/1624873951795-8befc4c0-45c1-4eca-903b-ddbbebc5f37f.png?x-oss-process=image%2Fresize%2Cw_1496)
 
-可以看到，在 iOS 15 之前，reload 后 cell<0, 5> 由原来的 0x143021c10 变成了 0x141510db0；而在 iOS 15 之后，cell<0,5> 在 reconfigure 前后都是 0x12352cd10 对象。**（至于 0x12355de90 的多次 configure 应该是和前面一样是 bug 吧😓）**
-
-**总之，除非需要显式替换 cell 对象，否则你应该使用 iOS 15 推出的  `reconfigureItems(_:)` 实现 cell 的内容更新。**
+可以看到，在 iOS 15 之前，reload 后 cell<0, 3> 由原来的 0x13101bb40 变成了 0x13101dbb0；而在 iOS 15 之后，cell<0,3> 在 reconfigure 前后都是 0x133a17cd0 对象。**总之，除非需要显式替换 cell 对象，否则你应该使用 iOS 15 推出的  `reconfigureItems(_:)` 实现 cell 的内容更新。**
 
 ### 重申 CellRegistration 的用法
 
