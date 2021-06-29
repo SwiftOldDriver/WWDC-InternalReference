@@ -201,7 +201,21 @@
 
 ## 1.8 AttributedString Scopes
 
-`Scopes` 是属性 `key` 的集合。
+`Scopes` 是属性 `key` 的集合。`Scopes` 在解码 `JSON` 或 `Markdown` 时十分有用，因为它告诉了我们想要查找的属性，以及如何解码这些属性。
+
+> Apple 分别为 `Foundation`、`UIKit`、`AppKit`、`SwiftUI` 定义了各自的 `Scope`。你可以定义属于你自己应用的 `Scope`。
+
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1624979342918-d399eae6-0723-4956-96e4-68c40c55e87a.png#clientId=ue872796c-1b67-4&from=paste&height=366&id=uc3e110d1&margin=%5Bobject%20Object%5D&name=image.png&originHeight=732&originWidth=2250&originalType=binary&ratio=2&size=593234&status=done&style=none&taskId=u9e44a978-c1ad-48a7-b17b-3dd02588717&width=1125)
+
+- 如上代码所示，我们在 `AttributeScopes` 的 `extension` 中声明了一个结构体 `CaffeAppAtrributes`，这个结构体遵循了 `AttributeScope` 协议。然后声明了一个自定义属性 `RainbowAttribute` ，同时声明了一个 `SwiftUIAttributes`，这可以让我们用到了 `SwiftUI` 内部的所有属性。而由于 `scope` 是支持递归嵌套的，所以也默认包含了 `Foundation` 的自定义属性。
+- 在我们新的 `scope` 中定义一个属性是十分有用的，因为可以让我们在接收 `scope` 作为参数的函数中使用 `key path` 语法。
+
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1624980203668-9d98501d-2993-4514-b62a-4d4d23c4eaa9.png#clientId=ue872796c-1b67-4&from=paste&height=156&id=ud1cd0ad8&margin=%5Bobject%20Object%5D&name=image.png&originHeight=312&originWidth=2314&originalType=binary&ratio=2&size=273538&status=done&style=none&taskId=uce269bcb-62a2-4201-ac6d-c74a8773a55&width=1157)
+
+- 最终，我们可以从自定义的 `markdown` 中加载我们的本地化字符串了。
+
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1624980963280-dfc07e6e-bb67-44f0-bf7a-d748d1161d9e.png#clientId=ue872796c-1b67-4&from=paste&height=480&id=u3fec9461&margin=%5Bobject%20Object%5D&name=image.png&originHeight=960&originWidth=536&originalType=binary&ratio=2&size=177528&status=done&style=none&taskId=ua8a995d3-55f2-45b4-b501-9a14f1ab2c0&width=268)![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1624981018504-566c599b-472f-4cea-bad2-39b172af8cec.png#clientId=ue872796c-1b67-4&from=paste&height=480&id=u2d3b35c1&margin=%5Bobject%20Object%5D&name=image.png&originHeight=960&originWidth=530&originalType=binary&ratio=2&size=185549&status=done&style=none&taskId=u7e901ddc-3228-471d-8f42-42e70ea7a9a&width=265)
+如上图所示，本地化字体文件中的 `Markdown` 在被转换为属性字符串后，应用会找到需要设置属性的范围并将属性应用到对应范围的字符串上。而因为属性来自于本地化字体文件，这适用于所有语言。
 
 # 二、 格式化器 - Formatters
 
