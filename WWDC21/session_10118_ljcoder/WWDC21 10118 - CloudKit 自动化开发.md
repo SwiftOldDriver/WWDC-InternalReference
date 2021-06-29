@@ -1,7 +1,9 @@
-# WWDC21 10118 - CloudKit 自动化开发
+
 本文基于[Session 10118](https://developer.apple.com/videos/play/wwdc2021/10118/)梳理
 
-之前我们在使用 `CloudKit` 进行开发的过程中，如果我们需要增加新的 `Record Types` 跟 `Record` 我们需要去 [CloudKit Dashboard](https://icloud.developer.apple.com/dashboard/home/) 后台进行手动创建，操作特别麻烦。此次 WWDC 苹果推出 `cktool` 来帮我们解决这个问题。
+`CloudKit`是 Apple 的 BaaS 服务，基于 iCloud 提供云端数据存储，结合 Core Data 还能简单的实现多终端本地数据库同步功能。 
+
+在使用 `CloudKit` 进行开发的过程中，我们一般都会先使用 [CloudKit Dashboard](https://icloud.developer.apple.com/dashboard/home/) 创建我们需要的 `Record Type` 数据模型，数据模型的每一个字段都要手动添加它的名称跟类型，操作起来特别麻烦。为了解决这个问题，此次 WWDC 苹果推出了 `cktool` 这个工具。
 
 ## 环境配置
 `cktool` 的使用需要我们安装 Xcode 13，然后下载[初始项目](https://github.com/ljcoder2015/AutomatingCloudKitDemo/tree/master/starter)，配置好 iCloud。
@@ -50,7 +52,7 @@ xcrun cktool reset-schema    \
 ```
 
 ### 添加新的数据类型
-通过 `import-schema` 命令可以实现数据类型的添加。
+通过 `import-schema` 命令可以实现数据模型的添加。
 ```
 xcrun cktool import-schema 		\
 	--team-id [TEAM-ID]			\
@@ -129,10 +131,26 @@ xcrun cktool create-record        \
 > 注: `create-record` 命令依赖 **User token** 进行身份验证。
 
 ## 利用Xcode Pre-actions实现自动化
-`cktool` 的命令我们了解以后，就可以考虑如何实现自动化处理了，这里我们使用的是 Xcode 的 **Pre-actions** 功能来完成这个需求。实现比较简单，点击 Xcode 菜单 **Product>Scheme>Edit Scheme**，打开如下界面，通过以下步骤把前面 `cktool` 的三个命令添加成一个 Action，这样每次执行 Run 之前，都会执行这个 Action。
+有这样一个需求， 我们要开发一个部门跟员工列表，为此需要添加两种数据类型 `Department` 和 `Employee`，同时添加一个 `Department` 类型的 `Record`，用于展示默认部门。
+
+使用 `cktool` 我们可以很方便的准备好我们的数据环境，使用 ` import-schema` 命令添加 `Department` 和 `Employee`，`create-record` 命令创建初始数据。
+
+更进一步，我们可以借助 Xcode 的 **Pre-actions** 功能来自动化完成数据环境的准备。为了不重复添加类型，我们需要一开始执行 `reset-schema` 命令重置一下 Development 数据环境。
+
+实现比较简单，点击 Xcode 菜单 **Product>Scheme>Edit Scheme**，打开如下界面，通过以下步骤把前面 `cktool` 的三个命令添加成一个 Action，这样每次执行 Run 之前，都会执行这个 Action。
 ![添加Action](https://cdn.nlark.com/yuque/0/2021/jpeg/383510/1624325111846-dad1e6be-c729-440f-af0d-cfd547419665.jpeg)
 运行后我们就可以看到通过 `cktool` 添加的数据了。
 ![demo运行截图](https://cdn.nlark.com/yuque/0/2021/png/383510/1624325111183-1328c759-be59-414e-a2fa-e67bcf4b103a.png)
 
-至此，我们就实现了 CloudKit 的自动化开发，你还可以通过 [DEMO](https://github.com/ljcoder2015/AutomatingCloudKitDemo/tree/master/final) 查看具体细节。
+至此，我们就实现了自动化添加数据模型和默认数据，你还可以通过 [DEMO](https://github.com/ljcoder2015/AutomatingCloudKitDemo/tree/master/final) 查看具体细节。
 
+## 总结
+本文主要介绍了 `cktool` 以下的三个方面：
+- `cktool` 访问权限的验证方式
+    - Management toke 用来进行 Management APIs 的调用。
+    - User token 用来查询和创建用户存储在 iCloud 的数据。
+- `cktool` 常用命令解析
+    - `reset-schema` 命令重置 Development 环境。
+    - `import-schema` 命令添加数据模型。
+    - `create-record` 命令添加数据。
+- 借助 Pre-actions 实现 `cktool` 命令自动化执行
