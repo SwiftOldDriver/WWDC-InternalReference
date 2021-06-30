@@ -46,7 +46,21 @@ iCloud Synchronization 提供的能力大致可以分成以下两种：
 
 ### 密码自动填充
 
-开发者现在可以用很少的代码在 Watch App 上添加密码自动填充功能。具体步骤如下：
+密码自动填充功能源自于文本自动填充功能，只不过，密码属于隐私数据，那么我们就需要考虑数据安全性问题。
+
+下图是使用自动填充文本的界面效果：
+
+![自动填充地址](https://cdn.nlark.com/yuque/0/2021/png/269131/1625064348105-b8b0db4f-626e-45d0-94a7-f27cf270177b.png)
+
+而需要实现上图文本自动填充，只需要设定 `UITextField.textContentType` 为 `.fullStreetAddress` 即可。
+
+目前已经支持很多数据的自动填充，未来还会继续增加。
+
+![自动填充的元素列表](https://cdn.nlark.com/yuque/0/2021/png/269131/1625064831659-a8742ccc-ef89-4b02-8e90-0cc467af2414.png)
+
+以上都是自动填充在 iOS 上的应用。
+
+现在我们可以用很少的代码在 Watch App 上添加密码自动填充功能。具体步骤如下：
 
 1、将 Associated Domains Capability 添加到 Target（Watch App 上则是将该 Capability 添加到 WatchKit Extension Target）中，在其中添加一个带有我们域名的 `webcredentials` entry。
 
@@ -295,7 +309,15 @@ struct CoreDataView: View {
 
 ## Watch Connectivity
 
-Watch Connectivity 框架对我们来说并不陌生，它具有以下特点：
+在介绍 Watch Connectivity 是什么之前，我们来看看早起 App 的数据是怎样存储的。
+
+![watchOS 2 存储数据](https://cdn.nlark.com/yuque/0/2021/png/269131/1625062643146-f804a8c8-fc3f-43f0-a16e-ef715f7019d8.png)
+
+上图不难看出，iPhone 与 Watch 上的 App 内的数据是独立的，彼此无法进行交互。为了解决这个问题，Apple 设计了 Watch Connectivity 框架，下图比较简洁的指出了它们彼此间的关联与作用。
+
+![Watch Connectivity](https://cdn.nlark.com/yuque/0/2021/png/269131/1625062714925-6649d104-ab4c-4202-8880-4da855241eaa.png)
+
+Watch Connectivity 最早是在 watchOS 2、iOS 9 上推出。这里不再做过多的介绍。这里主要总结一下这个框架的几个特点：
 
 * 在蓝牙范围内或在同一 WiFi 网络时，在 Watch 应用程序和其配套的 iPhone 应用程序之间发送数据
 * 共享只有在一个设备（Watch/iPhone）上可用的数据
@@ -307,6 +329,8 @@ Watch Connectivity 框架对我们来说并不陌生，它具有以下特点：
 2、可达性的问题，在我们发送数据前，需要判断 WCSession 的 `reachability`；
 
 3、所有 WCSession `delegate` 方法都在非主串行队列上调用。因此，如果需要在这些方法中操作界面，需要切换到主线程上。
+
+4、判断 WCSession 是否可用，`WCSession.isSupported()`。
 
 对于传输内容方面的限制，Connectivity 传输内容可以分为以下几种：
 
