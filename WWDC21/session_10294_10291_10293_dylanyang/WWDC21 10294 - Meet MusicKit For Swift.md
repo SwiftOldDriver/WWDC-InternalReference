@@ -8,22 +8,27 @@
 
 # 背景
 
-MusicKit 是一个 Apple 在 2017 年推出的框架，它可以让我们更方便地访问音乐相关的信息，也可以让我们在 App 中轻松调用音乐播放等音乐相关功能。
+MusicKit 是一个 Apple 在 2017 年推出的框架，它可以让我们更方便地访问 Apple Music 中音乐相关的信息，也可以让我们在 App 中轻松调用音乐播放等音乐相关能力。
 
 MusicKit 主要有两部分组成
 
-1. iOS 中集成的 API
+1. iOS 内集成的 API
 2. 一套服务端的 API 接口，可以通过发送请求来访问
 
 关于 MusicKit 基本的介绍，可以参考 2017 年 WWDC 的 Session: [Introducing MusicKit](https://developer.apple.com/videos/play/wwdc2017/502/)
 
+本文主要描述了新版的 MusicKit For Swift 增强了哪些能力。全文主要分为三大章节，第一章节主要介绍了新版 iOS 内 MusicKit 的构成，并配有一个 Demo 可以用来参考如何使用 MusicKit 的基础能力。第二章节主要介绍了新版的服务端 API 主要做了哪些调整。第三章节则更细致列举了一些音乐资源交叉访问时所需要用到的 API。其中第三章节内容可能仅有重度 MusicKit 使用者需要用到，初次接触的开发者可以选择跳过。
+
 # MusicKit For Swift
 
-今年推出的 MusicKit for Swift 相比 2017 年的版本有以下一些特点：
+今年推出的 MusicKit for Swift 相比 2017 年的版本在原生 API 层主要有以下一些调整：
 
-1. 为 API 实现了全新的 Swift 并行语法
+1. 实现了原生的数据结构来对服务端返回的数据做映射
+2. 为 API 实现了全新的 Swift 并行语法
 3. 与 SwiftUI 无缝融合
-4. 新增/加强了一部分 API
+4. 提供了更简单的接入方式
+
+本章节会对新版的 MusicKit 原生 API 做一些介绍，并通过一个 SwiftUI Demo 来展示如何接入/使用 MusicKit 的能力。
 
 ## 基本数据结构
 
@@ -230,7 +235,7 @@ func requestMusicAuthorization() {
 
 ![](https://images.xiaozhuanlan.com/photo/2021/df196f5f24b5cb4d3b618620a2bbd6c1.png)
 
-任何 Apple Music API 中个性化的请求还需要一个 User Token，像Developer Token一样，User Token 现在也已经默认集成了。
+任何 Apple Music API 中个性化的请求还需要一个 User Token，像 Developer Token 一样，User Token 现在也已经默认集成了。
 
 想了解 token 的另一种获取方式，可以参考 https://developer.apple.com/documentation/applemusicapi/getting_keys_and_creating_tokens。
 
@@ -272,7 +277,7 @@ var body: some View {
 
 ## Apple Music 订阅
 
-如果我们的用户还没有成为 Apple Music的订阅用户的话，我们也可以在 App 中直接唤起弹窗让他们开始免费试用。这样用户就可以在我们的 App 中体验完整的功能了。 
+如果我们的用户还没有成为 Apple Music 的订阅用户的话，我们也可以在 App 中直接唤起弹窗让他们开始免费试用。这样用户就可以在我们的 App 中体验完整的功能了。 
 
 通过引导用户去订阅 Apple Music，我们甚至还能通过苹果获得的佣金（毕竟给Apple Music引流了）。关于佣金更详细的信息可以参考 https://affiliate.itunes.apple.com/resources
 
@@ -309,9 +314,11 @@ func showSubscriptionOffer() {
 
 # 新增/加强的服务端 API
 
-MusicKit 这次也新增/加强了原有的服务端 API。
+MusicKit 中的服务端 API 是可以脱离 iOS 去独立访问的，它不光可以在 iOS App 中使用，也可以网页上去调用。它可以帮助开发者非常轻松地访问到 Apple Music 中的海量内容。
 
 再次补充下现有的API的查询地址 https://developer.apple.com/documentation/applemusicapi
+
+下面主要介绍了这次新增/加强了的服务端 API。
 
 ## 搜索接口
 
@@ -359,7 +366,7 @@ MusicKit 这次也新增/加强了原有的服务端 API。
 
 ![](https://images.xiaozhuanlan.com/photo/2021/d86bab3815d9ac2df7a548e1671ac148.png)
 
-可以看到当我们添加 type 参数请求艺人、专辑类型后，接口返回了对应类型的 Resource结构。
+可以看到当我们添加 type 参数请求艺人、专辑类型后，接口返回了对应类型的 Resource 结构。
 
 ```json
 /v1/catalog/us/search/suggestions?term=taylor&kinds=topResults&types=artists,songs
@@ -498,6 +505,8 @@ Resource 结构中的 attributes 是一个默认的字段集合，但通过 exte
 ```
 
 # 内容资源的交叉访问
+
+本章节内容仅对重度使用 MusicKit 开发者有用，初识 MusicKit 的同学可以跳过，主要列举了详细的资源交叉访问相关的 API。
 
 ## 跨店面资源转换
 
@@ -653,4 +662,4 @@ GET /v1/catalog/us/albums?filter[upc]=00602435945422
 
 # 总结
 
-MusicKit 的这次更新使得 iOS 内的 API 以及服务端接口 API 都更强大了。如果我们在开发 App 的时候有需要用到音乐相关的功能，那可以考虑下是否可以利用 MusicKit 的能力。
+MusicKit 的这次更新使得 iOS 内的 API 以及服务端接口 API 都更强大了。如果我们在开发 App 的时候有需要用到音乐类资源的查询、音乐播放等音乐相关的功能，那可以考虑下是否可以利用 MusicKit 的能力。
