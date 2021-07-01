@@ -8,6 +8,8 @@ WWDC21 10121 - 为内容丰富的应用量身打造高效 VoiceOver 体验
 
 ## About Me
 
-Ckitakishi，目前在日本从事 iOS 开发，对动画和图像感兴趣，也关注 Accessibility，正在为写出优美的代码而修炼。
+> 作者：Ckitakishi，目前在日本从事 iOS 开发，对动画和图像感兴趣，也关注 Accessibility，正在为写出优美的代码而修炼。
+>
+> 审核：红纸，iOS 开发，周报编辑，就职于淘系技术部
 
 
