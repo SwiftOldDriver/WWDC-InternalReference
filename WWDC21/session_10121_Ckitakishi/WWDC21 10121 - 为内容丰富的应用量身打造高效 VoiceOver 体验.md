@@ -1,5 +1,10 @@
 # WWDC21 10121 - 为内容丰富的应用量身打造高效 VoiceOver 体验
 
+> 作者：Ckitakishi，目前在日本从事 iOS 开发，对动画和图像感兴趣，也关注 Accessibility，正在为写出优美的代码而修炼。
+>
+> 审核：红纸，iOS 开发，周报编辑，就职于淘系技术部
+
+
 > 本文基于 WWDC21 Session 10121 - [Tailor the VoiceOver experience in your data-rich apps](https://developer.apple.com/videos/play/wwdc2021/10121/) 创作
 
 ## 前言
@@ -36,15 +41,15 @@ Accessibility 提供了非常多类型的辅助，包括视觉，听觉和其他
 
 Accessibility 团队在 Session 中举了一个宠物犬列表的例子，每只宠物犬都拥有名字，类型，年龄，简介等字段，如下图所示。如果将这些字段都作为内容展示给听众，对于大部分用户而言，一段尚且还好，要听完十段这样的描述，真的需要极大的耐心和热情。
 
-![01-full](https://cdn.nlark.com/yuque/0/2021/png/21889291/1624871965702-6b18f958-40d6-400a-917a-d7f8edd6b8c2.png)
+![01-full](https://images.xiaozhuanlan.com/photo/2021/9e544c8633b8483aa7a5975c437e1fa0.png)
 
 太多的内容会让人无所适从，而且从繁多的内容中提取少量自己关注的信息并不是一件轻松的事情。有一个概念叫做 DRIP (Data rich information poor) ，意思是数据丰富但信息匮乏，为了不让用户陷入这种困境，Accessibility 团队将名字和种类视为一只宠物犬最重要的特征，除此以外的内容都被放到了“更多内容”中。经过这次修改，用户再一次尝试 VoiceOver，就只会听到名字，种类和“更多内容可用”。就像下图显示的这样：
 
-![02-more-content](https://cdn.nlark.com/yuque/0/2021/png/21889291/1624871974330-be112062-ec84-4c64-b1ab-bbefccf27025.png)
+![02-more-content](https://images.xiaozhuanlan.com/photo/2021/a46fe6ce6d7294429fc3676ea0f1b85b.png)
 
 此时只需调节转子，用户便可以按需访问“更多内容”。
 
-![03-rotor](https://cdn.nlark.com/yuque/0/2021/png/21889291/1624871970279-bd989ba5-7d63-405b-bcdf-1c519f713102.png)
+![03-rotor](https://images.xiaozhuanlan.com/photo/2021/6680d6092193ecd955db12313309a4ed.png)
 
 ## Accessibility Custom Content API
 
@@ -187,10 +192,10 @@ extension AccessibilityCustomContentKey {
 
 为了提供更酷的 Accessibility 体验，难免需要多投入一些精力来完善产品，但我相信此刻的你也会觉得这是值得的。
 
-### 参考资料
+## 关注我们
 
-- WWDC20 - 10116: [VoiceOver efficiency with custom rotors](https://developer.apple.com/videos/play/wwdc2020/10116/)
-- WWDC21 - 10119: [SwiftUI Accessibility: Beyond the basics](https://developer.apple.com/videos/play/wwdc2021/10119)
-- [Accessibility for Developers](https://developer.apple.com/accessibility/)
-- [Accessibility Programming Guide for iOS](https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/iPhoneAccessibility/Introduction/Introduction.html)
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
 
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
