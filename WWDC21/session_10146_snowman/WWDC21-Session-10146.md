@@ -9,7 +9,7 @@
 在这一部分，我们会多花一些时间讨论 AVAsset 检查元数据的新能力，然后再快速介绍另外两个功能：视频合成与元数据和字幕文件创作。
 
 
-我们先说说 *AVAsset异步查看元信息* ，在开始之前，先了解一下 AVAsset 的背景知识：
+我们先说说 AVAsset异步查看元信息 ，在开始之前，先了解一下 AVAsset 的背景知识：
 > AVAsset 是 AVFoundation 的核心模型对象，用于表示存储在用户设备上或远程服务器的媒体文件内容，当然也包括流媒体（例如 HTTP Live Streams ）或其他形式的视听内容
 
 ![](https://images.xiaozhuanlan.com/photo/2021/006873e54a66272bf1e214468f7acca5.png)
@@ -29,7 +29,7 @@
 
 不过，上面所说的特性从功能本身来说都不是新的——在WWDC21苹果增加了新的API 能力，但相关类一直有异步加载属性值的能力，我们先看看如果使用旧 API 我们需要怎么写代码：
 
-<br/><img src="https://images.xiaozhuanlan.com/photo/2021/f16a6b861f27aad976a1ab07a46b188a.png" width=600 />
+![](https://images.xiaozhuanlan.com/photo/2021/f16a6b861f27aad976a1ab07a46b188a.png)
 
 
 一般需三步：
@@ -41,7 +41,8 @@
 
 *例如，容易忘记一些基本的检查步骤：*
 
-<br/><img src="https://images.xiaozhuanlan.com/photo/2021/5ca9524990ba9d0315fba8bb52dcdd3a.png" width=600 />
+
+![](https://images.xiaozhuanlan.com/photo/2021/5ca9524990ba9d0315fba8bb52dcdd3a.png)
 
 **如果我们在没有完成加载的情况下使用这些同步的属性/方法，就会最终阻塞 I/O；如果这一切发生在主线程上，这就意味着我们的 App 会被挂起不确定的时间！**
 
@@ -50,7 +51,7 @@
 
 下面，我们来看看新的 API 是如何工作的，当我们需要检查媒体资源属性时，我们可以这样使用：
 
-<br/><img src="https://images.xiaozhuanlan.com/photo/2021/d76ce0f29a542df78936f0db214277a3.png" width=600 />
+![](https://images.xiaozhuanlan.com/photo/2021/d76ce0f29a542df78936f0db214277a3.png)
 
 1. 需要注意的是这是新的 load 方法，它接受一个属性标识符——在本例中为.duration(持续时间)
 
@@ -80,7 +81,7 @@
 
 比如，我们可以同时加载持续时间和曲目，这不仅方便，而且还可以更高效：
 
-<br/><img src="https://images.xiaozhuanlan.com/photo/2021/76359d4f7b2bbf94059e99caf18c9e72.png" width=600 />
+![](https://images.xiaozhuanlan.com/photo/2021/76359d4f7b2bbf94059e99caf18c9e72.png)
 
 当AVAsset明确了需要的所有属性，它会自动进行批量处理
 
@@ -91,7 +92,8 @@
 如果需要检查属性的状态，可以随时使用新的 status(of:) 方法来确认，无需等待值加载
 
 可传入用于加载的相同属性标识符，返回的是一个包含四种可能情况的枚举，如下：
-<br/><img src="https://images.xiaozhuanlan.com/photo/2021/a91a5c384402fbee11e2e1fbfaaef148.png" width=600 />
+
+![](https://images.xiaozhuanlan.com/photo/2021/a91a5c384402fbee11e2e1fbfaaef148.png)
 
 
 - 每个属性在没加载前都是 ``.notYetLoaded``状态——媒体资源检查是按需进行的，因此在实际要求加载属性值之前，``AVAsset``不会做任何加载动作
@@ -105,18 +107,17 @@
 
 同时，``AVAsset`` 有很多属性，它们的值都可以异步加载，如下：
 
-<br/><img src="https://images.xiaozhuanlan.com/photo/2021/4534b96a08936f813e83313decf5e47f.png" width=600 />
-
+![](https://images.xiaozhuanlan.com/photo/2021/4534b96a08936f813e83313decf5e47f.png)
 
 其中比较特殊的是 tracks 和 metada 属性，它们提供了更复杂的对象，可用来访问媒体资源的层次结构：
 
-<br/><img src="https://images.xiaozhuanlan.com/photo/2021/d1716a6b3706304e1c560e4f8a301a32.png" width=600 />
+![](https://images.xiaozhuanlan.com/photo/2021/d1716a6b3706304e1c560e4f8a301a32.png)
 
 
 - 对于 ``.tracks`` 属性，我们会获得一组 ``AVAssetTrack``
 - ``AVAssetTrack`` 还有自己的属性集合，这些属性值也可以使用相同的加载方法异步加载
 
-<br/><img src="https://images.xiaozhuanlan.com/photo/2021/5c03a28a938a5faeb43efd1dab7d3f5c.png" width=600 />
+![](https://images.xiaozhuanlan.com/photo/2021/5c03a28a938a5faeb43efd1dab7d3f5c.png)
 
 同样， ``.metadata``属性提供了一组 ``AVMetadataItem``，``AVMetadataItem`` 的属性也可以使用 load 方法异步加载
 
@@ -125,19 +126,21 @@
 
 在 AVAsset 和 AVAssetTrack 上都有几个这样的新方法：
 
-<br /><img src="https://images.xiaozhuanlan.com/photo/2021/0d7aae3721b23cf910322782cfef4f51.png" width=600 />
-<br />
-<br /><img src="https://images.xiaozhuanlan.com/photo/2021/ccbb109cbd2f301a387ae6d3b1f5ed2d.png" width=600 />
+![](https://images.xiaozhuanlan.com/photo/2021/0d7aae3721b23cf910322782cfef4f51.png)
+
+![](https://images.xiaozhuanlan.com/photo/2021/0d7aae3721b23cf910322782cfef4f51.png)
+
+![](https://images.xiaozhuanlan.com/photo/2021/ccbb109cbd2f301a387ae6d3b1f5ed2d.png)
 
 
 以上这些就是WWDC21为媒体资源检查准备的新 API，为了更方便地迁移到这些新接口，这里有一个简短的迁移指南：
 
-<br/><img src="https://images.xiaozhuanlan.com/photo/2021/084ef84992ab7e6e2fcc365c70998353.png" width=600 />
+![](https://images.xiaozhuanlan.com/photo/2021/084ef84992ab7e6e2fcc365c70998353.png)
 
 
 1. 如果我们的代码符合加载值 -> 检查状态 -> 获取同步属性的三步模式，那就可以简单地调用 load 方法并在异步步骤中完成所有操作
 
-<br/><img src="https://images.xiaozhuanlan.com/photo/2021/c4640d869ae120309e5eebb7d5ff0d8e.png" width=600 />
+![](https://images.xiaozhuanlan.com/photo/2021/c4640d869ae120309e5eebb7d5ff0d8e.png)
 
 2. 如果我们还在使用旧的 ``statusOfValue(forKey:)`` 方法并通过switch分发不同状态，现在推荐使用新的状态枚举来完成工作
 3. 如果我们在代码的一部分中加载属性值，然后在代码的其他部分中获取加载的值，则可以通过以下方式来替代：
@@ -150,7 +153,7 @@
 
 # 视频元数据合成
 
-<br/><img src="https://images.xiaozhuanlan.com/photo/2021/407665a9fac5b0858978e518ddd72d32.png" width=600 />
+![](https://images.xiaozhuanlan.com/photo/2021/407665a9fac5b0858978e518ddd72d32.png)
 
 
 简而言之，视频合成就是**一个获取多个视频轨道并将它们合成为单个视频帧流的过程**
