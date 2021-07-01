@@ -24,7 +24,7 @@
 
 ![10019-02-model-spacephoto](https://images.xiaozhuanlan.com/photo/2021/d1615ef496c61cfaa44ef21cdc762805.png)
 
-首先，定义了 `SpacePhoto`，它需要遵循 Codable 和 [Identifiable](https://developer.apple.com/documentation/swift/identifiable) 这两个协议。Codeable 自不必多说，用于将原始数据解析成您定义的数据模型。而 Identifiable 协议则最早是在 SwiftUI 中出现的，在 Swift 5.1 被加入到 Swift 标准库中的。
+首先，定义了 `SpacePhoto`，它需要遵循 Codable 和 [Identifiable](https://developer.apple.com/documentation/swift/identifiable) 这两个协议。Codable 自不必多说，用于将原始数据解析成您定义的数据模型。而 Identifiable 协议则最早是在 SwiftUI 中出现的，在 Swift 5.1 被加入到 Swift 标准库中的。
 
 ### Identifiable
 
