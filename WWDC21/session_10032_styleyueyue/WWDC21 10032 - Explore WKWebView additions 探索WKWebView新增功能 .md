@@ -1,7 +1,7 @@
 
 本文主要是根据WWDC21中的[Session 10032](https://developer.Apple.com/videos/play/wwdc2021/10032/)撰写，主要讲解WKWebView在iOS 15中新增的功能。
 
-# 一、引言
+## 引言
 
 在讲解WKWebView在iOS 15中新增功能之前，首先需要来捋捋`UIWebView`与`WKWebView`。
 
@@ -14,7 +14,7 @@
 - `WKWebView`（适用于iOS 8及以上）
 - `SFSafariViewController`（适用于iOS 9及以上）
 
-# 二、UIWebView & WKWebView & SFSafariViewController
+## UIWebView & WKWebView & SFSafariViewController
 
 `UIWebView`是苹果在iOS 2中推出用来展示网页的UI控件，同时也是最占内存的控件。UIWebView有以下特点：
 - 1、加载速度慢；
@@ -37,11 +37,11 @@
 
 下面分别来讲解下`UIWebView & WKWebView`、`SFSafariViewController`的使用。
 
-## 1、UIWebView & WKWebView的使用
+### UIWebView & WKWebView的使用
 
 主要介绍UIWebView & WKWebView的`使用步骤`以及`实用方法`、`代理方法`以及`与JS的交互`。
 
-### 1-1、简单使用
+#### 简单使用
 
 两种控件的简单使用主要分为4步：
 - 1、创建webView，并设置大小
@@ -65,11 +65,11 @@ func createWKWebView(){
 ```
 
 
-### 1-2、实用函数
+#### 实用函数
 
 实用函数主要包括`加载网页`、`网页导航刷新`等函数。
 
-#### 1-2-1、加载函数
+##### 加载函数
 
 - `UIWebView`不仅可以加载HTML页面，还支持pdf、word、txt以及各种图片的显示；
 
@@ -84,7 +84,7 @@ func createWKWebView(){
 |load(_:mimeType:textEncodingName:baseURL:)|load(_:mimeType:characterEncodingName:baseURL:)|加载文件，并指定MIME类型和编码类型|
 | -|loadFileURL(_:allowingReadAccessTo:)|加载本地文件(适用于iOS9及以上)|
 
-#### 1-2-2、网页导航刷新相关函数
+##### 网页导航刷新相关函数
 
 - UIWebView和WKWebView都有3个属性（`canGoBack`、`canGoForward`、`isLoading`）
 
@@ -106,12 +106,12 @@ func createWKWebView(){
 |-|reloadFromOrigin|会比较网络数据变化，如果没有变化，则使用缓存，否则重新请求|
 |-|go(to item:)|跳转到某个指定的历史界面|
 
-### 1-3、代理协议
+#### 代理协议
 
 - UIWebView的代理协议主要是`UIWebViewDelegate`；
 - WKWebView的代理协议主要有3个，分别是`WKNavigationDelegate、WKUIDelegate`和`WKScriptMessageHandler`。
 
-#### 1-3-1、UIWebViewDelegate & WKNavigationDelegate
+##### UIWebViewDelegate & WKNavigationDelegate
 
 其中`UIWebViewDelegate`和`WKNavigationDelegate`的等效项如下所示
 
@@ -170,19 +170,19 @@ func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigatio
 }
 ```
 
-#### 1-3-2、WKNavigationDelegate & WKScriptMessageHandler
+##### WKNavigationDelegate & WKScriptMessageHandler
 
 - `WKScriptMessageHandler`是必须实现的函数，是用于`App与JS的交互`，提供从网页中收消息的回调方法，如下所示；
 
-| WKScriptMessageHandler代理方法           | 说明 |
-|--------------------------------------|----|---|
+| WKScriptMessageHandler代理方法|说明|
+|-----------------------------|---|
 | userContentController(_:didReceive:) |    响应从网页的 JavaScript 代码发送的消息。使用 message 参数获取消息内容并确定原始 Web 视图。|
 
 - `WKUIDelegate`是UI界面相关的代理协议，主要用于处理三种提示框：输入、确认、警告。因为在UIWebView中，Alert、Confirm、Prompt等视图是可以直接执行的，但在WKWebView上，需要通过这个协议接收通知，然后通过iOS原生执行，即需要将web提示框拦截然后再通过原生做处理。
 
 | WKUIDelegate代理方法 | 说明 |
-|------------------|----|
-| webView(_:createWebViewWith:for:windowFeatures:)    |  创建一个新的webView  |
+|--------------------|----|
+|webView(_:createWebViewWith:for:windowFeatures:)    |  创建一个新的webView  |
 |webView(_:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:)|调用JS的alert方法|
 |webView(_:runJavaScriptConfirmPanelWithMessage:initiatedByFrame:completionHandler:)|调用JS的confirm方法|
 |webView(_:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:)|调用JS的prompt方法|
@@ -237,11 +237,11 @@ func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt:
 }
 ```
 
-### 1-4、与JavaScript的交互
+#### 与JavaScript的交互
 
 分别讲解UIWebView与WKWebView是如何与JS交互的。
 
-#### 1-4-1 UIWebView与JS交互
+##### UIWebView与JS交互
 - iOS 6之前，`UIWebView`是不支持共享对象的，Web端需要通知Native，需要通过修改location.url，利用跳转询问协议来间接实现，通过定义URL元素组成来规范协议。
 - iOS 7之后，新增了`JavaScriptCore`库，内部有一个`JSContext`对象，可以用它来实现共享。
 
@@ -293,7 +293,7 @@ func webViewDidFinishLoad(_ webView: UIWebView)
 }
 ```
 
-#### 1-4-2、WKWebView与JS交互
+##### WKWebView与JS交互
 - 在WKWebView上，web的window对象提供`WebKit`对象实现共享；
 - 而WKWebView绑定共享对象，是通过特定的构造方法实现，即通过指定`WKUserContentController` 对象的 `ScriptMessageHandler` 经过 `Configuration` 参数构造时传入；
 - 而Handler对象需要实现指定协议，实现指定的协议方法，当 JS 端通过 `window.webkit.messageHandlers` 发送 Native 消息时，handler对象的协议方法被调用，然后通过协议方法的相关参数传值。
@@ -361,7 +361,7 @@ let noneSelectScript = WKUserScript(source: jsString, injectionTime: .atDocument
 userCC.addUserScript(noneSelectScript)
 ```
 
-### 1-5、UIWebView & WKWebView的性能分析
+#### UIWebView & WKWebView的性能分析
 分别使用UIWebVIew和WKWebView加载网页，查看其内存情况。
 
 - UIWebView加载网页时的内存情况
@@ -374,12 +374,12 @@ userCC.addUserScript(noneSelectScript)
 
 从图中可以看出，UIWebView相比WKWebVIew几乎有10倍之差，当涉及的H5界面较多时，如果使用UIWebView，其占用的内存可想而知是很大的，所以这也是为什么苹果弃用UIWebView，改用WKWebView的原因。
 
-### 1-6、H5与App的动态交互
+#### H5与App的动态交互
 目前App的多数点击事件都是在代码中写死的。例如点击一个区域需要弹框，或者跳转一个界面等，这些在最初是写死的，如果要更改就需要进行代码修改。为了更加灵活的测试、发版，在项目中引入了`Command`方案。
 
 Command的本质就是一条`scheme格式`的字符串指令，主要通过后端下发或者前端通过JS交互传递给App。然后App通过解析这条指令，执行相应的行为，从而实现动态的事件处理。
 
-#### 1-6-1、基本格式
+##### 基本格式
 command的基本格式如下所示
 
 ```
@@ -428,7 +428,7 @@ class CJLUniversalCommand: NSObject, OpenCommandDelegate{
 }
 ```
 
-## 2、SFSafariViewController的使用
+### SFSafariViewController的使用
 
 - `SFSafariViewController`是iOS 9以后推出的一种视图控制器，继承于`UIViewController`，主要用于浏览web页面，其浏览H5页面的效果与Safari浏览器类似。简单来说，就是相当于用WKWebView加载web页面且不用跳转到Safari就拥有了Safari浏览器的所有功能；
 - `SFSafariViewController`视图控制器包括了Safari的一些功能，例如阅读器、自动填充、欺诈网站检测和内容拦截等。在iOS 9和 iOS 10中，它与Safari共享cookie和其他网站数据；
@@ -438,7 +438,7 @@ class CJLUniversalCommand: NSObject, OpenCommandDelegate{
 > 注意：根据App Store Review Guidelines（App Store审查指南），这个视图控制器必须用于向用户可见地呈现信息，控制器不得被其他视图或图层隐藏或遮挡。此外，未经用户知情和同意，App不得使用`SFSafariViewController`跟踪用户。
 
 
-### 2-1、使用
+#### 使用
 
 具体的属性及方法请参考[SFSafariViewController](https://developer.Apple.com/documentation/safariservices/sfsafariviewcontroller)。以下是对其简单的使用
 
@@ -463,7 +463,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate
 
 ```
 
-### 2-2、优缺点
+#### 优缺点
 
 **优点**
 - 不用跳转Safari就可以打开网页；
@@ -475,7 +475,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate
 - 跳转方式导致了适用的场景有限，简单来说就是互动范围有限；
 - 只能用于iOS 9及以上的版本，且在[iOS 9,iOS 11)和[iOS 11, *)的版本中的操作有所区别。
 
-## 3、三者之间的关系
+### 三者之间的关系
 
 下面梳理下 `UIWebView`、`WKWebView`、`SFSafariViewController` 3者之间的关系：
 - iOS 2-iOS 12： 支持 UIWebView；
@@ -483,7 +483,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate
 - iOS 9及以上  ： 支持 UIWebView、WKWebView、SFSafariViewController；
 - iOS12及以上  ： 支持 WKWebView、SFSafariViewController。
 
-# 三、WWDC21 中WKWebView的新增功能
+## WWDC21 中WKWebView的新增功能
 
 根据[Explore WKWebView additions](https://developer.Apple.com/videos/play/wwdc2021/10032/)中解读可以知道，主要新增了以下两点：
 
@@ -496,7 +496,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate
 
 下面针对上述的更新分别进行一一说明。
 
-## 1、SafariServices中的新增
+### SafariServices中的新增
 
 在iOS 15之前，用户始终可以通过`SFSafariViewController`上的共享表运行App的扩展，但是对于App构建的特殊功能，用户很难发现，简单来说就是用户无法知道Safari这个功能是由我们的App提供的，或误认为是Safari自带的。
 
@@ -506,7 +506,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate
 ![10032-01-SafariServices.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624376488375-ae51aee0-5a70-465d-b8ba-ae5816b5f091.png#height=381&id=u9f535560&margin=%5Bobject%20Object%5D&name=10032-01-SafariServices.png&originHeight=792&originWidth=1352&originalType=binary&ratio=1&size=309812&status=done&style=none&width=650)
 主要是通过获取`SFSafariViewController`视图控制器的配置，通过配置中的`activityButton`属性来实现Safari中扩展按钮的自定义。
 
-#### 演示
+##### 演示
 - 前提：创建一个Action Extension
 - 自定义extension按钮
 
@@ -537,7 +537,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
 效果如下所示，右下角的❤就是自定义的扩展按钮
 ![10032-14-customExtension.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624449827394-225e6d0b-5fdb-4ad7-92e7-d1a749bc87f2.png#clientId=ufc08ec57-3c08-4&from=ui&height=599&id=ud104f10e&margin=%5Bobject%20Object%5D&name=10032-14-customExtension.png&originHeight=1010&originWidth=506&originalType=binary&ratio=2&size=461383&status=done&style=none&taskId=u671625ef-0e91-49a9-93fb-4646460bb19&width=300)
 
-## 2、WKWebView中的新增
+### WKWebView中的新增
 
 如果希望与Web内容进行更多的交互，`SFSafariViewController`就不适用了，因为它自身提供的自定义交互有限，适用于简单的交互场景。
 
@@ -548,7 +548,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
 - **与webView交互相关的API**：用于操作和访问web内容，且无需注入JavaScript
 - **Safari浏览器相关的API**：用于访问以前只能在Safari浏览器中使用的功能，从而可以在App中获得更深层次的浏览器体验
 
-### 2-1、与webView交互相关的API
+#### 与webView交互相关的API
 
 在了解新增的的交互API之前，首先需要说明我们为什么需要避免注入JS，有以下几点：
 - 1、JS的注入很复杂，需要在跨越本机和网络之间的界面中注入，不仅`难且繁琐`。
@@ -563,7 +563,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
 - **Manage text interaction**：禁用文本交互的API
 - **Control media playback**：控制web视图中媒体播放的API
 
-#### 2-1-1、Theme Color 主题颜色相关API
+##### Theme Color 主题颜色相关API
 
 在WWDC20中，苹果工程师实现了一个内部App WebKittens，用于浏览cat和dog，今年，工程师希望在WebKittens App中做一些改变，即为App`动态的添加主题颜色`，这个颜色需要随季节为变化，最终的实现效果如下所示  
 ![10032-gif-01-themeColor.gif](https://cdn.nlark.com/yuque/0/2021/gif/1536000/1624379425598-c12932ad-fea0-4ba9-8ca2-2f8fe78fc2aa.gif#clientId=u03326725-b0ec-4&from=ui&id=uc9a5b3fc&margin=%5Bobject%20Object%5D&name=10032-gif-01-themeColor.gif&originHeight=334&originWidth=600&originalType=binary&ratio=2&size=1091744&status=done&style=none&taskId=uf4f57c6d-5cf7-4866-9a30-906c5873a51)
@@ -578,7 +578,7 @@ Tips：
 
 > Tips：经过实际验证，目前Xcode 12 Beta版本中WKWebView并没有`underPageBackgroundColor`这个属性。猜测在正式版本出来后应该会体现，拭目以待吧。
 
-#### 2-1-2、Manage text interaction 文本交互相关API
+##### Manage text interaction 文本交互相关API
 
 苹果工程师闲着没事，在WebKittens和Pups两个App中添加了浏览宠物视频的功能，但是呢，浏览视频的用户反馈在播放视频时，会触发文本交互，严重影响了用户体验。
 
@@ -608,7 +608,7 @@ override func loadView() {
 }
 ```
 
-#### 2-1-3、Control media playback 视频操作相关API
+##### Control media playback 视频操作相关API
 
 在iOS 15以前，如果想在在web视图中暂停或者挂起播放的视频，是需要注入JavaScript且还需要从DOM中获取控制视频的元素，其操作过程非常繁琐。
 
@@ -634,14 +634,14 @@ override func loadView() {
    - 3-2、针对3-1中存在问题情，可以通过调用`setAllMediaPlaybackSuspended`方法来解决，采用这种方式实现的暂停，即使页面刷新后，视频也会保持刷新前的暂停状态，因为这种方式是`直接操作web视图本身的属性`。其效果演示如下：
 ![10032-gif-03-mediaPause-04.gif](https://cdn.nlark.com/yuque/0/2021/gif/1536000/1624381334192-eada666b-a79d-4851-885d-43c8b16032db.gif#clientId=u03326725-b0ec-4&from=ui&id=u51e02f87&margin=%5Bobject%20Object%5D&name=10032-gif-03-mediaPause-04.gif&originHeight=333&originWidth=600&originalType=binary&ratio=2&size=2817205&status=done&style=none&taskId=u33500221-418a-4ddd-b7b9-732637f34ac)
 
-### 2-2、Safari浏览器相关的API
+#### Safari浏览器相关的API
 
 下面主要说说Safari浏览器相关的API，以前我们只能在Safari浏览器中使用Safari提供的功能。现在为了开发者更好的访问Safari浏览器中提供的功能。主要有以下三方面的更新：
 - **Disable HTTPS upgrade**： 禁用HTTPS升级
 - **Control Media capture**： 控制媒体捕获
 - **Manage downloads**： 下载管理
 
-#### 2-2-1、Disable HTTPS upgrade  禁用HTTPS升级
+##### Disable HTTPS upgrade  禁用HTTPS升级
 
 苹果一直致力于在用户的安全和隐私方面下大功夫。目前业界最火的操作是将流量由HTTP转到HTTPS。因为HTTPS是一种更为安全的浏览web网页的方式，可以更好的保护用户隐私。
 
@@ -650,7 +650,7 @@ override func loadView() {
 但是如果开发者想在本地做一些调试，您可以webView的配置中禁用HTTPS的升级，即设置`upgradeKnownHostsToHTTPS`为`false`，具体的代码如下所示：
 ![10032-06-disableHTTPSUpgrade.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624377815943-bc67b594-d74c-4234-b843-8ffb32ccdb1a.png#height=383&id=u148cd1a6&margin=%5Bobject%20Object%5D&name=10032-06-disableHTTPSUpgrade.png&originHeight=796&originWidth=1350&originalType=binary&ratio=1&size=165099&status=done&style=none&width=650)
 
-#### 2-2-2、Control Media capture 控制媒体捕获
+##### Control Media capture 控制媒体捕获
 
 在iOS 14.3中，WKWebView启用了`getUserMedia`，这个功能允许`WebRTC`函数在App中工作。今年又做的更好了，当您在App中需要自定义处理加载的web内容时，可以将App作为用户请求的来源，而不是来源于网站URL的请求。这个功能将使用户的体验更好且无缝衔接App。如果开发者希望用户请求是来自URL，那么只需加载即可，而不用自定义`scheme`处理web内容。以下是拦截scheme处理的演示代码。
 
@@ -690,14 +690,14 @@ func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigatio
 
 以上就针对媒体捕获在WKWebView中新增的API
 
-#### 2-2-3、Manage downloads 管理下载
+##### Manage downloads 管理下载
 
 新的API中主要提供了三种下载文件的方式：
 - web页面启动下载
 - 服务器启动下载
 - App启动下载
 
-##### 2-2-3-1、web页面启动下载
+###### web页面启动下载
 
 web内容启动下载，类似于`JS启动下载`。当执行JS代码时，会启动一个下载导航操作，该操作会调用navigationDelegate的代理方法，在代理方法中将`shouldPerformDownload`设置为`true`，同时需要结合其他逻辑一起来确定是否允许下载文件
 - JS启动下载操作
@@ -732,7 +732,7 @@ func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigatio
 > 参考链接
 > - [Blob-对象介绍](https://zhuanlan.zhihu.com/p/161000123)
 
-##### 2-2-3-2、服务器启动下载
+###### 服务器启动下载
 
 服务器在webView上调用`loadRequest`后，类似于在`HTTP中启动下载`。当发生这种情况时，WKNavigationDelegate的代理方法中的`WKNavigationAction`对象会有一个`Content-Disposition`头字段，其值包含` "attachment"`，当出现这个参数时，就应该在代理方法中返回`WKNavigationActionPolicyDownload`，表示开始下载文件
 - 服务器启动下载
@@ -767,7 +767,7 @@ func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigat
 ```
 
 
-##### 2-2-3-3、App启动下载
+###### App启动下载
 
 App应用程序可以使用`NSURLRequest`在当前页面的上下文中下载某些内容
 ![10032-12-downloadFromApp.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624378822437-a166bb15-03e0-4f0d-a18e-1f5331da31fd.png#clientId=u03326725-b0ec-4&from=ui&height=380&id=u4d2192f7&margin=%5Bobject%20Object%5D&name=10032-12-downloadFromApp.png&originHeight=792&originWidth=1354&originalType=binary&ratio=2&size=238098&status=done&style=none&taskId=u40b7353b-1192-4727-b871-2c5c13b04b2&width=650)
@@ -791,7 +791,7 @@ download.delegate = self
 
 以上就是Safari浏览器相关的API，这些API为用户提供了更多的选择性，让App拥有更好的网络体验。
 
-# 四、总结
+## 总结
 
 综上所述，在iOS 15中新增的API主要有以下：
 ![iOS 15 WKWebView新增功能.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624428188156-50e90d56-021f-4c65-ba64-d5a943456ab5.png#clientId=u04b88f42-3b8f-4&from=ui&id=u7a20433b&margin=%5Bobject%20Object%5D&name=iOS%2015%20WKWebView%E6%96%B0%E5%A2%9E%E5%8A%9F%E8%83%BD.png&originHeight=2192&originWidth=3245&originalType=binary&ratio=2&size=694678&status=done&style=none&taskId=u66bff002-1350-49ab-97e5-c68b1ba8695)
