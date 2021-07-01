@@ -4,11 +4,12 @@
 
 ## 本文知识目录
 
-![10019-01-table](https://images.xiaozhuanlan.com/photo/2021/75781e66f98d60d5869160b896664c33.png)
+![Build SwiftUI views for widgets](https://gitee.com/looseyi/blog-image/raw/master/uPic/10019-Discover-concurrency-in-SwiftUI.png)
 
 本文属于 WWDC21 中 SwiftUI 与 Concurrency 结合应用的文章。
 
 关于 SwiftUI 可以查看这篇介绍：[Introduction to SwiftUI](https://wwdc.io/share/wwdc20/10119)，而 Swift Concurrency 算是今年 WWDC 的重头戏，从使用层面来看，就是引入了 [Async / Await](https://developer.apple.com/videos/play/wwdc2021/10132/) 这一语法，但是解决的却是软件工程中最令人头疼的问题之一。
+接下来让我们看看 Concurrency 新工具是如何与 SwiftUI 结合的。
 
 > Tips：文末有示例代码地址。
 
