@@ -565,12 +565,34 @@ extension BackgroundURLSession : URLSessionDownloadDelegate {
 
 ## Sockets
 
-Sockets 是直接与服务器通信的另一个选项。在具体实际中主要使用以下两种技术方案：
+Sockets 是直接与服务器通信的另一个选项。Socket 并不是一个具体的网络协议，它只是一个网络技术接口的封装规范。
+
+那么在 iOS 上，我们可以通过 NSURLSession 中 API 进行使用。现在，在我们的 Watch 平台上，一样是通过 NSURLSession 进行使用。
+
+在实际应用中，一般使用下面两种技术能力：
 
 * HLS
 * Web Sockets
 
-此 Session 种就不再进行详细的介绍了。有关 Socket 的更多相关资料，请查看 "[Streaming Audio on watchOS 6](https://developer.apple.com/wwdc19/716)"。
+Web Sockets 相信大家都很熟悉，主要是用来建立长链接。iPhone 的 Push 其实就是一个长链接。
+
+但是对于 HLS 可能会比较陌生，其实 HLS 就是 Watch 支持的一种音频流播放格式。
+
+![HLS 音频流格式](https://cdn.nlark.com/yuque/0/2021/png/269131/1625148921329-2f9ddd6d-f8cf-49ef-8c60-9b79dd62c167.png)
+
+主要是为了解决在 Watch 上进行媒体播放的问题。
+
+下图是说明我们使用 HLS 或自定义媒体流格式，在技术上大概是怎样的位置。
+
+![HLS 技术框架位置](https://cdn.nlark.com/yuque/0/2021/png/269131/1625148988477-175ab509-6488-411c-b3d7-88d82dad6d45.png)
+
+![Audio Stream 技术框架位置](https://cdn.nlark.com/yuque/0/2021/png/269131/1625149007940-bfc018d7-fc53-4ad3-8817-fd3c85a326c5.png)
+
+HLS 主要是封装在 AVFoundation 中，具体的一些 API，在这里不进行更多的阐述。
+
+Audio Stream 则可以借助 NSURLSession 中的 Stream 类 API 实现数据传输，更多 API 请自行查看 SDK 中相关文档。
+
+有关 Watch 上音频流的更多相关资料，请查看 "[Streaming Audio on watchOS 6](https://developer.apple.com/wwdc19/716)"。
 
 ## 小结
 
