@@ -227,7 +227,7 @@
 
 可以使用新 API   [AVAssetReaderOutputCaptionAdaptor](https://developer.apple.com/documentation/avfoundation/avassetreaderoutputcaptionadaptor?language=o_5) 来读取字幕，它允许我们从字幕文件中读出 ``AVCaption`` 对象：
 
-![](https://images.xiaozhuanlan.com/photo/2021/4328db3224838b48aa3ff885111c4905.png)
+![](https://images.xiaozhuanlan.com/photo/2021/88949756f6f272e5d5c4874be1c4cba4.png)
 
 
 除此之外，还有 [AVCaptionRenderer](https://developer.apple.com/documentation/avfoundation/avcaptionrenderer)  类，它允许我们获取单个字幕或一组字幕并将它们渲染到 CGContext 预览它们在播放期间的外观。
