@@ -1,5 +1,9 @@
 # WWDC21 10032 - Explore WKWebView additions 探索 WKWebView 新增功能
 
+本文目录
+
+[TOC]
+
 本文主要是根据 WWDC21 中的 [Explore WKWebView additions - session 10032](https://developer.Apple.com/videos/play/wwdc2021/10032/) 撰写，主要讲解 WKWebView 在 iOS 15 中新增的功能。
 
 ## 引言
@@ -507,7 +511,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate
 ![10032-01-SafariServices.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624376488375-ae51aee0-5a70-465d-b8ba-ae5816b5f091.png#height=381&id=u9f535560&margin=%5Bobject%20Object%5D&name=10032-01-SafariServices.png&originHeight=792&originWidth=1352&originalType=binary&ratio=1&size=309812&status=done&style=none&width=650)
 主要是通过获取 `SFSafariViewController` 视图控制器的配置，通过配置中的 `activityButton` 属性来实现 Safari 中扩展按钮的自定义。
 
-##### 演示
+**演示**
 - 前提：创建一个 Action Extension
 - 自定义 extension 按钮
 
