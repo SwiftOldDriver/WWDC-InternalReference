@@ -225,9 +225,43 @@ Auth | {CertificateVerify*}
 
 ![eliminate round trip times.png](https://cdn.nlark.com/yuque/0/2021/png/21929876/1624593463017-b3c5c231-e219-494a-b03f-89141e499007.png#clientId=uaf4b4a10-7211-4&from=drop&id=u6bf53921&margin=%5Bobject%20Object%5D&name=eliminate%20round%20trip%20times.png&originHeight=1546&originWidth=2748&originalType=binary&ratio=2&size=268913&status=done&style=none&taskId=u2587277c-01d8-43cf-a764-ff654fc7467)
 
+发出请求到收到数据产生的 `RTT` 次数如下：
+
+`TLS1.2 over TCP`           ： 4次
+
+`TLS1.3 over TCP`           ： 4次
+
+`TLS1.2 over TCP Fast Open` ： 1-2 次
+
+`HTTP3/QUIC`                ： 1-2次
 
 其中 `TLS 1.3 over TCP Fast Open` 和 `HTTP3/QUIC` 效果最明显，相比 `TLS 1.2 over TCP` 可以节省一半以上的 `RTT` 次数。
 <br>
+
+## 应用现状
+
+由于低版本的 `TLS` 有诸如 [POODLE](https://en.wikipedia.org/wiki/Transport_Layer_Security#POODLE_attack) 和 [BEAST](https://en.wikipedia.org/wiki/Transport_Layer_Security#BEAST_attack) 等严重漏洞， 所以 `TLS1.0/1.1` 逐渐被各大浏览器停用，目前应用最广泛的是 `TLS1.2`。 
+
+#### 苹果与 `TLS1.2`
+
+根据[官网介绍](https://support.apple.com/zh-cn/guide/deployment-reference-ios/apd1775f8cbb/web)介绍，iOS 11 或更高版本、iPadOS 13.1 或更高版本和 macOS 10.13 或更高版本在 802.1X 认证中增加了 TLS 1.2 支持。
+
+#### 苹果与 `TLS1.3`
+
+去年的 [WWDC20 10111 - 探索现代的移动网络](https://xiaozhuanlan.com/topic/5437168290#sectiontls13) 提到，在 iOS 12 和 macOS Mojave 中，提供了 TLS1.3 的预览，可以在其中启用 TLS 1.3 标准的初始版本，并针对服务器部署对其进行测试，并且自 iOS 13.4 起 URLSession 和 Network.framework 默认启用 TLS 1.3。
+
+#### 苹果与 `TCP Fast Open`
+
+从 [API-enablefastopen](https://developer.apple.com/documentation/network/nwprotocoltcp/options/2998777-enablefastopen) 可以看出， `TFO` 在 iOS 12.0+ 和 macOS macOS 10.14+ 开始支持。
+和 `TLS` 不一样，`TFO` 默认是关闭的，是因为 `TFO` 目前还存在一些问题，比如：
+
+1.根据 [shadowsocks-libev](https://github.com/shadowsocks/shadowsocks-libev/issues/1669) 的反馈，`TFO` 在中国移动数据网络下不能正常工作，而且长城防火墙会识别和丢弃	`TFO` 的包。
+
+2.已经在 `TCP` 存在的 [SYN-flood Attack](https://en.wikipedia.org/wiki/SYN_flood) 在开启 `TFO` 情况下，会更糟糕，如下:
+
+![](https://cdn.nlark.com/yuque/0/2021/png/21929876/1625306137752-bee9cbad-14a8-48a2-a6b4-a4407d37b67e.png?x-oss-process=image%2Fresize%2Cw_1496)
+
+和传统 `TCP` 相比，开启 `TFO` 时，`SYN-flood Attack` 会让 `Server` 资源被攻击耗尽。所以需要谨慎使用 `TFO`。
 
 
 ## 减少单次 Round Trip Time
