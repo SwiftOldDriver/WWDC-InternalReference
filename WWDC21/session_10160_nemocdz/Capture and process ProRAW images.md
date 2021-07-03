@@ -33,7 +33,7 @@ RAW：
 
 ### 兼容性
 
-容器是标准的 [Adobe DNG](https://helpx.adobe.com/cn/photoshop/digital-negative.html) 文件
+ProRaw 采用标准的 [Adobe DNG](https://helpx.adobe.com/cn/photoshop/digital-negative.html) 文件格式进行存储。DNG 是一种兼容多家相机厂商 Raw 格式转换的公开通用标准格式，兼容性很好：
 
 1. 软件支持：大部分修图软件，例如 Adobe Lightroom 等都支持
 2. 开发支持：Apple 的 ImageIO 和 Core Image 框架都支持处理
