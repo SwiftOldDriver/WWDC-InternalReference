@@ -48,9 +48,9 @@ PHASE 主要给开发者带来了 「几何感知（Geometry-aware）」 和 「
 
 PHASE 引入了**体积声源**的概念，**声音源可以是几何形状的物体，遮挡物也可以是几何形状的物体**，并且可以设置遮挡物的声学材料属性。PHASE 还允许你**为声音源设置距离模型和方向模型**。你还可以从预设库中选择**「早期反射」和「后期混响」等属性模拟声音碰到遮挡物时的效果**。一旦你告诉框架各种声源、遮挡物和听者在哪里，PHASE 将帮助你完成繁重的工作，并为你模拟场景中各种声源的遮挡和传播效果。这样你的应用程序的音频系统就是几何感知的，它可以很快地适应视觉场景的变化。
 
-> [距离模型延伸阅读](https://www.52vr.com//extDoc/ue4/CHN/Engine/Audio/DistanceModelAttenuation/index.html)
-> [早起反射](https://www.sweetwater.com/insync/early-reflections/)：被墙壁、天花板等遮挡物反射一两次后到达听众的声音。
-> [混响](https://baike.baidu.com/item/%E6%B7%B7%E5%93%8D/480460)：当声源停止发声后，声波在室内要经过多次反射和吸收，最后才消失，我们就感觉到声源停止发声后还有若干个声波混合持续一段时间。
+> 1. [距离模型延伸阅读](https://www.52vr.com//extDoc/ue4/CHN/Engine/Audio/DistanceModelAttenuation/index.html)
+> 2. [早起反射](https://www.sweetwater.com/insync/early-reflections/)：被墙壁、天花板等遮挡物反射一两次后到达听众的声音。
+> 3. [混响](https://baike.baidu.com/item/%E6%B7%B7%E5%93%8D/480460)：当声源停止发声后，声波在室内要经过多次反射和吸收，最后才消失，我们就感觉到声源停止发声后还有若干个声波混合持续一段时间。
 
 
 
