@@ -242,8 +242,8 @@ pop-page 在 Mac 与手机上表现不一致，这一点也需要注意，手机
 
 ### 参考
 
-[demo code](https://developer.apple.com/documentation/safariservices/safari_web_extensions/adopting_new_safari_web_extension_apis)
+https://developer.apple.com/documentation/safariservices/safari_web_extensions/adopting_new_safari_web_extension_apis
 
-[video](https://developer.apple.com/videos/play/wwdc2021/10104/)
+https://developer.apple.com/videos/play/wwdc2021/10104/
 
-[mdn browser extension](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions)
+https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions
