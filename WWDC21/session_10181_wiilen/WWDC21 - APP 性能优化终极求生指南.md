@@ -12,7 +12,7 @@
 
 ![性能优化求生之路](https://images.xiaozhuanlan.com/photo/2021/04206fddc42c645105cd7d488e61d7a5.png)
 
-目前有八个关键的指标用于衡量 App 的性能：电量使用情况、启动时间、无响应比例、内存使用情况、磁盘读写、滑动流畅性、应用终止、MXSignposts，这些都有工具可以追踪。
+目前有八个关键的指标用于衡量 App 的性能：电量使用情况、启动时间、卡顿比例、内存使用情况、磁盘读写、滑动流畅性、应用终止、MXSignposts，这些都有工具可以追踪。
 
 ![八个优化方向](https://images.xiaozhuanlan.com/photo/2021/7707d2d844b2f560abd47e0bdfbad4a3.png)
 
@@ -63,7 +63,7 @@ class AppMetrics: MXMetricManagerSubscriber {
 
 > 苹果在 20 年时对 MetricKit 做了一次升级，相关 Session「[What's new in MetricKit](https://developer.apple.com/videos/play/wwdc2020/10081/)」中对 `MetricKit` 做了一些相对完整的说明，有兴趣的读者可以阅读。也可以看看 20 年内参的翻译 「[WWDC20 10081 - MetricKit 中的新功能](https://xiaozhuanlan.com/topic/3572084169)」。
 >
-> 简单来说，每 24 个小时，`MetricKit` 会将性能数据收集，然后打包上传到服务器，我们能拿到可读性更高的数据。这些性能数据被包在 `MXDiagnosticPayload` 中，包括电池相关指标（CPU、网络状态、GPU、定位）、性能指标（应用退出原因、启动耗时、内存使用情况）、用户交互相关指标（Hitch、无响应情况）、磁盘写入指标、自定义指标（`MXSignpost` 打点的指标）。
+> 简单来说，每 24 个小时，`MetricKit` 会将性能数据收集，然后打包上传到服务器，我们能拿到可读性更高的数据。这些性能数据被包在 `MXDiagnosticPayload` 中，包括电池相关指标（CPU、网络状态、GPU、定位）、性能指标（应用退出原因、启动耗时、内存使用情况）、用户交互相关指标（Hitch、卡顿情况）、磁盘写入指标、自定义指标（`MXSignpost` 打点的指标）。
 
 ![Organizer - Metrics - Battery Usage](https://images.xiaozhuanlan.com/photo/2021/cde94711c8fe849cd99827b27de47ea6.png)
 
@@ -81,11 +81,13 @@ class AppMetrics: MXMetricManagerSubscriber {
 >
 > ![HTTP 流量分析 Instrument](https://images.xiaozhuanlan.com/photo/2021/abf84663c9e7d753682b5076ac09876b.png)
 
-## 无响应和滑动流畅性
+## 卡顿和滑动流畅性
 
-下一步是关于无响应和滑动流畅性的，这两项指标表示 App 是否还响应操作。无响应指的是 App 不响应用户的操作至少 250ms。App 无响应会导致用户强杀 App，对用户体验损害极大，需要优先处理。如果新一帧的内容在下一次刷新时还没准备好，就会发生滑动卡顿。卡顿也会让用户用的难受，从而减少使用时间，从卡顿开始优化性能，性价比较高。
+> 这里的卡顿原文中用词是 Hang，代表的是超过 250ms App 不响应用户操作。超过 250ms 这个范围有些大，从上下文的联系中（指滑动流畅性）看，会更倾向于是和用户交互相关的描述，所以这里使用了「卡顿」这个翻译。
 
-还记得我们之前展现过的流畅滑动吗？追求这样的体验也是对用户最有帮助的。在 Xcode Organizer 中，我们能够跟踪无响应和滑动流畅性的相关指标。如果注意到指标在持续上涨，或者像在滑动 Hitches 的页面中看到指标变黄或变红，那就需要更关注这方面的优化了。
+下一步是关于卡顿和滑动流畅性的，这两项指标表示 App 是否还响应操作。卡顿指的是 App 不响应用户的操作至少 250ms。App 长时间的卡顿会导致用户强杀 App，对用户体验损害极大，需要优先处理。如果新一帧的内容在下一次刷新时还没准备好，就会发生滑动卡顿。卡顿也会让用户用的难受，从而减少使用时间，从卡顿开始优化性能，性价比较高。
+
+还记得我们之前展现过的流畅滑动吗？追求这样的体验也是对用户最有帮助的。在 Xcode Organizer 中，我们能够跟踪卡顿和滑动流畅性的相关指标。如果注意到指标在持续上涨，或者像在滑动 Hitches 的页面中看到指标变黄或变红，那就需要更关注这方面的优化了。
 
 > 苹果在 20 年的 Session 中提出了 Hitch 的概念，用以衡量滑动时的卡顿情况。Hitch 指的是 卡顿时间（一帧延后出现的时间，ms）/ 总时间（一般是 1 秒），低于 5 ms/s 说明比较优秀，高于 10 ms/s 说明发生了较严重的卡顿。
 
@@ -109,7 +111,7 @@ class AppMetrics: MXMetricManagerSubscriber {
 
 ![MetricKit Payload 实时更新](https://images.xiaozhuanlan.com/photo/2021/c333c271a2b97d99c443eaf033fa1ed4.png)
 
-有时候想要重现响应性相关的问题并不简单，得益于 `MetircKit`，将它接入 App 后，我们可以在这些问题发生时收集测试和诊断结果。如果发生了无响应的情况，在 iOS 14 中，`MetricKit` 会在 24 小时内收集这些诊断信息。而在 iOS 15 和 macOS 12 中，能在性能问题出现时，马上获得诊断信息。结合这些实时的诊断信息以及测试技术，开发者就能快速定位并解决最严重的响应性问题。而对于滑动卡顿问题，iOS 15 在 `MetricKit` 中引入了新的 API，用 `MXSignpost` 来标记自定义动画。`MXSignpost` 是 `MetricKit` 中封装的 API，用于标记重要代码，以供远程收集数据。
+有时候想要重现响应性相关的问题并不简单，得益于 `MetircKit`，将它接入 App 后，我们可以在这些问题发生时收集测试和诊断结果。如果发生了卡顿的情况，在 iOS 14 中，`MetricKit` 会在 24 小时内收集这些诊断信息。而在 iOS 15 和 macOS 12 中，能在性能问题出现时，马上获得诊断信息。结合这些实时的诊断信息以及测试技术，开发者就能快速定位并解决最严重的响应性问题。而对于滑动卡顿问题，iOS 15 在 `MetricKit` 中引入了新的 API，用 `MXSignpost` 来标记自定义动画。`MXSignpost` 是 `MetricKit` 中封装的 API，用于标记重要代码，以供远程收集数据。
 
 ![MetricKit Animation 信息收集 API](https://images.xiaozhuanlan.com/photo/2021/53447998344db9dcab21edd4e3fbf0cd.png)
 
@@ -117,9 +119,9 @@ class AppMetrics: MXMetricManagerSubscriber {
 
 ## 磁盘写入
 
-我们已经走完了半程，接下来讨论的是磁盘写入问题。磁盘写入操作会磨损用户的闪存，导致设备性能变差。频繁的写入耗时严重，会导致糟糕的用户体验及较差的性能，最好能分批进行写入操作。
+我们已经走完了半程，接下来讨论的是磁盘写入问题。磁盘写入操作会损耗用户的闪存，影响设备的使用寿命。频繁的写入耗时严重，会导致糟糕的用户体验及较差的性能，最好能分批进行写入操作。
 
-在 App 上线前，可以用 Instruments 中的 File Activity 模版分析是否有相关问题。这个模版以系统调用的形式记录文件系统的使用情况，因此可以轻松定位到哪些代码访问了文件系统。有很多办法限制磁盘写入，常见的比如批量处理写入操作、使用 CoreData 来存储频繁更改的数据、避免重复创建和删除文件。
+在 App 上线前，可以用 Instruments 中的 File Activity 模版分析是否有相关问题。这个模版以系统调用的形式记录文件系统的使用情况，因此可以轻松定位到哪些代码访问了文件系统。有很多办法限制磁盘写入，常见的比如批量处理写入操作、使用 CoreData 来存储频繁更改的数据、避免快速创建和删除文件。
 
 ![磁盘写入性能测试](https://images.xiaozhuanlan.com/photo/2021/5b14dece284240bdd6e42f428a16454c.png)
 
