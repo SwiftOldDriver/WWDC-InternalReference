@@ -10,6 +10,6 @@ DSL 全称是 **Domain-Specific Language**，中文翻译为**领域特定语言
 
 ## About Me
 
-> 作者：jojotov, iOS 开发，SwiftGG 翻译组成员，目前任职字节跳动，负责抖音直播客户端相关工作。
+> 作者：冬瓜, iOS 开发，SwiftGG 翻译组成员。公众号[「一瓜技术」](https://www.desgard.com/qrcode)作者。
 >
 > 审核：刘鹏
