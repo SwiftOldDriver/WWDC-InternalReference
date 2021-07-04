@@ -23,7 +23,7 @@
 
 ![](https://images.xiaozhuanlan.com/photo/2021/81eb76b69826ec2d8dcc55b023bca781.png)
 
-可以通过设置属性 ``canStartPictureInPictureAutomaticallyFromInline``s  = true来实现：
+可以通过设置属性 ``canStartPictureInPictureAutomaticallyFromInline``  = true来实现：
 
 ![](https://images.xiaozhuanlan.com/photo/2021/946cb28507807021073129a673dc5666.png)
 
