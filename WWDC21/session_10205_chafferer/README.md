@@ -1,7 +1,5 @@
 ### About Me
-作者：Chafferer，目前就职于百度 App 基础研发团队，从事百度 App iOS CI/CD 相关方向的工作，主要维护 EasyBox。
-
-审核：暂无
+作者：Chafferer，目前就职于百度 App 基础研发团队，从事 CI/CD 相关方向的工作。
 
 ### 标题
 
