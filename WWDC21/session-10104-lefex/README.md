@@ -2,7 +2,7 @@
 
 作者：素燕(Lefex)，毒舌程序员，擅长 iOS 与前端开发，正在写 [前端小课](https://lefex.gitee.io/)，[GitHub](https://github.com/lefex)
 
-审核：待确认
+审核：刘栋，iOS 工程师，老司机技术周报编辑，就职于丁香园，熟悉音视频、图像处理相关
 
 ### 标题
 
