@@ -24,7 +24,7 @@
 
 在当今的游戏中，游戏引擎的各种子系统，如物理、动画、视觉效果等，都是根据玩家的行为而发生变化，推动游戏情节向前发展。
 
-然而，音频子系统通常与其余部分是分开管理和驱动的。**音频资源通常是后期制作、预先处理、手动调整的**，随着视觉效果的变化，音频关资源需要再生，这会导致**音频体验落后于游戏的视觉方面**。于是 Apple 团队带来新的音频框架 PHASE，用 PHASE 探索「几何感知」的音频体验，解决音频资源后期制作的痛点。
+然而，音频子系统通常与其余部分是分开管理和驱动的。**音频资源通常是后期制作、预先处理、手动调整的**，随着视觉效果的变化，音频相关资源需要再生，这会导致**音频体验落后于游戏的视觉方面**。于是 Apple 团队带来新的音频框架 PHASE，用 PHASE 探索「几何感知」的音频体验，解决音频资源后期制作的痛点。
 
 
 
@@ -46,10 +46,10 @@ PHASE 主要给开发者带来了 「几何感知（Geometry-aware）」 和 「
 
 ![10079-05-geometry-intergration-and-volumetric-sounds](https://gitee.com/jimbabydev/blog-image/raw/master/uPic/10079-05-geometry-intergration-and-volumetric-sounds.png)
 
-PHASE 引入了**体积声源**的概念，**声音源可以是几何形状的物体，遮挡物也可以是几何形状的物体**，并且可以设置遮挡物的声学材料属性。PHASE 还允许你**为声音源设置距离模型和方向模型**。你还可以从预设库中选择**「早期反射」和「后期混响」等属性模拟声音碰到遮挡物时的效果**。一旦你告诉框架各种声源、遮挡物和听者在哪里，PHASE 将帮助你完成繁重的工作，并为你模拟场景中各种声源的遮挡和传播效果。这样你的应用程序的音频系统就是几何感知的，它可以很快地适应视觉场景的变化。
+PHASE 引入了**体积声源**的概念，**声音源可以是几何形状的物体，遮挡物也可以是几何形状的物体**，并且可以设置遮挡物的声学材料属性。PHASE 还允许你**为声音源设置距离模型和方向模型**。你还可以从预设库中选择 [早期反射](https://www.sweetwater.com/insync/early-reflections/) 和后期 [混响](https://baike.baidu.com/item/%E6%B7%B7%E5%93%8D/480460) 等属性模拟声音碰到遮挡物时的效果。一旦你告诉框架各种声源、遮挡物和听者在哪里，PHASE 将帮助你完成繁重的工作，并为你模拟场景中各种声源的遮挡和传播效果。这样你的应用程序的音频系统就是「几何感知」的，它可以很快地适应视觉场景的变化。
 
 > 1. [距离模型延伸阅读](https://www.52vr.com//extDoc/ue4/CHN/Engine/Audio/DistanceModelAttenuation/index.html)
-> 2. [早起反射](https://www.sweetwater.com/insync/early-reflections/)：被墙壁、天花板等遮挡物反射一两次后到达听众的声音。
+> 2. [早期反射](https://www.sweetwater.com/insync/early-reflections/)：被墙壁、天花板等遮挡物反射一两次后到达听众的声音。
 > 3. [混响](https://baike.baidu.com/item/%E6%B7%B7%E5%93%8D/480460)：当声源停止发声后，声波在室内要经过多次反射和吸收，最后才消失，我们就感觉到声源停止发声后还有若干个声波混合持续一段时间。
 
 
@@ -145,7 +145,7 @@ PHASE API 可以分为三个主要概念：
 
 ![10079-15-sampler-node](https://gitee.com/jimbabydev/blog-image/raw/master/uPic/10079-15-sampler-node.png)
 
-`采样器节点（Sampler Nodes）` 是 `生成器节点（Generator Nodes）` 的一种类型，负责播放已注册的 `声音资源（Sound Event）`，你也可以设置一些基本属性，使其正确播放。`播放模式（Playback Mode）` 决定音频文件将如何播放，`OneShot` 表示音频文件播放一次将自动停止，`looping` 表示音频文件将无限期播放。`剔除选项（Cull Option）` 控制 PHASE 当声音变得听不见时该做什么，`terminate` 表示声音将在听不见时自动停止，`sleep` 表示声音将在听不见时停止渲染，并在听得到时再次开始渲染。`校准级别（Calibration level）` 设置真实环境中 SPL 的级别，以分贝为单位。
+`采样器节点（Sampler Nodes）` 是 `生成器节点（Generator Nodes）` 的一种类型，负责播放已注册的 `声音资源（Sound Event）`，你也可以设置一些基本属性，使其正确播放。`播放模式（Playback Mode）` 决定音频文件将如何播放，`OneShot` 表示音频文件播放一次将自动停止，`looping` 表示音频文件将无限期播放。`剔除选项（Cull Option）` 控制 PHASE 当声音变得听不见时该做什么，`terminate` 表示声音将在听不见时自动停止，`sleep` 表示声音将在听不见时停止渲染，并在听得到时再次开始渲染。`校准级别（Calibration level）` 设置真实环境中 [SPL](https://en.wikipedia.org/wiki/Sound_pressure#Sound_pressure_level) 的级别，以分贝为单位。
 
 > [SPL](https://en.wikipedia.org/wiki/Sound_pressure#Sound_pressure_level)：声音相对于参考值的有效压力的对数测度。
 
@@ -172,11 +172,11 @@ PHASE API 可以分为三个主要概念：
 
 ![10079-19-blend-node](https://gitee.com/jimbabydev/blog-image/raw/master/uPic/10079-19-blend-node.png)
 
-`混合节点（Blend Node）` 基于参数值在其子节点之间混合。上图例子中，你可以为 `混合` 节点分配一个湿度参数，将得到一个 `Footstep` 和 `Splash` 节点混合的效果。
+`混合节点（Blend Node）` 基于参数值在其子节点之间混合。上图例子中，你可以为 `混合节点` 分配一个湿度参数，将得到一个 `Footstep` 和 `Splash` 节点混合的效果。
 
 ![10079-20-container-node](https://gitee.com/jimbabydev/blog-image/raw/master/uPic/10079-20-container-node.png)
 
-`容器节点（Container Node）` 同时播放其所有子节点。上图例子中，你可以有一个播放脚步声的采样器，另一个是播放衣服声音的采样器，每次触发 `容器` 节点时，两个采样器节点都会同时播放。
+`容器节点（Container Node）` 同时播放其所有子节点。上图例子中，你可以有一个播放脚步声的采样器，另一个是播放衣服声音的采样器，每次触发 `容器节点` 时，两个采样器节点都会同时播放。
 
 
 
@@ -204,7 +204,7 @@ PHASE API 可以分为三个主要概念：
 
 ![10079-23-ambient-mixer](https://gitee.com/jimbabydev/blog-image/raw/master/uPic/10079-23-ambient-mixer.png)
 
-`环境混音器（Ambient Mixers）` 渲染音频可以有环绕声的效果，但是没有「几何感知」的真实音频空间模拟能力。举个例子，当听者转动他们的头部时，声音还是继续来自空间中相同的相对位置。`环境混音器` 主要用于多声道音频，这里的多声道音频指的是音频不是在真实环境中模拟的，但是有一种来自太空某处的感觉，举个例子，蟋蟀在大森林中鸣叫的背景。另外，如果对沉浸式音乐感兴趣的话，可以详细看看 [Session 10265 - Immerse your app in spatial audio](https://developer.apple.com/videos/play/wwdc2021/10265/)。
+`环境混音器（Ambient Mixers）` 渲染音频可以有环绕声的效果，但是没有「几何感知」的真实音频空间模拟能力。举个例子，当听者转动他们的头部时，声音还是继续来自空间中相同的相对位置。`环境混音器` 主要用于 [多声道音频](https://baike.baidu.com/item/%E5%A4%9A%E5%A3%B0%E9%81%93%E9%9F%B3%E9%A2%91)，这里的多声道音频指的是音频不是在真实环境中模拟的，但是有一种来自太空某处的感觉，举个例子，蟋蟀在大森林中鸣叫的背景。另外，如果对沉浸式音乐感兴趣的话，可以详细看看 [Session 10265 - Immerse your app in spatial audio](https://developer.apple.com/videos/play/wwdc2021/10265/)。
 
 > [多声道音频](https://baike.baidu.com/item/%E5%A4%9A%E5%A3%B0%E9%81%93%E9%9F%B3%E9%A2%91)：一种音频放音系统，可以处理若干个（通常多于两个）声道的声音。
 
@@ -216,8 +216,8 @@ PHASE API 可以分为三个主要概念：
 
 `空间化混音器（Spatial Mixers）` 的特性主要体现在三个方面：
 
-1. 「全部的空间化能力」：当声源相对于听者移动时，你听到声音的来源位置、分贝数以及频率的变化都是基于声相、「距离建模」和「方向性建模」算法的。
-2. 「几何感知的环境效果」：在声音源和听者之间的路径上，将使用几何感知环境的效果
+1. 「全部的空间化能力」：当声源相对于听者移动时，你听到声音的来源位置、分贝数以及频率的变化都是基于 [声相](https://en.wikipedia.org/wiki/Panning_(audio))、「距离建模」和「方向性建模」算法的。
+2. 「几何感知的环境效果」：在声音源和听者之间的路径上，将使用几何感知环境的效果，支持 `直接路径传输（Direct Path Transmission）`、`早期反射（Early Reflections）` 和 `后期混响（Late Reverb）` 三种环境效果。
 3. 「环绕声的效果」：和 `环境混音器（Ambient Mixers）` 一样，音频有一种来自太空某处的感觉。
 
 > [声相](https://en.wikipedia.org/wiki/Panning_(audio))：声相是将声音信号（单声道或立体声对）分配到由声相控制设置确定的新立体声或多声道声场中。
@@ -236,7 +236,7 @@ PHASE API 可以分为三个主要概念：
 
 ![10079-26-spatial-mixer-directivity-models](https://gitee.com/jimbabydev/blog-image/raw/master/uPic/10079-26-spatial-mixer-directivity-models.png)
 
-对于点声源而言，`空间化混音器` 支持两种不同的方向建模算法。一种是心脏曲线形方向建模，做一些简单的修改，你可以用这种模型来模拟人类说话的声音，或者用 [hyper-cardioid](https://mynewmicrophone.com/what-is-a-hypercardioid-microphone-polar-pattern-mic-examples/) 模式来模拟声学弦乐器的声音。另一种是 `锥形方向建模`，这种经典模式允许你将方向性过滤限制在特定的旋转范围内。
+对于点声源而言，`空间化混音器` 支持两种不同的方向建模算法。一种是 [心脏曲线形](https://baike.baidu.com/item/%E5%BF%83%E8%84%8F%E7%BA%BF/10323843?fromtitle=%E5%BF%83%E5%BD%A2%E7%BA%BF&fromid=10018818) 方向建模，做一些简单的修改，你可以用这种模型来模拟人类说话的声音，或者用 [hyper-cardioid](https://mynewmicrophone.com/what-is-a-hypercardioid-microphone-polar-pattern-mic-examples/) 模式来模拟声学弦乐器的声音。另一种是 `锥形方向建模`，这种经典模式允许你将方向性过滤限制在特定的旋转范围内。
 
 > [心脏曲线形](https://baike.baidu.com/item/%E5%BF%83%E8%84%8F%E7%BA%BF/10323843?fromtitle=%E5%BF%83%E5%BD%A2%E7%BA%BF&fromid=10018818)：是一个圆上的固定一点在它绕着与其相切且半径相同的另外一个圆周滚动时所形成的轨迹，因其形状像心形而得名。
 
@@ -264,8 +264,6 @@ PHASE API 可以分为三个主要概念：
 
 `后期混响（Late Reverb）` 提供环境的声音，这是漫射散射能量的密集聚集，汇聚成空间的最终听觉表现，除了提供空间大小和形状的感觉，它还会给你一种包围感。
 
-当目前为止，我们已经介绍了 PHASE `引擎`、`节点` 和 `混音器` 背后的概念，是时候将这些概念与一些示例结合起来了。
-
 
 
 ### 小结
@@ -284,13 +282,15 @@ PHASE API 可以分为三个主要概念：
     2. `环境混音器（Ambient Mixers）`：渲染音频时有环绕声的效果，但是没有「几何感知」的真实音频空间模拟能力。
     3. `空间化混音器（Spatial Mixers）`：渲染音频时既有环绕声的效果，又有「几何感知」的真实音频空间模拟能力。拥有「距离建模」和「方向建模」能力，以及支持 `直接路径传输（Direct Path Transmission）`、`早期反射（Early Reflections）` 和 `后期混响（Late Reverb）` 三种环境效果。
 
+当目前为止，我们已经介绍了 PHASE `引擎`、`节点` 和 `混音器` 背后的概念，是时候将这些概念与一些示例结合起来了。
+
 
 
 ## Sample use cases
 
 ![10079-31-three-examples-intro](https://gitee.com/jimbabydev/blog-image/raw/master/uPic/10079-31-three-examples-intro.png)
 
-在本节中，我将介绍怎样实现**播放音频文件**、**构建空间音频体验**和**构建行为声音事件**。这三个 Demo，都极具代表性，可以让你更加了解 PHASE 的主要功能，开始的例子会简单一些，越往后的例子就越深入，也越有趣。
+在本节中，我将介绍怎样实现 **「播放一个音频文件」**、**「构建一个空间化的音频体验」** 和 **「构建一个行为声音事件」**。这三个 Demo，都极具代表性，可以让你更加了解 PHASE 的主要功能，开始的例子会简单一些，越往后的例子就越深入，也越有趣。
 
 
 
@@ -303,8 +303,6 @@ PHASE API 可以分为三个主要概念：
 3. 创建 `声音事件实例（Sound Event）`，并开始播放。
 4. 清理和销毁引擎。
 
-下面让我讲讲详细的过程和实现：
-
 
 
 **步骤一：创建 PHASE 引擎，并注册 `声音资源`**
@@ -313,7 +311,7 @@ PHASE API 可以分为三个主要概念：
 
 首先，我们需要创建一个 PHASE 引擎实例。我们通过 `PHASEEngine` 类初始化一个实例，这边我选择了 `automatic` 更新模式，一般我们首选这个模式，如果游戏需要更精确地与帧更新同步时，可以选择 `manual`。
 
-接下来，我们需要向 PHASE 引擎注册 `音频资源`。我们通过引擎实例的 `registerSoundAsset` 方法注册，分别传入音频文件的 `url`、`identifier`、`assetType`、`channelLayout` 和 `normalizationMode` 参数。
+接下来，我们需要向 PHASE 引擎注册 `音频资源`。我们通过引擎实例的 `registerSoundAsset` 方法注册，分别传入 `url`、`identifier`、`assetType`、`channelLayout` 和 `normalizationMode` 参数。
 
 代码实现如下：
 
@@ -769,12 +767,13 @@ actor_container.addSubtree(noisy_clothing_random)
 
 1. PHASE 框架的初衷是「解决游戏开发中音频需要后期制作，不能和游戏中其他子系统实时交互的痛点」。
 2. PHASE 给开发者带来 「几何感知」 和 「事件驱动的音频播放」 两大能力，这样可以很好地解决上述问题。
+  
    「几何感知」：
    1. 在 PHASE 中，你可以模拟一个真实音频世界中的场景，场景包含 `声音源`、`遮挡物` 和 `听者`。
    2. `声音源`、`遮挡物` 都可以是几何形状的，同时可以设置声音源的 `距离建模` 和 `方向建模`，设置遮挡物的声学材料属性，以及还可以设置 `声音源` 碰撞 `遮挡物` 发生的几何效果，比如 `直接路径传输`、`早起反射` 和 `后期混响`。
    
    「事件驱动的音频播放」：
    1. 在 PHASE 中，一个 `声音事件节点` 可以由多个子节点组成，是一个树状的结构，这些节点可以是 `生成器节点` 或者 `控制节点`。
-   2. `生成器节点` 负责连接 `音频资源` 和 `混音器`，是产生 `声音事件资源` 的最基本单位，`控制节点` 负责掌握整个程序的逻辑，它可以 `随机节点`、`切换节点`、`混合节点` 和 `容器节点` 中的一者，这些可以让我们随意表达一个复杂的 `事件驱动的音频播放` 了。
+   2. `生成器节点` 负责连接 `音频资源` 和 `混音器`，是产生 `声音事件资源` 的最基本单位，`控制节点` 负责掌握整个程序的逻辑，它可以是 `随机节点`、`切换节点`、`混合节点` 和 `容器节点` 中的一者，这些可以让我们随意表达一个复杂的 `事件驱动的音频播放` 了。
 
-除了解决游戏创作的痛点外，因为 PHASE 有「几何感知」的能力，所以只要有「模拟现实的极致听觉体验」的场景，我们就可以用 PHASE 来完成。想象一下 VR 和 PHASE 的结合是否可以给用户带来更好的的虚拟世界呢？另外用 PHASE 完成一场「在线音乐会」呢？PHASE 可以还原舞台上不同位置不同乐器的声音，有小提琴，有钢琴等等，同时可以还原座位席上每个听众的位置，用户可以在手机上选择不同的座位来享受不同的听觉体验，我相信这将会是一场美好的听觉盛宴。
+除了解决游戏创作的痛点外，因为 PHASE 有「几何感知」的能力，所以只要有「模拟现实的极致听觉体验」的场景，我们就可以用 PHASE 来完成。想象一下 VR 和 PHASE 的结合是否可以给用户带来更好的虚拟世界呢？另外用 PHASE 完成一场「在线音乐会」呢？PHASE 可以还原舞台上不同位置不同乐器的声音，有小提琴，有钢琴等等，同时可以还原座位席上每个听众的位置，用户可以在手机上选择不同的座位来享受不同的听觉体验，我相信这将会是一场美好的听觉盛宴。
