@@ -1,5 +1,9 @@
 ## WWDC21 - ProRAW 的拍摄与处理
 
+> 作者：Nemo，目前在字节跳动剪映担任客户端开发。
+>
+> 审核：折腾范儿_唯敬，iOS/前端 开发者，就职于阿里巴巴，喜欢研究跨平台动态化混合前端相关的内容，目前从事移动应用客户端/前端相关开发工作。
+
 [TOC]
 
 > WWDC21 Session 10160 - [Capture and process ProRAW images](https://developer.apple.com/videos/play/wwdc2021/10160/)
@@ -68,7 +72,7 @@ ProRaw 采用标准的 [Adobe DNG](https://helpx.adobe.com/cn/photoshop/digital-
 
 整体上，ProRaw 比普通的 Raw 在拍摄的支持上会完善不少，包括支持更多的镜头，还能带上场景信息等。
 
-![截屏2021-06-26 下午5.39.16](img/01.png)
+![截屏2021-06-26 下午5.39.16](https://images.xiaozhuanlan.com/photo/2021/9ddc564cef2282506d22260bdd1ce86d.png)
 
 ### 1. 设置 AVCaptureSesion 和 AVCaptureDevice
 
@@ -213,7 +217,7 @@ Raw 的 `PHAsset` 可能有 `alternatePhoto` 类型的 `PHAssetResource`。
 
 这是由于某些资源可能是从单反相机拷贝来的，有些单反相机拍摄的 Raw 资源包含了 JPEG 和加上 Raw。
 
-![截屏2021-06-27 下午9.37.17](img/02.png)
+![截屏2021-06-27 下午9.37.17](https://images.xiaozhuanlan.com/photo/2021/1e6df574596c41b486780634c64d04a7.png)
 
 这会导致文件占用空间增加，可移植性降低，并且可能会导致用户体验混乱。
 
@@ -295,11 +299,11 @@ func getAdjustedRawImage(url: URL) -> CIImage? {
 
 比如设置不同的 `localToneMapAmount`。
 
-<img src="img/03.png" alt="截屏2021-06-27 下午10.56.02" style="zoom:50%;" />
+<img src="qvf5ynk5g.bkt.clouddn.com/mweb/03.png" alt="截屏2021-06-27 下午10.56.02" style="zoom:50%;" />
 
-<img src="img/04.png" alt="截屏2021-06-27 下午10.56.50" style="zoom:50%;" />
+<img src="qvf5ynk5g.bkt.clouddn.com/mweb/04.png" alt="截屏2021-06-27 下午10.56.50" style="zoom:50%;" />
 
-<img src="img/05.png" alt="截屏2021-06-27 下午10.57.00" style="zoom:50%;" />
+<img src="qvf5ynk5g.bkt.clouddn.com/mweb/05.png" alt="截屏2021-06-27 下午10.57.00" style="zoom:50%;" />
 
 ### 获得线性 Scene-Referred 图
 
@@ -316,7 +320,7 @@ let linearRawImage = rawFilter.outputImage
 
 这个线性图可以设置为其他 `CIFilter` 上的输入，来对 Scene-Referred 图进行计算，也可以使用它进行渲染。
 
-![截屏2021-06-27 下午11.22.23](img/06.png)
+![截屏2021-06-27 下午11.22.23](https://images.xiaozhuanlan.com/photo/2021/fbb1de375ff0064eed0d86ae2c825a28.png)
 
 可以看到，左边是默认输出，左边太阳部分和右边天空亮度差异比较小，而线性图的差异就大了不少，更符合真实的明暗关系（真实的差异还要比记录的信息大得多），而这也给后期调整保留了更多的信息，有更大的调整空间。
 
@@ -355,11 +359,18 @@ if let caml = layer as? CAMetalLayer {
 // 在 CIRawFilter 渲染的时候设置以下参数
 rawFilter?.extendedDynamicRangeAmount = 1.0
 ```
+![](https://images.xiaozhuanlan.com/photo/2021/6df545e08fe9ea36a20f640e1ee6a2f9.png)
 
-<img src="img/07.png" alt="07" style="zoom:50%;" />
-
-<img src="img/08.png" alt="08" style="zoom:50%;" />
+![](qvf5ynk5g.bkt.clouddn.com/mweb/08.png)
 
 ## 总结
 
 ProRAW 从实现上看，走得并不是完全类似专业单反的原始信息 Raw 的道路，而是通过 Apple 非常擅长的计算摄影流程，给用户带来媲美 Raw 的高动态范围和丰富的原始色彩信息，同时又能配合软硬件的 Apple 生态产物。iOS 15 上 ProRaw 的全流程开发支持，也意味着对于音视频/图像编辑领域等 SDK 开发者，需要提前对行业头部推出的标准进行熟悉和适配，才能带给用户完整的用户体验。
+
+## 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
