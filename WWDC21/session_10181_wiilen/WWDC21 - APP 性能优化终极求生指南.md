@@ -1,5 +1,11 @@
 > 本文基于 [Session 10181](https://developer.apple.com/videos/play/wwdc2021/10181/) 梳理。
 
+> 作者：wiilen，目前就职于字节跳动西瓜视频，负责品质优化相关工作。  
+> 
+> 审核：Martin，目前就职于字节跳动 TikTok 团队，负责稳定性相关工作。
+
+> 本文基于 [Session 10181](https://developer.apple.com/videos/play/wwdc2021/10181/) 梳理。
+
 性能优化听起来是一个困难重重的任务，需要追溯诸多指标，使用大量工具。这份性能优化指南能帮助你理解工具、指标、代码范例，进而让开发过程更加流畅，并为用户提供更优秀的体验。
 
 这份指南相比于其他性能优化的 Session，更像是一本手册，指导你在遇到不同的性能问题时，应该使用哪份工具。而想要深入了解的话，则需要前往各个 Session。本文中也会加入作者在日常过程中使用这些工具的心得，帮助大家更好的了解苹果近年来在性能优化方向上为开发者提供的工具。
@@ -197,4 +203,12 @@ func saveAppAssets() {
 如果你对性能优化工具不熟悉，推荐看看 2020 年的「[Diagnose Performance Issues with the Xcode Organizer](https://developer.apple.com/videos/play/wwdc2020/10076/)」、「[What's New in MetricKit](https://developer.apple.com/videos/play/wwdc2020/10081/)」、「[Identify Trends with the Power and Performance API](https://developer.apple.com/videos/play/wwdc2020/10057/)」三个视频，以及 2019 年的「[Getting Started with Instruments](https://developer.apple.com/videos/play/wwdc2019/411/)」。深入了解了这些指标与工具之后，希望大家能够在这些工具的帮助下，提供性能最优的 App 给用户。作为练习，大家可以去 Xcode 的 Organizer 中看看 App 的性能趋势，使用 Instruments 中不同的模版来检测性能，写写 XCTest 来提前检测问题，用 MetricKit 来强化数据收集与分析。
 
 本次的 Session 内容就到此为止了，希望大家能在读完后花一些时间开始尝试优化性能，多多加油。
+
+## 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
 
