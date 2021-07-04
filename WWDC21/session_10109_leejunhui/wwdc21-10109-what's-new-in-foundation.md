@@ -344,11 +344,75 @@
 
 ## 2.4 字符串和格式化器的国际化与本地化
 
-![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1625337866143-c2ebb11e-6558-4410-b124-9fa8bff96408.png#clientId=u5f924393-78f4-4&from=paste&height=482&id=u8ade4fce&margin=%5Bobject%20Object%5D&name=image.png&originHeight=964&originWidth=868&originalType=binary&ratio=1&size=80127&status=done&style=none&taskId=u09ddaeed-3c86-4272-b95d-00c5cce3786&width=434)
+​
+
 关于字符串与格式化器的国际化以及本地化的更多内容可以参考本次 `WWDC` 的其他 `Session`：
 [Localize your SwiftUI app](https://developer.apple.com/videos/play/wwdc2021/10220/) & [Streamline your localized strings](https://developer.apple.com/videos/play/wwdc2021/10221/)
 ​
 
 # 三、 语法协议引擎 - Grammar agreement
+
+最后，我们将目光转移到一个全新的功能上 -- 自动修正语法(Automatic grammar agreement)。在之前，西班牙语等语言的本地化表达自然翻译的能力受到限制，有时会导致尴尬的对话出现。这些语言需要进行转换以实现在
+不同的对话中达到时态与复数的一致，有时甚至需要了解用户的首选称呼。英语也具有同样的特性，名词具有单数和复数两种形式。
+​
+
+## 3.1 Automatic Grammar Agreement 初见
+
+​
+
+我们讨论了语言中的一些术语，接下来让我们以实际的例子进行更深入的讨论吧。
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1625360433548-03679975-c152-4410-9ea9-1b2fdff9363e.png#clientId=u86432fc4-6b2f-4&from=paste&height=988&id=udf4b7989&margin=%5Bobject%20Object%5D&name=image.png&originHeight=988&originWidth=626&originalType=binary&ratio=1&size=138927&status=done&style=none&taskId=uab4e8f77-0f7b-4a4d-a7c6-518a15f3b80&width=626)
+在 `Caffe` App 中，我们可以点餐，然后设置餐食的大小以及数量。我们先点一份沙拉。
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1625360525642-7ec018a2-6068-433b-aab0-53fe5ab2dfbe.png#clientId=u86432fc4-6b2f-4&from=paste&height=966&id=u05f7c85e&margin=%5Bobject%20Object%5D&name=image.png&originHeight=966&originWidth=532&originalType=binary&ratio=1&size=142290&status=done&style=none&taskId=u1094d3a8-5d3b-480e-b59a-d752f850971&width=532)
+接着我们的朋友说她也需要一份，所以我们就增加数量到两份。在英语中，`salad` 这个单词需要改变自己的单复数形式以匹配两份沙拉，这就叫做语法协议。这也就是说这句话中的所有单词必须相互匹配。
+在英语中，由于复数的问题而修正单词是一种常见的语法协议。现在切换我们的 `App` 到西班牙语。
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1625360894017-999db968-32de-4be9-8a24-1a9624fcdba1.png#clientId=u86432fc4-6b2f-4&from=paste&height=962&id=u4bf8bf35&margin=%5Bobject%20Object%5D&name=image.png&originHeight=962&originWidth=550&originalType=binary&ratio=1&size=147225&status=done&style=none&taskId=u5913734b-99e6-4ff4-870d-732779d8d07&width=550)
+这里我们点了一份 `ensalada pequeña` ,或者说一小份沙拉。当我们为朋友再点一份的时候，订单确认按钮需要与英语进行同样的复数化，但有一点是不同的。在西班牙语中，像「小的」这样的形容词以及「沙拉」这样的名词都需要和具体的数量达成一致。
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1625361521292-7a53f687-0eb7-4336-bdb9-569a32f17cee.png#clientId=u86432fc4-6b2f-4&from=paste&height=948&id=u25375edc&margin=%5Bobject%20Object%5D&name=image.png&originHeight=948&originWidth=544&originalType=binary&ratio=1&size=137264&status=done&style=none&taskId=uc69f3ad6-6699-4246-b101-dc8287d0c81&width=544)​
+所以，订单确认按钮上显示的是 `ensaladas pequeñas` 而不是 `ensalada pequeña`。
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1625372012058-0fb980ae-cacd-4863-aa2f-d70636823e9c.png#clientId=u86432fc4-6b2f-4&from=paste&height=964&id=ud829cf32&margin=%5Bobject%20Object%5D&name=image.png&originHeight=964&originWidth=564&originalType=binary&ratio=1&size=120601&status=done&style=none&taskId=u7d383e70-67a2-490e-8d63-eac2a77a5da&width=564)
+我们接着讲目光锁定到饮品上，如上图所示，对于订单按钮中的文字来说，不仅需要单复数匹配正确，还需要在这些单词的词法性上达成一致。`Juice` 与 `jugo` 是阳性化的。而形容词 `pequeño` 「小的」也必须匹配。
+为了正确对这些文字进行国际化和本地化，我们最终会遇到「组合爆炸」的问题。食物、大小和数量的每个组合都需要不同的本地化字符串。在代码层面，就会出现如下所示的场景。
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1625372374385-963c2ab4-bccd-419b-a03d-b17c5fc32648.png#clientId=u86432fc4-6b2f-4&from=paste&height=880&id=ua5d2e93e&margin=%5Bobject%20Object%5D&name=image.png&originHeight=880&originWidth=1432&originalType=binary&ratio=1&size=736993&status=done&style=none&taskId=ua02e34ff-2fec-4681-93ca-3775a83ab21&width=1432)
+我们需要对每个 `item` 进行 `switch` 操作，同时还需要对选择的大小进行判断，等等。还需要一个字符串文件来正确地对每个字符串中的计数进行复数化。而现在，通过利用在系统键盘上提示用户输入这一功能的相同技术，`Apple` 创建了一个新的 `API`，就可以轻松处理上面我们所遇到的问题了。此功能被命名为自动语法协议，因为系统会自动修复本地化字符串以使它们有正确的语法。
+​
+
+## 3.2 Automatic Grammar Agreement 解析
+
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1625372989380-761c19ed-71e2-42bb-8422-e85ceae7d23d.png#clientId=u86432fc4-6b2f-4&from=paste&height=334&id=ua445a7b9&margin=%5Bobject%20Object%5D&name=image.png&originHeight=334&originWidth=1364&originalType=binary&ratio=1&size=154023&status=done&style=none&taskId=u4867a83e-f475-4e91-ae08-ca809aacc55&width=1364)
+有了新的 `Automatic Grammar Agreement` 加持，代码变得更简单了。你可以在一个字符串里直接指定数 量、大小和具体的餐食。自动语法协议会通过「反射」自动修复其中的语法。
+让我们逐步分解一下，为了执行「反射」流程，我们需要知道字符串中的哪些部分需要做自动语法修复。幸运的是，在 `Swift` 中有一个全新的类型 `AttributedString` 属性字符串，以及在 `Markdown` 中可以设置自定义属性的功能。
+当我们导出 `Caffe` 项目的本地化时，我们会得到一个字符串文件，这个文件中包含我们的提示文本以及代码中的本地化字符串，比如餐食的名称以及大小。
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1625373489747-f0b6c2ef-34d1-448b-a773-9d22899bce0e.png#clientId=u86432fc4-6b2f-4&from=paste&height=558&id=ua45ed7fd&margin=%5Bobject%20Object%5D&name=image.png&originHeight=558&originWidth=1692&originalType=binary&ratio=1&size=363327&status=done&style=none&taskId=u89df57e9-e93c-48c2-ba9f-ba126fd8c10&width=1692)
+在拉丁美洲西班牙环境下，本地化器使用重新排列语法将大小和餐食的顺序进行了调换，这是因为西班牙语中像「小的」或「大的」这样的形容词位于名词的后面。
+​
+
+有些语言不仅在本地化文本本身上，还在文本与阅读的人之间具有一致性。自动语法协议也有助于解决这一问题。
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1625373838652-05e7d192-bda7-4b45-b981-608b8b2d0781.png#clientId=u86432fc4-6b2f-4&from=paste&height=970&id=ub4c11fc1&margin=%5Bobject%20Object%5D&name=image.png&originHeight=970&originWidth=1050&originalType=binary&ratio=1&size=241915&status=done&style=none&taskId=u5bcaffe4-0d85-4299-b89d-bf8ef894256&width=1050)
+举个例子，如上图所示，`iOS` 系统自带的备忘录应用在第一次使用时会弹出一个欢迎菜单。在英语中，欢迎语是 `Welcome to Notes`，即欢迎使用备忘录。而在西班牙语中，则是 `Te damos la bienvenida a Notas`，即我们欢迎您使用备忘录。我们希望有和英语一样的西班牙语体验。然而，在西班牙语中，`bienvenido` 一词必须与用户首选的称号相匹配。称号可能是几个选项之一，而具体的选项就会更改文本的内容。使用正确的称号可以带来更个性化和更具包容性的体验。
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1625374305338-b54d51c0-3bfb-4165-9df1-713e44ea6690.png#clientId=u86432fc4-6b2f-4&from=paste&height=948&id=NfGkb&margin=%5Bobject%20Object%5D&name=image.png&originHeight=948&originWidth=540&originalType=binary&ratio=1&size=163056&status=done&style=none&taskId=u388122b6-ebb9-4d1c-98cf-938acccb97a&width=540)
+在今年的更新当中，`Apple` 为西班牙语用户提供了设置了称号的入口。在语言与地区的设置中，将会有一个新的称号选项。
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1625374362854-2ac61ceb-1f96-4c3a-82bb-39536a94e306.png#clientId=u86432fc4-6b2f-4&from=paste&height=968&id=ue0cbdf20&margin=%5Bobject%20Object%5D&name=image.png&originHeight=968&originWidth=534&originalType=binary&ratio=1&size=124237&status=done&style=none&taskId=u329d164b-4619-4213-9c64-9522499b088&width=534)
+如上图所示，用户可以选择设置不同的称号并选择是否与所有 `App` 共享这一设置。
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1625374472365-e6809ab1-c3ee-450f-b3af-86f0ccbd7888.png#clientId=u86432fc4-6b2f-4&from=paste&height=976&id=u32913bc1&margin=%5Bobject%20Object%5D&name=image.png&originHeight=976&originWidth=534&originalType=binary&ratio=1&size=125664&status=done&style=none&taskId=u11f81a4d-c0e0-4b72-923c-038fca886d6&width=534)
+上图是用户设置了女性称谓后，新的备忘录欢迎界面。
+![image.png](https://cdn.nlark.com/yuque/0/2021/png/225346/1625374542564-03ce3913-60ac-4bbd-8fc6-56d3d9b78f60.png#clientId=u86432fc4-6b2f-4&from=paste&height=962&id=u20b3375b&margin=%5Bobject%20Object%5D&name=image.png&originHeight=962&originWidth=532&originalType=binary&ratio=1&size=124607&status=done&style=none&taskId=u1349dcfd-1d28-43a6-a895-827689e53a7&width=532)
+而上图是设置了男性称谓后的备忘录欢迎界面。
+如果我们不知道用户是否有设置过称谓，我们还是会以初始的字符串作为备选。
+​
+
+今年，`Apple` 对西班牙语和英语实现了自动语法协议功能。就像系统应用备忘录的欢迎界面一样，你也可以在自己的应用中采用同样的技术。
+​
+
+# 四、总结
+
+`Foundation` 今年有许多强大的新功能，你可以从今天开始在你的 `app` 中使用它们。
+​
+
+- `AttributedString` 属性字符串提供了一个快速的，易用的并且 `Swift` 优先的接口，进而实现在一个字符串的范围中添加键值对以达到富文本的效果。你可以在 `SwiftUI` 中使用 `Text` 组件，并在本地化字符串中使用 `Markdown` 语法。
+- 新的格式器 `API` 将重点放在格式上，简化了代码并提高了性能。
+- 最后，自动语法协议将智能地修复本地化字符串，以便匹配语法时态，单复数以及用户自己的称谓设置。
+
+​
 
 _​_
