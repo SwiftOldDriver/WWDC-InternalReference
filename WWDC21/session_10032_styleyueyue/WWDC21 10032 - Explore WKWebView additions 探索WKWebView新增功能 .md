@@ -1,8 +1,8 @@
 # WWDC21 10032 - Explore WKWebView additions 探索 WKWebView 新增功能
 
-本文目录
-
-[TOC]
+> 作者：Style月月，iOS程序媛，简书/掘金文章贡献者，目前任职于小米，侧重于海外相关业务
+>
+> 审核：折腾范儿_唯敬，iOS/前端 开发者，就职于阿里巴巴，喜欢研究跨平台动态化混合前端相关的内容，目前从事移动应用客户端/前端相关开发工作。
 
 本文主要是根据 WWDC21 中的 [Explore WKWebView additions - session 10032](https://developer.Apple.com/videos/play/wwdc2021/10032/) 撰写，主要讲解 WKWebView 在 iOS 15 中新增的功能。
 
@@ -370,10 +370,10 @@ userCC.addUserScript(noneSelectScript)
 分别使用 UIWebView 和 WKWebView 加载网页，查看其内存情况。
 
 - UIWebView 加载网页时的内存情况
-![image.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624336319083-a8c1a062-da2a-4fa6-9a7a-b783a2f15047.png#height=439&id=DZNdT&margin=%5Bobject%20Object%5D&name=image.png&originHeight=506&originWidth=750&originalType=binary&ratio=1&size=68389&status=done&style=none&width=650)
+![image.png](https://images.xiaozhuanlan.com/photo/2021/2154d0bd37fe484061ca0b86cfa61672.png)
 
 - WKWebView 加载网页时的内存情况
-![image.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624336327737-baf9be37-f6ce-4f9e-bc79-10dcca56cf1f.png#height=446&id=NRpcP&margin=%5Bobject%20Object%5D&name=image.png&originHeight=515&originWidth=750&originalType=binary&ratio=1&size=63882&status=done&style=none&width=650)
+![image.png](https://images.xiaozhuanlan.com/photo/2021/096ea412a2fec3ef3ed3f05212a7266d.png)
 
 **结论**
 
@@ -508,7 +508,7 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate
 为了更好的识别，苹果在 iOS 15 的 `SafariServices` 框架中新增了一个 API，用于将 App 的扩展功能关联到 `SFSafariViewController` 的自定义按钮上，为了更好的向用户展示 App 的扩展功能，也可以为这个按钮设置图标。并同时允许用户直接从 Safari 工具栏中运行 App 扩展，包括在页面上运行 JS。虽然这也是非常有限的交互，但相比之前无法自定义的交互而言，也是一种进步。
 
 在 `SFSafariViewController` 界面中自定义扩展按钮的代码，如下所示。
-![10032-01-SafariServices.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624376488375-ae51aee0-5a70-465d-b8ba-ae5816b5f091.png#height=381&id=u9f535560&margin=%5Bobject%20Object%5D&name=10032-01-SafariServices.png&originHeight=792&originWidth=1352&originalType=binary&ratio=1&size=309812&status=done&style=none&width=650)
+![10032-01-SafariServices.png](https://images.xiaozhuanlan.com/photo/2021/16cb82276cba9b5b41cb6a955eaa06bd.png)
 主要是通过获取 `SFSafariViewController` 视图控制器的配置，通过配置中的 `activityButton` 属性来实现 Safari 中扩展按钮的自定义。
 
 **演示**
@@ -540,7 +540,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
 }
 ```
 效果如下所示，右下角的❤就是自定义的扩展按钮
-![10032-14-customExtension.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624449827394-225e6d0b-5fdb-4ad7-92e7-d1a749bc87f2.png#clientId=ufc08ec57-3c08-4&from=ui&height=599&id=ud104f10e&margin=%5Bobject%20Object%5D&name=10032-14-customExtension.png&originHeight=1010&originWidth=506&originalType=binary&ratio=2&size=461383&status=done&style=none&taskId=u671625ef-0e91-49a9-93fb-4646460bb19&width=300)
+![10032-14-customExtension.png](https://images.xiaozhuanlan.com/photo/2021/c2bbf440ea199743aa5a08fe7dee6acd.png)
 
 ### WKWebView 中的新增
 
@@ -571,13 +571,13 @@ class ViewController: UIViewController, WKScriptMessageHandler {
 ##### Theme Color 主题颜色相关 API
 
 在 WWDC20 中，苹果工程师实现了一个内部 App WebKittens，用于浏览 cat 和 dog，今年，工程师希望在 WebKittens App 中做一些改变，即为 App `动态的添加主题颜色`，这个颜色需要随季节为变化，最终的实现效果如下所示  
-![10032-gif-01-themeColor.gif](https://cdn.nlark.com/yuque/0/2021/gif/1536000/1624379425598-c12932ad-fea0-4ba9-8ca2-2f8fe78fc2aa.gif#clientId=u03326725-b0ec-4&from=ui&id=uc9a5b3fc&margin=%5Bobject%20Object%5D&name=10032-gif-01-themeColor.gif&originHeight=334&originWidth=600&originalType=binary&ratio=2&size=1091744&status=done&style=none&taskId=uf4f57c6d-5cf7-4866-9a30-906c5873a51)
+![10032-gif-01-themeColor.gif](https://images.xiaozhuanlan.com/photo/2021/3b0a539661f9678d05f0f79f74a573c2.gif)
 
 为了更好的实现这个需求，苹果针对主题颜色的更改提供了一个新的 API。可以通过这个 API 将 `headerView` 的颜色设置为 `WebView` 的主题颜色，而无需开发人员做额外的工作，代码如下所示
-![10032-02-themeColor.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624377107178-547e8bec-cf38-40fd-98db-4b1ababfc6e4.png#height=381&id=u8cf908f8&margin=%5Bobject%20Object%5D&name=10032-02-themeColor.png&originHeight=788&originWidth=1346&originalType=binary&ratio=1&size=222287&status=done&style=none&width=650)
+![10032-02-themeColor.png](https://images.xiaozhuanlan.com/photo/2021/2d441ec2947f135abc57cfb44250cf32.png)
 
 如果网站未设置主题颜色，会有一个替代 `themeColor` 的页面背景颜色，主要通过 WKWebView 的 `underPageBackgroundColor` 属性获取，如下所示
-![10032-03-pageBackgroundColor.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624377170830-345532f0-5578-4730-95f4-8e1a18cc9aae.png#height=385&id=udc54da60&margin=%5Bobject%20Object%5D&name=10032-03-pageBackgroundColor.png&originHeight=798&originWidth=1348&originalType=binary&ratio=1&size=247966&status=done&style=none&width=650)
+![10032-03-pageBackgroundColor.png](https://images.xiaozhuanlan.com/photo/2021/e4886a3f7f45b0172aac91fe4f5f8c15.png)
 
 如果上述代码仍然不满足您的要求，您还可以通过 `underPageBackgroundColor` 属性来自定义用来填充滚动到Web内容末尾时的背景颜色。以上就是通过 WKWebView 新增的颜色相关 API，来创建加载 Web 的 App 的主题颜色。
 
@@ -588,7 +588,7 @@ class ViewController: UIViewController, WKScriptMessageHandler {
 苹果工程师闲着没事，在 WebKittens 和 Pups 两个 App 中添加了浏览宠物视频的功能，但是呢，浏览视频的用户反馈在播放视频时，会触发文本交互，严重影响了用户体验。
 
 为了解决这个问题，苹果今年在 `WKWebView` 中新增了一个 API，让开发者可以非常简单的禁用 WebView 上的文本交互，这个功能是通过 `WKPreferences` 类中`textInteractionEnabled` 属性实现的，该属性是 `BOOL` 类型，将其设置为 `false`，然后将 `preferences` 对象赋值给 WebView 的 configuration 对象，用 `configuration` 初始化的 WebView 就已经禁用了 WebView 中的所有文本交互，代码如下所示。
-![10032-04-textInteraction.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624377240490-3fa9250c-7da9-4bc4-95f4-e9da17536f4b.png#height=379&id=u3399ce93&margin=%5Bobject%20Object%5D&name=10032-04-textInteraction.png&originHeight=792&originWidth=1358&originalType=binary&ratio=1&size=515861&status=done&style=none&width=650)
+![10032-04-textInteraction.png](https://images.xiaozhuanlan.com/photo/2021/6ece5c21d3842d62ea160e0470674c37.png)
 
 > Tips：苹果官方的讲解视频中，这部分代码有问题，以下是纠正后的代码。
 
@@ -618,26 +618,26 @@ override func loadView() {
 在 iOS 15 以前，如果想在在 Web 视图中暂停或者挂起播放的视频，是需要注入 JavaScript 且还需要从 DOM 中获取控制视频的元素，其操作过程非常繁琐。
 
 为了简化对视频的操作，WKWebView 在 iOS 15 中中推出了一些简单易用的 API。用来帮助开发者更好的操作视频，例如暂停视频、关闭所有视频窗口、获取媒体状态以及设置媒体暂停状态等。其中新增的`视频操作相关API`如下所示。
-![10032-05-mediaPlayback.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624377302388-f6b7c63e-35c6-4cf0-a8e3-93a7ced2382f.png#height=381&id=uc04fc856&margin=%5Bobject%20Object%5D&name=10032-05-mediaPlayback.png&originHeight=792&originWidth=1350&originalType=binary&ratio=1&size=198085&status=done&style=none&width=650)
+![10032-05-mediaPlayback.png](https://images.xiaozhuanlan.com/photo/2021/16ba70c9555f7f12a46fe722cceeef91.png)
 
 这些 API 的调用都会导致视频暂停，以及禁用文本交互，直到开发人员将 `setAllMediaPlaybackSuspended` 设置为 `false` 后才会恢复。
 
 **演示**
 
 这里还是以 WebKittens 和 Pups 为例，从上面我们知道了苹果工程师在 WebKittens 和 Pups 都增加了发布视频的功能，其效果图示如下
-![10032-gif-02-mediaPlay.gif](https://cdn.nlark.com/yuque/0/2021/gif/1536000/1624379789948-60c69c91-e287-4363-8ed1-e03e8d6546e6.gif#clientId=u03326725-b0ec-4&from=ui&id=u227a8bcc&margin=%5Bobject%20Object%5D&name=10032-gif-02-mediaPlay.gif&originHeight=336&originWidth=600&originalType=binary&ratio=2&size=962045&status=done&taskId=u35250f99-f6e0-438f-904b-7af5c504953)
+![10032-gif-02-mediaPlay.gif](https://images.xiaozhuanlan.com/photo/2021/ba4afb4e9d165c17a7a667bb3699fe7a.gif)
 从图中可以看出，页面的顶部是 Web 内容，且设置了主题颜色。下面是 3 个按钮，主要用于控制视频。但是用户希望在 App 中浏览视频时，视频是暂停的而非自动播放的，为了实现这个需求，苹果的开发工程师尝试了以下几种方案：
 - 1、直接使用 `pause` 按钮，发现只有小猫视频暂停了，而小狗的视频仍处于播放状态，点击 Play 后，什么都没有发生，小猫视频也没有恢复播放。因此这种方式是不可行的，其效果如下所示。
-![10032-gif-03-mediaPause-01.gif](https://cdn.nlark.com/yuque/0/2021/gif/1536000/1624380404830-22d59436-97d6-4e88-b673-460b696429ce.gif#clientId=u03326725-b0ec-4&from=ui&id=u446a63e3&margin=%5Bobject%20Object%5D&name=10032-gif-03-mediaPause-01.gif&originHeight=334&originWidth=600&originalType=binary&ratio=2&size=5819382&status=done&style=none&taskId=uaf8154bb-fadc-4f67-bcf4-44d652f5780)
+![10032-gif-03-mediaPause-01.gif](https://images.xiaozhuanlan.com/photo/2021/7b11d895afb94d2ad65a8d9a5e54e7f1.gif)
 
 - 2、通过 `JavaScript` 来暂停所有视频，但是这样做会有一个问题，工程师需要了解不同网站的页面结构。且这种页面结构是在不断变化的。如果这样做，过程非常繁琐。
 - 3、采用 iOS 15 中新推出的 API 对视频进行暂停
    - 首先在 Web 视图上调用 `pauseAllMediaPlayback` 方法，相当于在 WebView 中的每个视频元素上`调用了 JavaScript 函数的 pause`，演示如下，发现效果非常好。
-![10032-gif-03-mediaPause-03.gif](https://cdn.nlark.com/yuque/0/2021/gif/1536000/1624380888909-79823037-8937-4196-ba23-24d510958260.gif#clientId=u03326725-b0ec-4&from=ui&id=u7be792b4&margin=%5Bobject%20Object%5D&name=10032-gif-03-mediaPause-03.gif&originHeight=333&originWidth=600&originalType=binary&ratio=2&size=2697862&status=done&style=none&taskId=u2a2fe00d-0f37-41d3-abf2-db10dd69808)
+![10032-gif-03-mediaPause-03.gif](https://images.xiaozhuanlan.com/photo/2021/4ef95289d28834aca002f4c348f63f79.gif)
 但是这种方式会存在一个问题，当刷新页面时，会导致 WebView 的内容重新加载，且视频是重新开始播放。简单来说，就是刷新前的视频暂停操作像从来没有做过一样。
 
    - 3-2、针对3-1中存在问题情，可以通过调用 `setAllMediaPlaybackSuspended` 方法来解决，采用这种方式实现的暂停，即使页面刷新后，视频也会保持刷新前的暂停状态，因为这种方式是`直接操作 Web 视图本身的属性`。其效果演示如下：
-![10032-gif-03-mediaPause-04.gif](https://cdn.nlark.com/yuque/0/2021/gif/1536000/1624381334192-eada666b-a79d-4851-885d-43c8b16032db.gif#clientId=u03326725-b0ec-4&from=ui&id=u51e02f87&margin=%5Bobject%20Object%5D&name=10032-gif-03-mediaPause-04.gif&originHeight=333&originWidth=600&originalType=binary&ratio=2&size=2817205&status=done&style=none&taskId=u33500221-418a-4ddd-b7b9-732637f34ac)
+![10032-gif-03-mediaPause-04.gif](https://images.xiaozhuanlan.com/photo/2021/5be35b419faec774cbbaaa9969865d06.gif)
 
 #### Safari 浏览器相关的 API
 
@@ -653,7 +653,7 @@ override func loadView() {
 从 iOS 15 和 macOS Monterey 开始，苹果会`将 HTTP 请求发送到已知的 HTTPS 站点`，以此来帮助开发者将 HTTP 请求转为 HTTPS。对于开发者来说不需要做任何事情。
 
 但是如果开发者想在本地做一些调试，您可以 WebView 的配置中禁用 HTTPS 的升级，即设置 `upgradeKnownHostsToHTTPS` 为 `false`，具体的代码如下所示：
-![10032-06-disableHTTPSUpgrade.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624377815943-bc67b594-d74c-4234-b843-8ffb32ccdb1a.png#height=383&id=u148cd1a6&margin=%5Bobject%20Object%5D&name=10032-06-disableHTTPSUpgrade.png&originHeight=796&originWidth=1350&originalType=binary&ratio=1&size=165099&status=done&style=none&width=650)
+![10032-06-disableHTTPSUpgrade.png](https://images.xiaozhuanlan.com/photo/2021/120e016dc7eb6922cfec45d0f5c31469.png)
 
 ##### Control Media capture 控制媒体捕获
 
@@ -670,7 +670,7 @@ func WebView(_ WebView: WKWebView, decidePolicyFor navigationAction: WKNavigatio
 ```
 
 除此之外，还更新了一个 API，用于处理 Web 内容时，决定何时提示用户获取相机和麦克风权限。一旦通过正常流程获取相机和麦克风权限，开发人员可以决定是否显示权限提示，也可以通过此方法来实现自定义的提示，或者记住用户对 Web 内容的操作和响应。具体的实现步骤主要是通过 WKWebView 中的 `WKUIDelegate` 协议中的代理方法实现，如下所示
-![10032-08-promptForMicrophoneAccess.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624377968221-dc73a8e5-15eb-4767-b914-2ebd38ee6161.png#height=384&id=uc31761a5&margin=%5Bobject%20Object%5D&name=10032-08-promptForMicrophoneAccess.png&originHeight=792&originWidth=1340&originalType=binary&ratio=1&size=283846&status=done&style=none&width=650)
+![10032-08-promptForMicrophoneAccess.png](https://images.xiaozhuanlan.com/photo/2021/32d80e55029eeffa993b412b30b8fc0e.png)
 
 **演示**
 
@@ -680,18 +680,18 @@ func WebView(_ WebView: WKWebView, decidePolicyFor navigationAction: WKNavigatio
  `getUserMedia` 设置 `WebRTC` 功能，方便团队成员能够实时查看，并与宠物狗朋友聊天。
 
 当设置 `WKUIDelegate `时，开发人员已经了解这些服务器的请求是用户即将授予权限的请求。正常情况下权限提示如下所示
-![10032-gif-04-access.gif](https://cdn.nlark.com/yuque/0/2021/gif/1536000/1624382007274-505eff19-500f-4e2c-b28c-58b1f8a49f3c.gif#clientId=u03326725-b0ec-4&from=ui&id=ub58415b6&margin=%5Bobject%20Object%5D&name=10032-gif-04-access.gif&originHeight=335&originWidth=600&originalType=binary&ratio=2&size=471175&status=done&style=none&taskId=u5e02308b-c923-4794-85e9-1f55408b3cf)
+![10032-gif-04-access.gif](https://images.xiaozhuanlan.com/photo/2021/cba5c551f0c70ed1700609801674f551.gif)
 
 如果用户已经授予了相机和麦克风权限，开发人员可以通过在 `WKWebView` 上设置 `WKUIDelegate` 的代理方法来跳过权限的提示，在原生到中开发人员只需要检查提供线上宠物狗媒体资源的 host，并允许媒体捕获和访问即可如下所示
-![10032-08-bypassPromptForBrowserPets.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624381441635-24f1e052-7255-49cd-a872-8184f08ba975.png#clientId=u03326725-b0ec-4&from=ui&height=375&id=u4632c18d&margin=%5Bobject%20Object%5D&name=10032-08-bypassPromptForBrowserPets.png&originHeight=782&originWidth=1354&originalType=binary&ratio=2&size=182781&status=done&style=none&taskId=uf0468e4c-46e0-4cc0-921c-03b057dcabb&width=650)
+![10032-08-bypassPromptForBrowserPets.png](https://images.xiaozhuanlan.com/photo/2021/35ccdc89fd37b26d182da57e201e73f2.png)
 以 WebKittens App 为例所做的演示效果
-![10032-gif-04-noAccess.gif](https://cdn.nlark.com/yuque/0/2021/gif/1536000/1624382284606-c0f99593-3403-48ef-81b2-7304760335b9.gif#clientId=u03326725-b0ec-4&from=ui&id=u343a8510&margin=%5Bobject%20Object%5D&name=10032-gif-04-noAccess.gif&originHeight=329&originWidth=600&originalType=binary&ratio=2&size=567481&status=done&style=none&taskId=ucef4c5a9-d933-4a2a-a1ba-20b44cbad74)
+![10032-gif-04-noAccess.gif](https://images.xiaozhuanlan.com/photo/2021/17b010468d045b72bcd8edbb50a57d43.gif)
 
 开发人员也可以在没有 JS 的情况下与媒体进行交互，如下所示，是两个按钮的点击方法，用来`设置相机和麦克风的状态`
-![10032-09-setCameraState.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624378284726-4e4298f8-045a-4af1-89bb-d5c1a24008ac.png#clientId=u03326725-b0ec-4&from=ui&height=382&id=uf7ec44d4&margin=%5Bobject%20Object%5D&name=10032-09-setCameraState.png&originHeight=794&originWidth=1350&originalType=binary&ratio=2&size=243520&status=done&style=none&taskId=u1cab40fa-f651-48c2-84f8-36f767c2fbe&width=650)
+![10032-09-setCameraState.png](https://images.xiaozhuanlan.com/photo/2021/7c6a7e0da60d8b58591d83485a2dfe09.png)
 
 在跳过权限提示的基础上，此时尝试点击静音按钮，从下图中可以看出，相机的摄像功能停止了且静音了。如何恢复视频的录制状态呢？非常简单，只需要使用 JS，将其连接到 `WebView.setCameraCaptureState` 即可。
-![10032-gif-04-noAccessVoice.gif](https://cdn.nlark.com/yuque/0/2021/gif/1536000/1624382427027-7851b84e-109d-47ef-956f-68972355fad2.gif#clientId=u03326725-b0ec-4&from=ui&id=u32b1e22a&margin=%5Bobject%20Object%5D&name=10032-gif-04-noAccessVoice.gif&originHeight=334&originWidth=600&originalType=binary&ratio=2&size=782410&status=done&style=none&taskId=u2b13c2be-efa7-4387-b282-c7cda16abca)
+![10032-gif-04-noAccessVoice.gif](https://images.xiaozhuanlan.com/photo/2021/4c9f928f84bbea9b96662fe60d02fb9d.gif)
 
 以上就针对媒体捕获在 WKWebView 中新增的 API
 
@@ -706,9 +706,9 @@ func WebView(_ WebView: WKWebView, decidePolicyFor navigationAction: WKNavigatio
 
 Web 内容启动下载，类似于`JS 启动下载`。当执行 JS 代码时，会启动一个下载导航操作，该操作会调用 `navigationDelegate` 的代理方法，在代理方法中将 `shouldPerformDownload` 设置为 `true`，同时需要结合其他逻辑一起来确定是否允许下载文件
 - JS 启动下载操作
-![10032-10-JSCode.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624378574720-833e0cd2-e4af-451b-8cef-ca3489d060ac.png#clientId=u03326725-b0ec-4&from=ui&height=386&id=u86e84f10&margin=%5Bobject%20Object%5D&name=10032-10-JSCode.png&originHeight=804&originWidth=1354&originalType=binary&ratio=2&size=106335&status=done&style=none&taskId=u796284a0-19c0-4b48-abed-ba9a14f67b5&width=650)
+![10032-10-JSCode.png](https://images.xiaozhuanlan.com/photo/2021/30647b969d34a4ab507f19cee47179fe.png)
 - 从 `WKNavigationAction` 中下载文件
-![10032-10-downloadCode.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624378585025-b99fa3ed-bb7a-47e7-b131-117a1d2a1e19.png#clientId=u03326725-b0ec-4&from=ui&height=382&id=u9de66e7b&margin=%5Bobject%20Object%5D&name=10032-10-downloadCode.png&originHeight=792&originWidth=1348&originalType=binary&ratio=2&size=163996&status=done&style=none&taskId=u4dee0374-7d52-4f71-985d-d8be50123dd&width=650)
+![10032-10-downloadCode.png](https://images.xiaozhuanlan.com/photo/2021/add5d529961eee6dabb69efcf7eefe98.png)
 
 以下是对上述代码的一个解析
 
@@ -741,9 +741,9 @@ func WebView(_ WebView: WKWebView, decidePolicyFor navigationAction: WKNavigatio
 
 服务器在 WebView 上调用 `loadRequest` 后，类似于在`HTTP 中启动下载`。当发生这种情况时， WKNavigationDelegate 的代理方法中的 `WKNavigationAction` 对象会有一个 `Content-Disposition` 头字段，其值包含 ` "attachment"`，当出现这个参数时，就应该在代理方法中返回 `WKNavigationActionPolicyDownload`，表示开始下载文件
 - 服务器启动下载
-![10032-11-serverCode.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624378746428-11edcbf1-2092-4ee9-a77b-37c1950a74e6.png#clientId=u03326725-b0ec-4&from=ui&height=379&id=u1f54373e&margin=%5Bobject%20Object%5D&name=10032-11-serverCode.png&originHeight=792&originWidth=1358&originalType=binary&ratio=2&size=85965&status=done&style=none&taskId=uc13e874b-61ff-4f87-9db4-adad2fc222e&width=650)
+![10032-11-serverCode.png](https://images.xiaozhuanlan.com/photo/2021/06b386b6bc08d1d6c73add39fca98361.png)
 - `WKNavigationDelegate` 协议的代理方法中判断 `navigationReposnse` 的头字段是否包含 `attachment`，如果有则开始下载文件
-![10032-11-downloadFromResponse.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624378755558-d9aae8fa-c4c4-43bf-afbd-04bc7c17ec34.png#clientId=u03326725-b0ec-4&from=ui&height=381&id=uf529d19f&margin=%5Bobject%20Object%5D&name=10032-11-downloadFromResponse.png&originHeight=792&originWidth=1350&originalType=binary&ratio=2&size=304666&status=done&style=none&taskId=u67d2cc2c-d6d1-4dfb-81b5-5f56beb3810&width=650)
+![10032-11-downloadFromResponse.png](https://images.xiaozhuanlan.com/photo/2021/132f0e535f9106fcd55d8b9a0ccc2450.png)
 
 > Tips：苹果官方文档中的代码有部分问题，下面是已纠正的代码
 
@@ -775,7 +775,7 @@ func WebView(_ WebView: WKWebView, decidePolicyFor navigationResponse: WKNavigat
 ###### App 启动下载
 
 App 应用程序可以使用 `NSURLRequest` 在当前页面的上下文中下载某些内容
-![10032-12-downloadFromApp.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624378822437-a166bb15-03e0-4f0d-a18e-1f5331da31fd.png#clientId=u03326725-b0ec-4&from=ui&height=380&id=u4d2192f7&margin=%5Bobject%20Object%5D&name=10032-12-downloadFromApp.png&originHeight=792&originWidth=1354&originalType=binary&ratio=2&size=238098&status=done&style=none&taskId=u40b7353b-1192-4727-b871-2c5c13b04b2&width=650)
+![10032-12-downloadFromApp.png](https://images.xiaozhuanlan.com/photo/2021/f2aaadcdc0164d7fa44198100bfb7fbd.png)
 
 **总结**
 
@@ -787,16 +787,24 @@ download.delegate = self
 ```
 
 - 如果下载失败，开发人员可以在 `WKDownloadDelegate` 协议代理方法中实现以下方法，用于恢复下载的数据，然后可以使用这些数据重新从 WebView 中下载文件
-![10032-13-resumeDownload.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624378888602-4f2b3188-3039-43bb-9c58-2ae4e26cf649.png#clientId=u03326725-b0ec-4&from=ui&height=372&id=u8656c8bc&margin=%5Bobject%20Object%5D&name=10032-13-resumeDownload.png&originHeight=774&originWidth=1352&originalType=binary&ratio=2&size=258183&status=done&style=none&taskId=u67295d48-a2eb-4134-a413-c5e8d7d33a8&width=650)
+![10032-13-resumeDownload.png](https://images.xiaozhuanlan.com/photo/2021/b93432bac83f163a73524c41eb2dc88b.png)
 
 **演示**
 
 这里还是以 WebKittens App 为例。用户一直希望与朋友和家人分享这些动物的图片，但是目前只有苹果内部员工才能使用这个 App。为了解决这个问题，苹果新增了一个 API，允许用户从 WebView 中下载和管理文件，使文件的共享更为便捷。以下是以通过简单的方式将文件下载到文件中的演示
-![10032-gif-05-downloadFile.gif](https://cdn.nlark.com/yuque/0/2021/gif/1536000/1624382515686-5b0fc940-0db0-4112-8c91-ce1139f27e32.gif#clientId=u03326725-b0ec-4&from=ui&id=u7420216c&margin=%5Bobject%20Object%5D&name=10032-gif-05-downloadFile.gif&originHeight=333&originWidth=600&originalType=binary&ratio=2&size=741808&status=done&style=none&taskId=u68575e3e-dbc7-4b6a-bf4e-19f647eabc7)
+![10032-gif-05-downloadFile.gif](https://images.xiaozhuanlan.com/photo/2021/a4825cf7e9f7d2b86c5d2461a2b98ee9.gif)
 
 以上就是 Safari 浏览器相关的 API，这些 API为用户提供了更多的选择性，让 App 拥有更好的网络体验。
 
 ## 总结
 
 综上所述，在 iOS 15 中新增的 API 主要有以下：
-![iOS 15 WKWebView新增功能.png](https://cdn.nlark.com/yuque/0/2021/png/1536000/1624428188156-50e90d56-021f-4c65-ba64-d5a943456ab5.png#clientId=u04b88f42-3b8f-4&from=ui&id=u7a20433b&margin=%5Bobject%20Object%5D&name=iOS%2015%20WKWebView%E6%96%B0%E5%A2%9E%E5%8A%9F%E8%83%BD.png&originHeight=2192&originWidth=3245&originalType=binary&ratio=2&size=694678&status=done&style=none&taskId=u66bff002-1350-49ab-97e5-c68b1ba8695)
+![iOS 15 WKWebView新增功能.png](https://images.xiaozhuanlan.com/photo/2021/8bf57b837e224d1a9826cb98b8de7868.png)
+
+## 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
