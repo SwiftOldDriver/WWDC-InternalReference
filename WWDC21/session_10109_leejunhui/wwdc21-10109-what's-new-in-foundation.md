@@ -25,7 +25,7 @@
 属性字符串允许您将属性（键值对）与字符串的特定范围相关联，最常见的字符串属性由 SDK 进行定义，但是你可以创建属于你自己的属性。
 ​
 
-在 `Foundation` 框架面世之时，`NSAttributedString` 属性字符串类型便随之一起推出。而今年，Apple 推出了一个基于现代化的 `Swift` 语言特性的全新的属性字符串结构体 - `AttributedString`，
+在 `Foundation` 框架面世之时，`NSAttributedString` 属性字符串类型便随之一起推出。而今年，Apple 推出了一个基于现代化的 `Swift` 语言特性的全新的属性字符串结构体 - `AttributedString`。
 ​
 
 ### 1.1 AttributedString 初见
@@ -49,7 +49,7 @@
 
 - 首先通过简单的初始化语法得到一个 `AttributedString` 结构体，传入的初始化内容是 `Thank you`。
 
-同时，我们这里对属性字符串设置一个的 `SwiftUI` 字体属性 `bold`，设置之后会让字体有加粗的效果。值得 注意的是，该属性作用在属性字符串全局范围内。
+同时，我们这里对属性字符串设置一个的 `SwiftUI` 字体属性 `bold`，设置之后会让字体有加粗的效果。值得注意的是，该属性作用在属性字符串全局范围内。
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624362686003-21dcf69d-f066-43c9-b1ca-99aebb389da6.png#clientId=u4301b739-d3c5-4&from=paste&height=117&id=u19bfd993&margin=%5Bobject%20Object%5D&name=image.png&originHeight=234&originWidth=1670&originalType=binary&ratio=2&size=157014&status=done&style=none&taskId=ub6f146d9-a518-40ac-9409-0ea15966beb&width=835)
 
 - 同样的，我们再次初始化一个 `AttributedString` 结构体，传入的初始化内容是 `Please visit our website`。这里我们设置字体为斜体 `italic`。同时设置属性字符串的 `link` 属性为一个 `URL`。
@@ -73,7 +73,6 @@
 - Characters 字符，用来访问字符串
 - Runs 用来访问属性
 
-​
 
 「视图」是 `Swift` 的 `Collection` 类型，那么也就是说我们可以像操作 `Array` 类型一样来操作「视图」。
 ​
@@ -126,8 +125,6 @@
 - `prompt` 方法接收一个字符串参数 `document` 并返回一个本地化之后的字符串。不需要通过字符串格式化函数并使用 `%@` 或 `%d` 等格式化说明符，你只需要直接传入具体的值即可。
 - `attributePrompt` 同上。
 
-​
-
 > ​`Xcode` 可以通过编译器自动生成字符串文件，只需要开启位于 `Build Settings` 下的 `Localization` 设置中的 `Use Compiler to Extract Swift Strings` 选项。
 
 ### 1.6 AttributedString & Markdown
@@ -144,7 +141,8 @@
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624890706370-252f0387-0355-4435-a443-542cda7b6ccb.png#clientId=u7f0c6343-d450-4&from=paste&height=320&id=ud63e4218&margin=%5Bobject%20Object%5D&name=image.png&originHeight=640&originWidth=1430&originalType=binary&ratio=2&size=261458&status=done&style=none&taskId=u032e4fc0-f2ab-4f85-b8b2-116500849b3&width=715)
 
 - 除此之外，还支持 `Markdown` 中链接的语法，也就是说 可以为不同的语言提供不同的 `URL`。
-  > `Markdown` 中的删除线以及代码块语法也得到了支持。
+
+> `Markdown` 中的删除线以及代码块语法也得到了支持。
 
 ### 1.7 AttributedString 转换操作
 
@@ -177,6 +175,7 @@
 
 如上代码所示：`AttributedStringKey` 协议只需要定义关联类型 `Value` 以及静态的变量 `name` 即可。现在假设我们希望这个 `RainbowAttribute` 属性 `Codable`。
 ​
+​
 
 > `Codable` 其实是 `Swift` 标准库中的一个类型别名，它代表的是 `Decodable` 和 `Encodable` 协议。
 
@@ -199,6 +198,7 @@
 上图中前两行代码在 `Markdown` 中十分常见，中括号中表示的是描述文本，括号中表示的是实际的 `URL`。带感叹号前缀的话就是直接渲染图片出来，不带感叹号前缀的话将会渲染一个链接出来。而第三行代码展示了自定义属性的语法。
 自定义属性首先会以 `^` 开头，然后是一个中括号来接收文本，最后是一个括号来表示属性。属性以 `JSON5`格式表示。
 
+
 > [JSON5](https://json5.org) 与 JSON 兼容，并允许使用不带引号的 `key`、注释和一些其它功能。
 
 > Foundation 中的 JSON 相关的 API 也已经添加了对 JSON5 的支持。
@@ -215,6 +215,7 @@
 ### 1.8 AttributedString Scopes
 
 `Scopes` 是属性 `key` 的集合。`Scopes` 在解码 `JSON` 或 `Markdown` 时十分有用，因为它告诉了我们想要查找的属性，以及如何解码这些属性。
+
 
 > Apple 分别为 `Foundation`、`UIKit`、`AppKit`、`SwiftUI` 定义了各自的 `Scope`。你可以定义属于你自己应用的 `Scope`。
 
@@ -247,8 +248,6 @@
 
 ### 2.1 新的 `Formatters` 语法
 
-​
-
 那么可以简化上面的步骤吗？答案是可以的，在最新的 `Formatters API` 发布后，我们无需再手动创建并配置 `Formatter`，同时，我们也不需要传给 `Formatter` 一个日期对象了，我么只需要在日期对象身上调用 `formatted` 方法，并指定格式化标准是什么。仅仅一行代码就完成了上面两个步骤的工作。
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1625326851691-ba62c0bf-e26d-4428-bbe6-b6e0538c8005.png#clientId=ud2f66d03-637b-4&from=paste&height=300&id=u6b18833c&margin=%5Bobject%20Object%5D&name=image.png&originHeight=600&originWidth=1658&originalType=binary&ratio=2&size=441324&status=done&style=none&taskId=udf9a1e25-5d1d-40ab-bd80-3c9f47a5a7b&width=829)
@@ -277,8 +276,6 @@
 
 - 首先，通过 `Date.now` 获取当前时间点 `date`
 - 然后，在 `date` 对象上调用 `formatted` 方法得到格式化后的内容 `formatted`
-
-​
 
 默认的日期格式化就是如此简单，当然，就像上面例子中看得到那样，日期格式化支持多样化的配置。
 
@@ -312,7 +309,6 @@
 - 一旦你开始添加一些字段上去，输出的结果就会是自定义并仅反映你选择显示的内容，有点像 `UI` 中的占位文本。
 
 ​
-
 本次更新对于格式化相互关联的两个日期也提供了新的 `API`。
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1625333304742-5b4689fe-511d-4a46-8727-323b33122089.png#clientId=ud2f66d03-637b-4&from=paste&height=441&id=u2b52827e&margin=%5Bobject%20Object%5D&name=image.png&originHeight=882&originWidth=1668&originalType=binary&ratio=2&size=695082&status=done&style=none&taskId=u39af2b8b-4ab8-499a-b7a4-684cb12a244&width=834)
@@ -353,7 +349,6 @@
 - 初始化一个日期解析策略，传入的格式化字符串通过字符串插值进行拼接，同时还具有代码自动补全功能，这相比于指定诸如 `YYYY-MM-DD` 这类「魔法」字符串会来得更加简单与直观。所以从现在开始，格式化字符串为日期时，不再需要考虑应该用多少个大写的 `Y` 了。
 
 ​
-
 ### 2.3 数字格式化
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1625337161257-266f384f-9779-48f3-a649-81a691bcbca2.png#clientId=u5f924393-78f4-4&from=paste&height=388&id=bMD6x&margin=%5Bobject%20Object%5D&name=image.png&originHeight=776&originWidth=1588&originalType=binary&ratio=1&size=115154&status=done&style=none&taskId=udfbd752d-3b3d-484a-87af-cf9a85b72b2&width=794)
@@ -381,11 +376,9 @@
 - 如上图所示，在原料部分我们用到了集合格式化，在价格部分用到了货比格式化，在数量部分用到了数字格式化，并在下单按钮上对下单数量做了本地化操作。
 
 ​
-
 ### 2.4 字符串和格式化器的国际化与本地化
 
 ​
-
 关于字符串与格式化器的国际化以及本地化的更多内容可以参考本次 `WWDC` 的其他 `Session`：
 [Localize your SwiftUI app](https://developer.apple.com/videos/play/wwdc2021/10220/) & [Streamline your localized strings](https://developer.apple.com/videos/play/wwdc2021/10221/)
 ​
@@ -397,8 +390,6 @@
 ​
 
 ### 3.1 Automatic Grammar Agreement 初见
-
-​
 
 我们讨论了语言中的一些术语，接下来让我们以实际的例子进行更深入的讨论吧。
 
@@ -441,7 +432,6 @@
 
 在拉丁美洲西班牙环境下，本地化器使用重新排列语法将大小和餐食的顺序进行了调换，这是因为西班牙语中像「小的」或「大的」这样的形容词位于名词的后面。
 ​
-
 有些语言不仅在本地化文本本身上，还在文本与阅读的人之间具有一致性。自动语法协议也有助于解决这一问题。
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1625373838652-05e7d192-bda7-4b45-b981-608b8b2d0781.png#clientId=u86432fc4-6b2f-4&from=paste&height=970&id=ub4c11fc1&margin=%5Bobject%20Object%5D&name=image.png&originHeight=970&originWidth=1050&originalType=binary&ratio=1&size=241915&status=done&style=none&taskId=u5bcaffe4-0d85-4299-b89d-bf8ef894256&width=1050)
@@ -465,15 +455,11 @@
 而上图是设置了男性称谓后的备忘录欢迎界面。
 如果我们不知道用户是否有设置过称谓，我们还是会以初始的字符串作为备选。
 ​
-
 今年，`Apple` 对西班牙语和英语实现了自动语法协议功能。就像系统应用备忘录的欢迎界面一样，你也可以在自己的应用中采用同样的技术。
-​
 
 ## 四、总结
 
 `Foundation` 今年有许多强大的新功能，你可以从今天开始在你的 `app` 中使用它们。
-​
-
 - `AttributedString` 属性字符串提供了一个快速的，易用的并且 `Swift` 优先的接口，进而实现在一个字符串的范围中添加键值对以达到富文本的效果。你可以在 `SwiftUI` 中使用 `Text` 组件，并在本地化字符串中使用 `Markdown` 语法。
 - 新的格式器 `API` 将重点放在格式上，简化了代码并提高了性能。
 - 最后，自动语法协议将智能地修复本地化字符串，以便匹配语法时态，单复数以及用户自己的称谓设置。
