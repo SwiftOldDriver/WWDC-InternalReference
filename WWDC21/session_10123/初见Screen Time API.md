@@ -6,7 +6,7 @@
 
 
 ## 导读
-距离苹果第一次向大家介绍 iOS Screen Time 已经过去三年了，`Screen Time` 对用苹果用户来说是一个很“透明的”功能，它可以为用户提供清晰透明的应用使用时间、访问网页时间记录，用户以及他的家庭成员能够直观的了解到过去一段时间使用手机的情况。在了解到相关信息之后，可以针对性管理使用手机的习惯，从而让用户能够合理、健康地使用手机。不仅如此，家长还可以通过 `Screen Time` 增加限制条件来管理孩子们的手机。
+距离苹果第一次向大家介绍 iOS Screen Time 已经过去三年了，`Screen Time` 对用苹果用户来说是一个很“透明的”功能，它可以为用户提供清晰透明的应用使用时间、访问网页时间记录，用户以及其家庭成员能够直观的了解到过去一段时间设备的使用情况。在了解到相关信息之后，可以针对性地管理使用设备的习惯，从而让用户能够合理、健康地使用手机。不仅如此，家长还可以通过 `Screen Time` 增加限制条件来管理孩子们的设备。
 
  ![](Img/screenTimeSetting.png)
 
@@ -14,50 +14,57 @@
 
 
 ## Screen Time API 构造
-`Screen Time API` 提供了核心的 `Screen Time` 功能，在iOS 和 iPadOS 15 之后的系统版本就可以使用 `Screen Time API`。`Screen Time API` 是100% Swift 和 SwiftUI 代码，它的设计和构建遵守了3个指导原则，基于这3个指导原则，苹果设计了与之对应的3个新的框架 — `Managed Setting` 、`Family Controls` 、`Device Activity` — 共同组成了 `Screen Time API`。
+`Screen Time API` 提供了核心的 `Screen Time` 功能，在iOS 和 iPadOS 15 之后的系统版本就可以使用 `Screen Time API`。`Screen Time API` 是100% Swift 和 SwiftUI 代码，它的设计和构建遵守了3个指导原则：
+
+	1.  提供一个现代的、设备级的框架来直接使用 `Screen Time`  现有的限制能力
+	2. 严格保障用户隐私
+	3. 确保开发者能够创造出优秀的动态家长控制体验
+
+基于这3个指导原则，苹果设计了与之对应的3个新的框架 — `Managed Setting` 、`Family Controls` 、`Device Activity` — 共同组成了 `Screen Time API`
 
 ![](Img/threePart.png)
 
 
-### 1. Managed Setting framework
-基于**“为直接使用现有限制提供一个现代的、设备级的框架”**的指导思想，`Managed Setting` 框架能够直接使用与 `Screen Time` 相同的限制能力。
+### 1. Managed Setting Framework
 
-**家长控制应用**不仅应该限制儿童在设备上能够做什么，还应当让这些限制持续生效直到家长或者监护人解除限制。`Managed Setting` 提供了若干与 `Screen Time` 近似的实现方法：
-
-- 适时的锁定账户或者锁定密码修改
-- 过滤网络传输
-- 屏蔽应用或网站
-
-基于这些方法，可以根据应用自身的品牌调性以及功能，相应地进行定制化开发，设置多种类型的限制。
+基于**“提供一个现代的、设备级的框架来直接使用 `Screen Time`  现有的限制能力”**的指导思想，`Managed Setting` 框架为用户提供了一种保护隐私的方式来对设备中的某些设置和功能进行限制设置，这些限制会持续生效直到家长或者监护人解除。开发者可以根据应用自身的品牌调性以及功能需求，相应地进行定制化开发，设置多种类型的限制。
 
 ![](Img/managerSettingOption.png)
 
-针对媒体内容，Managed Setting 提供了相关 API 且无需 Family Controls 授权。对于媒体类型的应用，这些方法会帮助它们针对不同用户做内容分级限制。
+这其中针对媒体内容，Managed Setting 提供了相关 API 且无需 Family Controls 授权。对于媒体类型的应用，这些方法会帮助它们针对不同用户做内容分级限制。
 
 ![](Img/mediaRestriction.png)
 
-### 2. Family Controls framework
+### 2. Family Controls Framework
 
-`Screen Time`会处理一些很敏感的用户信息（例如：用户使用应用时长或者访问网页时长），`Screen Time` 一直都很重视用户隐私，除了家庭成员，其他任何人（甚至苹果）都不能够获取用户敏感信息。`Screen Time API` 将延续这一特性：用户的使用数据在设备之外是不能被看到的。
+`Screen Time` 会处理一些很敏感的用户信息（例如：用户使用应用时长或者访问网页时长），`Screen Time` 中除了家庭成员，其他任何人（甚至苹果）都不能够获取用户敏感信息。正是基于**严格保障用户隐私**指导思想，`Family Controls` 提供了在儿童的设备中校验家长控制的使用授权的能力，防止 `Screen Time API` 被移除或规避。与此同时，`Family Controls` 为家庭成员正在使用的应用或访问的网站提供**隐私不透明令牌**，在使用 `Screen Time API` 来进行监控或者限制功能使用的整个过程中，这个令牌都会用到。通过它还可以确保只有 `Family Share` 团体中的成员可以知道什么应用或网站正在被使用，任何其他人都无法得知。
 
-正是基于这一指导思想 `Family Controls` 应运而生。`Family Controls` 能够校验 `Screen Time API` 的使用授权，防止 `Screen Time API` 被移除或规避。与此同时，`Family Controls` 为家庭正在使用的应用或访问的网站提供**隐私不透明令牌**。应用使用 `Screen Time API` 来进行监控或者限制功能使用的整个过程中，这个令牌都会用到。通过它还可以确保只有 `Family Share` 团体中的成员可以知道什么应用或网站正在被使用，任何其他人都无法得知。
+![](Img/familyControlsFramework.png)
 
-### 3. Device Activity framework
-`Device Activity` 框架提供了一种新的方式来监控网站和应用的使用状况，开发者可以在适当的地方执行代码来实现监控。考虑一种情况，小时候偷偷看电视，“聪明”的孩子就会用湿毛巾来给电视降温，这样在家长回到家摸电视机时就不会发现孩子偷看电视的行为。同样的，作为一个**家长控制应用**，孩子会想尽办法不让它“存活”在自己的手机中。那么如何才能运行代码来给孩子设置限制呢？答案便是`Device Activity` 框架中的 `schedules` 和 `events`。
-`Device Activity Schedule` 会在时窗的开始和结束时，在程序中运行一个拓展。
-`Device Activity Events` 是当设备上的用户达到 `Device Activity Schedule` 中的使用阈值时调用扩展的使用监视器。
-**家长控制应用**只需要简单声明它所关心的**使用类型**和**使用时间**。
+### 3. Device Activity Framework
+基于**确保开发者能够创造出优秀的动态家长控制体验**的指导思想，`Device Activity` 框架提供了监控网站和应用的使用状况的能力，开发者可以在适当的地方执行代码来实现监控。
 
+考虑一种情况，小时候偷偷看电视，“聪明”的孩子就会用湿毛巾来给电视降温，这样在家长回到家摸电视机时就不会发现孩子偷看电视的行为。同样的，作为一个**家长控制应用**，孩子会想尽办法不让它“存活”在自己的手机中。那么如何才能运行代码在孩子的设备中设置限制呢？答案便是`Device Activity` 框架中的 `schedules` 和 `events`。
+
+`Device Activity Schedule` 会在时窗的开始和结束时，在程序中运行一个拓展。当使用设备的用户达到 `Device Activity Schedule` 设置的使用阈值时，`Device Activity Events`  会调用拓展中的相应方法。**家长控制应用**只需要简单声明它所关心的**使用类型**和**使用时间**。
+
+![](Img/deviceActivityFramework.png)
+
+以上三个框架就构成了整个 Screen Time API，接下来我们来了解一下简单的家长控制应用使用流程以及如何使用 Screen Time API 来构建实现自己的家长控制应用。
+
+## 家长控制应用工作流程
+
+基于 `Screen Time API` 提供的能力，在家长控制应用中可以按照下述流程来对儿童的设备进行管理。需要明确在整个流程中存在两个端，家长或监护人使用的 **家长端**和儿童使用的**儿童端**，家长设备和儿童设备需要包含在同一 Family Share 团体中。
+
+<center>![](Img/workflow.gif)</center>
+
+1. 首先，在家长和儿童的设备中安装家长控制应用，监护人打开儿童端，儿童端会请求获取授权并登录家长或监护人的 Apple ID。
+2. 之后，在家长端设置限制和规则，应用会发送这些信息到孩子的设备。
+3. 然后，在儿童端，应用会根据家长端的设置来对儿童的行为进行监控和限制操作。
+
+以上就是一个简单的“获取控制权限-设置限制-监控操作”家长控制应用工作流程，在 Screen Time API 中，这三步分别对应 `Family Controls` 、`Managed Setting`、`Device Activity`，接下来我们看一下具体的实现过程。
 
 ## Screen Time API 实践
-
-下面是一个**家长应用控制**工作的流程：
-
-1. 当**家长控制应用**被安装在监护人和孩子的设备中，家长在孩子的设备上打开应用，应用会请求 `Family Controls` 的权限。
-2.  在监护人设备的应用中进行设置、限制和规则，应用会发送这些信息到孩子的设备。
-3. 在孩子的设备中，应用使用 `Device Activity` 来创建计划和事件，当计划或事件发生，应用中 `Device Activity` 拓展会收到调用。在拓展中可以使用 `Managed Setting` 设置限制。
-
-如何使用 `Screen Time API` 来完成这些操作是接下来要介绍。
 
 ### 1. 初始化并获取 Family Controls 权限
 
@@ -73,18 +80,15 @@
  
 ![](Img/authFCCode.png)
 
-
-执行后台代码实施
-
 ### 2. 设置限制
 
 #### 2.1 设置限制内容
 
-在家长端，需要监护人来选择哪些应用、网站、分类是需要被禁止的。在 Family Controls framework 中提供了 `The family activity picker` 的 SwiftUI 组件来实现应用选择交互。当监护人做出选择后，通过返回的不透明的 token 指代的应用、网站或分类做出限制。当获取到监护人选择的限制之后，在 Device Activity 监听拓展中，进行下一步操作。
+在家长端，需要监护人来选择哪些应用、网站、分类是需要被禁止的。在 `Family Controls` 框架中提供了 `The family activity picker` 的 SwiftUI 组件来实现应用选择交互。当监护人做出选择后，通过返回的不透明的 token 指代的应用、网站或分类做出限制。当获取到监护人选择的限制之后，在 Device Activity 监听拓展中，进行下一步操作。
 
 ![](Img/selectAPP.png)
 
-即使家长控制应用没有开启，也可以使用 Device Activity Schedule 来设置应用屏蔽限制。当 Device Activity Schedule 开启，Device Activity 将会调用一个新的拓展点，项目中会有针对拓展点的拓展。为了实现拓展，需要定义 `DeviceActivityMonitor` 的子类作为原理类。子类中需要重写两个方法 `intervalDidStart` 和 `intervalDidEnd` ，在自己的 schedule 开始和结束之后，当设备被使用时这两个方法将首次分别被调用。
+即使家长控制应用没有开启，也可以使用 Device Activity Schedule 来设置应用屏蔽限制。当 Device Activity Schedule 开启，`Device Activity` 将会调用一个新的拓展点，项目中会有针对拓展点的拓展。为了实现拓展，需要定义 `DeviceActivityMonitor` 的子类作为原理类。子类中需要重写两个方法 `intervalDidStart` 和 `intervalDidEnd` ，在自己的 schedule 开始和结束之后，当设备被使用时这两个方法将首次分别被调用。
 
 引入 `ManagedSettings` 模块来配置应用屏蔽限制内容，在代码中，`intervalDidstart`方法内获取 `MyModel` 模型内家长端设置的限制内容，将限制内容配置到 `ManagedSettingsStore`。相应的，`intervalDidEnd ` 方法内清空限制配置，在时间范围外移除限制。
 
@@ -130,6 +134,13 @@
 
 Screen Time API 让我想到了目前国内 APP 中的青少年模式，两者都是对于儿童使用应用过程中的限制。不同的是，应用中的青少年模式只能从应用层级来做限制，例如抖音的青少年模式会限制展示内容分类、使用时间限制，应用内操作限制。而 Screen Time API 是从系统层面对应用使用做出限制，其隐私性更加有保障，可以通过配置来设置激励措施。两者可以相互结合，在系统层面和应用层级全面的设置限制来引导用户使用手机的习惯。
 
+Screen Time API 的设计中存在家长端和儿童端两个身份，这就需要两个设备。然而现实中还存在另外一种需求：个人在自己的设备上做出限制来管理自己使用设备的习惯，但是基于 Screen Time API 的设计是无法实现在一台设备中管理使用权限的，很多人针对这个问题向苹果提出疑问。
+
+总而言之，Screen Time API 为开发者带来了 Screen Time 核心的应用管理功能，这些 API 的开放将会激发更多有意思 的需求，相信未来在很多教育类型的 APP 中都会看到他的身影。
+
 
 ## 相关内容
 - [Family Share](https://www.apple.com/family-sharing/)
+- [Managed Settings Documentation](https://developer.apple.com/documentation/ManagedSettings)
+- [Family Controls Documentation](https://developer.apple.com/documentation/FamilyControls)
+- [Device Activity Documentation](https://developer.apple.com/documentation/DeviceActivity)
