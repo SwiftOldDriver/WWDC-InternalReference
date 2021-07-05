@@ -4,7 +4,7 @@
 
 ### 概览
 
-本 session 讲解了如何使用 Xcode 检测和诊断内存问题。了解一些常见的内存问题，以及内存占用对 app 的影响。学习使用一些工具来分析并解决内存的问题。
+本 session 讲解了如何使用 Xcode 检测和诊断内存问题。了解一些常见的内存问题，以及内存占用对 app 的影响。学习使用一些工具来分析并解决内存问题。
 
 
 
@@ -60,7 +60,7 @@
 
 Dirty memory 是已经被 app 写入的内存，包含如下：
 
-1. 它包括所有的 heap allocations：当你用 malloc时，申请的就是堆上的存储空间。
+1. 它包括所有的 heap allocations：当你用 malloc 时，申请的就是堆上的存储空间。
 2. 图像解码的buffer。
 3. 以及 frameworks 中的 `__DATA` 和 `__DATA_DIRTY` 部分也同样存储在 Dirty memory。
 
@@ -96,7 +96,7 @@ Clean Memory 是还没有被写入的内存或可以被 page out 的内存。指
 
 ![image-20210615001328356](https://www.yuque.com/api/filetransfer/images?url=https%3A%2F%2Fcdn.nlark.com%2Fyuque%2F0%2F2021%2Fpng%2F21867895%2F1623935418716-d50f9bbc-13fe-4913-a5f4-63a7e07fc0f8.png&sign=5a9021b1a8e893b850dd31748e9b4f4c9dec20958746285b3bd7c45cad42901a)
 
-**因此， memory footprint = dirty size + compressed size ，这也就是我们需要并且能够尝试去减少的内存占用。**
+**因此， memory footprint = dirty size + compressed size ，也就是我们需要尝试去减少的内存占用。**
 
 如果想对内存技术有更深刻的了解，建议观看 [WWDC18 iOS Memory Deep Dive](https://developer.apple.com/videos/play/wwdc2018/416) 。
 
