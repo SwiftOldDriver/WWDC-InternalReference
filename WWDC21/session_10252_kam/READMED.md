@@ -12,5 +12,5 @@ WWDC21 - 10252 Make blazing fast lists and collection views
 
 ## 作者简介
 
-[Kam](https://kam-to.github.io),  iOS 软件开发者、资深摸鱼工程师，喜欢收集小比例汽车模型、打羽球，现供职于网易。
+[Kam](https://kam-to.github.io)， iOS 软件开发者、资深摸鱼工程师，喜欢收集小比例汽车模型、打羽球，现供职于网易。
 

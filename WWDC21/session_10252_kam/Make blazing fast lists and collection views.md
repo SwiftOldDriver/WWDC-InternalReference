@@ -2,7 +2,7 @@
 
 > 本文基于 [Session 10252](https://developer.apple.com/videos/play/wwdc2021/10252/) 梳理
 
-继 iOS 13、14 为 list 及 collection view 带来更现代化的 API 后，iOS 15 为它们带来了更流畅的滚动体验。不仅在 cell prefetching 、cell reloading 机制上做了底层优化工作，还充分吸取了优秀开源项目的优化经验，提供 `UIImage` 生成缩略图、解码为位图等功能 API，避免直接设置大尺寸的未解码 `UIImage` 对象给 cell 上的 `UIImageView` 而导致卡顿。下面我们聊一聊这些改进。
+继 iOS 13、14 为 List 及 Collection View 带来更现代化的 API 后，iOS 15 为它们带来了更流畅的滚动体验。不仅在 cell prefetching 、cell reloading 机制上做了底层优化工作，还充分吸取了优秀开源项目的优化经验，提供 `UIImage` 生成缩略图、解码为位图等功能 API，避免直接设置大尺寸的未解码 `UIImage` 对象给 cell 上的 `UIImageView` 而导致卡顿。下面我们聊一聊这些改进。
 
 ## Diffable Data Source
 
@@ -12,11 +12,11 @@
 
 ### Recap
 
-在过去，上古时期的 iOS 开发者，需要手动计算变动数据的 `NSIndexPath` 集合，然后调用 collection view 的批量刷新接口更新 UI，而 buggy 的计算逻辑很容易抛出 UI 更新结果与数据不一致的 `NSInternalInconsistencyException` 异常。当然，粗暴地调用 `reloadData` 全量刷新可以解决这个问题，但这会丢失 cell 动画以致用户体验下降，并且这种冗余的刷新工作还有会带来性能下降的表现。很长一段时间开发者们会使用 [IGListKit ](https://github.com/Instagram/IGListKit) 这样的 data-driven 框架，用 diff 算法察觉数据变动刷新 UI，来应付这样的异常。直到 Apple 在 iOS 13 上推出 Diffable Data Source，开发者才能使用原生的技术品尝到 diff 刷新带来的好处。
+在过去，上古时期的 iOS 开发者，需要手动计算变动数据的 `NSIndexPath` 集合，然后调用 Collection View 的批量刷新接口更新 UI，而 buggy 的计算逻辑很容易抛出 UI 更新结果与数据不一致的 `NSInternalInconsistencyException` 异常。当然，粗暴地调用 `reloadData` 全量刷新可以解决这个问题，但这会丢失 cell 动画以致用户体验下降，并且这种冗余的刷新工作还有会带来性能下降的表现。很长一段时间开发者们会使用 [IGListKit ](https://github.com/Instagram/IGListKit) 这样的 data-driven 框架，用 diff 算法察觉数据变动刷新 UI，来应付这样的异常。直到 Apple 在 iOS 13 上推出 Diffable Data Source，开发者才能使用原生的技术品尝到 diff 刷新带来的好处。
 
 ![Diffable Data Source](https://cdn.nlark.com/yuque/0/2021/jpeg/21817760/1624816704722-986dab67-1aa8-4c9b-97b1-4da6f151db75.jpeg?x-oss-process=image%2Fresize%2Cw_1496)
 
-Diffable Data Source 采用了闭包来配置 cell 和 supplementary view，使用 snapshot 的概念描述 data source 的状态，而数据的变动只需对其 snapshot 进行操作，然后 data source 就能计算出前后两个 snapshot 的 diff，从而执行 UI 的插入、移除等相关更新。其用法比较简单：
+Diffable Data Source 采用了闭包来配置 cell 和 supplementary view，使用 snapshot 的概念描述 Data Source 的状态，而数据的变动只需对其 snapshot 进行操作，然后 Data Source 就能计算出前后两个 snapshot 的 diff，从而执行 UI 的插入、移除等相关更新。其用法比较简单：
 
 首先是摒弃传统的 UICollectionViewDataSource 的代理方法：
 
@@ -37,7 +37,7 @@ func collectionView(_:cellForItemAt:)
         return cell
     }
 
-然后用 `NSDiffableDataSourceSnapshot` 生成当前数据的状态，让 data source 对象调用 `apply(:animatingDifferences)` 函数即可。
+然后用 `NSDiffableDataSourceSnapshot` 生成当前数据的状态，让 Data Source 对象调用 `apply(:animatingDifferences)` 函数即可。
 
     var snapshot = NSDiffableDataSourceSnapshot<SectionType, ItemType>()
     let firstSectionObject: SecionType = ...
@@ -54,7 +54,7 @@ func collectionView(_:cellForItemAt:)
 
 ### API - apply(_:animatingDifferences:)
 
-在 iOS 15 之前，调用 `apply(_:animatingDifferences:completion:)` 刷新时，如果传递的动画参数为 `false`，那么 UIKit 内部将会转为 `reloadData` 调用，这导致 collection view 全量刷新屏幕上所有的 cell。由于官方提供的 demo 有比较多 iOS 15 的 API 逻辑耦合，为了能跟 iOS 14 作对比，笔者自己整了个 demo 测试，在从 snapshot 中移除一个 item 之后，调用 `dataSource.apply(snapshot, animatingDifferences: false)`， 在控制台中的输出如下：
+在 iOS 15 之前，调用 `apply(_:animatingDifferences:completion:)` 刷新时，如果传递的动画参数为 `false`，那么 UIKit 内部将会转为 `reloadData` 调用，这导致 Collection View 全量刷新屏幕上所有的 cell。由于官方提供的 demo 有比较多 iOS 15 的 API 逻辑耦合，为了能跟 iOS 14 作对比，笔者自己整了个 demo 测试，在从 snapshot 中移除一个 item 之后，调用 `dataSource.apply(snapshot, animatingDifferences: false)`， 在控制台中的输出如下：
 
 ![new_two_api.png](https://cdn.nlark.com/yuque/0/2021/png/21817760/1624873951255-90b3c656-d916-44ca-8fd9-0b421eafa5da.png?x-oss-process=image%2Fresize%2Cw_1496)
 
@@ -208,7 +208,7 @@ preparingThumbnail cost:	 0.005650997161865234 seconds
 
 ## 总结
 
-本文我们回顾了往年的 Diffable Data Source 基础和关于 hitchs 的 tech talk 等内容，了解 iOS 15 在 Diffable Data Source 和 cell prefetching 上的改进，也试用了 `UIImage` 两个甜品 API，希望这些知识都能被大家实践到产品上，构建性能更优的 list 和 collection view。
+本文我们回顾了往年的 Diffable Data Source 基础和关于 hitchs 的 tech talk 等内容，了解 iOS 15 在 Diffable Data Source 和 cell prefetching 上的改进，也试用了 `UIImage` 两个甜品 API，希望这些知识都能被大家实践到产品上，构建性能更优的 List 和 Collection View。
 
 ## 参考
 
