@@ -139,7 +139,7 @@ class AppMetrics: MXMetricManagerSubscriber {
 
 ![Organizer - Reports - Disk Writes](https://images.xiaozhuanlan.com/photo/2021/31559fdcda6eff36f39f24ecbf1624e1.png)
 
-也可以在 Organizer 中的 Reports 下的 Disk Writes 中看到代码详情，其中展示了在 24 小时内写入超过 1 GB 的代码片段。调用栈展示了代码中哪里进行了过量的写操作，而在 Xcode 13 中，右侧新增了一栏 Insights，简述了可以如何进行优化，减少磁盘写入。这些数据也会通过 App Store Connect API 提供。也可以通过 `MetricKit` 实时收集这些数据。如果使用了 `MetricKit` 来监控 App 的磁盘使用情况，就能够使用 `MXSignpost` 记录关键的磁盘写入的路径，获取更精确的数据，从而找到优化空间。关于如何定位并修复磁盘写入的问题，可以观看今年的 「[Diagnose Power and Performance Regressions in your App](https://developer.apple.com/videos/play/tech-talks/10855/)」。
+也可以在 Organizer 中的 Reports 下的 Disk Writes 中看到代码详情，其中展示了在 24 小时内写入超过 1 GB 的代码片段。调用栈展示了代码中哪里进行了过量的写操作，而在 Xcode 13 中，右侧新增了一栏 Insights，简述了可以如何进行优化，减少磁盘写入。这些数据也会通过 App Store Connect API 提供。也可以通过 `MetricKit` 实时收集这些数据。如果使用了 `MetricKit` 来监控 App 的磁盘使用情况，就能够使用 `MXSignpost` 记录关键的磁盘写入的路径，获取更精确的数据，从而找到优化空间。关于如何定位并修复磁盘写入的问题，可以观看今年的 「[Diagnose Power and Performance Regressions in your App](https://developer.apple.com/wwdc21/10087/)」。
 
 ## 启动时间与应用终止（Termination）
 
