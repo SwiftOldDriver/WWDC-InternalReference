@@ -17,7 +17,7 @@
 
 ![Image](https://res.craft.do/user/full/f4d6ca89-7816-10ef-0133-2b135b34972a/doc/357B7876-35F7-462F-85B8-7AD053A54DEE/0FC69BE9-37D1-410D-BCE2-0C6847D202FF_2/Image)
 
-具体的代码如下图所示。首先我们可以注意到，由于多次使用回调处理，显示缩略图这个简单的任务对应的代码，出现了多层缩进，给阅读代码和查找问题带来一定阻碍。其次，这段代码存在严重的bug，你注意到了么？
+具体的代码如下所示。首先我们可以注意到，由于多次使用回调处理，显示缩略图这个简单的任务对应的代码，出现了多层缩进，给阅读代码和查找问题带来一定阻碍。其次，这段代码存在严重的bug，你注意到了么？
 
 ```swift
 func fetchThumbnail(for id: String, completion: @escaping (UIImage?, Error?) -> Void) {
@@ -43,9 +43,9 @@ func fetchThumbnail(for id: String, completion: @escaping (UIImage?, Error?) -> 
 }
 ```
 
-揭晓答案，如下图所示，在两处`guard/return`代码里，没有针对发生错误的场景执行`completion`回调，其结果可能是，图片的loading动画一直转，就是不显示图。从业务角度看，`fetchThumbnail`函数的任何一个return都应该执行`completion`回调；但从编译层面，Swift没办法保证return前都执行了回调处理，即我们不能借助Swift的错误处理机制在编译时发现这样的问题。因为对Swift来说，`completion`回调只是一个普通的闭包，尽管我们希望它总是执行，但Swift没法强制必须如此。所以，当使用完成回调的方式异步处理任务时，需要开发者小心谨慎，确保任何情况下完成回调总是被执行。
+揭晓答案，如下面代码所示，在两处`guard/return`代码里，没有针对发生错误的场景执行`completion`回调，其结果可能是，图片的loading动画一直转，就是不显示图。从业务角度看，`fetchThumbnail`函数的任何一个return都应该执行`completion`回调；但从编译层面，Swift没办法保证return前都执行了回调处理，即我们不能借助Swift的错误处理机制在编译时发现这样的问题。因为对Swift来说，`completion`回调只是一个普通的闭包，尽管我们希望它总是执行，但Swift没法强制必须如此。所以，当使用完成回调的方式异步处理任务时，需要开发者小心谨慎，确保任何情况下完成回调总是被执行。
 
-两个同步任务（步骤1和3），两个使用完成回调的异步任务（步骤2和4），我们成功完成了相关代码的书写，而这段代码约20行、且容易引入隐蔽的bug。我们只是希望这4个任务按顺序执行，但这段代码容易写错，难以理解，且由于混杂着错误处理和各种回调，没法一眼看清楚其意图。
+两个同步任务（步骤1和3），两个使用完成回调的异步任务（步骤2和4），我们成功完成了相关代码的书写，而这段代码约20行、且容易引入隐蔽的bug。我们只是希望这4个任务按顺序执行，但这段代码容易写错，难以理解，且由于混杂着错误处理和各种回调，没法一眼看清楚其意图。以下是修复bug之后的代码。
 
 ```swift
 func fetchThumbnail(for id: String, completion: @escaping (UIImage?, Error?) -> Void) {
@@ -77,7 +77,7 @@ func fetchThumbnail(for id: String, completion: @escaping (UIImage?, Error?) -> 
 
 ### 用`async/await`改造我们的程序🧑🏻‍💻
 
-闲话少说，使用`async/await`的完整版的代码如下图所示。上个版本，我们需要约20行代码，有5层缩进结构；新版本只有6行代码，且只有一层代码结构，没有任何额外的缩进。当你忽略两行`guard/return`代码后，会发现新版本的代码，就像一段英文段落一样容易阅读理解：
+闲话少说，使用`async/await`的完整版的代码如下所示。上个版本，我们需要约20行代码，有5层缩进结构；新版本只有6行代码，且只有一层代码结构，没有任何额外的缩进。当你忽略两行`guard/return`代码后，会发现新版本的代码，就像一段英文段落一样容易阅读理解：
 
    1. 创建缩略图URLRequest；
    2. 发送网络请求并接收服务端返回；
@@ -120,7 +120,7 @@ extension UIImage {
 
 ### async序列
 
-如下图所示，await还可以用在for循环中，来遍历async序列(async sequence)。async序列就像普通序列一样，唯一区别是它是异步提供其元素供我们使用的。所以获取其下一个元素必须标记await关键词，表明这里是异步的。
+如下面代码所示，await还可以用在for循环中，来遍历async序列(async sequence)。async序列就像普通序列一样，唯一区别是它是异步提供其元素供我们使用的。所以获取其下一个元素必须标记await关键词，表明这里是异步的。
 
 ```swift
 for await id in staticImageIDsURL.lines {
@@ -132,7 +132,7 @@ let result = await collage.draw()
 
 我们来看看下面这个有趣的例子。第一行`endpointURL`的内容是最近的地震信息。通常下载数据是个异步任务，消耗一定时间。但这里，我们不想等到全部都下载好，相反我们想边接收信息边展示它们。这就要用到新的`async/await`特性了。我们处理的是csv格式的文件，它是由逗号分隔而成的格式化文本，每一行(line)文本是完整的一行(row)数据。因为由很多行文本组成的async序列会释放出它收到的每一行文本，所以我们有机会随着收到数据的进度动态把它们呈现出来，让程序用起来响应迅速跟手。
 
-更棒的是，你可以像处理熟悉的普通序列那样处理这个新的异步场景。比如，你可以使用`for-await-in`语法来遍历async序列，而像`map`、`filter`、`reduce`以及下图中的`dropFirst`等函数，去处理async序列。
+更棒的是，你可以像处理熟悉的普通序列那样处理这个新的异步场景。比如，你可以使用`for-await-in`语法来遍历async序列，而像`map`、`filter`、`reduce`以及下面代码中的`dropFirst`等函数，去处理async序列。
 
 ```swift
 @main
@@ -228,7 +228,7 @@ do {
 }
 ```
 
-有时我们需要并发的运行两个迭代器，只需要如下图创建async任务，把要执行的迭代包在其中。这对于可能无限运行下去的迭代器也很有用，因为你不仅可以并发执行多个async任务，还能稍后在外部使用`cancel`方法提前终结任务。
+有时我们需要并发的运行两个迭代器，只需要如下面代码所示，创建async任务，把要执行的迭代包在其中。这对于可能无限运行下去的迭代器也很有用，因为你不仅可以并发执行多个async任务，还能稍后在外部使用`cancel`方法提前终结任务。
 
 ```swift
 // 异步遍历每个元素
@@ -252,7 +252,7 @@ iteration1.cancel()
 iteration2.cancel()
 ```
 
-iOS15、macOS Monterey 等提供了很多async序列的API，我们来看看其中最精彩的一些。从文件中读取字节是很常见的一个任务。FileHandle现在有了新的`bytes`属性，能提供字节流的async序列。配合async序列的扩展能力——把字节流变成`lines`，我们就可以从文件中异步地获得逐行内容并进行处理了，如下图所示。
+iOS15、macOS Monterey 等提供了很多async序列的API，我们来看看其中最精彩的一些。从文件中读取字节是很常见的一个任务。FileHandle现在有了新的`bytes`属性，能提供字节流的async序列。配合async序列的扩展能力——把字节流变成`lines`，我们就可以从文件中异步地获得逐行内容并进行处理了。
 
 ```swift
 // 从FileHandle异步读取bytes
@@ -263,7 +263,7 @@ for try await line in FileHandle.standardInput.bytes.lines {
 }
 ```
 
-处理文件的需求太常见了，我们决定URL需要同时有`bytes`和`lines`两个async属性，无论是从本地文件还是从网络请求，正如下图所示。我想这些属性会让之前比较繁琐的任务变得简单又安全。
+处理文件的需求太常见了，我们决定URL需要同时有`bytes`和`lines`两个async属性，无论是从本地文件还是从网络请求。我想这些属性会让之前比较繁琐的任务变得简单又安全。
 
 ```swift
 // 从URL中异步读取bytes或lines
@@ -276,7 +276,7 @@ for try await line in lines {
 }
 ```
 
-除了文件和URL，通知也支持async序列了。如下图所示，我们在await第一个匹配`storeUUID`的RemoteChange通知。配合使用`first-where`和通知的async序列，我们可以实现非常干净的设计模式让原本表达起来非常复杂的逻辑变得紧凑而易读。
+除了文件和URL，通知也支持async序列了。我们在await第一个匹配`storeUUID`的RemoteChange通知。配合使用`first-where`和通知的async序列，我们可以实现非常干净的设计模式让原本表达起来非常复杂的逻辑变得紧凑而易读。
 
 ```swift
 // 异步await通知
@@ -296,7 +296,7 @@ let notification = await center.notifications(named: .NSPersistentStoreRemoteCha
 
 前面提到的API都很酷，语法也非常简洁，但我如何创建自己的async序列呢？有几种方法来实现async序列，现在我们只关注怎么去适配已有的代码。有一些设计模式和async序列配合使用效果非常好，比如被调用多次的闭包，以及一些代理方法等。
 
-任何不需要回应、只是通知新的值产生了的场景，都可能是实现async序列的潜在候选者。这些设计模式很常见，你的应用中可能已经在使用它们了。下图中的monitor是很常见的Handler模式，它有一个handler属性，一个开始和结束方法。可能的使用场景是这的：monitor创建了，其handler属性被赋值，然后monitor启动并把监控到的地震信息发送给handler去处理。而这之后，monitor可能会停止发送监控事件。
+任何不需要回应、只是通知新的值产生了的场景，都可能是实现async序列的潜在候选者。这些设计模式很常见，你的应用中可能已经在使用它们了。下面代码中的monitor是很常见的Handler模式，它有一个handler属性，一个开始和结束方法。可能的使用场景是这的：monitor创建了，其handler属性被赋值，然后monitor启动并把监控到的地震信息发送给handler去处理。而这之后，monitor可能会停止发送监控事件。
 
 ```swift
 // Handlers经常是很棒的AsyncSequence候选者
@@ -309,7 +309,7 @@ monitor.startMonitoring()
 monitor.stopMonitoring()
 ```
 
-如下图所示，我们可以继续使用相同的接口，但稍加改造使其可以使用`AsyncStream`类型。只需要少量代码，就可以创建一个async序列。创建AsyncStream实例时，需要提供相应的元素类型和构造闭包。闭包中的`continuation`可以多次产生值，直到完成或处理提前终止。这意味着monitor可以在构造闭包内创建，handler可以向`continuation`提供产出的地震，`onTermination`则用来处理取消操作和清理工作。接下来我们启动monitor开始监控。上图我们在使用的代码可以很容易的包裹在AsyncStream的构造闭包中，这避免了在每个使用场景下都重复相同的代码逻辑。
+如下面代码所示，我们可以继续使用相同的接口，但稍加改造使其可以使用`AsyncStream`类型。只需要少量代码，就可以创建一个async序列。创建AsyncStream实例时，需要提供相应的元素类型和构造闭包。闭包中的`continuation`可以多次产生值，直到完成或处理提前终止。这意味着monitor可以在构造闭包内创建，handler可以向`continuation`提供产出的地震，`onTermination`则用来处理取消操作和清理工作。接下来我们启动monitor开始监控。上图我们在使用的代码可以很容易的包裹在AsyncStream的构造闭包中，这避免了在每个使用场景下都重复相同的代码逻辑。
 
 ```swift
 // 使用AsyncStream把已有回调改造成AsyncSequence
@@ -326,7 +326,7 @@ let quakes = AsyncStream(Quake.self) { continuation in
 }
 ```
 
-下图则是你如何使用刚刚创建的AsyncStream实例，比如可以用filter或for-await-in来遍历，这会让你更专注代码的真正意图，而不必担心重复的管理和组织对数据的操作，因为我们把所需要的一切都封装在了AsyncStream实例中。
+以下则是使用刚刚创建的AsyncStream实例的具体场景，比如可以用filter或for-await-in来遍历，这会让你更专注代码的真正意图，而不必担心重复的管理和组织对数据的操作，因为我们把所需要的一切都封装在了AsyncStream实例中。
 
 ```swift
 // 使用AsyncStream
@@ -408,7 +408,7 @@ func fetchPhoto(url: URL, completionHandler: @escaping (UIImage?, Error?) -> Voi
 
 ![Image](https://res.craft.do/user/full/f4d6ca89-7816-10ef-0133-2b135b34972a/doc/357B7876-35F7-462F-85B8-7AD053A54DEE/2108F269-5AF8-42E2-B2C7-0190FA6DDF01_2/Image)
 
-下图则是使用async/await的新版本代码，它不仅明显更简洁，代码控制流是从上到下线性的，而且我们知道该方法中的所有代码处在同一个并发上下文中，所以也无需担心线程问题。这里我们用到了URLSession中心的async的data方法。它会挂起当前执行上下文，但不是阻塞，当收到返回的数据时，则会成功返回图片数据或抛出错误。throw的使用，让该方法的调用者可以利用Swift原生错误处理解决可能出现的问题，在编译层面就保障了代码更安全。最后，由于返回值是非可选类型的UIImage，当我们尝试返回可选类型时，编译器就会报错，迫使我们正确的解决图片为nil的问题。
+以下这段代码则是使用async/await的新版本代码，它不仅明显更简洁，代码控制流是从上到下线性的，而且我们知道该方法中的所有代码处在同一个并发上下文中，所以也无需担心线程问题。这里我们用到了URLSession中心的async的data方法。它会挂起当前执行上下文，但不是阻塞，当收到返回的数据时，则会成功返回图片数据或抛出错误。throw的使用，让该方法的调用者可以利用Swift原生错误处理解决可能出现的问题，在编译层面就保障了代码更安全。最后，由于返回值是非可选类型的UIImage，当我们尝试返回可选类型时，编译器就会报错，迫使我们正确的解决图片为nil的问题。
 
 ```swift
 // 使用async/await来获取照片
@@ -458,7 +458,7 @@ guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode =
 }
 ```
 
-下面是新的`download`方法签名和简单用例。`download`方法把返回的body保存成了文件，而不是存储在内存中。和`downloadTask`方法不同，这些新的`download`方法不会自动删除下载的文件，所以别忘了在必要时手动删除。在下图的例子里，我们把文件移动到了新的位置，以完成后续的处理。
+下面是新的`download`方法签名和简单用例。`download`方法把返回的body保存成了文件，而不是存储在内存中。和`downloadTask`方法不同，这些新的`download`方法不会自动删除下载的文件，所以别忘了在必要时手动删除。在下面这个例子里，我们把文件移动到了新的位置，以完成后续的处理。
 
 ```swift
 // URLSession.download
@@ -475,7 +475,7 @@ guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode =
 try FileManager.default.moveItem(at: location, to: newLocation)
 ```
 
-URLSession的async方法也支持提前中断取消，一种实现方式是使用并发任务句柄(Concurrency Task Handle)。如下图所示，我们使用`async{...}`来创建并发任务，一个接一个的加载网络资源。在最后一行，我们使用`cancel`方法取消了任务的执行。值得注意的是，并发任务(Concurrency Task)和URLSessionTask是不相关的，尽管它们都有"Task"字眼。
+URLSession的async方法也支持提前中断取消，一种实现方式是使用并发任务句柄(Concurrency Task Handle)。如下面这段代码所示，我们使用`async{...}`来创建并发任务，一个接一个的加载网络资源。在最后一行，我们使用`cancel`方法取消了任务的执行。值得注意的是，并发任务(Concurrency Task)和URLSessionTask是不相关的，尽管它们都有"Task"字眼。
 
 ```swift
 let handle = async {
@@ -488,7 +488,7 @@ let handle = async {
 handle.cancel()
 ```
 
-前面提到的方法——data、upload、download——都是要获取到整个返回结果才能继续执行的，如果我们希望渐近地处理接收到的返回结果呢？那就要看URLSession.bytes方法大显身手了。下图是新增的bytes方法的签名。这些方法在收到网络返回的headers时就返回了，并且把返回的body接收成字节的异步序列(AsyncSequence)。
+前面提到的方法——data、upload、download——都是要获取到整个返回结果才能继续执行的，如果我们希望渐近地处理接收到的返回结果呢？那就要看URLSession.bytes方法大显身手了。下面这段代码是新增的bytes方法的签名。这些方法在收到网络返回的headers时就返回了，并且把返回的body接收成字节的异步序列(AsyncSequence)。
 
 ```swift
 // URLSession.bytes 渐近地交付返回体
@@ -530,7 +530,7 @@ func bytes(from url: URL, delegate: URLSessionTaskDelegate?)
 func bytes(for request: URLRequest, delegate: URLSessionTaskDelegate?)
 ```
 
-如下图所示，在Objective-C中，我们也提供了delegate属性，来实现类似的功能。注意这里的属性是强持有的，直到task执行完毕或失败结束。值得注意的是，task代理不支持background URLSession。如果一个方法同时在session代理和task代理都实现了，task代理的方法才会被调用。
+如下面这段代码所示，在Objective-C中，我们也提供了delegate属性，来实现类似的功能。注意这里的属性是强持有的，直到task执行完毕或失败结束。值得注意的是，task代理不支持background URLSession。如果一个方法同时在session代理和task代理都实现了，task代理的方法才会被调用。
 
 ```objectivec
 // URLSessionTask的特定delegate
@@ -661,7 +661,7 @@ NSDocument.
 share(with: NSSharingService) async
 ```
 
-但是我们并没有止步于此。很多代理API会把完成回调传给使用者。调用回调方法会通知框架异步任务已经完成。我们需要在所有的返回路径上都明确调用完成回调方法。如下图所示：
+但是我们并没有止步于此。很多代理API会把完成回调传给使用者。调用回调方法会通知框架异步任务已经完成。我们需要在所有的返回路径上都明确调用完成回调方法。如下所示：
 
 ```swift
 import ClockKit
@@ -758,7 +758,7 @@ func persistenPosts() async throws -> [Post] {
 
 ![Image](https://res.craft.do/user/full/f4d6ca89-7816-10ef-0133-2b135b34972a/doc/357B7876-35F7-462F-85B8-7AD053A54DEE/B5D17153-3289-42ED-B3DC-17A247432ECB_2/Image)
 
-最后我们再来看一个场景。很多API是事件驱动的，它们提供代理回调方法，在特定的时间节点执行相关的操作。这种场景下怎么使用async方法呢？如下图所示，我们首先使用`withCheckedThrowingContinuation`，然后在其回调中把continuation保存到`self.activeConotinuation`成员变量。接着，我们在事件驱动的代理方法中，调用保存的continuation的`resume`方法，做相应的处理。执行完方法后，别忘了把该成员变量置为nil。
+最后我们再来看一个场景。很多API是事件驱动的，它们提供代理回调方法，在特定的时间节点执行相关的操作。这种场景下怎么使用async方法呢？如下所示，我们首先使用`withCheckedThrowingContinuation`，然后在其回调中把continuation保存到`self.activeConotinuation`成员变量。接着，我们在事件驱动的代理方法中，调用保存的continuation的`resume`方法，做相应的处理。执行完方法后，别忘了把该成员变量置为nil。
 
 由于我们是手动处理resume行为，切记在每个路径上都调用resume方法。想了解更多包括continuation在内的Swift并行的底层细节，请关注Session: “Swift concurrency: Behind the scenes”。
 
