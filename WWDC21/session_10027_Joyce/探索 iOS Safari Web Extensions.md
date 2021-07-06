@@ -1,4 +1,4 @@
-##WWDC21 10027 - 探索 iOS Safari Web Extensions
+##WWDC21 10027 - iOS Safari Web Extensions 实践小记
 
 本文基于 Session [10027](//developer.apple.com/videos/play/wwdc2021/10027/) 梳理
 
@@ -7,9 +7,10 @@ iOS15 苹果在 iOS 上支持了 Safari Web Extensions，在了解了如何在iO
 * 前言
 * 基础
 * Safari Web Extensions 新增 API
-    * 非持久性后台页面支持
+    * 非持久性后台页
     * 阻止 Web 上的内容
     * 自定义选项卡
+* 总结
 
 ####前言        
 在 WWDC20 上，苹果宣布在 Safari 中支持 Chrome 风格的浏览器扩展, 开发者开发一个 Web 扩展，需要将拓展功能封装在一个 Mac 应用中。用户从应用商店安装应用即可安装网络扩展。我们可以理解为 Safari App Extensions 可在 macOS 应用程序和 Safari 之间共享代码，但拓展程序依然基于 JavaScript、HTML 和 CSS 开发。
@@ -33,7 +34,7 @@ iOS15 苹果在 iOS 上支持了 Safari Web Extensions，在了解了如何在iO
 
 * api应用实践：
  
-    1. 在json文件中设置将 persistent 设置为 false
+    1. 在权限列表 manifest.json 文件中将 persistent 设置为 false
 
         ```
         "background": {
@@ -45,7 +46,7 @@ iOS15 苹果在 iOS 上支持了 Safari Web Extensions，在了解了如何在iO
     2. 添加后台页监听器，注意此处是在脚本顶层注册监听器，才可以生效。
 
         ```
-        browser.runtime.onMessage.addListener((request) => {
+    browser.runtime.onMessage.addListener((request) => {
         <!--业务代码-->
         });
         ```
@@ -58,45 +59,72 @@ iOS15 苹果在 iOS 上支持了 Safari Web Extensions，在了解了如何在iO
         * webRequest 是一个允许分析 Web 流量的 API，而 webRequest 事件的触发频率使该 API 与非持久性背景页不兼容
         
 ####阻止 Web 上的内容
-* 自2015年以来，Safari 一直支持使用 WebKit 内容规则列表构建的内容阻止程序扩展。今年有一些改进，然而，到目前为止，Web 扩展还没有那种快速、隐私保护、内容阻止的能力。而 Chrome 最近引入的声明性请求已经拥有了以上能力。
+* 自 2015 年以来，Safari 一直支持使用 WebKit 内容规则列表构建的内容阻止程序扩展。今年有一些改进，然而，到目前为止，Web 扩展还没有那种快速、隐私保护、内容阻止的能力。而 Chrome 最近引入的声明性请求已经拥有了以上能力。
 
-* 内容阻止规则是以JSON格式编写的。这些JSON规则在逻辑上被分组到称为规则集的文件中，JavaScript API 允许单独打开或关闭这些规则集。而且因为Chrome 也支持这个 API，所以可以编写一个内容拦截器，它可以在多个平台的多个浏览器中运行。
+* 内容阻止规则是以 JSON 格式编写的。这些 JSON 规则在逻辑上被分组到称为规则集的文件中，JavaScript API 允许单独打开或关闭这些规则集。而且因为 Chrome 也支持这个 API，所以可以编写一个内容拦截器，它可以在多个平台的多个浏览器中运行。
 
 * 应用
-阻止内容的权限
-{
- ...
-   "permissions": [
-    "declarativeNetRequest",
-    "activeTab"
-  ],
-  ...
-}
-将规则集添加到您的扩展和清单
-{
-   ...
-   "declarative_net_request" : {
-    "rule_resources" : [{
-      "id": "ruleset_for_images",
-      "enabled": true,
-      "path": "image_rules.json"
-    }, {
-      "id": "ruleset_for_scripts",
-      "enabled": false,
-      "path": "script_rules.json"
-    }]
-  },
-  ...
-}
+    * 要在的 Safari 网络扩展中使用声明性网络请求 API，首先请求许可。在Xcode 项目中，将声明性网络请求权限添加到文件中的权限列表中（manifest.json）:
+    ```
+    "permissions": [ "declarativeNetRequest" ]
+    ```
+    
+    * 并将规则集添加到扩展清单
+    
+        ```
+        "declarative_net_request": {
+        "rule_resources": [
+                {
+                "id": "ruleset_1",
+                "enabled": true,
+                "path": "ruleset_1.json"
+                }
+            ]
+        },
+        ```
+    
+    * 构建描述您希望如何阻止内容的规则，并将它们添加到您的规则集文件中。在 ruleset_1.json 文件中加入以下代码
+    * 参数：
+        * id 和 priority (优先级)，它决定了规则的应用顺序
+        * regexFilter 是匹配的 URL 资源匹配
+        * resourceTypes 是个数组，指定将被阻止的资源类型, resourceTypes 数组内支持的类型如下图
+         ![rule_types](media/rule_types.png)
+        * excludedResourceTypes 指定不想与之匹配的类型
+        * url 与文档具有相同安全源的加载为 firstParty ，其余都是 thirdParty 
+        * isUrlFilterCaseSensitive 设置 regexFilter 是否区分大小写
+        
+     ```
+        {
+            "id": 1,
+            "priority": 1,
+            "action": { "type": "block" },
+            "condition": 
+                { 
+                "regexFilter": "apple.com",
+                "resourceTypes": [ "image" ],
+                "excludedResourceTypes": [ "main_frame", "sub_frame" ],
+                "domainType" : [ "thirdParty"]
+                 "isUrlFilterCaseSensitive" : false
+                }
+        },
+    ```
 
-构建描述您希望如何阻止内容的规则，并将它们添加到您的规则集文件中。例如：
-{
-    "id": 1,
-    "priority": 1,
-    "action": { "type": "block" },
-    "condition": {
-        "regexFilter": ".*",
-        "resourceTypes": [ "script" ]
+####自定义选项卡 
+扩展是一个很好的方式性化浏览器，new tab override API 允许扩展接管 Safari 中的新 tab 页并对其进行完全定制。
+此 API 已在 Safari 14 中公开提供，使用起来也非常简单，只需要两步就可以轻松拥有一个高度自定义的选项卡界面。
+
+应用：
+* 在声明向中指定我需要加载的新选项卡的 html 文件
+
+    ```
+    "browser_url_overrides": {
+        "newtab": "new_tab_page.html"
     }
-}
+    ```    
+* 添加自定义选项卡的资源文件到工程中 
+![add_file_new_tab](media/add_file_new_tab.png)
+* 运行后可以看到一个自定义的选项卡界面
+![new_tab](media/new_tab.png)
 
+####总结
+以上就是这次在iOS Safari 15上提供的三个新的 Web Extension API。以及其用法，可以看到苹果在 Safari 拓展方面的越来越完善，虽然分发方式和发布流程还是非常"苹果做派"，但是可以通用在多平台的业务代码还是可以让我们可以快速的去在原有拓展代码上做简单修改和快速迁移。有兴趣的小伙伴赶快试试吧!
