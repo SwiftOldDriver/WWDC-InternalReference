@@ -730,7 +730,7 @@ func getPersistentPosts(completion: @escaping ([Post], Error?) -> Void) {
 }
 ```
 
-getPersistentPosts调用时，会调用进Core Data，一段时间后，Core Data会调用完成回调把结果传递回getPersistentPosts。这个过程和之前从服务端请求icon图片的过程非常相似。这里只缺少一个桥梁，衔接下图中的await和resume箭头所表示的过程。这种模式总是出现，于是他有了个名字，**继续(continuation)**。
+`getPersistentPosts`调用时，会调用进Core Data，一段时间后，Core Data会调用完成回调把结果传递回`getPersistentPosts`。这个过程和之前从服务端请求icon图片的过程非常相似。这里只缺少一个桥梁，衔接下图中的await和resume箭头所表示的过程。这种模式总是出现，于是他有了个名字，**继续(continuation)**。
 
 ![Image](https://res.craft.do/user/full/f4d6ca89-7816-10ef-0133-2b135b34972a/doc/357B7876-35F7-462F-85B8-7AD053A54DEE/B98589FE-95C4-43ED-89C3-69858391E22E_2/Image)
 
