@@ -706,7 +706,7 @@ extension ComplicationController: CLKComplicationDataSource {
 }
 ```
 
-想了解更多，请关注以下这几个session中列出的session。
+想了解更多，请关注以下列出的几个session。
 > [Session 10017 - 在Swift和SwiftUI中使用Core Data并发](https://developer.apple.com/videos/play/wwdc2021/10017/)  
 > [Session 10146 - AVFoundation的最新更新](https://developer.apple.com/videos/play/wwdc2021/10146/)  
 > [Session 10054 - AppKit的最新更新](https://developer.apple.com/videos/play/wwdc2021/10054/)  
