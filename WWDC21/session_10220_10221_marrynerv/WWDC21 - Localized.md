@@ -13,7 +13,7 @@
 ### 目前如何实现
 本地化的内容主要来源于三个部分，**工程内的代码文本、 info.plist 中的权限设置、可视化编程 (Storyboard / xib) 内的组件文本**。目前我们使用时一般通过 `NSLocalizedString(key, comment)`、可视化编程系统自动匹配、`R.swift` 等三方库来调用本地化文本。
 目前 OC 本地化的四种宏定义均为下方方法的简化使用。
-``` objc
+``` objectivec
 // 本地化四种宏定义
 NSLocalizedString(<#key#>, <#comment#>)
 NSLocalizedStringFromTable(<#key#>, <#tbl#>, <#comment#>)
@@ -34,7 +34,7 @@ public func NSLocalizedString(_ key: String, tableName: String? = nil, bundle: B
 * 本地化文本中的内容需要动态拼接显示
 * 本地化文本的符号转换
 * 阿拉伯语语言特性 - 阅读顺序从右到左
-。。。。。。
+* 。。。。。。
 - - - -
 ## 本地化的未来
 ### 基础使用
@@ -44,7 +44,7 @@ SwiftUI 中可以直接使用本地化中的 key。系统会根据 key 自动在
 Button("Key") { ... }
 ```
 Storyboard 可以在控件可视化的属性设置相应的 key。
-![](WWDC21%20-%20%E6%9C%AC%E5%9C%B0%E5%8C%96%E5%8A%9F%E8%83%BD%E4%B8%8A%E6%96%B0/D49F2583-2626-4E5C-949B-444D13E8F9CD.png)
+![Storyboard控件属性](https://images.xiaozhuanlan.com/photo/2021/1e13ddb70ea98aa39f9fbc7318e5a78a.png)
 其他地方可以使用专用方法。
 ```swift
 // 旧api
@@ -141,13 +141,3 @@ AttributedString(localized: "Order ^[\(ticketsCount) Ticket](inflect: true)")
 - - - -
 ## 补充阅读
 > [What’s new in Foundation - WWDC21 - Videos - Apple Developer](https://developer.apple.com/videos/play/wwdc2021/10109/)  
-
-
-
-#study/WWDC21
-
-
-
-
-
-
