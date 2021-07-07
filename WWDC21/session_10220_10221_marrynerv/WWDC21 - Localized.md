@@ -12,6 +12,7 @@
 ## 本地化的当下
 ### 目前如何实现
 本地化的内容主要来源于三个部分，**工程内的代码文本、 info.plist 中的权限设置、可视化编程 (Storyboard / xib) 内的组件文本**。目前我们使用时一般通过 `NSLocalizedString(key, comment)`、可视化编程系统自动匹配、`R.swift` 等三方库来调用本地化文本。
+
 目前 OC 本地化的四种宏定义均为下方方法的简化使用。
 ``` objectivec
 // 本地化四种宏定义
@@ -44,7 +45,9 @@ SwiftUI 中可以直接使用本地化中的 key。系统会根据 key 自动在
 Button("Key") { ... }
 ```
 Storyboard 可以在控件可视化的属性设置相应的 key。
+
 ![Storyboard控件属性](https://images.xiaozhuanlan.com/photo/2021/1e13ddb70ea98aa39f9fbc7318e5a78a.png)
+
 其他地方可以使用专用方法。
 ```swift
 // 旧api
@@ -94,6 +97,7 @@ Text("\(ticketCount) Ordered", comment: "Order summary: total number of tickets 
 - - - -
 ### 其他的本地化函数调用方式
 对应 OC 中四个本地化的宏定义，最新的 api 也支持根据文件名或者包名查找对应的本地化文本。
+
 指定文件名获取本地化文本。
 ```swift
 Text("\(ticketCount) Ordered",
@@ -119,7 +123,7 @@ String(localized: "Order \(ticketCount) Ticket(s)")
 ```
 - - - -
 ### 本地化单位符号
-不同语言里的单位符号也是本地化的一大难题。为了达到理想的效果，总是免不了写很多的匹配处理，使得不用语言下能适配各自的单位符号。不过从今往后这类问题就迎刃而解了，新的 api 支持了不同语言的符号系统，可以非常方便的帮助我们自动转化。
+不同语言里的单位符号也是本地化的一大难题。为了达到理想的效果，总是免不了写很多的匹配处理，使得不同语言下能适配各自的单位符号。不过从今往后这类问题就迎刃而解了，新的 api 支持了不同语言的符号系统，可以非常方便的帮助我们自动转化。
 ```swift
 Text("Total: \(price, format: .currency(code: "USD"))", 
 comment: "Order subtitle: total price of all tickets")
