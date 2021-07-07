@@ -1,6 +1,6 @@
 # Meet Async/Await in Swift
 
-作为iOS程序员，相信大家都用过很多使用完成回调的代码，比如UIKit中的`func dismiss(animated flag:` [`Bool`](https://developer.apple.com/documentation/swift/bool)`,  completion: (() ->` [`Void`](https://developer.apple.com/documentation/swift/void)`)? = nil)`方法，在关闭视图控制器后执行回调，或者AVPlayer的`func seek(to time:` [`CMTime`](https://developer.apple.com/documentation/coremedia/cmtime)`,  completionHandler: @escaping (`[`Bool`](https://developer.apple.com/documentation/swift/bool)`) ->` [`Void`](https://developer.apple.com/documentation/swift/void)`)`方法，在播放器跳转完成后执行回调。
+作为iOS程序员，相信大家都用过很多使用完成回调的代码，比如UIKit中的`func dismiss(animated flag: Bool, completion: (() -> Void)? = nil)`方法，在关闭视图控制器后执行回调，或者AVPlayer的`func seek(to time: CMTime, completionHandler: @escaping (Bool) -> Void)`方法，在播放器跳转完成后执行回调。
 
 无论是网络请求、磁盘IO、视图刷新等，都消耗一定的时间才能完成相关操作。在这段时间内，程序通常有两种选择，要么停在原地并等待操作结果的返回，再执行后续逻辑，即同步调用；要么在这段时间执行其他任务，在耗时操作完成时执行先前注册的回调逻辑，即异步调用。同步调用会让代码写起来更简单，但可能浪费性能、甚至造成界面卡死等不好的用户体验。异步调用则可以更充分地利用系统资源，在相同时间内响应更多的任务，缺点则是当多个异步调用衔接或嵌套时，尤其涉及到错误处理时，往往会让代码变得复杂而难以驾驭。
 
@@ -343,7 +343,6 @@ for await quake in significantQuakes {
 
 ```swift
 // 你好AsyncStream
-
 public struct AsyncStream<Element>: AsyncSequence {
     public init(
         _ elementType: Element.Type = Element.self,
@@ -367,7 +366,7 @@ async序列是非常强大的工具，它既安全，又容易上手，适合处
 
 ![Image](https://res.craft.do/user/full/f4d6ca89-7816-10ef-0133-2b135b34972a/doc/357B7876-35F7-462F-85B8-7AD053A54DEE/D9E00D49-708E-4E60-ADB0-E2242A6D3A48_2/Image)
 
-需要注意的是，在async函数挂起时，程序的状态可能会发生显著的变化。当然对于完成回调也是如此，但由于它会缩进代码，所以你会更容易注意到这些变化。所以使用`async/await`时，要留意await关键词，它表明当前函数可能在这里挂起，而不是畅通无阻的执行下去，甚至从挂起恢复回来时，函数可能跑到另外一个线程上去了。关于需要注意的这些事项，请参考Session："Protect mutable state with Swift actors"。
+需要注意的是，在async函数挂起时，程序的状态可能会发生显著的变化。当然对于完成回调也是如此，但由于它会缩进代码，所以你会更容易注意到这些变化。所以使用`async/await`时，要留意await关键词，它表明当前函数可能在这里挂起，而不是畅通无阻的执行下去，甚至从挂起恢复回来时，函数可能跑到另外一个线程上去了。关于需要注意的这些事项，请参考[Session 10133 - 用Swift的actors保护可变状态](https://developer.apple.com/videos/play/wwdc2021/10133/)。
 
 总结一下，当你标记一个函数为`async`时，同时意味着它可以挂起。在async函数中，使用`await`关键词标记在哪里可以一次或多次挂起。当async函数挂起时，线程并未阻塞，系统会自由安排其他任务。有时后启动的任务，可能被先执行。即你的程序状态可能在挂起时发生显著变化。当async函数恢复执行时，其返回的结果会自然融入到async函数的调用者，并在先前挂起的地方接续执行。
 
@@ -431,6 +430,7 @@ func fetchPhoto(url: URL) async throws -> UIImage {
 
 ```swift
 // URLSession.data
+
 func data(from url: URL) async throws -> (Data, URLResponse)
 func data(for request: URLRequest) async throws -> (Data, URLResponse)
 
@@ -604,7 +604,7 @@ struct ThumbnailView: View {
 
 看起来，只接受同步代码的接口，不能接受我们使用了await的异步代码，即同步和异步代码之间的鸿沟需要填平，怎么解决这个问题呢？答案是使用aync任务函数。async任务把要执行的工作包裹在闭包中，并把它发送给系统，等待下一个可执行任务的线程去立即执行。就像全局`DispatchQueue`的async方法一样。
 
-我们只需要把异步代码放到`async{...}`闭包内，就可以填平同步、异步代码之间的鸿沟，让只接受同步代码的接口，也能接受异步代码了。async任务只是众多帮助你写出强大并行Swift代码的众多API中的一个，想了解更多，请关注“Explore structured concurrency in Swift”和“Discover concurrency in SwiftUI”这两个session。
+我们只需要把异步代码放到`async{...}`闭包内，就可以填平同步、异步代码之间的鸿沟，让只接受同步代码的接口，也能接受异步代码了。async任务只是众多帮助你写出强大并行Swift代码的众多API中的一个，想了解更多，请关注[Session 10019 - 了解SwiftUI中的并发](https://developer.apple.com/videos/play/wwdc2021/10019/)和[Session 10134 - 探索Swift中的结构化并发](https://developer.apple.com/videos/play/wwdc2021/10134/)这两个Session。
 
 ```swift
 struct ThumbnailView: View {
@@ -706,9 +706,10 @@ extension ComplicationController: CLKComplicationDataSource {
 }
 ```
 
-想了解更多，请关注下图中列出的session。
-
-![Image](https://res.craft.do/user/full/f4d6ca89-7816-10ef-0133-2b135b34972a/doc/357B7876-35F7-462F-85B8-7AD053A54DEE/E52E964A-31DD-4D07-A81F-F30BA5A4C2FC_2/Image)
+想了解更多，请关注以下这几个session中列出的session。
+> [Session 10017 - 在Swift和SwiftUI中使用Core Data并发](https://developer.apple.com/videos/play/wwdc2021/10017/)  
+> [Session 10146 - AVFoundation的最新更新](https://developer.apple.com/videos/play/wwdc2021/10146/)  
+> [Session 10054 - AppKit的最新更新](https://developer.apple.com/videos/play/wwdc2021/10054/)  
 
 ### 如何写自己的async方法
 
@@ -760,7 +761,7 @@ func persistenPosts() async throws -> [Post] {
 
 最后我们再来看一个场景。很多API是事件驱动的，它们提供代理回调方法，在特定的时间节点执行相关的操作。这种场景下怎么使用async方法呢？如下所示，我们首先使用`withCheckedThrowingContinuation`，然后在其回调中把continuation保存到`self.activeConotinuation`成员变量。接着，我们在事件驱动的代理方法中，调用保存的continuation的`resume`方法，做相应的处理。执行完方法后，别忘了把该成员变量置为nil。
 
-由于我们是手动处理resume行为，切记在每个路径上都调用resume方法。想了解更多包括continuation在内的Swift并行的底层细节，请关注Session: “Swift concurrency: Behind the scenes”。
+由于我们是手动处理resume行为，切记在每个路径上都调用resume方法。想了解更多包括continuation在内的Swift并行的底层细节，请关注[Session 10254 - 解密Swift并发的背后原理](https://developer.apple.com/videos/play/wwdc2021/10254/)。
 
 ```swift
 class ViewController: UIViewController {
@@ -789,5 +790,4 @@ extension ViewController: PeerSyncDelegate {
 ### 总结
 
 以上就是关于Swift中的async/await介绍的全部了。我们讲了async/await在运行时的工作原理，以及如何在你的工程或框架中使用它们。我们展示了SDK中已有的async API，也展示了如何把已有代码和async方法衔接起来使用。async/await是Swift并发的基石，我们期待你把它们用起来。感谢你的阅读。
-
 
