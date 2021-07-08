@@ -4,9 +4,9 @@
 
 ### 概览
 
-本 session 讲解了如何使用 Xcode 检测和诊断内存问题。首选需要了解内存占用对 app 的影响，以及一些常见的内存问题，最后学习使用一些工具来分析并解决内存问题。
+本 session 讲解了如何使用 Xcode 检测和诊断内存问题。首先需要了解内存构成，内存占用对 app 的影响、以及一些常见的内存问题，最后学习使用一些工具来分析并解决内存问题。
 
-阅读指导：为了保证文章的完整性，我们会对一些概念进行更加详细的解释，你可以速读已了解的部分，或者直接
+阅读指导：为了保证文章的完整性，我们会对一些概念进行详细的解释，你可以速读已了解的部分，或者直接
 
 跳至下一小节继续阅读。
 
@@ -16,11 +16,11 @@
 
 ### 1. 内存占用的组成
 
-在了解内存问题之前，首先让我们先来复习一些内存的基础知识。让我们看看是什么组成了内存占用 (memory profile)。我们用三个类别来对你的 app 的内存占用进行分类。脏内存 (Dirty memory)，压缩内存 (Compressed memory), 干净的内存 (Clean memory)。让我们快速的看一下每一项都包含什么。
+在了解内存问题之前，首先让我们先来复习一些内存的基础知识。让我们看看是什么组成了内存占用 (memory profile)。我们用三个类别来对 app 的内存占用进行分类。脏内存 (Dirty memory)，压缩内存 (Compressed memory), 干净的内存 (Clean memory)。让我们快速的看一下每一项都包含什么。
 
 ![image-20210615001122429](https://www.yuque.com/api/filetransfer/images?url=https%3A%2F%2Fcdn.nlark.com%2Fyuque%2F0%2F2021%2Fpng%2F21867895%2F1623935418346-ddef5151-cacb-4a28-8400-cae9f86a0e5a.png&sign=bf591d03fd94644b9a86eeadefd46a768489e0f58984dee6de585a3ddec6e596)
 
-##### Dirty memory
+##### 1.1 Dirty memory
 
 Dirty memory 是已经被 app 写入的内存，包含如下：
 
@@ -32,7 +32,7 @@ Dirty memory 是已经被 app 写入的内存，包含如下：
 
 ![image-20210615001213304](https://www.yuque.com/api/filetransfer/images?url=https%3A%2F%2Fcdn.nlark.com%2Fyuque%2F0%2F2021%2Fpng%2F21867895%2F1623935418409-fe5070d7-4439-4925-9c68-64fcd06c7d01.png&sign=810cd889aca897a68c03af00a3d3da0c1118fc0e63ecd92349707c665b38b722)
 
-##### Compressed memory 
+##### 1.2 Compressed memory 
 
 苹果最初只是公开了从 OS X Mavericks 开始使用 Compressed memory 技术，但 iOS 系统也从 iOS 7 开始悄悄地使用。从 [OSX_Mavericks_Core_Technology_Overview](https://images.apple.com/media/us/osx/2013/docs/OSX_Mavericks_Core_Technology_Overview.pdf) 文档中可以了解到该技术在内存紧张时能够将最近未使用过的内存占用压缩至原有大小的一半以下，并且能够在需要时解压复用。它在节省内存的同时提高了系统的响应速度，其特点可以归结为：
 
@@ -49,7 +49,7 @@ Compressed memory 是将 Dirty memory 中最近没有访问过得内存，使用
 
 ![image-20210615001236922](https://www.yuque.com/api/filetransfer/images?url=https%3A%2F%2Fcdn.nlark.com%2Fyuque%2F0%2F2021%2Fpng%2F21867895%2F1623935418524-8efd5d7b-6eec-4920-af2b-da1616cfc510.png&sign=4b1a797da27ad7c860eefdd994231d128b306a9fb2e7e56bd0519df5e7657b82)
 
-##### Clean Memory 
+##### 1.3 Clean Memory 
 
 Clean Memory 是还没有被写入的内存或可以被 page out 的内存。指的是还没有被加载到内存或者能够被系统清理出内存且在需要时能重新加载的数据。包括：
 
@@ -360,7 +360,7 @@ page 是系统授予进程的固定大小、不可分割的最小内存块。因
 
 #### 4.2 新增的内存治理工具
 
-学习使用新工具之前，简单了解一下现在你可以使用到的分析内存占用的一些工具。Xcode 提供了一套工具来协助我们监控开发阶段和线上的 app 内存性能。
+今年苹果为开发者提供了**使用 XCTest 框架进行测试，然后通过生成的 Ktrace file 和 Memory graphs 文件来检测和诊断内存问题**，并且拓展已有的命令行工具的参数来帮助开发者更快的定位到问题。学习使用新工具之前，简单了解一下现在你可以使用到的分析内存占用的一些工具。Xcode 提供了一套工具来协助我们监控开发阶段和线上的 app 内存性能。
 
 ![image-20210614163556168](https://www.yuque.com/api/filetransfer/images?url=https%3A%2F%2Fcdn.nlark.com%2Fyuque%2F0%2F2021%2Fpng%2F21867895%2F1623935414443-c43d6435-b9c3-4537-8a83-de5d008b9bde.png&sign=21675125b5e5396228de956e46259e0c4eba8610edc83169b8392454dca6e67e)
 
@@ -680,19 +680,27 @@ address 可以使用我们之前收集的地址，这样我们就可以得到这
 
 ![image-20210617201641291](https://www.yuque.com/api/filetransfer/images?url=https%3A%2F%2Fcdn.nlark.com%2Fyuque%2F0%2F2021%2Fpng%2F21867895%2F1623935441752-6d12b134-0af6-404c-a34e-82dfa83cb766.png&sign=2acc4d41eb90d872c91f01661ff5d90a0ef2d61118c0adeb3235bc52d7dfdfd2)
 
-任何时候，你添加一个新的功能，用 `XCTest` 写一个性能测试来监测内存,和其他系统指标。为每个测试设置 baseline。然后用测试来捕获回归，并使用收集到的 `ktrace` 和 `memgraph` 文件进行调查。
+开发一个新功能之后，用 `XCTest` 写一个性能测试来监测内存,和其他系统指标。为每个测试设置 baseline。然后用测试来捕获回归，并使用收集到的 `ktrace` 和 `memgraph` 文件进行调查。
 
 ##### 5.4.2 诊断流程
 
 ![image-20210617202711003](https://www.yuque.com/api/filetransfer/images?url=https%3A%2F%2Fcdn.nlark.com%2Fyuque%2F0%2F2021%2Fpng%2F21867895%2F1623935441972-32f3f428-183d-4a41-afd2-5ed812773993.png&sign=6b0cdd60b85c5940acdb2004ee36c88807d583c37dbd052ad1720d6ef7264356)
 
-使用在执行 `XCTest` 失败生成的 memgraph 文件来帮忙诊断你的内存问题，首先你应该检查泄露，使用 `leaks` 工具并且使用 MSL 堆栈来帮忙找到需要修复的泄露。如果回归不包含泄露，再去检查堆。使用 `vmmap -summary` 来确认堆上的内存。如果需要,使用 `heap -diffFrom` 来查看那个对象类型需要对内存的增长负责。如果罪魁祸首看起来很明显, 使用 `heap -addresses` 来获取地址。如果罪魁祸首看起来并不明显，尝试使用 `leaks -referenceTree` 来找到一些线索。最后,搭配使用 `leaks -traceTree`  `malloc_history` 来找到有问题的对象地址。
+使用在执行 `XCTest` 失败生成的 memgraph 文件来帮忙诊断你的内存问题，首先你应该检查泄露，使用 `leaks` 工具并且使用 MSL 堆栈来帮忙找到需要修复的泄露。如果回归不包含泄露，再去检查堆。使用 `vmmap -summary` 来确认堆上的内存。如果需要,使用 `heap -diffFrom` 来查看那个对象类型造成了内存增长。如果某个对象类型很可疑, 使用 `heap -addresses` 来获取地址。如果罪魁祸首看起来并不明显，尝试使用 `leaks -referenceTree` 来找到一些线索。并且搭配 `leaks -traceTree`  `malloc_history` 来找到有问题的对象地址。
 
-最后，确保你在开发中将这些最佳实践牢记在心。努力让你的应用程序零泄漏。如果你使用 `unsafe` 类型，**确保你会释放任何你创建的东西**。同时也要注意代码中的循环引用，找到一种方式来减少你的堆分配，你可以缩小它们, 并且尽量把持有它们的时间变的更短。或者完全**取消不必要的分配**。确保把碎片化问题牢记在心，创建的对象要尽量相邻并且具有相似的生命周期，以便稍后创建的大块空闲内存。使用这些最佳实践和 `XCTest` 工作流，您将能够检测、诊断和修复应用程序中的内存问题。
+最后，请确保把这些最佳实践牢记在心。努力让你的应用程序零泄漏。
+
+**总结**：
+
+1. 如果你使用 `unsafe` 类型，**确保你会释它**。
+2. 同时也要注意代码中的循环引。
+3. 找到一种方式来减少你的堆分配，你可以缩小它们, 并且尽量把持有它们的时间变的更短。或者完全**取消不必要的分配**。
+4. 确保把碎片化问题牢记在心，创建的对象要尽量相邻并且具有相似的生命周期。
+5. 使用这些最佳实践和 `XCTest` 工作流，您将能够检测、诊断和修复应用程序中的内存问题。
 
 **作者总结**：
 
-本 session 主要介绍使用 XCTest 写性能测试来检测内存问题(泄露和碎片化)，这是一种可重用的，更加系统性的检测内存性能的方式，但是每个 app 都有自己的情况，可能因为种种原因，目前还不能使用 XCTest 来对 app 进行测试，或者开发者目前对内存问题查找及命令工具不熟悉的时候，Xcode  的 `Debug Memory Graph` 就是一个很好的入门工具。它可以很方便的帮我们查找泄露，并且这个工具是可视化的。你只需要运行工程，用手点一遍自己的新功能，然后点击 `Debug Memory Graph` 来捕获内存图，通过筛选来看内存中的泄露，或者查看目前的存活对象及其创建堆栈和引用关系， `Debug Memory Graph` 是一种轻量级的，更方便、更快速、更直观的方式来让你了解自己 app 内存的使用情况。如果需要，你还可以在 `Debug Memory Graph` 时，导出当前捕获的内存图的 memgraph 文件，你可以多次导出然后就可以使用命令行工具 heap 新增的 diffFrom 功能了哦，你可以结合上面学到的命令工具，帮你最大程度的了解内存问题。不知道 `Debug Memory Graph` 使用方式的，建议观看 [WWDC18 iOS Memory Deep Dive](https://developer.apple.com/videos/play/wwdc2018/416) 或者阅读 [深入解析iOS内存 iOS Memory Deep Dive](https://www.toutiao.com/i6569037697183121934) 来获取更多信息。
+本 session 主要介绍如何使用 XCTest 写性能测试来检测内存问题(泄露和碎片化)，这是一种可重用的，更加系统性的检测内存性能的方式，因为是通过命令行工具对文件进行分析，你可以通过脚本快速检测泄露和堆的问题，简化一些无用信息的输出。但是每个 app 都有自己的情况，可能因为种种原因，目前还不能使用 XCTest 来对 app 进行测试，或者开发者目前对内存问题查找及命令工具不熟悉的时候，Xcode  的 `Debug Memory Graph` 就是一个很好的入门工具。它可以很方便的帮我们查找泄露，并且这个工具是可视化的。你只需要运行工程，用手点一遍自己的新功能，然后点击 `Debug Memory Graph` 来捕获内存图，通过筛选来看内存中的泄露，或者查看目前的存活对象及其创建堆栈和引用关系， `Debug Memory Graph` 是一种轻量级的，更方便、更快速、更直观的方式来让你了解自己 app 内存的使用情况。如果需要，你还可以在 `Debug Memory Graph` 时，导出当前捕获的内存图的 memgraph 文件，可以多次导出然后就可以使用命令行工具 heap 新增的 diffFrom 功能了哦，你可以结合上面学到的命令工具，帮你最大程度的了解内存问题。想要更详细的了解  `Debug Memory Graph` ，建议观看 [WWDC18 iOS Memory Deep Dive](https://developer.apple.com/videos/play/wwdc2018/416) 或者阅读 [深入解析iOS内存 iOS Memory Deep Dive](https://www.toutiao.com/i6569037697183121934) 来获取更多信息。
 
 **拓展阅读**
 
