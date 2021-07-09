@@ -1,6 +1,6 @@
 #  WWC21 10216 - Swift 中的 ARC 机制: 从基础到进阶
 
- [Session 10216](https://wwdc.io/share/wwdc21/10216) 围绕 Swift 语言中的 **A**utomatic **R**eference **C**ounting （自动引用计数）机制讲述了实践过程中对象生命周期变化可能引发的问题以及如何从语言或代码设计层面去规避这些问题。说到 ARC 可能很多 Objective-C 程序员都非常熟悉（实际上 Objective-C 的 ARC 特性[源自](https://oleb.net/2019/chris-lattner-swift-origins/)早期 Swift 在苹果内部的设计过程），这里所描述的多数问题在 Objective-C 代码中也同样存在，可以借鉴其解决办法。
+ [Session 10216](https://wwdc.io/share/wwdc21/10216) 围绕 Swift 语言中的 **A**utomatic **R**eference **C**ounting （自动引用计数）机制讲述了实践过程中对象生命周期变化可能引发的问题以及如何从语言或代码设计层面去规避这些问题。说到 ARC 可能很多 Objective-C 程序员都非常熟悉（实际上 Objective-C 的 ARC 特性[启发自](https://oleb.net/2019/chris-lattner-swift-origins/) Swift），这里所描述的多数问题在 Objective-C 代码中也同样存在，可以借鉴其解决办法。
 
 ## ARC 的基本概念
 
