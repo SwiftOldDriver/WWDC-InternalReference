@@ -1,6 +1,8 @@
 ### About Me
 
-作者：[kukushi](https://kukushi.github.io)，Swift 爱好者，独立编写多款 App 上架 AppStore。就职于字节跳动音乐团队。
+> 作者：[kukushi](https://kukushi.github.io)，Swift 爱好者，独立编写多款 App 上架 AppStore。就职于字节跳动音乐团队。
+>
+> 审核：曾铭，iOS 开发，老司机技术周报编辑，就职于字节跳动音乐团队
 
 ### 文章标题
 
