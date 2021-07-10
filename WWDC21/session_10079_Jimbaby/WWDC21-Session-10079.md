@@ -1,4 +1,4 @@
-# WWDC21 10079 - Discover geometry-aware audio with PHASE
+# WWDC21 10079 - 使用 PHASE 探索几何感知的音频
 
 > 作者：Jimbaby，iOS 开发者，目前就职于字节跳动音乐团队
 >
