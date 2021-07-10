@@ -1,9 +1,12 @@
 # WWDC21 10239 - Reduce network delays for your app
 
+> 作者：lmh，iOS开发-搜狗输入法。
+>
+> 审核：小T，广深剪映专业版团队技术负责人，iOS 老司机，最近也玩 Mac 开发，对于跨平台开发方案有一些经验
 
->内容基于 [Session 10239](https://developer.apple.com/videos/play/wwdc2021/10239) 完成。
->网络延迟是影响 App 用户体验的一个重要因素。如果用户使用一个 App 的网络请求经常延迟比较高，对用户来说意味着糟糕的使用体验；对开发者来说，则可能意味着负反馈，甚至是用户流失。
->本文主要介绍了影响网络延迟的原因及如何降低网络延迟。文中涉及了很多传输层协议相关的知识，也会对相关概念进行解释。
+> 内容基于 [Session 10239](https://developer.apple.com/videos/play/wwdc2021/10239) 完成。
+> 网络延迟是影响 App 用户体验的一个重要因素。如果用户使用一个 App 的网络请求经常延迟比较高，对用户来说意味着糟糕的使用体验；对开发者来说，则可能意味着负反馈，甚至是用户流失。
+> 本文主要介绍了影响网络延迟的原因及如何降低网络延迟。文中涉及了很多传输层协议相关的知识，也会对相关概念进行解释。
 
 [TOC]
 
@@ -13,7 +16,7 @@
 
 iOS15 系统在 Settings->Developer->NETWORKING 下新增了 `Responsiveness` 功能，此功能用于测试当前的网络环境。如下：
 
-![WX20210620-140344@2x.png](https://cdn.nlark.com/yuque/0/2021/png/21929876/1624593209998-8a99bfc2-52db-4d6f-bf7d-784d2cbd69aa.png#clientId=uaf4b4a10-7211-4&from=drop&id=u987bb79f&margin=%5Bobject%20Object%5D&name=WX20210620-140344%402x.png&originHeight=1890&originWidth=3360&originalType=binary&ratio=2&size=1300691&status=done&style=none&taskId=u61be8c5e-f485-4571-ae7c-1f071b1b3e4)
+![WX20210620-140344@2x.png](https://images.xiaozhuanlan.com/photo/2021/78cd311a2cb2ef4a917dd26a6bd6bebf.png)
 
 macOS 系统也提供了网络环境测试的命令行工具，目录在 `/usr/bin/networkQuality` ，但是只在新的 macOS Monterey 及以上系统才支持。
 
@@ -34,20 +37,17 @@ Session 里以视频会议为例，我们在使用在线视频或音频时，其
 
 表面上客户端和服务端收发数据包时是这样的：
 
-![transports1@2x.png](https://cdn.nlark.com/yuque/0/2021/png/21929876/1624593290923-2c701538-f699-4159-9ea0-d99ff10a75fc.png#clientId=uaf4b4a10-7211-4&from=drop&id=ud76d50a4&margin=%5Bobject%20Object%5D&name=transports1%402x.png&originHeight=552&originWidth=2138&originalType=binary&ratio=2&size=105060&status=done&style=none&taskId=u8b440196-a733-49ec-9df8-8634823032d)
+![transports1@2x.png](https://images.xiaozhuanlan.com/photo/2021/7d8b9ab075181a8427a4ca8826fe61d0.png)
 
 但是实际情况可能是下图这样：
 
-![transport2@2x.png](https://cdn.nlark.com/yuque/0/2021/png/21929876/1624593301501-ddedaa70-30e3-477d-8d00-83acbe46038f.png#clientId=uaf4b4a10-7211-4&from=drop&id=u222c0a00&margin=%5Bobject%20Object%5D&name=transport2%402x.png&originHeight=554&originWidth=2160&originalType=binary&ratio=2&size=127933&status=done&style=none&taskId=u7d38632f-09fb-4737-b4ab-bd88a11e293)
+![transport2@2x.png](https://images.xiaozhuanlan.com/photo/2021/036e5768159bf0e110368e91ab6a0f28.png)
 
 通信设备往往设置了缓冲区，在先进先出队列系统中，过大的缓冲区会导致更长的队列和更高的延迟，并且不会提高网络吞吐量。当网络拥塞时，就会发生缓冲膨胀现象，即 `Bufferbloat`。
 `Bufferbloat`是影响网络延迟的一个重要因素，但是并不是唯一因素。影响网络延迟的因素如下：
 
 
-<div align=center>
-<img src="https://cdn.nlark.com/yuque/0/2021/png/21929876/1624607238217-b3e110a3-9ef6-4de5-a2eb-a9bd20ecdfe7.png?x-oss-process=image%2Fresize%2Cw_752"/>
-</div>
-<br>
+![](https://images.xiaozhuanlan.com/photo/2021/d65ed69fbb42761fc36bcfceec821bea.png)
 
 1. 软硬件处理时间：随着 CPU 性能的提升，会降低请求处理时间。
 2. 数据传输时间：带宽的提升可以降低数据传输时间。
@@ -75,11 +75,7 @@ Session 里以视频会议为例，我们在使用在线视频或音频时，其
 
 下图展示了 `TCP + TLS` 和 `QUIC` 建立连接的区别：
 
-
-<div align=center>
-<img src="https://cdn.nlark.com/yuque/0/2021/gif/21929876/1624593362622-763e6933-b3ad-4748-b9c8-b69cf053dd18.gif#clientId=uaf4b4a10-7211-4&from=drop&id=u69447520&margin=%5Bobject%20Object%5D&name=v2-95f5c7e411d0b7f96d182abe284be551_hd.gif&originHeight=381&originWidth=600&originalType=binary&ratio=2&size=339780&status=done&style=none&taskId=u10b83653-597a-458e-9c30-4e5bcf35b6f"/>
-</div>
-<br>
+![](https://images.xiaozhuanlan.com/photo/2021/393cd404cef6f2967820ad69e0ee23b7.gif)
 
 `QUIC` 建立连接的过程如下：
 1.当客户端首次发起 `QUIC` 连接时，客户端向服务器发送一个 `client hello` 消息，服务器回复一个 `server reject` 消息。该消息中有包括 `server config` ，类似于 `TLS1.3` 中的 `key_share` 交换。这需要产生 `1-RTT`. 事实上，`QUIC` 加密协议的作者也明确指出当前的 `QUIC` 加密协议是「注定要死掉的」(destined to die), 未来将会被 `TLS1.3` 代替。只是在 `QUIC` 提出来的时候，`TLS1.3` 还没出生，这只是一个临时的加密方案。
@@ -104,12 +100,7 @@ let connection = NWConnection(host: "example.com", port: 443, using: .quic(alpn:
 
 `TFO` 握手过程和普通 `TCP` 握手过程区别如下：
 
-
-<div align=center>
-<img src="https://cdn.nlark.com/yuque/0/2021/png/21929876/1624782447120-d0c1ee69-830f-4747-ac65-184ba9eb4129.png?x-oss-process=image%2Fresize%2Cw_1496"/>
-</div>
-<br>
-
+![](https://images.xiaozhuanlan.com/photo/2021/c331efe458c2850c96f76c7372780133.png)
 
 在 iOS12 中，就已经提供了 `TFO` 相关的 `API`，使用方式如下：
 
@@ -147,11 +138,11 @@ write(fd, ...)
 例如，用 `GET` 方法请求 [https://developer.apple.com/](https://developer.apple.com/) 时，第一次请求时，如果还没有返回数据时，重新发送请求，两次可能会请求到不同的服务器，但是这两次请求的结果不会有任何差异。
 
 
-![idempotent1.png](https://cdn.nlark.com/yuque/0/2021/png/21929876/1624593422466-edc64665-9ac1-4d39-a6fa-59b2a01acdc7.png#clientId=uaf4b4a10-7211-4&from=drop&id=uc6db5548&margin=%5Bobject%20Object%5D&name=idempotent1.png&originHeight=1546&originWidth=2748&originalType=binary&ratio=2&size=610808&status=done&style=none&taskId=u254fd0bb-7271-4a26-b6b3-f0dbfd1d33e)
+![idempotent1.png](https://images.xiaozhuanlan.com/photo/2021/43f9ad905586d75288f8ce135336fc25.png)
 
 而在购买 iPhone 时，如果发生的上面相同的情况，不同的是，两次请求产生的结果是不一样的，比如会产生两次不同的交易数据等等。
 
-![idempotent2.png](https://cdn.nlark.com/yuque/0/2021/png/21929876/1624593431214-c634874d-e8a7-4f9e-af47-e017e7fda7d7.png#clientId=uaf4b4a10-7211-4&from=drop&id=ubf764290&margin=%5Bobject%20Object%5D&name=idempotent2.png&originHeight=1546&originWidth=2748&originalType=binary&ratio=2&size=543168&status=done&style=none&taskId=uc4dccbc0-2185-48a4-bdad-85be4fe9014)
+![idempotent2.png](https://images.xiaozhuanlan.com/photo/2021/8ef43640f8da4f7f38deef46a9a5d2d4.png)
 
 
 ### TLS1.3
@@ -161,11 +152,7 @@ write(fd, ...)
 
 `TLS1.2` 的握手过程和 `TLS1.3` 的过程区别如下：
 
-<div align=center>
-<img src="https://cdn.nlark.com/yuque/0/2021/png/21929876/1624683937891-8a8c9ca4-d01b-49b9-b355-a55d14326d8f.png?x-oss-process=image%2Fresize%2Cw_748"/>
-</div>
-<br>
-
+![](https://images.xiaozhuanlan.com/photo/2021/4d84c21689d389eb7afda686d9bc6e88.png)
 
 `TLS1.2` 握手流程：
 
@@ -224,7 +211,7 @@ Auth | {CertificateVerify*}
 
 综上，使用上述技术，带来的收益如下：
 
-![eliminate round trip times.png](https://cdn.nlark.com/yuque/0/2021/png/21929876/1624593463017-b3c5c231-e219-494a-b03f-89141e499007.png#clientId=uaf4b4a10-7211-4&from=drop&id=u6bf53921&margin=%5Bobject%20Object%5D&name=eliminate%20round%20trip%20times.png&originHeight=1546&originWidth=2748&originalType=binary&ratio=2&size=268913&status=done&style=none&taskId=u2587277c-01d8-43cf-a764-ff654fc7467)
+![eliminate round trip times.png](https://images.xiaozhuanlan.com/photo/2021/e64cf0be05cee5fdfae9954d64a60174.png)
 
 发出请求到收到数据产生的 `RTT` 次数如下：
 
@@ -260,7 +247,7 @@ Auth | {CertificateVerify*}
 
 2.已经在 `TCP` 存在的 [SYN-flood Attack](https://en.wikipedia.org/wiki/SYN_flood) 在开启 `TFO` 情况下，会更糟糕，如下:
 
-![](https://cdn.nlark.com/yuque/0/2021/png/21929876/1625306137752-bee9cbad-14a8-48a2-a6b4-a4407d37b67e.png?x-oss-process=image%2Fresize%2Cw_1496)
+![](https://images.xiaozhuanlan.com/photo/2021/2e223a71f6d9702a2757477af3165800.png)
 
 和传统 `TCP` 相比，开启 `TFO` 时，`SYN-flood Attack` 会让 `Server` 资源被攻击耗尽。所以需要谨慎使用 `TFO`。
 
@@ -276,12 +263,12 @@ Auth | {CertificateVerify*}
 
 优化前的网络请求可能是这样的：
 
-![downloading resources@2x.png](https://cdn.nlark.com/yuque/0/2021/png/21929876/1624593484664-de7caa2b-a90a-4fd6-a133-385000f9e728.png#clientId=uaf4b4a10-7211-4&from=drop&id=ud47e80e3&margin=%5Bobject%20Object%5D&name=downloading%20resources%402x.png&originHeight=1546&originWidth=2748&originalType=binary&ratio=2&size=335611&status=done&style=none&taskId=ud94f3314-8ef2-4f0e-b697-09374e7c3b7)
+![downloading resources@2x.png](https://images.xiaozhuanlan.com/photo/2021/2e41798eeb3f40f58761ae0d84eac807.png)
 
 Apple 通过优化拥塞控制算法，在 iOS15 上针对上传和下载请求，做了较大的优化。新的算法不仅能降低延迟，还能保证其他被标记为 `background` 请求的发送时效。
 优化后的网络请求如下：
 
-![downloadingresources3.png](https://cdn.nlark.com/yuque/0/2021/png/21929876/1624593496932-f5138874-ebe0-4eff-9a50-ba149dd6bb9d.png#clientId=uaf4b4a10-7211-4&from=drop&id=ua5160384&margin=%5Bobject%20Object%5D&name=downloadingresources3.png&originHeight=1546&originWidth=2748&originalType=binary&ratio=2&size=483904&status=done&style=none&taskId=uf8d23af5-ee12-4d2d-ad8a-fff6676eaa7)
+![downloadingresources3.png](https://images.xiaozhuanlan.com/photo/2021/09a6cfbdecbc8aa19da814f95c649000.png)
 
 可以看到，上面的网络请求队列中，由于通过算法，将标记为低优先级的请求延后处理，使得队列中网络请求数量变少，较少了延迟时间。
 
@@ -312,3 +299,11 @@ lazy var urlSession: URLSession = {
 ## 总结
 
 以上，这篇 Session 带来的新知识并不多，而且从目前 `HTTP3/QUIC` 等技术普及的情况来看，大部分可以实际应用的也不多。网络优化从来都不是客户端自己的事情，如果再涉及到服务端更换协议，可能就会是一个比较漫长的过程。文中介绍的传输层协议，主要是针对降低 `RTT` 次数来介绍，去年的 [WWDC20 10111 - 探索现代的移动网络](https://xiaozhuanlan.com/topic/5437168290#sectiontls13)中已经对这些技术做了详细的介绍，感兴趣可查阅。
+
+## 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
