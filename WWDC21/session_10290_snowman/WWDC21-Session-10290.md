@@ -1,11 +1,14 @@
-# What's new in AVKit
+# AVKit 的新变化
 
+> 作者：牟爽，目前就职于字节音乐部门，负责 Resso 的 iOS 研发；因为音乐本身的技术特征，平时比较关注 iOS 的音视频底层能力和 Swift 的新特性
+>
+> 审核：曾铭，iOS 开发，老司机技术周报编辑，就职于字节跳动音乐部门
 
->本篇来源为 WWDC2021 中 [What’s new in AVKit](https://developer.apple.com/videos/play/wwdc2021/10290/) 
+> 本篇来源为 WWDC2021 中 [What’s new in AVKit](https://developer.apple.com/videos/play/wwdc2021/10290/) 
 
 我们将会介绍 Apple 对画中画（或简称 PiP ）以及 macOS 上的全屏体验所做的一些改进。
 
-# Picture in picture (PiP)
+## Picture in picture (PiP)
 
 通过画中画，用户可以在使用设备进行多任务处理的同时继续欣赏他们的视频内容
 
@@ -86,7 +89,7 @@
   - 类似 ``AVPlayer`` 上的 ``timeControlStatus``
 
 
-# Mac全屏播放体验
+## Mac全屏播放体验
 在 Big Sur 中，当用户在 Mac Catalyst 应用程序中全屏拍摄视频时，视频会填满整个窗口，但不是整个屏幕：
 
 ![](https://images.xiaozhuanlan.com/photo/2021/30455684fa0b628e1d89c41aa810aaec.png)
@@ -142,7 +145,7 @@
 
 **返回 false 表示恢复失败或不可能，此时内容会在没有动画的情况下直接从全屏退出**
 
-# 总结
+## 总结
 
 本篇的主要内容有：
 - 通过新的API，使用 ``AVPlayerLayer`` 或 ``AVSampleBufferDisplayLayer`` ， 来给 App 添加画中画
@@ -150,6 +153,13 @@
 
 The End！
 
+## 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
 
 
 
