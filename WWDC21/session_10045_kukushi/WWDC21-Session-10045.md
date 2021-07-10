@@ -1,5 +1,9 @@
 # WWDC21 10045 - 用 ShazamKit 创造自定义音频体验
 
+> 作者：[kukushi](https://kukushi.github.io)，Swift 爱好者，独立编写多款 App 上架 AppStore。就职于字节跳动音乐团队。
+>
+> 审核：曾铭，iOS 开发，老司机技术周报编辑，就职于字节跳动音乐团队
+
 > 本文基于 [Session 10044 - Explore ShazamKit](https://developer.apple.com/videos/play/wwdc2021/10044) 和 [WWDC 10045 Create custom audio experiences with ShazamKit](https://developer.apple.com/videos/play/wwdc2021/10045/) 整合编写而成。
 
 ## ShazamKit 是什么？
@@ -22,17 +26,17 @@ ShazamKit 的功能大体可以分为三个部分：
 
 从按下 Shazam 识别按钮，到识别出歌曲，背后究竟发生了什么？
 
-![Recognize Song](https://cdn.nlark.com/yuque/0/2021/png/21898725/1624288663244-541f7fe1-1e37-4195-81fc-44cee15bb6c0.png)
+![Recognize Song](https://images.xiaozhuanlan.com/photo/2021/6f9e2c8d313554b328d039c6924b949d.png)
 
 开始识别后，ShazamKit 会基于待查询的原始音频生成特征信息（Signature）。由于这个特征会被发送到 Shazam 服务器进行查询，因此也被称为查询特征（Query Signature）。使用特征而不是原始数据进行匹配带来了两个好处：其一，特征数据比原始数据小一个数量级，大大减少了网络上传输的数据量。其二，特征数据无法还原出原始音频，更好地保护了用户的隐私。
 
-![Reference Signature Catalog](https://cdn.nlark.com/yuque/0/2021/png/21898725/1624288640112-c6132deb-1497-442c-ae6e-9d3cd82cae33.png)
+![Reference Signature Catalog](https://images.xiaozhuanlan.com/photo/2021/f4356cfd7b0dd9076772bb42407b7038.png)
 
 服务器在接收到特征后，会用特征在 Shazam 特征目录中搜寻匹配。特征目录，故名思义，是由多个特征组成的集合。特征通常还包含了对应音频内容的元数据，元数据让特征能引用回原始的音频内容，因此这类特征被称为引用特征（Reference Signature）。
 
 Shazam 特征目录是由苹果维护的一个特殊的特征目录，包含了世界上大部分歌曲的引用特征。这个目录会定期用最新的歌曲进行更新，目录中的每个特征都是用歌曲的完整音频生成的，并且包含了歌曲完整元信息的引用。
 
-![Query Signature](https://cdn.nlark.com/yuque/0/2021/png/21898725/1624288699643-11d62d74-1c3a-4338-b793-d98b2a583782.png)
+![Query Signature](https://images.xiaozhuanlan.com/photo/2021/a0160cf0a591712649ad143b784e630c.png)
 
 进行目录搜索时，服务器会用查询特征与 Shazam 特征目录中的每首歌的引用特征进行对比，寻找匹配的歌曲。在找到歌曲后，将歌曲完整的元数据信息发送回 ShazamKit。
 
@@ -84,7 +88,7 @@ extension SongResultViewController: SHSessionDelegate {
 
 至此，我们得到了 Shazam 特征目录识别的完整流程：
 
-![Shazam Catalog Recognization](https://cdn.nlark.com/yuque/0/2021/png/21898725/1624283648987-d67eeeba-4498-495d-af5a-469c8a619ffb.png)
+![Shazam Catalog Recognization](https://images.xiaozhuanlan.com/photo/2021/2b5fb676748d4aa4dffb982830dcfe7c.png)
 
 ## 歌曲库管理
 
@@ -121,7 +125,7 @@ SHMediaLibrary.default.add([matchedMediaItem]) { error in
 
 Shazam 特征目录识别极大地简化了音乐识别的流程，但 ShazamKit 的能力并不局限于此。自定义特征目录识别让我们能够为应用程序创造出独特的音频体验。
 
-![Question 1](https://cdn.nlark.com/yuque/0/2021/png/21898725/1625325912040-e5c47f9a-9882-40c2-8bb8-f6fb3e4330a4.png?x-oss-process=image%2Fresize%2Cw_748)
+![Question 1](https://images.xiaozhuanlan.com/photo/2021/5a10a96d5e5c103a8076cb48d2c807d8.png)
 
 近两年，线上教育越来越流行，但上课中的小朋友的投入度往往没有线下的高。如果我们可以有一个 App，可以随着教育视频的播放实时且不断的显示出对应的问题，让小朋友们通过 App 交互回答提问，应该能极大提高小朋友的投入度。
 
@@ -324,3 +328,11 @@ func session(_ session: SHSession, didFind match: SHMatch) {
 ## 结语
 
 以上就是 WWDC21 中关于 ShazamKit 的全部内容。ShazamKit 不仅提供了非常便利的接口实现听歌识曲，还提供了自定义识别音频的功能，开拓了全新的可能性。相信未来会有许多基于 ShazamKit 的功能，为用户带来崭新的体验。
+
+## 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
