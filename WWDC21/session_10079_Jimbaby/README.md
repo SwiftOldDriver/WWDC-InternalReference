@@ -1,11 +1,13 @@
 
 ## 自我介绍
 
-作者：Jimbaby，iOS 开发者，目前就职于字节跳动音乐团队
+> 作者：Jimbaby，iOS 开发者，目前就职于字节跳动音乐团队
+>
+> 审核：曾铭，iOS 开发，老司机技术周报编辑，就职于字节跳动音乐部门
 
 ## 文章标题
 
-WWDC21 10079 - Discover geometry-aware audio with PHASE
+WWDC21 10079 - 使用 PHASE 探索几何感知的音频
 
 ## 文章简介
 
