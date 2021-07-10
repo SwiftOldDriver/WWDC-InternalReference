@@ -1,8 +1,17 @@
 # WWDC21 10187 - 使用Group Activity共享定制化内容
 
+> 作者：Darwin-lv，客户端架构师，就职于字节跳动飞书视频会议团队。
+>
+> 审核：
+> 
+> 刘思源，目前就职于字节跳动音乐团队
+>
+> 莲叔 ，任职于阿里uc事业部，负责uc主端短视频，直播等业务。对于音视频，端智能等技术领域有一定经验。
+
 ![](https://images.xiaozhuanlan.com/photo/2021/685edcf53a1d7dc756b257ca747cd8f9.png)
 
 ## 导读
+
 刚刚结束的 WWDC 2021 ，苹果给 Facetime 带来了新功能 SharePlay。使用苹果设备的用户，无论是 iOS、iPadOS 还是 MacOS，都可以通过 Facetime 开启 SharePlay，和其他苹果用户，无论他使用什么类型的苹果设备，都可以实时的共享电影、音乐等媒体。 
 
 当然不仅仅是共享媒体， SharePlay 的底层通信框架 Group Activities Framework 还支持通过 GroupSessionMessenger API 发送和接收结构化的数据。GroupSessionMessenger 会自动进行序列化和反序列化，并且进行端到端的加密。
@@ -13,7 +22,7 @@
 - 通过 GroupSessionMessenger API 进行数据通信
 - 一个优秀的共享应用还需要注意的细节
 
-> 在阅读本文前建议首先阅读 [WWDC21 10183/10184 - 初探 Group Activities]()   和[WWDC21 10225 - 使用Group Activity共享媒体]() 了解 Group Activities API 的基本概念
+> 在阅读本文前建议首先阅读 [WWDC21 10183/10184 - 初探 Group Activities](https://xiaozhuanlan.com/topic/0593748621)   和[WWDC21 10225 - 使用 Group Activity 共享媒体](https://xiaozhuanlan.com/topic/2560189374) 了解 Group Activities API 的基本概念
 > 本文主要信息来源于[WWDC21 session 10187：Build custom experiences with Group Activities](https://developer.apple.com/videos/play/wwdc2021/10187/)
 
 ## 共享定制化内容
@@ -22,7 +31,7 @@
 - GroupActivity: 应用用来定义共享内容的实体
 - GroupSession: 用来一个SharePlay会话的对象
 
-详细描述参见 [WWDC21 10183/10184 - 初探 Group Activities]()，这里不再详述。
+详细描述参见 [WWDC21 10183/10184 - 初探 Group Activities](https://xiaozhuanlan.com/topic/0593748621)，这里不再详述。
 
 ### 基本流程
 
@@ -37,7 +46,7 @@
 
 相比于共享媒体，共享定制化内容主要有两个地方不同。 一个是 GroupActivity 定义 metadata 需要更改类型。另一个是获得 GroupSession 后不再配置到 `AVPlaybackCoordinater`， 而是用GroupSession构造一个 `GroupSessionMessenger` 对象来管理数据传输。
 
-#### GroupActivity定义
+#### GroupActivity 定义
 
 在实现 GroupActivity 协议的时候， 设置 metadata 的类型为 `generic`，这样系统就知道这个 GroupActivity 是一个定制化的内容，而不是多媒体内容。
 
@@ -167,7 +176,7 @@ groupSession.$activeParticipants
 真实世界中，SharePlay 共享的内容不会是一成不变的。 人们会很正常的期望更换电影、歌曲或者一个新的白板。
 有两种办法可以更换共享的内容。创建新的 GroupSession 或者更新 GroupSession 所持有的 GroupActivity
 
-#### 创建新的GroupSession
+#### 创建新的 GroupSession
 
 创建新的 GroupSession 是更换共享内容的首选方法。 只需要按照启动共享的步骤重新调用对应的 API 即可。因为清晰的加入会话、退出会话流程，这种方法更容易将参与者之间的状态同步一致，因此不需要担心从旧的会话中得到不需要的滞留状态或消息。
 在本文白板的例子中，通过创建新的 GroupSession 来创建一个新的画板显然更合适。
@@ -190,7 +199,7 @@ func reset() {
 }
 ```
 
-#### 更新GroupActivity
+#### 更新 GroupActivity
 GroupSession 提供了一个简单的方法来更新 GroupActivity。
 
 ```swift
@@ -222,21 +231,42 @@ if groupSession == nil && groupStateObserver.isEligibleForGroupSession {
 ```
 
 ## 总结
+
 使用 Group Activity 共享定制化内容和共享媒体的基本流程是一致的。 最主要的区别是共享定制化内容需要通过 GroupSessionMessenger  收发自定义的数据结构。这样的设计给了开发者很大自由空间。
 
 虽然 GroupSessionMessenger 提供的数据通道有一定的能力限制，但是目前大多数应用本身就具备了联网协同的能力，并不缺乏实时通讯能力。而通过这个数据通道完成创建房间，加好友，交换名片等信息，相当于借助苹果自身的 Facetime 社交连接为自己的应用增加更多的社交能力。
 
-### 参考文档
+
+## 参考文档
 
 Group Activity 相关的 WWDC Session：
 
+[【WWDC21 10183/10184】初探 Group Activities](https://xiaozhuanlan.com/topic/0593748621)
+
 -  [Meet Group Activities](https://developer.apple.com/videos/play/wwdc2021/10183/) 
--  [Coordinate media experiences with Group Activities ](https://developer.apple.com/videos/play/wwdc2021/10225/)
--  [Coordinate media playback in Safari with Group Activities](https://developer.apple.com/videos/play/wwdc2021/10189/) 
--  [Build custom experiences with Group Activities](https://developer.apple.com/videos/play/wwdc2021/10187/) 
 -  [Design for Group Activities ](https://developer.apple.com/videos/play/wwdc2021/10184/)
+
+
+[【WWDC21 10225】使用 Group Activity 共享媒体](https://xiaozhuanlan.com/topic/2560189374)
+-  [Coordinate media experiences with Group Activities ](https://developer.apple.com/videos/play/wwdc2021/10225/)
+
+[【WWDC21 10187】使用 Group Activity 共享定制化内容](https://xiaozhuanlan.com/topic/6205739184)
+-  [Build custom experiences with Group Activities](https://developer.apple.com/videos/play/wwdc2021/10187/) 
+
+[【WWDC21 10189】使用 Group Activity 在 Safari 中共享媒体](https://xiaozhuanlan.com/topic/7165042893)
+-  [Coordinate media playback in Safari with Group Activities](https://developer.apple.com/videos/play/wwdc2021/10189/) 
+
 
 开发手册
 
 - [Inviting Participants to Share an Activity](https://developer.apple.com/documentation/groupactivities/inviting-participants-to-share-an-activity)
 - [Joining and Managing a Shared Activity](https://developer.apple.com/documentation/groupactivities/joining-your-app-to-a-shared-activity)
+
+
+## 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
