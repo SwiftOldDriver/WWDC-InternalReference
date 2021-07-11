@@ -2,7 +2,7 @@
 
 [TOC]
 
-> WWDC21 Session 10147 - [What's new in camera capture](https://developer.apple.com/videos/play/wwdc2021/10047/) 
+> WWDC21 Session 10047 - [What's new in camera capture](https://developer.apple.com/videos/play/wwdc2021/10047/) 
 
 去年 Apple 对 iPhone 的相机升级是非常明显的，比如增加了 10-bit HDR 视频的拍摄，Apple ProRaw 的支持等。同时得益于 M 系列/A 系列芯片强大的算力，Apple 目前对于拍摄上的思考和提升更多走的是 [计算摄影](https://zh.wikipedia.org/zh-hans/%E8%AE%A1%E7%AE%97%E6%91%84%E5%BD%B1) 路线，而非在光学硬件上做大幅度提升。所以今年的 WWDC，Apple 将相机的更多能力开放给开发者使用。
 
