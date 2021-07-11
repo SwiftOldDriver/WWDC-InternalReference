@@ -15,17 +15,17 @@
 
 ## 一、属性字符串 - AttributedString
 
-`iOS` 中的属性字符串相信大多数开发者都不会陌生，它由以下三部分组成：
+`iOS` 中的 `AttributedString` 相信大多数开发者都不会陌生，它由以下三部分组成：
 ​
 
 - 字符 Characters
 - 区间 Ranges
 - 字典 Dictionary
 
-属性字符串允许您将属性（键值对）与字符串的特定范围相关联，最常见的字符串属性由 SDK 进行定义，但是你可以创建属于你自己的属性。
+`AttributedString` 允许您将属性（键值对）与字符串的特定范围相关联，最常见的字符串属性由 SDK 进行定义，但是你可以创建属于你自己的属性。
 ​
 
-在 `Foundation` 框架面世之时，`NSAttributedString` 属性字符串类型便随之一起推出。而今年，Apple 推出了一个基于现代化的 `Swift` 语言特性的全新的属性字符串结构体 - `AttributedString`。
+在 `Foundation` 框架面世之时，`NSAttributedString` 类型便随之一起推出。而今年，Apple 推出了一个基于现代化的 `Swift` 语言特性的全新的结构体 - `AttributedString`。
 ​
 
 ### 1.1 AttributedString 初见
@@ -49,10 +49,10 @@
 
 - 首先通过简单的初始化语法得到一个 `AttributedString` 结构体，传入的初始化内容是 `Thank you`。
 
-同时，我们这里对属性字符串设置一个的 `SwiftUI` 字体属性 `bold`，设置之后会让字体有加粗的效果。值得注意的是，该属性作用在属性字符串全局范围内。
+同时，我们这里对 `AttributedString` 设置一个的 `SwiftUI` 字体属性 `bold`，设置之后会让字体有加粗的效果。值得注意的是，该属性作用在 `AttributedString` 全局范围内。
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624362686003-21dcf69d-f066-43c9-b1ca-99aebb389da6.png#clientId=u4301b739-d3c5-4&from=paste&height=117&id=u19bfd993&margin=%5Bobject%20Object%5D&name=image.png&originHeight=234&originWidth=1670&originalType=binary&ratio=2&size=157014&status=done&style=none&taskId=ub6f146d9-a518-40ac-9409-0ea15966beb&width=835)
 
-- 同样的，我们再次初始化一个 `AttributedString` 结构体，传入的初始化内容是 `Please visit our website`。这里我们设置字体为斜体 `italic`。同时设置属性字符串的 `link` 属性为一个 `URL`。
+- 同样的，我们再次初始化一个 `AttributedString` 结构体，传入的初始化内容是 `Please visit our website`。这里我们设置字体为斜体 `italic`。同时设置 `AttributedString` 的 `link` 属性为一个 `URL`。
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624374831543-d3316e7d-f758-49bc-a5ca-f3d0c51c6ffb.png#clientId=u4301b739-d3c5-4&from=paste&height=193&id=uf44f5aad&margin=%5Bobject%20Object%5D&name=image.png&originHeight=386&originWidth=1652&originalType=binary&ratio=2&size=251777&status=done&style=none&taskId=ue3eecfaa-3a16-4db2-ba30-07ab7d9beb1&width=826)
 
@@ -60,14 +60,14 @@
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624375360118-13eb7a94-d06f-4b44-a09f-47718829dfff.png#clientId=u4301b739-d3c5-4&from=paste&height=92&id=u16f5c27e&margin=%5Bobject%20Object%5D&name=image.png&originHeight=184&originWidth=1674&originalType=binary&ratio=2&size=106082&status=done&style=none&taskId=u719f32bf-a64c-419a-b293-d5e1a2f6856&width=837)
 
-- 最后，通过调用 `mergeAttributes` 方法，将 `container` 对象所携带的属性应用在 `thanks` 和 `website` 属性字符串上。
+- 最后，通过调用 `mergeAttributes` 方法，将 `container` 对象所携带的属性应用在 `thanks` 和 `website` 上。
 
-我们前面说到过，属性字符串是由字符，区间以及属性字典三大部分组成的。但是如果需要访问一个属性字符串的这三大部分内容并不是直接通过属性字符串本身，而是通过属性字符串的「视图」特性。
+我们前面说到过，`AttributedString` 是由字符，区间以及属性字典三大部分组成的。但是如果需要访问一个 `AttributedString` 的这三大部分内容并不是直接通过 `AttributedString` 本身，而是通过「视图」特性。
 ​
 
 ### 1.3 AttributedString 视图
 
-属性字符串的「视图」由下列两部分组成：
+`AttributedString` 的「视图」由下列两部分组成：
 ​
 
 - Characters 字符，用来访问字符串
@@ -100,7 +100,7 @@
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624887361848-563b03be-3a85-4e49-87d2-967638289bfe.png#clientId=uca4b5ec3-d888-4&from=paste&height=180&id=uc785cc4a&margin=%5Bobject%20Object%5D&name=image.png&originHeight=360&originWidth=1360&originalType=binary&ratio=2&size=137410&status=done&style=none&taskId=u412316a9-b0a6-4dfd-8b8c-de75566753b&width=680)
 上面的字符串由 4 个 `run` 视图组成。分别是 `Thank you!`、`Please visit our`、`website`、 `.`。
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624887312397-26f07239-c578-438a-a49e-75ecfb4bbfd6.png#clientId=uca4b5ec3-d888-4&from=paste&height=260&id=u325f2278&margin=%5Bobject%20Object%5D&name=image.png&originHeight=520&originWidth=2270&originalType=binary&ratio=2&size=315109&status=done&style=none&taskId=u224eedf2-28e1-4a25-874b-600f33a557c&width=1135)
-如上代码所示，我们可以通过属性字符串的 `runs` 属性下面的 `count` 来获取有多少个 `run` 视图。
+如上代码所示，我们可以通过 `AttributedString` 的 `runs` 属性下面的 `count` 来获取有多少个 `run` 视图。
 `character` 和 `run` 视图的区间是可以相互转换的，所以你可以通过下标访问到某个区间的字符串内容。
 
 对于 `run` 视图来说，专注于一个特定的属性这种场景可能更加有用。![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624887947108-a4cfa20b-cd7a-4605-83ff-1abc84a678dc.png#clientId=uca4b5ec3-d888-4&from=paste&height=551&id=u6a71499d&margin=%5Bobject%20Object%5D&name=image.png&originHeight=1102&originWidth=1772&originalType=binary&ratio=2&size=670453&status=done&style=none&taskId=uef019d59-0915-4a37-beaa-31ed8906d15&width=886)
@@ -109,7 +109,7 @@
 
 ### 1.4 AttributedString 使用
 
-另外一个有用的场景是在属性字符串中查找特定的子串，查找成功后可以编辑对应区间内的字符串内容以及字符串属性。
+另外一个有用的场景是在 `AttributedString` 中查找特定的子串，查找成功后可以编辑对应区间内的字符串内容以及字符串属性。
 比如我们想把 `visit` 改成更为复古的 `surf`，如下图所示：
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624888672843-d1a6b37d-6cda-48af-8f2e-1a06076eaad3.png#clientId=uca4b5ec3-d888-4&from=paste&height=97&id=ub187ec9b&margin=%5Bobject%20Object%5D&name=image.png&originHeight=194&originWidth=1316&originalType=binary&ratio=2&size=113848&status=done&style=none&taskId=ud6f032b9-7cf6-4f3b-b07a-32bdef43e0c&width=658)
 我们只需要下方代码即可实现：
@@ -129,7 +129,7 @@
 
 ### 1.6 AttributedString & Markdown
 
-`AttributedString` 支持 `Markdown` 语法，下面是一个 `SwiftUI` 中 `Text` 组件使用本地化的属性字符串的例子：
+`AttributedString` 支持 `Markdown` 语法，下面是一个 `SwiftUI` 中 `Text` 组件使用本地化的 `AttributedString` 的例子：
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624890483866-7f054866-be90-483c-8ef2-3a4f2d35f3cd.png#clientId=u7f0c6343-d450-4&from=paste&height=323&id=ud290c319&margin=%5Bobject%20Object%5D&name=image.png&originHeight=646&originWidth=1436&originalType=binary&ratio=2&size=267935&status=done&style=none&taskId=udeea7580-56c1-4e5a-bc18-45faf40b225&width=718)
 
 - 通过在 `Thank you` 两侧插入两个星号，右侧的实时预览区域就直观的显示出了加粗的效果。
@@ -151,14 +151,14 @@
 最后，我们希望能够在 `Markdown` 中设置自定义的字符串属性。
 ​
 
-上述三种场景都涉及到了属性字符串的转换操作，我们依次进行分析。
+上述三种场景都涉及到了 `AttributedString` 的转换操作，我们依次进行分析。
 ​
 
 #### 1.7.1 从结构体类型转换为类类型
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624891336971-29dca061-5bab-496b-a1be-96c61cd61c90.png#clientId=u7f0c6343-d450-4&from=paste&height=215&id=u0ded317a&margin=%5Bobject%20Object%5D&name=image.png&originHeight=430&originWidth=1652&originalType=binary&ratio=2&size=152758&status=done&style=none&taskId=u4759d623-84b4-424a-8204-1cb9479cb28&width=826)
 
-只需要将属性字符串 `AttribuedString` 传入 `NSAttributedString` 的构造方法中即可，至于属性如何关联则交给 SDK 完成。
+只需要将 `AttribuedString` 传入 `NSAttributedString` 的构造方法中即可，至于属性如何关联则交给 SDK 完成。
 ​
 
 #### 1.7.2 编码与解码
@@ -188,7 +188,7 @@
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624893096157-fde51b1d-6896-4dba-a4e7-70da73088f96.png#clientId=u7f0c6343-d450-4&from=paste&height=263&id=u094ad9ad&margin=%5Bobject%20Object%5D&name=image.png&originHeight=526&originWidth=1592&originalType=binary&ratio=2&size=201963&status=done&style=none&taskId=u2681535b-af51-4eb7-9865-4bbaea4b836&width=796)
 
-通过声明一个属性字符串属性遵循 `MarkdownDecodableAttributedStringKey` 协议，我们就可以直接从 `Markdown` 中解码出该属性，并插入到一个属性字符串中，这一切的前提还需要 `Value` 是 `Codable` 的。
+通过声明一个 `AttributedString` 属性遵循 `MarkdownDecodableAttributedStringKey` 协议，我们就可以直接从 `Markdown` 中解码出该属性，并插入到一个AttributedString中，这一切的前提还需要 `Value` 是 `Codable` 的。
 ​
 
 #### 1.7.3 自定义的 `Markdown` 属性
@@ -230,7 +230,7 @@
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624980963280-dfc07e6e-bb67-44f0-bf7a-d748d1161d9e.png#clientId=ue872796c-1b67-4&from=paste&height=480&id=u3fec9461&margin=%5Bobject%20Object%5D&name=image.png&originHeight=960&originWidth=536&originalType=binary&ratio=2&size=177528&status=done&style=none&taskId=ua8a995d3-55f2-45b4-b501-9a14f1ab2c0&width=268)![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624981018504-566c599b-472f-4cea-bad2-39b172af8cec.png#clientId=ue872796c-1b67-4&from=paste&height=480&id=u2d3b35c1&margin=%5Bobject%20Object%5D&name=image.png&originHeight=960&originWidth=530&originalType=binary&ratio=2&size=185549&status=done&style=none&taskId=u7e901ddc-3228-471d-8f42-42e70ea7a9a&width=265)
 
-如上图所示，本地化字体文件中的 `Markdown` 在被转换为属性字符串后，应用会找到需要设置属性的范围并将属性应用到对应范围的字符串上。而因为属性来自于本地化字体文件，这适用于所有语言。
+如上图所示，本地化字体文件中的 `Markdown` 在被转换为 `AttributedString` 后，应用会找到需要设置属性的范围并将属性应用到对应范围的字符串上。而因为属性来自于本地化字体文件，这适用于所有语言。
 
 ## 二、 格式化器 - Formatters
 
@@ -317,9 +317,9 @@
 - 时间区间可以只显示时间，不显示日期，就像格式化单个日期那样。
 - 你也可以将时间区间格式化成一个持续时间(`timeDuration`)，可以格式化为组件(`components`)，或者是一个相对时间。
 
-#### 2.2.1 格式化属性字符串
+#### 2.2.1 格式化AttributedString
 
-`Formatters` 另外一个新的特性是针对属性字符串进行格式化。通过全新的结构体 `AttributedString` 以及 `Formatters API`，在任何地方都可以实现格式化属性字符串的输出。在 `watchOS`中，许多 `complications` 都是格式化的字符串，因为 `Apple Watch` 是十分个性化的设备，所以考虑到用户的偏好设置是十分重要的。下面通过 `SwiftUI` 中的 `demo`，我们可以一探究竟。
+`Formatters` 另外一个新的特性是针对 `AttributedString` 进行格式化。通过全新的结构体 `AttributedString` 以及 `Formatters API`，在任何地方都可以实现格式化 `AttributedString` 的输出。在 `watchOS`中，许多 `complications` 都是格式化的字符串，因为 `Apple Watch` 是十分个性化的设备，所以考虑到用户的偏好设置是十分重要的。下面通过 `SwiftUI` 中的 `demo`，我们可以一探究竟。
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1625335899725-f99b9f54-a883-4e50-bd28-b1d843b88b1c.png#clientId=u5f924393-78f4-4&from=paste&height=464&id=ub1d044bd&margin=%5Bobject%20Object%5D&name=image.png&originHeight=928&originWidth=1738&originalType=binary&ratio=1&size=539454&status=done&style=none&taskId=ub3cba51e-9960-4a06-9bc1-8cd3545e86d&width=869)
 
@@ -425,7 +425,7 @@
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1625372989380-761c19ed-71e2-42bb-8422-e85ceae7d23d.png#clientId=u86432fc4-6b2f-4&from=paste&height=334&id=ua445a7b9&margin=%5Bobject%20Object%5D&name=image.png&originHeight=334&originWidth=1364&originalType=binary&ratio=1&size=154023&status=done&style=none&taskId=u4867a83e-f475-4e91-ae08-ca809aacc55&width=1364)
 
 有了新的 `Automatic Grammar Agreement` 加持，代码变得更简单了。你可以在一个字符串里直接指定数 量、大小和具体的餐食。自动语法协议会通过「反射」自动修复其中的语法。
-让我们逐步分解一下，为了执行「反射」流程，我们需要知道字符串中的哪些部分需要做自动语法修复。幸运的是，在 `Swift` 中有一个全新的类型 `AttributedString` 属性字符串，以及在 `Markdown` 中可以设置自定义属性的功能。
+让我们逐步分解一下，为了执行「反射」流程，我们需要知道字符串中的哪些部分需要做自动语法修复。幸运的是，在 `Swift` 中有一个全新的类型 `AttributedString` AttributedString，以及在 `Markdown` 中可以设置自定义属性的功能。
 当我们导出 `Caffe` 项目的本地化时，我们会得到一个字符串文件，这个文件中包含我们的提示文本以及代码中的本地化字符串，比如餐食的名称以及大小。
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1625373489747-f0b6c2ef-34d1-448b-a773-9d22899bce0e.png#clientId=u86432fc4-6b2f-4&from=paste&height=558&id=ua45ed7fd&margin=%5Bobject%20Object%5D&name=image.png&originHeight=558&originWidth=1692&originalType=binary&ratio=1&size=363327&status=done&style=none&taskId=u89df57e9-e93c-48c2-ba9f-ba126fd8c10&width=1692)
@@ -460,7 +460,7 @@
 ## 四、总结
 
 `Foundation` 今年有许多强大的新功能，你可以从今天开始在你的 `app` 中使用它们。
-- `AttributedString` 属性字符串提供了一个快速的，易用的并且 `Swift` 优先的接口，进而实现在一个字符串的范围中添加键值对以达到富文本的效果。你可以在 `SwiftUI` 中使用 `Text` 组件，并在本地化字符串中使用 `Markdown` 语法。
+- `AttributedString` AttributedString提供了一个快速的，易用的并且 `Swift` 优先的接口，进而实现在一个字符串的范围中添加键值对以达到富文本的效果。你可以在 `SwiftUI` 中使用 `Text` 组件，并在本地化字符串中使用 `Markdown` 语法。
 - 新的格式器 `API` 将重点放在格式上，简化了代码并提高了性能。
 - 最后，自动语法协议将智能地修复本地化字符串，以便匹配语法时态，单复数以及用户自己的称谓设置。
 
