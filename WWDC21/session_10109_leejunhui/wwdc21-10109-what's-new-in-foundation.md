@@ -188,7 +188,7 @@
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624893096157-fde51b1d-6896-4dba-a4e7-70da73088f96.png#clientId=u7f0c6343-d450-4&from=paste&height=263&id=u094ad9ad&margin=%5Bobject%20Object%5D&name=image.png&originHeight=526&originWidth=1592&originalType=binary&ratio=2&size=201963&status=done&style=none&taskId=u2681535b-af51-4eb7-9865-4bbaea4b836&width=796)
 
-通过声明一个 `AttributedString` 属性遵循 `MarkdownDecodableAttributedStringKey` 协议，我们就可以直接从 `Markdown` 中解码出该属性，并插入到一个AttributedString中，这一切的前提还需要 `Value` 是 `Codable` 的。
+通过声明一个 `AttributedString` 属性遵循 `MarkdownDecodableAttributedStringKey` 协议，我们就可以直接从 `Markdown` 中解码出该属性，并插入到一个 `AttributedString` 中，这一切的前提还需要 `Value` 是 `Codable` 的。
 ​
 
 #### 1.7.3 自定义的 `Markdown` 属性
@@ -460,7 +460,7 @@
 ## 四、总结
 
 `Foundation` 今年有许多强大的新功能，你可以从今天开始在你的 `app` 中使用它们。
-- `AttributedString` AttributedString提供了一个快速的，易用的并且 `Swift` 优先的接口，进而实现在一个字符串的范围中添加键值对以达到富文本的效果。你可以在 `SwiftUI` 中使用 `Text` 组件，并在本地化字符串中使用 `Markdown` 语法。
+- `AttributedString` 提供了一个快速的，易用的并且 `Swift` 优先的接口，进而实现在一个字符串的范围中添加键值对以达到富文本的效果。你可以在 `SwiftUI` 中使用 `Text` 组件，并在本地化字符串中使用 `Markdown` 语法。
 - 新的格式器 `API` 将重点放在格式上，简化了代码并提高了性能。
 - 最后，自动语法协议将智能地修复本地化字符串，以便匹配语法时态，单复数以及用户自己的称谓设置。
 
