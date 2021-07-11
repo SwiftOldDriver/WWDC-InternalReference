@@ -153,7 +153,6 @@
 
 上述三种场景都涉及到了 `AttributedString` 的转换操作，我们依次进行分析。
 ​
-
 #### 1.7.1 从结构体类型转换为类类型
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624891336971-29dca061-5bab-496b-a1be-96c61cd61c90.png#clientId=u7f0c6343-d450-4&from=paste&height=215&id=u0ded317a&margin=%5Bobject%20Object%5D&name=image.png&originHeight=430&originWidth=1652&originalType=binary&ratio=2&size=152758&status=done&style=none&taskId=u4759d623-84b4-424a-8204-1cb9479cb28&width=826)
@@ -188,14 +187,12 @@
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624893096157-fde51b1d-6896-4dba-a4e7-70da73088f96.png#clientId=u7f0c6343-d450-4&from=paste&height=263&id=u094ad9ad&margin=%5Bobject%20Object%5D&name=image.png&originHeight=526&originWidth=1592&originalType=binary&ratio=2&size=201963&status=done&style=none&taskId=u2681535b-af51-4eb7-9865-4bbaea4b836&width=796)
 
-通过声明一个 `AttributedString` 属性遵循 `MarkdownDecodableAttributedStringKey` 协议，我们就可以直接从 `Markdown` 中解码出该属性，并插入到一个 `AttributedString` 中，这一切的前提还需要 `Value` 是 `Codable` 的。
-​
-
-#### 1.7.3 自定义的 `Markdown` 属性
+声明一个遵循 `MarkdownDecodableAttributedStringKey` 协议的 `AttributedString` 属性，然后让属性的 `value` 部分遵循 `Codable` 协议，我们就可以在 `Markdown` 文本中实现富文本字符串的效果，具体使用参考下图。
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624893288547-25edb1c5-4ea6-44fc-a197-0429ee7f5229.png#clientId=u7f0c6343-d450-4&from=paste&height=201&id=u5b017da5&margin=%5Bobject%20Object%5D&name=image.png&originHeight=402&originWidth=1662&originalType=binary&ratio=2&size=222313&status=done&style=none&taskId=u7afc4f6d-c811-4cb4-acf0-f949def17c4&width=831)
 
 上图中前两行代码在 `Markdown` 中十分常见，中括号中表示的是描述文本，括号中表示的是实际的 `URL`。带感叹号前缀的话就是直接渲染图片出来，不带感叹号前缀的话将会渲染一个链接出来。而第三行代码展示了自定义属性的语法。
+
 自定义属性首先会以 `^` 开头，然后是一个中括号来接收文本，最后是一个括号来表示属性。属性以 `JSON5`格式表示。
 
 
@@ -203,7 +200,6 @@
 
 > Foundation 中的 JSON 相关的 API 也已经添加了对 JSON5 的支持。
 
-​
 
 因为自定义属性通过 `JSON` 进行表示，所以任何可以被 `JSONDecoder` 解码的内容自动与新的自定义 `Markdown` 语法兼容。
 
@@ -361,7 +357,7 @@
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1625337385460-105e56fb-6e3e-4c3c-baf7-edca8ead257e.png#clientId=u5f924393-78f4-4&from=paste&height=305&id=u4d5d9b4c&margin=%5Bobject%20Object%5D&name=image.png&originHeight=610&originWidth=1398&originalType=binary&ratio=1&size=314786&status=done&style=none&taskId=u6ef12cb4-a848-4c3d-81a4-87484e677f3&width=699)
 
-- 如上图所示，数字格式化支持各种配置，我们可以配置输出百分比的字符串，或者是科学记数法格式的字符串，亦或者是输出货币格式的内容。
+- 如上图所示，数字格式化支持各种配置，我们可以配置输出百分比的字符串，或者是科学记数法格式的字符串，亦或者是输出货比格式的内容。
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1625337508852-cf9db010-46aa-44d5-9558-c1ed850ed509.png#clientId=u5f924393-78f4-4&from=paste&height=136&id=u89efef4a&margin=%5Bobject%20Object%5D&name=image.png&originHeight=272&originWidth=1680&originalType=binary&ratio=1&size=118984&status=done&style=none&taskId=u0d6f1c16-bb57-46e7-9f25-9eed01e6a5a&width=840)
 
@@ -369,7 +365,7 @@
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1625337709793-9dac5c4d-72d0-4e91-bd0c-d9023f7578a1.png#clientId=u5f924393-78f4-4&from=paste&height=487&id=u0a0e2efd&margin=%5Bobject%20Object%5D&name=image.png&originHeight=974&originWidth=1592&originalType=binary&ratio=1&size=500010&status=done&style=none&taskId=ufdc7b955-9165-4ef6-ac54-07921fb42d2&width=796)
 
-`SwiftUI` 支持在输入框上附加化的样式，因为格式化样式有需要被格式化内容的类型信息，我们可以使用一个可读的但是安全的语法实现对 `tip` 的百分比格式化操作。
+`SwiftUI` 支持在 `TextFeild` 上设置内容格式的样式，而因为格式的样式有需要被格式化内容的类型，所以我们可以使用一个可读的但是安全的语法实现对 `tip` 的格式化。
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1625338113993-c594474b-f387-4566-9043-810b16a4e615.png#clientId=u5f924393-78f4-4&from=paste&height=474&id=ufb1c004b&margin=%5Bobject%20Object%5D&name=image.png&originHeight=948&originWidth=1100&originalType=binary&ratio=1&size=159539&status=done&style=none&taskId=u0cc662ce-c8d6-49b7-8a06-20f75f05eee&width=550)
 
