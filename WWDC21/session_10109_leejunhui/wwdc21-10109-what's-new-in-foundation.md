@@ -270,7 +270,7 @@
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1625328219522-4b71f16b-70f7-493d-ab1f-7e2e4dabc41e.png#clientId=ud2f66d03-637b-4&from=paste&height=459&id=u1d2a8965&margin=%5Bobject%20Object%5D&name=image.png&originHeight=918&originWidth=1632&originalType=binary&ratio=2&size=185049&status=done&style=none&taskId=u9a7fa36f-a0a8-4a00-8861-545cd392a2e&width=816)
 
-日期格式化本质上就是将一个绝对的时间点转换为我们人类所理解的日期，这其中又涉及到了**日历**以及**时区**。甚至更重要的是，还需要考虑到不同地区的人们对于日期显示的偏好不同，这种偏好我们一般称之为**语言环境，**即 `locale`。接下来一起来看一下最简单的日期格式化代码是怎样编写的吧。
+日期格式化本质上就是将一个绝对的时间点转换为我们人类所理解的日期，这其中又涉及到了「日历」以及「时区」。甚至更重要的是，还需要考虑到不同地区的人们对于日期显示的偏好不同，这种偏好我们一般称之为「语言环境」，即 `locale`。接下来一起来看一下最简单的日期格式化代码是怎样编写的吧。
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1625328568887-b54bc1b7-aa44-4be5-ba31-524e9b55d0aa.png#clientId=ud2f66d03-637b-4&from=paste&height=182&id=ubefe4c51&margin=%5Bobject%20Object%5D&name=image.png&originHeight=364&originWidth=924&originalType=binary&ratio=2&size=143920&status=done&style=none&taskId=ueb6ce415-2687-4e83-acbc-110a3e1c014&width=462)
 
@@ -361,7 +361,7 @@
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1625337385460-105e56fb-6e3e-4c3c-baf7-edca8ead257e.png#clientId=u5f924393-78f4-4&from=paste&height=305&id=u4d5d9b4c&margin=%5Bobject%20Object%5D&name=image.png&originHeight=610&originWidth=1398&originalType=binary&ratio=1&size=314786&status=done&style=none&taskId=u6ef12cb4-a848-4c3d-81a4-87484e677f3&width=699)
 
-- 如上图所示，数字格式化支持各种配置，我们可以配置输出百分比的字符串，或者是科学记数法格式的字符串，亦或者是输出货比格式的内容。
+- 如上图所示，数字格式化支持各种配置，我们可以配置输出百分比的字符串，或者是科学记数法格式的字符串，亦或者是输出货币格式的内容。
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1625337508852-cf9db010-46aa-44d5-9558-c1ed850ed509.png#clientId=u5f924393-78f4-4&from=paste&height=136&id=u89efef4a&margin=%5Bobject%20Object%5D&name=image.png&originHeight=272&originWidth=1680&originalType=binary&ratio=1&size=118984&status=done&style=none&taskId=u0d6f1c16-bb57-46e7-9f25-9eed01e6a5a&width=840)
 
@@ -373,7 +373,7 @@
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1625338113993-c594474b-f387-4566-9043-810b16a4e615.png#clientId=u5f924393-78f4-4&from=paste&height=474&id=ufb1c004b&margin=%5Bobject%20Object%5D&name=image.png&originHeight=948&originWidth=1100&originalType=binary&ratio=1&size=159539&status=done&style=none&taskId=u0cc662ce-c8d6-49b7-8a06-20f75f05eee&width=550)
 
-- 如上图所示，在原料部分我们用到了集合格式化，在价格部分用到了货比格式化，在数量部分用到了数字格式化，并在下单按钮上对下单数量做了本地化操作。
+- 如上图所示，在原料部分我们用到了集合格式化，在价格部分用到了货币格式化，在数量部分用到了数字格式化，并在下单按钮上对下单数量做了本地化操作。
 
 ​
 ### 2.4 字符串和格式化器的国际化与本地化
