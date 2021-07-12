@@ -44,7 +44,7 @@ Fruta 是 Apple 用来演示 Xcode Cloud 的 App。在 Xcode 13 本地打开的 
 
 ![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%88%AA%E5%9B%BE%206.jpg)
 
-这些内容可不只是在 Xcode 本地才能看到，也可以在 App Store Connect 网页中获取到，包括开始构建、管理工作流、检阅构建产物、与团队成员共享构建报告和管理通知等。比如，在构建完成后，可以设置结果通知到 Slack 等交流协作工具，以帮助团队成员在第一时间知道结果。
+这些内容可不只是在 Xcode 本地才能看到，也可以在 App Store Connect 网页中获取到，包括开始构建、管理工作流、检阅构建产物、与团队成员共享构建报告和管理通知等。比如，在构建完成后，可以在网页中设置结果通知到 Slack 等交流协作工具，以帮助团队成员在第一时间知道结果。
 
 #### One More Thing...
  Xcode Cloud 不光是团队开发以及协作流程的好帮手，而且 Apple 一贯良好的隐私保护也未曾在它身上缺席，源代码的管理是软件工程中的核心之一。Xcode Cloud 的方方面面均是为保护用户数据而设计的：
