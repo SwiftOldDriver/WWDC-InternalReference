@@ -40,7 +40,7 @@ Fruta 是 Apple 用来演示 Xcode Cloud 的 App。在 Xcode 13 本地打开的 
 
 ![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%88%AA%E5%9B%BE%205.jpg)
 
-点选某个 Action，展现在我们面前的是某个工作流单次运行的报告。从这里，我们能看到测试代码运行的结果与相应的日志，甚至可以双击报错处，直接定位到导致出错的某一行代码。
+在左侧边栏中点选某个工作流，展现在我们面前的是该工作流单次运行的总览。从这里，我们能看到测试代码运行的结果与相应的日志，甚至可以双击报错处，直接定位到导致出错的某一行代码。
 
 ![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%88%AA%E5%9B%BE%206.jpg)
 
