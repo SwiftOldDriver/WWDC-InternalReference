@@ -1,7 +1,7 @@
 # Watch OS 8 中的新特性
 
 > 作者 kk，字节跳动啥缺人做啥的开发。前端、后端、客户端都会写一点，也都不擅长
-> 本文基于[session 10009](https://developer.apple.com/videos/play/wwdc2021/10009/)以及 [session 10018](https://developer.apple.com/videos/play/wwdc2021/10018)整理。 
+> 本文基于[session 10009](https://developer.apple.com/videos/play/wwdc2021/10009/)以及 [session 10002](https://developer.apple.com/videos/play/wwdc2021/10002/)整理。 
 
 # 前言
 
@@ -16,9 +16,9 @@
 
 - 常亮显示
 - 健康数据
--  蓝牙
+- 蓝牙
 - 位置信息
--  其他的新功能
+- 其他的新功能
 
 ## 常亮显示(Always-On display)
 
