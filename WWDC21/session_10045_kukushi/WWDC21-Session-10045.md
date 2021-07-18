@@ -113,7 +113,7 @@ SHMediaLibrary.default.add([matchedMediaItem]) { error in
 
 用户默认的 Shazam 歌曲库十分特殊，只有在 Shazam 特征目录中识别到的歌曲可以被添加进去。出于隐私的考虑，库中的内容是端到端加密存储的，且只有开启了两步认证的设备可以访问。将内容添加到 Shazam 库中并不需要特别的权限，但苹果还是强烈建议开发者不要在用户不知情的时候存储内容。
 
-匹配结果中的  `MediaItem` 上还暴露了许多其他属性，比如 `matchOffset`，它显示了在歌曲中进行匹配的位置。此外，新版本 MusicKit 框架提供了描述歌曲以及关系的对象。关于更多细节，你可以查看 [Meet MusicKit for Swift](https://developer.apple.com/videos/play/wwdc2021/10294/)。
+匹配结果中的  `MediaItem` 上还暴露了许多其他属性，比如 `matchOffset`，它显示了在歌曲中进行匹配的位置。此外，新版本 MusicKit 框架提供了描述歌曲以及关系的对象。关于更多细节，你可以查看 [Meet MusicKit for Swift](https://developer.apple.com/videos/play/wwdc2021/10294/)（[《【WWDC21 10291/10294/10295】MusicKit 概述》](https://xiaozhuanlan.com/topic/6102839475)）。
 
 在继续探索 ShazamKit 之前，我们先总结下 Shazam 特征目录识别的最佳实践：
 

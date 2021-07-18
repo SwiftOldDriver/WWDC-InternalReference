@@ -19,7 +19,7 @@
 如果读者曾经使用过 fastlane 等工具实现过项目的构建、打包、上传，那会很轻松的理解这一篇的文章介绍的内容。
 
 
-全文以苹果官方 Fruta 的应用程序举例说明，它已经在 Xcode Cloud 上启动并运行。如何您还不知道什么是 Xcode Cloud，您可以订阅《老司机技术周报》-- [窥探 Xcode Cloud](https://xiaozhuanlan.com/topic/7496513820) 这篇文章，或者直接观看苹果官方视频 [Meet Xcode Cloud](https://developer.apple.com/videos/play/wwdc2021/10267)
+全文以苹果官方 Fruta 的应用程序举例说明，它已经在 Xcode Cloud 上启动并运行。如何您还不知道什么是 Xcode Cloud，您可以订阅《老司机技术周报》-- [窥探 Xcode Cloud](https://xiaozhuanlan.com/topic/7496513820) 这篇文章，或者直接观看苹果官方视频 [Meet Xcode Cloud](https://developer.apple.com/videos/play/wwdc2021/10267)（[《【WWDC21 10267/10268/10269】窥探 Xcode Cloud》](https://xiaozhuanlan.com/topic/7496513820)）
 
 
 ## 工作流介绍

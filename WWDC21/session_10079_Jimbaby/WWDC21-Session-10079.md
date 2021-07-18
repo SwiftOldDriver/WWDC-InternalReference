@@ -208,7 +208,7 @@ PHASE API 可以分为三个主要概念：
 
 ![10079-23-ambient-mixer](https://images.xiaozhuanlan.com/photo/2021/a9b000abd0ee69e994188a6c1ae5780f.png)
 
-`环境混音器（Ambient Mixers）` 渲染音频可以有环绕声的效果，但是没有「几何感知」的真实音频空间模拟能力。举个例子，当听者转动他们的头部时，声音还是继续来自空间中相同的相对位置。`环境混音器` 主要用于 [多声道音频](https://baike.baidu.com/item/%E5%A4%9A%E5%A3%B0%E9%81%93%E9%9F%B3%E9%A2%91)，这里的多声道音频指的是音频不是在真实环境中模拟的，但是有一种来自太空某处的感觉，举个例子，蟋蟀在大森林中鸣叫的背景。另外，如果对沉浸式音乐感兴趣的话，可以详细看看 [Session 10265 - Immerse your app in spatial audio](https://developer.apple.com/videos/play/wwdc2021/10265/)。
+`环境混音器（Ambient Mixers）` 渲染音频可以有环绕声的效果，但是没有「几何感知」的真实音频空间模拟能力。举个例子，当听者转动他们的头部时，声音还是继续来自空间中相同的相对位置。`环境混音器` 主要用于 [多声道音频](https://baike.baidu.com/item/%E5%A4%9A%E5%A3%B0%E9%81%93%E9%9F%B3%E9%A2%91)，这里的多声道音频指的是音频不是在真实环境中模拟的，但是有一种来自太空某处的感觉，举个例子，蟋蟀在大森林中鸣叫的背景。另外，如果对沉浸式音乐感兴趣的话，可以详细看看 [Session 10265 - Immerse your app in spatial audio](https://developer.apple.com/videos/play/wwdc2021/10265/)([《【WWDC21 10265】将你的应用沉浸在空间音频中》](https://xiaozhuanlan.com/topic/8750491623))。
 
 > [多声道音频](https://baike.baidu.com/item/%E5%A4%9A%E5%A3%B0%E9%81%93%E9%9F%B3%E9%A2%91)：一种音频放音系统，可以处理若干个（通常多于两个）声道的声音。
 

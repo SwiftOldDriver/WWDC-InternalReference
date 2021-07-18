@@ -310,7 +310,7 @@ struct CoreDataView: View {
 
 上面的代码中，我们使用 `@Environment` 向 "View" 提供托管 Context，从数据库中获取结果。这些结果可以在 SwiftUI 列表和其他视图中使用。使用 CloudKit 的 CoreData 为我们提供了一种共享结构化数据的方法，它可以同步到个人的所有设备并备份到 iCloud 上。它并不依赖于有一个配套的 iPhone 应用程序，而是支持 Family Setup。同步时机根据网络可用性和系统条件，并不是即时的。
 
-要了解更多关于在应用程序中使用 Core Data with CloudKit，请查看 "[Build apps that share data through CloudKit and Core Data](https://developer.apple.com/wwdc21/10015)" 和 "[Bring Core Data concurrency to Swift and SwiftUI](https://developer.apple.com/wwdc21/10017)"。
+要了解更多关于在应用程序中使用 Core Data with CloudKit，请查看 "[Build apps that share data through CloudKit and Core Data](https://developer.apple.com/wwdc21/10015)" 和 "[Bring Core Data concurrency to Swift and SwiftUI](https://developer.apple.com/wwdc21/10017)（[《【WWDC21 10017】为 Swift 和 SwiftUI 带来 Core Data 并发》](https://xiaozhuanlan.com/topic/4625791038)）"。
 
 ## Watch Connectivity
 
@@ -566,7 +566,7 @@ extension BackgroundURLSession : URLSessionDownloadDelegate {
 2. 需要服务端的快速响应
 3. 在 App 交互中需要及时的数据交互
 
-想要了解更多 URL Sessions 相关知识，请查看 "[Keep your complications up to date](https://developer.apple.com/wwdc20/10049)" 和 "[Background execution demystified](https://developer.apple.com/wwdc20/10063)"。
+想要了解更多 URL Sessions 相关知识，请查看 "[Keep your complications up to date](https://developer.apple.com/wwdc20/10049)（[《保持复杂功能的及时更新》](https://xiaozhuanlan.com/topic/7256810394)）" 和 "[Background execution demystified](https://developer.apple.com/wwdc20/10063)（[《WWDC20 10063 解密后台运行》](https://xiaozhuanlan.com/topic/7639820154)）"。
 
 ## Sockets
 
