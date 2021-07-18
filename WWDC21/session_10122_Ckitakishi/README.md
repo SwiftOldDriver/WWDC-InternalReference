@@ -8,4 +8,6 @@ WWDC 10122 - 图表的无障碍支持进阶
 
 ## About Me
 
-Ckitakishi，目前在日本从事 iOS 开发，对动画和图像感兴趣，也关注 Accessibility，正在为写出优美的代码而修炼。
+> 作者：Ckitakishi，目前在日本从事 iOS 开发，对动画和图像感兴趣，也关注 Accessibility，正在为写出优美的代码而修炼。
+>
+> 审核：Parsifal，老司机技术周报负责人，微医集团移动诊疗负责人
