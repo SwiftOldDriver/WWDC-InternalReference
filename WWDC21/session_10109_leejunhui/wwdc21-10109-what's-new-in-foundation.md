@@ -62,22 +62,22 @@
 
 - 最后，通过调用 `mergeAttributes` 方法，将 `container` 对象所携带的属性应用在 `thanks` 和 `website` 上。
 
-我们前面说到过，`AttributedString` 是由字符，区间以及属性字典三大部分组成的。但是如果需要访问一个 `AttributedString` 的这三大部分内容并不是直接通过 `AttributedString` 本身，而是通过「视图」特性。
+我们前面说到过，`AttributedString` 是由字符，区间以及属性字典三大部分组成的。但是如果需要访问一个 `AttributedString` 的这三大部分内容并不是直接通过 `AttributedString` 本身，而是通过 `View`。
 ​
 
-### 1.3 AttributedString 视图
+### 1.3 AttributedString View
 
-`AttributedString` 的「视图」由下列两部分组成：
+`AttributedString` 的 `View` 由下列两部分组成：
 ​
 
 - Characters 字符，用来访问字符串
 - Runs 用来访问属性
 
 
-「视图」是 `Swift` 的 `Collection` 类型，那么也就是说我们可以像操作 `Array` 类型一样来操作「视图」。
+`View` 是 `Swift` 的 `Collection` 类型，那么也就是说我们可以像操作 `Array` 类型一样来操作 `View`。
 ​
 
-#### 1.3.1 Characters 视图
+#### 1.3.1 Characters View
 
 现在假设设计师要求我们实现标点符号的文字颜色为橘色:
 ​
@@ -88,23 +88,30 @@
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624885278849-1a545e8c-f874-43a1-be86-19e5ead1702d.png#clientId=uca4b5ec3-d888-4&from=paste&height=229&id=rHkyn&margin=%5Bobject%20Object%5D&name=image.png&originHeight=458&originWidth=1798&originalType=binary&ratio=2&size=315510&status=done&style=none&taskId=ufa79532d-e252-43f5-baf6-2ae395f9b26&width=899)
 
-- 首先通过 `characters` 取出字符「视图」
-- 然后遍历字符「视图」，并通过 `isPunctuation` 筛选出字符「视图」集合中为标点符号的字符
+- 首先通过 `characters` 取出字符 `View`
+- 然后遍历字符 `View`，并通过 `isPunctuation` 筛选出字符 `View` 集合中为标点符号的字符
   - 最后使用区间运算符确定标点符号字符的区间，然后设置其颜色为橘色
 
 ​
 
-#### 1.3.2 Runs 视图
+#### 1.3.2 Runs View
 
-一个 `run` 视图包含了一个特定的属性的起始位置、长度、以及具体的属性值。
+一个 `Run View` 包含了一个特定的属性的起始位置、长度、以及具体的属性值。
+
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624887361848-563b03be-3a85-4e49-87d2-967638289bfe.png#clientId=uca4b5ec3-d888-4&from=paste&height=180&id=uc785cc4a&margin=%5Bobject%20Object%5D&name=image.png&originHeight=360&originWidth=1360&originalType=binary&ratio=2&size=137410&status=done&style=none&taskId=u412316a9-b0a6-4dfd-8b8c-de75566753b&width=680)
-上面的字符串由 4 个 `run` 视图组成。分别是 `Thank you!`、`Please visit our`、`website`、 `.`。
-![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624887312397-26f07239-c578-438a-a49e-75ecfb4bbfd6.png#clientId=uca4b5ec3-d888-4&from=paste&height=260&id=u325f2278&margin=%5Bobject%20Object%5D&name=image.png&originHeight=520&originWidth=2270&originalType=binary&ratio=2&size=315109&status=done&style=none&taskId=u224eedf2-28e1-4a25-874b-600f33a557c&width=1135)
-如上代码所示，我们可以通过 `AttributedString` 的 `runs` 属性下面的 `count` 来获取有多少个 `run` 视图。
-`character` 和 `run` 视图的区间是可以相互转换的，所以你可以通过下标访问到某个区间的字符串内容。
 
-对于 `run` 视图来说，专注于一个特定的属性这种场景可能更加有用。![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624887947108-a4cfa20b-cd7a-4605-83ff-1abc84a678dc.png#clientId=uca4b5ec3-d888-4&from=paste&height=551&id=u6a71499d&margin=%5Bobject%20Object%5D&name=image.png&originHeight=1102&originWidth=1772&originalType=binary&ratio=2&size=670453&status=done&style=none&taskId=uef019d59-0915-4a37-beaa-31ed8906d15&width=886)
-上面的代码中，我们使用了 `link` 的 `key path` 来合并链接属性。 如果我们只关注链接属性的话，我们这里有三个 `run` 视图。遍历 `run` 视图会得到一个 `(value, range)` 的元组。因为 `value` 是类型安全的，所以我们可以使用存在于 `URL` 上的 `scheme` 这样的 `API`。上面的代码表达意思就是检查开头不为 `https` 的字符串，匹配成功则加入 `insecureLinks` 数组中。
+上面的字符串由 4 个 `Run View` 组成。分别是 `Thank you!`、`Please visit our`、`website`、 `.`。
+
+![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624887312397-26f07239-c578-438a-a49e-75ecfb4bbfd6.png#clientId=uca4b5ec3-d888-4&from=paste&height=260&id=u325f2278&margin=%5Bobject%20Object%5D&name=image.png&originHeight=520&originWidth=2270&originalType=binary&ratio=2&size=315109&status=done&style=none&taskId=u224eedf2-28e1-4a25-874b-600f33a557c&width=1135)
+
+如上代码所示，我们可以通过 `AttributedString` 的 `runs` 属性下面的 `count` 来获取有多少个 `Run View`。
+`character` 和 `Run View` 的区间是可以相互转换的，所以你可以通过下标访问到某个区间的字符串内容。
+
+对于 `Run View` 来说，专注于一个特定的属性这种场景可能更加有用。
+
+![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624887947108-a4cfa20b-cd7a-4605-83ff-1abc84a678dc.png#clientId=uca4b5ec3-d888-4&from=paste&height=551&id=u6a71499d&margin=%5Bobject%20Object%5D&name=image.png&originHeight=1102&originWidth=1772&originalType=binary&ratio=2&size=670453&status=done&style=none&taskId=uef019d59-0915-4a37-beaa-31ed8906d15&width=886)
+
+上面的代码中，我们使用了 `link` 的 `key path` 来合并链接属性。 如果我们只关注链接属性的话，我们这里有三个 `Run View`。遍历 `Run View` 会得到一个 `(value, range)` 的元组。因为 `value` 是类型安全的，所以我们可以使用存在于 `URL` 上的 `scheme` 这样的 `API`。上面的代码表达意思就是检查开头不为 `https` 的字符串，匹配成功则加入 `insecureLinks` 数组中。
 ​
 
 ### 1.4 AttributedString 使用
