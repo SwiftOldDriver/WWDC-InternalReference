@@ -46,6 +46,8 @@ Fruta 是 Apple 用来演示 Xcode Cloud 的 App。在 Xcode 13 本地打开的 
 
 这些内容可不只是在 Xcode 本地才能看到，也可以在 App Store Connect 网页中获取到，包括开始构建、管理工作流、检阅构建产物、与团队成员共享构建报告和管理通知等。比如，在构建完成后，可以在网页中设置结果通知到 Slack 等交流协作工具，以帮助团队成员在第一时间知道结果。
 
+值得一提的是：网页版的 Xcode Cloud 提供与 Xcode 应用内一致的**全功能体验**。
+
 #### One More Thing...
  Xcode Cloud 不光是团队开发以及协作流程的好帮手，而且 Apple 一贯良好的隐私保护也未曾在它身上缺席，源代码的管理是软件工程中的核心之一。Xcode Cloud 的方方面面均是为保护用户数据而设计的：
 * 构建环境的信息过一段时间会被删除
@@ -54,9 +56,8 @@ Fruta 是 Apple 用来演示 Xcode Cloud 的 App。在 Xcode 13 本地打开的 
 * 用户可随时随地删除数据，且数据会被从 Xcode Cloud 系统中完全移除
 
 ## 为你的工程配置 Xcode Cloud
-
 ![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%88%AA%E5%9B%BE%207.jpg)
- 在 Xcode 13 中仅需“几步“操作即可为你的工程配置 Xcode Cloud。
+ 在 Xcode 13 中（满足一些前提条件之后）仅需几步操作即可为你的工程配置 Xcode Cloud。
 
 ![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%88%AA%E5%9B%BE%208.jpg)
 接着，选中接入 Xcode Cloud 的应用（这里以 Fruta 为例），·
@@ -66,7 +67,7 @@ Fruta 是 Apple 用来演示 Xcode Cloud 的 App。在 Xcode 13 本地打开的 
 * 启动的条件
 * 构建的环境
 * 执行的任务
-* 结束后的任务
+* 结束后执行的任务
 
 想要深入了解工作流的编辑过程，请参考 [WWDC21 10268 探索 Xcode Cloud 工作流](https://developer.apple.com/videos/play/wwdc2021/10268/)。
 
@@ -85,16 +86,45 @@ Xcode Cloud 也支持 Git 大文件存储（Git LFS）。
 ![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%88%AA%E5%9B%BE%2012.jpg)
 在 App Store Connect 上完成授权后就可以回到 Xcode 本地继续之前的流程。
 
-![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%88%AA%E5%9B%BE%2014.jpg)
-到了最后一步，Xcode Cloud 将会帮助开发者把应用信息注册至 App Store Connect。
+![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%88%AA%E5%9B%BE%2018%20%EF%BC%88%E6%9C%AA%E4%B8%8A%E4%BC%A0%E8%87%B3%E5%9B%BE%E5%BA%8A%EF%BC%89.jpg)
+点击 `Complete` 按钮，Xcode Cloud 将会帮助开发者把应用信息注册至 App Store Connect。
 
-## 检阅构建报告
+![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%88%AA%E5%9B%BE%2014.jpg)
+终于到了最后一步！点击 `Start Build` 按钮，就可以开始第一次构建。
+
+## 检阅 Xcode Cloud 构建报告
 ![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%88%AA%E5%9B%BE%2015%20%E6%96%B0.jpg)
 以 Fruta 这次构建为例：从该构建报告中，我们可以清晰明了地知道构建耗时以及构建环境的配置。点击右上角的 `Rebuild` 按钮也能帮助我们重新开始构建。
 
 ![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%88%AA%E5%9B%BE%2016.jpg)
 ![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%88%AA%E5%9B%BE%2017.jpg)
 在 `Actions` 一列中，点击单个 action，可以看到该次 Action 的日志和相应的产物。这样的设计使得整个团队都能很方便地获取到当前 CI 的信息。
+
+![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%96%B0%E6%96%B0%E6%88%AA%E5%9B%BE%2019.jpg)
+喔嚯，在 Build 1 中的「 在 macOS 上归档（Archive）」这一任务失败了！是因为无法在 macOS 上使用 UIKit 框架。我们可以把鼠标移至报错处，点击 ➡️ 小箭头，会直接跳转到对应出错的代码文件。
+
+![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%96%B0%E6%88%AA%E5%9B%BE%2020.jpg)
+根据之前的报错提示，我们可以快速定位问题。
+
+![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%96%B0%E6%96%B0%E6%88%AA%E5%9B%BE%2021.jpg)
+在 Git 上推送最新的代码之后，Xcode Cloud 自动触发了新的构建——Build 2。
+
+## Xcode Cloud 中的团队协作
+当团队中的另一位成员打开 Xcode Cloud 时，他/她也可以看到之前构建失败的 Build 1 和构建成功的 Build 2。
+
+Build 1 和 Build 2 均是名为 `Default` 的工作流的两次不同的构建。但 Default 这个名字取得不够具体，让我们在它上面点击鼠标右键并在弹出的菜单中选择 `Edit Workflow...`，来看看是如何简单地编辑一个 Xcode Cloud 工作流吧！
+
+![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%96%B0%E6%88%AA%E5%9B%BE%2022.jpg)
+将工作流的名称从 `Default` 修改为 `Releases` 更加符合该工作流的意图。
+
+![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%96%B0%E6%88%AA%E5%9B%BE%2023.jpg)
+点选左侧边栏的 `Start Condition` 就可以开始编辑该工作流的触发条件。
+类似地，我们在 `Custom Branches` 一栏中点击 + 号，添加 `release/v1` 分支。
+
+![](https://imagebed-1301918945.cos.ap-shanghai.myqcloud.com/WWDC%2021/%E6%AD%A3%E5%BC%8F/%E6%96%B0%E6%88%AA%E5%9B%BE%2024.jpg)
+`Releases` 工作流怎么能少了测试任务呢！点击 `Actions` 右边的小加号，并在弹出的菜单中选择 `Test` 即可添加对应的测试任务。
+
+点选左侧边栏的 `Environment` 就可以开始编辑该工作流的环境配置。其中有一个可勾选的 `Clean` 选项。一旦勾选，Xcode Cloud 会在每次开始构建时清空 `DerivedData` 缓存文件夹。更多详细内容，请参考 [WWDC21 10268 探索 Xcode Cloud 工作流](https://developer.apple.com/videos/play/wwdc2021/10268/) [06:02] 处。
 
 由此可见，借助于 Apple 云基础设施的力量，整个团队的协作效能将大大提高。
 
