@@ -1,11 +1,4 @@
----
-title: "WWDC21 - 探索 Xcode 项目中构建配置的高级技巧"
-date: 2021-06-20T00:00:00+00:00
-draft: false
-tags: [iOS', WWDC', 'Xcode']
-categories: ['iOS', 'WWDC', 'Xcodeproj']
-author: "土土Edmond木"
----
+# WWDC21 - 探索 Xcode 项目中构建配置的高级技巧
 
 ![wwdc21-10210-00-background](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-00-background.png)
 
@@ -15,7 +8,7 @@ author: "土土Edmond木"
 
 ## 本文知识目录
 
-![Explore advanced project configuration in Xcode](https://gitee.com/looseyi/blog-image/raw/master/uPic/Explore%2520advanced%2520project%2520configuration%2520in%2520Xcode.png)
+![Explore advanced project configuration in Xcode](https://gitee.com/looseyi/blog-image/raw/master/uPic/Explore%20advanced%20project%20configuration%20in%20Xcode.png)
 
 
 
@@ -82,7 +75,7 @@ Fruta 是一个多平台应用程序，专为 macOS、iOS 和 watchOS 构建。
 
 维护三个独立的 framework 可能会带来挑战，例如保持 Build Settings 同步，并确保所有源文件都正确添加到编译源的 Build Phases 中。
 
-为了应对这些挑战，先将我们的一个 framework 转换为 `multiplatofm framework`。首先让我们导航到 macOS framework target 的 Build Settings 选项卡。 接下来定位到 Build Settings 中的 **Supported Platforms** 设置项，并选择 **Any Platform** 来配置 framework 以针对所有平台构建。
+为了应对这些挑战，先将我们的一个 framework 转换为 `multiplatform framework`。首先让我们导航到 macOS framework target 的 Build Settings 选项卡。 接下来定位到 Build Settings 中的 **Supported Platforms** 设置项，并选择 **Any Platform** 来配置 framework 以针对所有平台构建。
 
 ![wwdc21-10210-06-multi-platform-buildSettings-support-platforms](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-06-multi-platform-buildSettings-support-platforms.png)
 修改之后，您还可以看到 **Allow Multiplatform Builds** 已自动设置为 "**Yes**”。这会通知构建系统根据需要为其每个受支持的平台构建此 target 一次。既然这是一个 multiplatform framework target，回想一下原始 macOS framework 上有一个额外的文件，它只能为 macOS 构建时构建。为此，我们可以添加一个平台过滤器来指定这个文件应该只为 macOS 构建。
