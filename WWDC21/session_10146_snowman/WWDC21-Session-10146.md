@@ -66,7 +66,7 @@
 
 这里新的知识点是 ``await 关键字``： Swift 中的一项新功能，方便调用方标知道  ``load``  方法是异步的
 
-> 有关 ``async/await`` 的详细介绍，可以参考Session 10132: [Meet async/await in Swift](https://developer.apple.com/videos/play/wwdc2021/10132/)
+> 有关 ``async/await`` 的详细介绍，可以参考Session 10132: [Meet async/await in Swift](https://developer.apple.com/videos/play/wwdc2021/10132/)([《【WWDC21 10132/10133/10134】认识 Swift 中的异步与并发》](https://xiaozhuanlan.com/topic/8627905413))
 
  方便理解，可以把含 ``await`` 关键字的函数分为两部分：
 

@@ -145,7 +145,7 @@ Task 和 Task group 是 Swift 并发模型中引入的另一个抽象概念，Ta
 > Task 中的依赖关系和 Task 之间的依赖关系，都是由代码显式定义的，因此 Swift 可以在编译期判断出这些依赖关系并严格执行。
 >
 > 更多关于 Task 以及 Task group 的内容，请参阅：
-> - [Session 10134 - Explore structured concurrency in Swift](https://developer.apple.com/videos/play/wwdc2021/10134)
+> - [Session 10134 - Explore structured concurrency in Swift](https://developer.apple.com/videos/play/wwdc2021/10134)（[《【WWDC21 10132/10133/10134】认识 Swift 中的异步与并发》](https://xiaozhuanlan.com/topic/8627905413)）
 > - [The Swift Programming Language: Concurrency](https://docs.swift.org/swift-book/LanguageGuide/Concurrency.html#ID642)
 > - [Task Group | Apple Developer Document](https://developer.apple.com/documentation/swift/taskgroup)
 

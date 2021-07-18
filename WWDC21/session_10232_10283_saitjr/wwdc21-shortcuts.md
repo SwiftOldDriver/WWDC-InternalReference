@@ -150,7 +150,7 @@ Shortcuts app 已经可以搜索到你的 Intent 了：
 
 Apple 提供了 In-app 和 Intents Extension 两种响应方式。In-app 即主 App 来处理，事件将传递给 AppDelegate，在资源限制上更友好（比如资源访问或内存等限制）。而 Extension 更轻量，以独立进程去处理响应，不用唤醒 App。
 
-In-app 事件响应通过 `application(_:handlerFor:)` 来实现，该接口是 macOS Monterey 新增的；而 Extension 通过继承 `INExtension` 并实现 `hander` 方法来处理。更多 In-App 和 Extension 的区别可以参考 [WWDC2020 Empower your intents](https://developer.apple.com/videos/play/wwdc2020/10073/)。
+In-app 事件响应通过 `application(_:handlerFor:)` 来实现，该接口是 macOS Monterey 新增的；而 Extension 通过继承 `INExtension` 并实现 `hander` 方法来处理。更多 In-App 和 Extension 的区别可以参考 [WWDC2020 Empower your intents](https://developer.apple.com/videos/play/wwdc2020/10073/)（[《WWDC20 - 10073 让 Intent 更强大》](https://xiaozhuanlan.com/topic/8269175304)）。
 
 ![img](https://images.xiaozhuanlan.com/photo/2021/ed664ccabfe04dc17db8ad3465326347.jpg)
 
@@ -394,7 +394,7 @@ AppleScript 访问方式（利用 Scripting Interface）：
 
 同样是设置截止时间，假设是在 HomePod 的场景，Siri 会阅读提示语（如，什么时候截止），而用户通过语音告知明天或者下周二截止。
 
-在提示语方面也要注意，弹窗和 HomePod 所用的提示语是一样。如果提示：什么时候截止。无论是弹窗还是 HomePod 语音对用户来说都非常明确。而仅仅提示“截止”两个字，在弹窗上看起来没问题，但 HomePod 念出来就有点摸不着头脑了。关于如何友好的和 Siri 交互，可以看这 [WWDC19: Designing great shortcuts](https://developer.apple.com/videos/play/wwdc2019/806/) 和 [WWDC20: Evaluate and optimize voice interaction for your app](https://developer.apple.com/videos/play/wwdc2020/10071/) 这两个 Session。
+在提示语方面也要注意，弹窗和 HomePod 所用的提示语是一样。如果提示：什么时候截止。无论是弹窗还是 HomePod 语音对用户来说都非常明确。而仅仅提示“截止”两个字，在弹窗上看起来没问题，但 HomePod 念出来就有点摸不着头脑了。关于如何友好的和 Siri 交互，可以看这 [WWDC19: Designing great shortcuts](https://developer.apple.com/videos/play/wwdc2019/806/) 和 [WWDC20: Evaluate and optimize voice interaction for your app](https://developer.apple.com/videos/play/wwdc2020/10071/)（[《WWDC20 10071 - 评估优化 App 的语音交互》](https://xiaozhuanlan.com/topic/4759630281)） 这两个 Session。
 
 ![img](https://images.xiaozhuanlan.com/photo/2021/37649b81a91bae8a678dfc9e5609754a.jpg)
 
