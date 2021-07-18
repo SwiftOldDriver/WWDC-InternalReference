@@ -154,7 +154,7 @@
 ### 1.7 AttributedString 转换操作
 
 要对 `AttributedString` 进行归档，我们需要能够在 `AttributedString` 与 `NSAttributedString` 这一引用类型之间进行相互转换。
-`AttributedString` 有可能是你的数据 `model` 中的一部分，因此，我们需要能够对其进行编码与解码。  
+`AttributedString` 有可能是你的数据 `model` 中的一部分，因此，我们需要能够对其进行序列化和反序列化。  
 最后，我们希望能够在 `Markdown` 中设置自定义的字符串属性。
 ​
 
@@ -167,7 +167,7 @@
 只需要将 `AttribuedString` 传入 `NSAttributedString` 的构造方法中即可，至于属性如何关联则交给 SDK 完成。
 ​
 
-#### 1.7.2 编码与解码
+#### 1.7.2 序列化和反序列化
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624891510892-6003e477-aae4-4f38-a3d4-118f4f273fd9.png#clientId=u7f0c6343-d450-4&from=paste&height=192&id=u0dee2085&margin=%5Bobject%20Object%5D&name=image.png&originHeight=384&originWidth=852&originalType=binary&ratio=2&size=112848&status=done&style=none&taskId=u432df0c1-9cea-4002-8b14-4ffed5b309a&width=426)
 
@@ -175,7 +175,7 @@
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624891634212-6f4b093a-3ddf-44c8-9731-637aca72a48c.png#clientId=u7f0c6343-d450-4&from=paste&height=177&id=uce5a9900&margin=%5Bobject%20Object%5D&name=image.png&originHeight=354&originWidth=878&originalType=binary&ratio=2&size=151057&status=done&style=none&taskId=u4c76c56d-afb4-4c2b-be8b-045655461ac&width=439)
 
-那么如何对自定义的字符串属性进行编解码呢？我们可以对属性进行更深入的了解。一个属性由两部分组成：一个 `key` 和一个 `value`。`key` 是一个遵循 `AttributedStringKey` 协议的类型，它定义了需要什么类型的值以及用于归档的属性名称。`key` 还可以遵循其他协议以自定义 `value` 的编解码方式。
+那么如何对自定义的字符串属性进行序列化和反序列化呢？我们可以对属性进行更深入的了解。一个属性由两部分组成：一个 `key` 和一个 `value`。`key` 是一个遵循 `AttributedStringKey` 协议的类型，它定义了需要什么类型的值以及用于归档的属性名称。`key` 还可以遵循其他协议以自定义 `value` 的序列化和反序列化方式。
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624892057686-729b5864-7792-423c-a9b0-52eeea7e0af6.png#clientId=u7f0c6343-d450-4&from=paste&height=270&id=uea224c9c&margin=%5Bobject%20Object%5D&name=image.png&originHeight=540&originWidth=950&originalType=binary&ratio=2&size=169569&status=done&style=none&taskId=ua3ac2b26-c518-41be-8881-3c98d14f1ac&width=475)
 
@@ -208,7 +208,7 @@
 > Foundation 中的 JSON 相关的 API 也已经添加了对 JSON5 的支持。
 
 
-因为自定义属性通过 `JSON` 进行表示，所以任何可以被 `JSONDecoder` 解码的内容自动与新的自定义 `Markdown` 语法兼容。
+因为自定义属性通过 `JSON` 进行表示，所以任何可以被 `JSONDecoder` 反序列化的内容自动与新的自定义 `Markdown` 语法兼容。
 
 ![](https://cdn.nlark.com/yuque/0/2021/png/225346/1624893806902-f72b7f3a-b173-4ffe-8cd1-2d35d3bb3f36.png#clientId=u7f0c6343-d450-4&from=paste&height=202&id=uc7c9e187&margin=%5Bobject%20Object%5D&name=image.png&originHeight=404&originWidth=1614&originalType=binary&ratio=2&size=188720&status=done&style=none&taskId=u0002e3eb-ecc8-4eac-a92c-8dc276c691b&width=807)
 
@@ -217,7 +217,7 @@
 
 ### 1.8 AttributedString Scopes
 
-`Scopes` 是属性 `key` 的集合。`Scopes` 在解码 `JSON` 或 `Markdown` 时十分有用，因为它告诉了我们想要查找的属性，以及如何解码这些属性。
+`Scopes` 是属性 `key` 的集合。`Scopes` 在反序列化 `JSON` 或 `Markdown` 时十分有用，因为它告诉了我们想要查找的属性，以及如何反序列化这些属性。
 
 
 > Apple 分别为 `Foundation`、`UIKit`、`AppKit`、`SwiftUI` 定义了各自的 `Scope`。你可以定义属于你自己应用的 `Scope`。
