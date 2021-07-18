@@ -1,18 +1,20 @@
-# WWDC21 10143 - 在 AVFoundation 中探索 HLS 变体
+# WWDC21 10143 - 探索 AVFoundation 中的 HLS 变体
 
 ![img](https://images.xiaozhuanlan.com/photo/2021/c6e24f2d0ee2c824724483db60f5aef0.png)
 
 # Overview
 
-了解如何使用 AVFoundation API 来突出 App 中内容的不同变体。 我们将向您展示如何使用这些 API 来检查 HLS 内容的不同视频特性，包括 SDR/HDR、FPS 等属性。 我们将探索代表流媒体和离线内容的 AVAssetVariant。
+本文基于 [Session 10143](https://developer.apple.com/videos/play/wwdc2021/10143) 梳理。
+
+本文将向您展示如何使用 AVFoundation API 来查看 HLS 变体的属性，如 SDR/HDR、FPS 等属性。 同时本文也将介绍 iOS 15 中下载 HLS 内容的全新方式。
 
 # 本篇
 
-[HTTP Live Streaming (HLS) ](https://developer.apple.com/documentation/http_live_streaming)是苹果公司在 2009 年推出的基于 HTTP 的流媒体协议。相较于实时传输协议 RTP，HLS 可以穿过任何允许 HTTP 数据通过的防火墙或者代理服务器，它也很容易使用 CDN 来传输媒体流，因而得到了广泛的应用。
-
 本 session 介绍的是如何使用 AVFoundation API 检查 HLS 变体的属性以及如何下载你所偏好的 HLS 变体，由苹果 AVFoundation 团队的工程师 Nishant Nelogal 讲解。
 
-> 注意，在阅读本文前我们假设你已经对 HLS 技术有所了解。如果你还不是很了解，建议先阅读[iOS 边学边记 HLS协议 m3u8 ts详解](https://blog.csdn.net/u014219492/article/details/110184490)
+> [HTTP Live Streaming (HLS) ](https://developer.apple.com/documentation/http_live_streaming)是苹果公司在 2009 年推出的基于 HTTP 的流媒体协议。因为 HLS 是基于 HTTP 协议的流媒体传输协议，所以 HLS 可以复用任何 HTTP 相关的基础设施。相对于 RTP 来说，HLS 被防火墙拦截的概率会更小（因为大部分防火墙都允许 HTTP 数据通过），也更容易使用 CDN 来传输媒体流，因此 HLS 得到了广泛的应用。
+
+> 注意，在阅读本文前我们假设你已经对 HLS 技术有所了解。如果你还不是很了解，建议先阅读[iOS 边学边记 HLS协议 m3u8 ts详解](https://blog.csdn.net/u014219492/article/details/110184490)。
 
 如果你想了解其他有趣的 HLS 新特性，请参考：
 
@@ -21,7 +23,7 @@
 
 ## 查看 HLS 变体属性
 
-首先，我们来看看如何查看 HLS 变体的属性。比如有这样一个主播放列表。
+首先，我们来看看如何查看 HLS 变体的属性。下面有这样一个主播放列表。
 
 ```
 #EXTM3U
@@ -50,7 +52,7 @@ dovi_variant.m3u8
 
 在这个例子中，我们有两个变体。其中一个是带有立体声音频的 SDR 变体，另一个是带有杜比全景声音频的杜比视界变体。
 
-通过观察，我们可以知道这个播放列表具有 4K、杜比视界和杜比全景声属性。在一个 App 中，可能会以这样的形式展示这些属性。
+通过观察，我们可以知道这个播放列表具有 4K、杜比视界和杜比全景声属性。在一个 App 中，可能会以下面这样的形式展示这些属性。
 
 ![img](https://images.xiaozhuanlan.com/photo/2021/a04a987dbd20ab250f6960eea0a06971.png)
 
@@ -58,19 +60,27 @@ dovi_variant.m3u8
 
 那么，如何让代码知道这些属性呢？在 iOS 15 之后，AVFoundation 提供了自动推断这些信息的能力，这个法宝便是 [AVAssetVariant](https://developer.apple.com/documentation/avfoundation/avassetvariant) 。
 
-AVAssetVariant 是 AVURLAsset 的一个属性，它以数组的形式存在。当 AVURLAsset 解析完 m3u8 文件后，就可以通过访问 variants 属性查看 HLS 媒体的属性了。
+AVAssetVariant 是 AVURLAsset 的一个属性，如下图所示，它以数组的形式存在。
 
 ![img](https://images.xiaozhuanlan.com/photo/2021/04b841905bbec543409f8a109d03d019.png)
 
-AVAssetVariant 的结构大致如下图。第一级属性能直接获取码率信息。剩下的视频信息和音频信息分别用 VideoAttributes 和 AudioAttributes 两个子属性表示。
+当 AVURLAsset 解析完 m3u8 文件后，就可以通过访问 variants 属性查看 HLS 媒体的属性了。
 
-其中，VideoAttributes 包含编解码器、帧率、分辨率和动态范围成像([AVVideoRange](https://developer.apple.com/documentation/avfoundation/avvideorange))信息。
-
-AudioAttributes 包含音频格式(formatID)以及更深一层的音频渲染属性(RenditionSpecificAttributes)所包含的的音频渲染频道数(channel count)信息。
+AVAssetVariant 的具体结构大致如下图所示。
 
 ![img](https://images.xiaozhuanlan.com/photo/2021/1f11fb4e4af3678f1c927afac3c0bdda.png)
 
+图中可以看到，第一级属性能直接获取码率信息。剩下的视频信息和音频信息分别用 VideoAttributes 和 AudioAttributes 两个子属性表示。
+
+其中，VideoAttributes 包含编解码器、帧率、分辨率和动态范围成像（[AVVideoRange](https://developer.apple.com/documentation/avfoundation/avvideorange)）信息。
+
+AudioAttributes 包含音频格式信息（formatID），以及更深一层的音频渲染属性（RenditionSpecificAttributes）所包含的的音频渲染频道数（channel count）信息。
+
+有了 AVAssetVariant，AVFoudantion 会自动地进行 “对号入座”，让开发者能够很方便地获取变体的属性。
+
 ## AVAssetVariant 在 HLS 下载中的应用
+
+除了查看变体信息，AVAssetVariant 还可以用于 HLS 下载。
 
 有时候我们希望能离线观看 HLS 视频，这时候就需要提前把 HLS 视频流下载下来存储。
 
@@ -78,7 +88,7 @@ AudioAttributes 包含音频格式(formatID)以及更深一层的音频渲染属
 
 好了，现在我们假设你已经对 HLS 下载有所了解。在 iOS 15 中，HLS 下载功能更加丰富灵活。
 
-### 下载指定的 HLS 视频
+### iOS 15 前下载指定的 HLS 视频
 
 我们一般下载视频都是下载最高清的，但用户有时希望能自由选择下载不同分辨率的视频。
 
@@ -118,7 +128,7 @@ let downloadTask = downloadSession.makeAssetDownloadTask(
 downloadTask?.resume()
 ```
 
-显然，这样的配置不够直观也不够灵活。接下来让我们看看 iOS 15 做了哪些优化。
+显然，使用 options 这样的配置限制很大，不够直观也不够灵活。接下来让我们看看 iOS 15 做了哪些优化。
 
 ### AVAssetVariantQualifier
 
@@ -141,6 +151,8 @@ let predicate = NSPredicate(format: "videoAttributes.videoRange == %@ && peakBit
 
 let variantQualifier = AVAssetVariantQualifier(predicate: predicate)
 ```
+
+有了 NSPredicate 的加入，HLS 下载的配置范围变得更广，配置起来也更加灵活。
 
 ### 内容配置
 
@@ -173,7 +185,7 @@ contentConfig.mediaSelections = myMediaSelections
 
 AVAssetDownloadConfiguration 是 HLS 下载的最终配置环节，它能接收多个 AVAssetDownloadContentConfiguration。
 
-注意，这里有主内容配置(primaryContentConfiguration)和辅助内容配置(auxiliaryContentConfigurations)的区分。
+注意，这里有主内容配置（primaryContentConfiguration）和辅助内容配置（auxiliaryContentConfigurations）的区分。
 
 AVAssetDownloadConfiguration 能接收一个主内容配置和多个辅助内容配置。辅助内容配置的作用是进一步约束你的配置选项，避免下载到多个满足主内容配置的不同资源，从而增加了下载内容的大小。
 
@@ -246,9 +258,9 @@ downloadTask.resume()
 let progress = downloadTask.progress
 ```
 
-### 直接通过变体配置你的下载
+### 指定变体来配置你的下载
 
-有些业务场景需要使用 AVAssetVariant 来进行 HLS 下载配置，这时候使用 NSPredicate 就不太合适了。因此苹果提供了另一种内容配置方案，直接传配好的 AVAssetVariant。
+有些业务场景需要使用 AVAssetVariant 来进行 HLS 下载配置，这时候使用 NSPredicate 就不太合适了。因此苹果提供了另一种内容配置方案，直接传配置好的 AVAssetVariant。
 
 ```swift
 let asset = AVURLAsset(url: URL(string: "http://example.com/master.m3u8")!)
