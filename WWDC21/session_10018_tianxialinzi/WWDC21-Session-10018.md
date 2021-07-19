@@ -29,7 +29,7 @@ WWDC21 Session 10018 - [Discover concurrency in SwiftUI](https://developer.apple
 # 引言
 
 SwiftUI于2019年首次发布，引入了一种比较强大的新方式，以声明式、状态驱动的风格构建用户界面。这次发布，对于SwiftUI来说，也有很重要的改进，主要可以概括为以下几个部分：
-* 通过`AsyncImage`支持异步加载图像的加载
+* 通过`AsyncImage`支持异步加载图像
 * 可以在所有平台上使用的视图修改器`Searchable`
 * 创建一个带有schedule的`TimelineView`
 * 在iOS 15 的 UIKit中，又为我们带来更多按钮样式，比如 Toggle按钮，Pop-up 按钮等.
