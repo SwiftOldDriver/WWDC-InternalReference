@@ -256,7 +256,7 @@ static func all(includingPaid: Bool = true) -> [Smoothie] {
 }
 ```
 
-最后让我们来关注一下最后一点，我们来精简一下 `id`、 `title` 和 `description` 这几个属性的声明。在这里，我参考了我们 UI 当中的设计，从而得到了以下的 DSL 方式：
+现在让我们来关注一下最后一点，精简 `id`、`title` 和 `description` 这几个属性的声明。在这里，我们可以参考 App 的 UI 设计方案，从而得到了以下的 DSL 方式：
 
 ```swift
 Smoothie(id: "berry-blue", title: "Berry Blue") {
@@ -269,17 +269,17 @@ Smoothie(id: "berry-blue", title: "Berry Blue") {
 
 ![image.png](https://cdn.nlark.com/yuque/0/2021/png/227152/1625371873485-45606fe1-c24c-4f4f-ab74-438fc0107774.png#align=left&display=inline&height=577&margin=%5Bobject%20Object%5D&name=image.png&originHeight=577&originWidth=1589&size=563597&status=done&style=none&width=1589)
 
-我们可以看到 `title` 正好在 `navigationBar` 上，是处于 UI 的最上方， `description` 紧凑的在 `title` 之下，所以我们用一个 `String` 紧跟在闭包的第一个位置。再往下，就是各个成分列表，使用我们上面精简后的语法就得到了如图样式。
+我们可以看到 `title` 正好在 `navigationBar` 上，处于 UI 的最上方， `description` 紧凑地布局在 `title` 之下，所以我们用一个 `String` 紧跟在闭包的第一个位置。再往下，就是各个成分列表，使用我们上面精简后的语法就得到了如图样式。
 
 #### 一些小建议
 
-当我们要去做一个 DSL 设计的时候，我希望下面的方法论可以给你一些启发：
+当我们要去设计 DSL 的时候，我希望下面的方法论可以给你一些启发：
 
 1. 首先要建立一个明确的目标；
-1. 查阅并阅读别人的 DSL 描述方法；
-1. 统筹兼顾，适合需求；
-1. 用于试错，敢于挑战自身的错误；
-1. 不断修正问题，并找到最佳的方案。
+2. 查阅并阅读别人的 DSL 描述方法；
+3. 统筹兼顾，适合需求；
+4. 用于试错，敢于挑战自身的错误；
+5. 不断修正问题，并找到最佳的方案。
 
 好的，有了上面的设计经验，下面让我们来实现这个 DSL 吧。
 
@@ -287,7 +287,7 @@ Smoothie(id: "berry-blue", title: "Berry Blue") {
 
 ### `buildBlock` 方法
 
-仿照之前的 SwiftUI 的方式，我们对于 `all(includingPaid:)` 也应该像 SwiftUI 那样，通过一个 `builder` 进行多个对象的依次构造。就像以下代码：
+仿照之前使用 SwiftUI 的方式，我们对于 `all(includingPaid:)` 方法也应该像 SwiftUI 那样，通过一个 `builder` 进行多个对象的依次构造。就像以下代码：
 
 ```swift
 @SmoothieArrayBuilder
@@ -300,6 +300,7 @@ static func all(includingPaid: Bool = true) -> [Smoothie] {
 ```
 
 为了使用 Result Builder，我们先来介绍一下其 API 以及每个方法的作用。具体介绍可以查看 [「The Swift Programming Laungage - Advanced Operators」中的 Result Builder 章节](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID630) 以及 [「The Swift Programming Lauguage - Attributes」中的 Result Builder API 介绍](https://docs.swift.org/swift-book/ReferenceManual/Attributes.html#ID633)。
+
 首先我们先来声明这么一个 Result Builder：
 
 ```swift
@@ -326,9 +327,9 @@ enum SmoothieArrayBuilder {
 
 这个报错是因为我们仅仅实现了 Result Builder 的 `buildBlock(_ components:)` 方法，还不能兼容 `if...else` 这种条件语句。此时我们点击 Xcode 的自动修复按钮，Xcode 提示我们需要增加一个 `buildOptional(_ component: [Smoothie]?)` 方法。
 
-首先我们从方法头上来看，这个 `buildOptional` 需要我们传入一个 Optional 的 `[Smoothie]` 类型，其实就是因为 `if...` 由于具有条件不确定性，所以进行构造的将可能是一个 `nil` 不存在的对象。
+首先我们从方法签名上来看，这个 `buildOptional` 方法需要我们传入一个 `Optional<[Smoothie]>` 类型，其实就是因为 `if...` 由于具有条件不确定性，所以进行构造的对象可能并不存在，即值为 `nil` 。
 
-也许你会问，**为什么会存着 `nil` 而不是当对应对象不存在时，直接不将其向下面的 `buildBlock` 进行传递呢**？我们继续像一开始那样，拆解一下具有 `if...` 条件语句的情况：
+也许你会问，**为什么会通过 `nil` 处理未命中 `if` 条件下对象不存在的情形，而不是采用直接跳过这个逻辑，不往最后的 `buildBlock` 传递参数这种直截了当的方式呢？** 我们继续像一开始那样，拆解一下具有 `if...` 条件语句的情况：
 
 ```swift
 @SmoothieArrayBuilder
@@ -497,13 +498,15 @@ static func all(includingPaid: Bool = true) -> [Smoothie] {
 
 ![image.png](https://cdn.nlark.com/yuque/0/2021/png/227152/1625391393075-6ad6ced4-4b2c-4ab0-8256-80b2836b937f.png#align=left&display=inline&height=641&margin=%5Bobject%20Object%5D&name=image.png&originHeight=641&originWidth=2904&size=898770&status=done&style=none&width=2904)
 
+对于 3 个及以上的条件分支，可以采用递归的方式处理：每次处理都把当前所有的条件分支拆分为 1 个条件分支和剩余的其他条件分支，这时按照 2 个条件分支的处理可以满足需要；接下来对于剩余的条件分支按照递归展开的方式继续处理即可，直到最后展开到仅剩余 2 个条件分支处理完毕。
+
 ### `buildExpression` 空处理
 
 至此，我们离大功告成越来越接近了，Xcode 报错只剩下一个问题：
 
 ![image.png](https://cdn.nlark.com/yuque/0/2021/png/227152/1625391545518-becde848-c531-47df-9dab-01691234438e.png#align=left&display=inline&height=1150&margin=%5Bobject%20Object%5D&name=image.png&originHeight=1150&originWidth=1555&size=491504&status=done&style=none&width=1555)
 
-提示我们说，这个语句是一个 `Void` 返回值，而不是一个 `Smoothie` 类型。同样的，我们对其进行一个预处理即可，这里继续使用 `buildExpression` 对 `Void` 进行处理（详见代码 L22-L24）：
+提示我们说，这个语句是一个 `Void` 返回值，而不是一个 `Smoothie` 类型。同样的，我们为 `buildExpression` 方法增加一种参数类型即可。这里继续使用 `buildExpression` 对 `Void` 进行处理（详见代码 L22-L24）：
 
 ```swift
 @resultBuilder
@@ -537,7 +540,7 @@ enum SmoothieArrayBuilder {
 
 ### 解决内层 DSL 问题
 
-我们之前在设计 DSL 的时候，出了对于 `Smoothie` 的设计之外，还有每一款沙冰的成分列表 - `makeIngredients` ，也希望他们遵循 DSL 的规则。虽然他们不必像 `Smoothie` 的 DSL 那么复杂，但是我们仍旧需要支持一下。
+我们之前在设计 DSL 的时候，除了对于 `Smoothie` 的设计之外，构造每一款沙冰的成分列表 - `makeIngredients` 方法 ，也希望能够遵循 DSL 的规则。虽然他们不必像 `Smoothie` 的 DSL 那么复杂，但是我们仍旧需要支持一下。
 
 由于 `makeIngredients` 是 `Smoothie` 的成员变量，且在构造时就会传入响应的 DSL，所以我们需要修改一下 `Smoothie` 的 `init` 方法，在 `makeIngredients` 参数前，增加一个自定义 Result Builder 关键字，这里我们起名为 `IngredientsBuilder` （详见 L5）：
 
@@ -554,7 +557,7 @@ extension Smoothie {
 }
 ```
 
-同样的我们也为他增加 `buildBlock` 方法：
+同样的我们也为其增加 `buildBlock` 方法：
 
 ```swift
 @resultBuilder
@@ -567,6 +570,8 @@ enum IngredientsBuilder {
     }
 }
 ```
+
+注意这里 `buildBlock` 方法的参数声明，`buildBlock` 方法并不限制参数的个数和类型，只要能够匹配到可以调用的 `buildBlock` 方法即可
 
 至此，我们大功告成，完成了整个 DSL 的设计！
 
