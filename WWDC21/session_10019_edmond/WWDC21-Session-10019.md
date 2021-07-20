@@ -8,7 +8,7 @@
 
 本文属于 WWDC21 中 SwiftUI 与 Concurrency 结合应用的文章。
 
-关于 SwiftUI 可以查看这篇介绍：[Introduction to SwiftUI](https://wwdc.io/share/wwdc20/10119)，而 Swift Concurrency 算是今年 WWDC 的重头戏，从使用层面来看，就是引入了 [Async / Await](https://developer.apple.com/videos/play/wwdc2021/10132/) 这一语法，但是解决的却是软件工程中最令人头疼的问题之一。
+关于 SwiftUI 可以查看这篇介绍：[Introduction to SwiftUI](https://wwdc.io/share/wwdc20/10119)，而 Swift Concurrency 算是今年 WWDC 的重头戏，从使用层面来看，就是引入了 [Async / Await](https://developer.apple.com/videos/play/wwdc2021/10132/) （[《【WWDC21 10132/10133/10134】认识 Swift 中的异步与并发》](https://xiaozhuanlan.com/topic/8627905413)） 这一语法，但是解决的却是软件工程中最令人头疼的问题之一。
 接下来让我们看看 Concurrency 新工具是如何与 SwiftUI 结合的。
 
 > Tips：文末有示例代码地址。
@@ -122,13 +122,13 @@ struct PhotoView: View {
 
 ![10019-06-run-loop](https://images.xiaozhuanlan.com/photo/2021/896c42a72217cd868f5966539f8c391d.png)
 
-在 WWDC20 的 “[Data essentials in SwiftUI](https://developer.apple.com/videos/play/wwdc2020/10040/)” 中，Raj 谈到了 SwiftUI 的生命周期，而 run loop 则是驱动该生命周期的工具。在 Swift 5.5 中 run loop 将运行在 **MainActor** 中。
+在 WWDC20 的 “[Data essentials in SwiftUI](https://developer.apple.com/videos/play/wwdc2020/10040/)”（[《WWDC20 10040 - SwiftUI 编程指南》](https://xiaozhuanlan.com/topic/9014753268))  中，Raj 谈到了 SwiftUI 的生命周期，而 run loop 则是驱动该生命周期的工具。在 Swift 5.5 中 run loop 将运行在 **MainActor** 中。
 
 
 
 ### Actor
 
-> 关于 Actor 详细信息，可查看 “[Protect mutable state with Swift actors](https://developer.apple.com/videos/play/wwdc2021/10133/)”。
+> 关于 Actor 详细信息，可查看 “[Protect mutable state with Swift actors](https://developer.apple.com/videos/play/wwdc2021/10133/)（[《【WWDC21 10132/10133/10134】认识 Swift 中的异步与并发》](https://xiaozhuanlan.com/topic/8627905413)）”。
 
 这里做简单了解，Actor 是定义成一个遵循 Sendable 的协议：
 

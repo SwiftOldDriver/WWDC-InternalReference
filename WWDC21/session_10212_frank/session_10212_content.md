@@ -43,7 +43,7 @@ author: "Frank"
 
 ## 前言
 
-今年 WWDC 2021 苹果除了推出了期待已久的 async/await, actors 等的 concurrency 相关技术外，也在性能优化上下了许多努力，如：[Reduce network delays for your app](https://developer.apple.com/videos/play/wwdc2021/10239), [Detect and diagnose memory issues](https://developer.apple.com/videos/play/wwdc2021/10180/), [Understand and eliminate hangs from your app](https://developer.apple.com/videos/play/wwdc2021/10258/) 等，有网络，内存或卡顿相关主题。
+今年 WWDC 2021 苹果除了推出了期待已久的 async/await, actors 等的 concurrency 相关技术外，也在性能优化上下了许多努力，如：[Reduce network delays for your app](https://developer.apple.com/videos/play/wwdc2021/10239)([《【WWDC21 10239】为你的 App 减少网络延迟》](https://xiaozhuanlan.com/topic/5297843106)), [Detect and diagnose memory issues](https://developer.apple.com/videos/play/wwdc2021/10180/), [Understand and eliminate hangs from your app](https://developer.apple.com/videos/play/wwdc2021/10258/)([《【WWDC21 10258】理解和消除 App 中的卡死》](https://xiaozhuanlan.com/topic/9027453618)) 等，有网络，内存或卡顿相关主题。
 
 而苹果内置的性能检测工具 Instruments 也在今年针对网络监控上做了大大的升级，这也是今天要介绍的主题：如何使用 Instruments 检测并且分析你的 app 网络流量及 HTTP 请求行为。
 

@@ -347,7 +347,7 @@ try ciContext.writeHEIF10Representation(of: rawFilter.outputImage!,
 
 推荐使用 MetalKit 的 `MTKView` 来显示 ProRaw 的 `CIImage`。
 
-> 使用 CoreImage 渲染最佳实践可以参考 WWDC2020 - [Optimize the Core Image pipeline for your video app](https://developer.apple.com/videos/play/wwdc2020/10008/)
+> 使用 CoreImage 渲染最佳实践可以参考 WWDC2020 - [Optimize the Core Image pipeline for your video app](https://developer.apple.com/videos/play/wwdc2020/10008/)([《WWDC2020 - Core Image专题》](https://xiaozhuanlan.com/topic/0837629154))
 
 ```swift
 // 在 MTKView 初始化的时候设置以下参数

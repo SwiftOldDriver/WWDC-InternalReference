@@ -213,7 +213,7 @@ pop-page 在 Mac 与手机上表现不一致，这一点也需要注意，手机
 
 在使用 window 上的一些 api 时，需要留意， 在 iOS 和 Mac 中有很大区别，iOS 表现如下：
 
-![image-20210626183110677](images/image-20210626183110677.png)
+![image-20210626183108154](qvf5ynk5g.bkt.clouddn.com/mweb/image-20210626183108154.png)
 
 
 

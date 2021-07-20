@@ -121,7 +121,8 @@ class AppMetrics: MXMetricManagerSubscriber {
 
 ![MetricKit Animation 信息收集 API](https://images.xiaozhuanlan.com/photo/2021/53447998344db9dcab21edd4e3fbf0cd.png)
 
-使用 `mxSignpostAnimationIntervalBegin` API，能够标记自定义动画的起始位置。使用 `mxSignpost` end API，能够标记动画的结束，并收集这段时间内发生 Hitch 的比例。这两个函数不仅会收集一些细粒度上的性能数据，也会捕获在这段时间内发生的 Hitch。推荐阅读「[Understand and Eliminate Hangs from your App](https://developer.apple.com/videos/play/wwdc2021/10258/)」这个 Session。如果想要深入了解如何定位滑动卡顿问题，推荐阅读 「[Eliminate animation hitches with XCTest](https://developer.apple.com/videos/play/wwdc2020/10077/)」和「[Explore UI Animation Hitches and the Render Loop](https://developer.apple.com/videos/play/tech-talks/10855/)」两个 2020 年的 Tech Talk。
+使用 `mxSignpostAnimationIntervalBegin` API，能够标记自定义动画的起始位置。使用 `mxSignpost` end API，能够标记动画的结束，并收集这段时间内发生 Hitch 的比例。这两个函数不仅会收集一些细粒度上的性能数据，也会捕获在这段时间内发生的 Hitch。推荐阅读「[Understand and Eliminate Hangs from your App](https://developer.apple.com/videos/play/wwdc2021/10258/)」([《【WWDC21 10258】理解和消除 App 中的卡死》](https://xiaozhuanlan.com/topic/9027453618))这个 Session。如果想要深入了解如何定位滑动卡顿问题，推荐阅读 「[Eliminate animation hitches with XCTest](https://developer.apple.com/videos/play/wwdc2020/10077/)」([《WWDC20 10077 - 使用 XCTest 消除动画卡顿
+》](https://xiaozhuanlan.com/topic/6849175032))和「[Explore UI Animation Hitches and the Render Loop](https://developer.apple.com/videos/play/tech-talks/10855/)」两个 2020 年的 Tech Talk。
 
 ## 磁盘写入
 
@@ -139,7 +140,7 @@ class AppMetrics: MXMetricManagerSubscriber {
 
 ![Organizer - Reports - Disk Writes](https://images.xiaozhuanlan.com/photo/2021/31559fdcda6eff36f39f24ecbf1624e1.png)
 
-也可以在 Organizer 中的 Reports 下的 Disk Writes 中看到代码详情，其中展示了在 24 小时内写入超过 1 GB 的代码片段。调用栈展示了代码中哪里进行了过量的写操作，而在 Xcode 13 中，右侧新增了一栏 Insights，简述了可以如何进行优化，减少磁盘写入。这些数据也会通过 App Store Connect API 提供。也可以通过 `MetricKit` 实时收集这些数据。如果使用了 `MetricKit` 来监控 App 的磁盘使用情况，就能够使用 `MXSignpost` 记录关键的磁盘写入的路径，获取更精确的数据，从而找到优化空间。关于如何定位并修复磁盘写入的问题，可以观看今年的 「[Diagnose Power and Performance Regressions in your App](https://developer.apple.com/videos/play/tech-talks/10855/)」。
+也可以在 Organizer 中的 Reports 下的 Disk Writes 中看到代码详情，其中展示了在 24 小时内写入超过 1 GB 的代码片段。调用栈展示了代码中哪里进行了过量的写操作，而在 Xcode 13 中，右侧新增了一栏 Insights，简述了可以如何进行优化，减少磁盘写入。这些数据也会通过 App Store Connect API 提供。也可以通过 `MetricKit` 实时收集这些数据。如果使用了 `MetricKit` 来监控 App 的磁盘使用情况，就能够使用 `MXSignpost` 记录关键的磁盘写入的路径，获取更精确的数据，从而找到优化空间。关于如何定位并修复磁盘写入的问题，可以观看今年的 「[Diagnose Power and Performance Regressions in your App](https://developer.apple.com/wwdc21/10087/)」。
 
 ## 启动时间与应用终止（Termination）
 
@@ -151,7 +152,7 @@ class AppMetrics: MXMetricManagerSubscriber {
 
 要是发现某一个版本的启动时间大幅上升，可以看看 Organizer 中的 Launch Time 和新加的 Termination 面板，这可以将当前的 App 启动时间和过去 16 个版本的进行对比，这样就能对 App 该有的启动时间有个认知，也可以去 Termination 面板中查看 App 被系统终止，有多少次时因为启动耗时太久。就像上图中，有 70% 是因为启动耗时太久导致 App 被终止的。
 
-确认了这个问题的存在之后，就可以通过本地的一些方法来找到具体是哪些代码导致的。首先，可以使用 Instruments 中的 App Launch 模版。该模版会运行 App 5 秒，收集启动时方法耗时数据以及 Thread State Trace，从中可以获得线程被 block 的原因并修复它。其次，可以使用 XCTest 来获取启动时间，通过 `XCTApplicationsLaunchMetric`，在 `measure` 方法中进行测量。如果想要自己进行更详细的分析，也可以使用 `MetricKit` 来收集每日的 App 终止数据。想了解如何在 App 被终止时进行状态恢复，可以参考 2020 年的 「[Why is my App Getting Killed](https://developer.apple.com/videos/play/wwdc2020/10078/)」。
+确认了这个问题的存在之后，就可以通过本地的一些方法来找到具体是哪些代码导致的。首先，可以使用 Instruments 中的 App Launch 模版。该模版会运行 App 5 秒，收集启动时方法耗时数据以及 Thread State Trace，从中可以获得线程被 block 的原因并修复它。其次，可以使用 XCTest 来获取启动时间，通过 `XCTApplicationsLaunchMetric`，在 `measure` 方法中进行测量。如果想要自己进行更详细的分析，也可以使用 `MetricKit` 来收集每日的 App 终止数据。想了解如何在 App 被终止时进行状态恢复，可以参考 2020 年的 「[Why is my App Getting Killed](https://developer.apple.com/videos/play/wwdc2020/10078/)」([《WWDC20 10078 - 为什么我的 app 被终止了？》](https://xiaozhuanlan.com/topic/1247983056))。
 
 > 这一节的重点其实是启动时间，这也是我们平常在工作中关注的重点。应用的终止是启动时间过长的恶果。启动时间直接关系到用户需要多久打开 App 并开始消费内容，可以说是争分夺秒的优化位置。
 >
@@ -200,7 +201,7 @@ func saveAppAssets() {
 
 我们来总结今天所讲的内容。性能优化对开发者们来说是一件很有挑战性的事情。在过去几年里，苹果提供的工具帮助大量开发者优化了性能。长期以来，Snapchat 一直致力于改善其应用程序的启动体验，并推动降低终止率。去年，Snapchat 减少了 99% 预期之外的应用终止情况。使用该 Session 中介绍的工具，开发者们也可以做到这一点。
 
-如果你对性能优化工具不熟悉，推荐看看 2020 年的「[Diagnose Performance Issues with the Xcode Organizer](https://developer.apple.com/videos/play/wwdc2020/10076/)」、「[What's New in MetricKit](https://developer.apple.com/videos/play/wwdc2020/10081/)」、「[Identify Trends with the Power and Performance API](https://developer.apple.com/videos/play/wwdc2020/10057/)」三个视频，以及 2019 年的「[Getting Started with Instruments](https://developer.apple.com/videos/play/wwdc2019/411/)」。深入了解了这些指标与工具之后，希望大家能够在这些工具的帮助下，提供性能最优的 App 给用户。作为练习，大家可以去 Xcode 的 Organizer 中看看 App 的性能趋势，使用 Instruments 中不同的模版来检测性能，写写 XCTest 来提前检测问题，用 MetricKit 来强化数据收集与分析。
+如果你对性能优化工具不熟悉，推荐看看 2020 年的「[Diagnose Performance Issues with the Xcode Organizer](https://developer.apple.com/videos/play/wwdc2020/10076/)」([《WWDC20 10076 使用 Xcode Organizer 诊断性能问题》](https://xiaozhuanlan.com/topic/9823657014))、「[What's New in MetricKit](https://developer.apple.com/videos/play/wwdc2020/10081/)」([《WWDC20 10081 - MetricKit 中的新功能》](https://xiaozhuanlan.com/topic/3572084169))、「[Identify Trends with the Power and Performance API](https://developer.apple.com/videos/play/wwdc2020/10057/)」([《WWDC20 10057 - Identify trends with the Power and Performance API》](https://xiaozhuanlan.com/topic/2036175489))三个视频，以及 2019 年的「[Getting Started with Instruments](https://developer.apple.com/videos/play/wwdc2019/411/)」。深入了解了这些指标与工具之后，希望大家能够在这些工具的帮助下，提供性能最优的 App 给用户。作为练习，大家可以去 Xcode 的 Organizer 中看看 App 的性能趋势，使用 Instruments 中不同的模版来检测性能，写写 XCTest 来提前检测问题，用 MetricKit 来强化数据收集与分析。
 
 本次的 Session 内容就到此为止了，希望大家能在读完后花一些时间开始尝试优化性能，多多加油。
 
