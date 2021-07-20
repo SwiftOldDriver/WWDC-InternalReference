@@ -542,7 +542,7 @@ enum SmoothieArrayBuilder {
 
 我们之前在设计 DSL 的时候，除了对于 `Smoothie` 的设计之外，构造每一款沙冰的成分列表 - `makeIngredients` 方法 ，也希望能够遵循 DSL 的规则。虽然他们不必像 `Smoothie` 的 DSL 那么复杂，但是我们仍旧需要支持一下。
 
-由于 `makeIngredients` 是 `Smoothie` 的成员变量，且在构造时就会传入响应的 DSL，所以我们需要修改一下 `Smoothie` 的 `init` 方法，在 `makeIngredients` 参数前，增加一个自定义 Result Builder 关键字，这里我们起名为 `IngredientsBuilder` （详见 L5）：
+由于 `makeIngredients` 是 `Smoothie` 的成员变量，且在构造时就会传入相应的 DSL，所以我们需要修改一下 `Smoothie` 的 `init` 方法，在 `makeIngredients` 参数前，增加一个自定义 Result Builder 关键字，这里我们命名为 `IngredientsBuilder` （详见 L5）：
 
 ```swift
 extension Smoothie {
