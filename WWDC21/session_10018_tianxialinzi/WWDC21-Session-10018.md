@@ -32,7 +32,8 @@ SwiftUI于2019年首次发布，引入了一种比较强大的新方式，以声
 * 通过`AsyncImage`支持异步加载图像
 * 可以在所有平台上使用的视图修改器`Searchable`
 * 创建一个带有schedule的`TimelineView`
-* 在iOS 15 的 UIKit中，又为我们带来更多按钮样式，比如 Toggle按钮，Pop-up 按钮等.
+* Text 和 keyboard 引入动态类型，Text支持 MarkDown格式以及本地化的处理
+* 更多按钮样式，比如 Toggle按钮，Pop-up 按钮等.
 
 # Better lists
 
