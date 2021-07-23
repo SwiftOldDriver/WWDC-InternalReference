@@ -191,7 +191,7 @@ run loop 过程，应用会不断接收用户事件，更新模型，最终将 S
 
 ![10019-09-dispatch](https://images.xiaozhuanlan.com/photo/2021/594509d3bd14626d7ae7226a61d9f4e4.png)
 
-可以看到在下一个 run loop 周期的 tick 节点，由于 `fetchPhotos` 的异步更新，SwfitUI 未能正确捕捉到 `objectWIllChange` 变化，导致快照数据对比结果为未更新。而如果您能保证如下状态的顺序执行，则可以避免上述的情况。
+可以看到，在异步更新的 `updateItems` 方法中，虽然触发了 `objectWIllChange` 调用，但 items 赋值还未完成，SwiftUI 却已进入下一个 run loop 周期，导致快照对比结果为未更新。而如果您能保证如下状态的顺序执行，则可以避免上述的情况。
 
 1. `objectWillChange`
 2. The state changes
