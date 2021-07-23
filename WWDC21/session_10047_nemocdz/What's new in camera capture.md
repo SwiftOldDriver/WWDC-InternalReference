@@ -6,9 +6,19 @@
 
 去年 Apple 对 iPhone 的相机升级是非常明显的，比如增加了 10-bit HDR 视频的拍摄，Apple ProRaw 的支持等。同时得益于 M 系列/A 系列芯片强大的算力，Apple 目前对于拍摄上的思考和提升更多走的是 [计算摄影](https://zh.wikipedia.org/zh-hans/%E8%AE%A1%E7%AE%97%E6%91%84%E5%BD%B1) 路线，而非在光学硬件上做大幅度提升。所以今年的 WWDC，Apple 将相机的更多能力开放给开发者使用。
 
+本文将会介绍几个 Apple 拍摄的新能力：
+
+* 最近对焦距离
+* 10-bit HDR 视频
+* 控制中心的视频特效
+* 相机性能相关的最佳实践
+* `IOSurface` 压缩
+
+> 本文不会花大量篇幅介绍拍摄开发的基础知识，建议还没接触的朋友先参考 Apple 文档 [Cameras and Media Capture](https://developer.apple.com/documentation/avfoundation/cameras_and_media_capture)，对 AVFoundation 中拍摄相关的 API 使用有个初步了解。
+
 ## AVCapture 简介
 
-拍摄相关的 API 都在 AVFoundation 中，以 AVCapture 为前缀。
+Apple 拍摄相关的 API 都位于 AVFoundation 中，以 AVCapture 为前缀。
 
 `AVCaptureDevice`：用于标识相机/麦克风等硬件设备
 
@@ -24,7 +34,7 @@
 
 ![01](img/01.png)
 
-> 还没接触过相机相关的建议参考 Apple 文档 [Cameras and Media Capture](https://developer.apple.com/documentation/avfoundation/cameras_and_media_capture) 
+简单了解 AVCapture 处理流程后，下面开始介绍 Apple 今年在拍摄上开放给开发者的新能力。
 
 ## 最近对焦距离
 
