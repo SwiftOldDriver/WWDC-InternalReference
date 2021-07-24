@@ -36,6 +36,7 @@
 ![](https://images.xiaozhuanlan.com/photo/2021/743c03ec8b7c1a61684926f9d578cccb.png)
 
 选中语言之后，`InfoPlist.strings` 文件就会自动生成对应的本地化文件，接下来就可以在对应文件中添加**工程配置项**的本地化文本，例如**应用名、隐私权限**。
+
 ![](https://images.xiaozhuanlan.com/photo/2021/fe9d08cbfebc9d40ccac0c9768aa3cde.png)
 > TIPS：`Info.plist`文件属性中也包含 `Localized...` 设置，但是该设置产生的本地化文件不能生效，一定要新建 `InfoPlist.strings` 文件来设置相应的本地化内容。  
 - - - -
