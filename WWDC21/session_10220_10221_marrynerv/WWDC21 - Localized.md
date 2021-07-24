@@ -32,6 +32,7 @@
 ![](https://images.xiaozhuanlan.com/photo/2021/89a1aa85e2a53814bd87bb7a7f7ecd93.png)
 
 配置好的文件属性变化为下图所示，选中需要的本地化语言。
+
 ![](https://images.xiaozhuanlan.com/photo/2021/743c03ec8b7c1a61684926f9d578cccb.png)
 
 选中语言之后，`InfoPlist.strings` 文件就会自动生成对应的本地化文件，接下来就可以在对应文件中添加**工程配置项**的本地化文本，例如**应用名、隐私权限**。
