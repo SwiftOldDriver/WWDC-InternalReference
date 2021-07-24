@@ -1,6 +1,6 @@
-# Meet Async/Await in Swift
+# 使用Swift的Async/Await
 
-作为iOS程序员，相信大家都用过很多使用完成回调的代码，比如UIKit中的`func dismiss(animated flag: Bool, completion: (() -> Void)? = nil)`方法，在关闭视图控制器后执行回调，或者AVPlayer的`func seek(to time: CMTime, completionHandler: @escaping (Bool) -> Void)`方法，在播放器跳转完成后执行回调。
+作为 iOS 程序员，相信大家都用过很多使用完成回调的代码，比如 UIKit 中的 `dismiss(animated:completion:)` 方法，在关闭视图控制器后执行回调，或者 AVPlayer 的 `func seek(to:completionHandler:)` 方法，在播放器跳转完成后执行回调。
 
 无论是网络请求、磁盘IO、视图刷新等，都消耗一定的时间才能完成相关操作。在这段时间内，程序通常有两种选择，要么停在原地并等待操作结果的返回，再执行后续逻辑，即同步调用；要么在这段时间执行其他任务，在耗时操作完成时执行先前注册的回调逻辑，即异步调用。同步调用会让代码写起来更简单，但可能浪费性能、甚至造成界面卡死等不好的用户体验。异步调用则可以更充分地利用系统资源，在相同时间内响应更多的任务，缺点则是当多个异步调用衔接或嵌套时，尤其涉及到错误处理时，往往会让代码变得复杂而难以驾驭。
 
@@ -8,11 +8,11 @@
 
 ![Image](https://res.craft.do/user/full/f4d6ca89-7816-10ef-0133-2b135b34972a/doc/357B7876-35F7-462F-85B8-7AD053A54DEE/7563BC69-1232-44F7-9127-D9483E59C6A8_2/Image)
 
-我们看一个具体的例子。上图是我们想做的一个demo程序，这是一个简单的列表，每行会显示一张存储在服务端的icon图片。我们来分析下icon图片是如何显示出来的。如下图所示，一共可以分为4个步骤：
+我们看一个具体的例子。上图是我们想做的一个 demo 程序，这是一个简单的列表，每行会显示一张存储在服务端的 icon 图片。我们来分析下 icon 图片是如何显示出来的。如下图所示，一共可以分为4个步骤：
 
-   1. 首先我们根据图片id生成网络请求；
+   1. 首先我们根据图片 id 生成网络请求；
    2. 然后把请求发送给服务器，并等待服务器返回结果；
-   3. 根据下发的Data构建UIImage；
+   3. 根据下发的 Data 构建 UIImage；
    4. 最后准备缩略图，并在完成时执行`fetchThumbnail`函数预先注册的`completion: @escaping (UIImage?, Error?) → Void`回调。
 
 ![Image](https://res.craft.do/user/full/f4d6ca89-7816-10ef-0133-2b135b34972a/doc/357B7876-35F7-462F-85B8-7AD053A54DEE/0FC69BE9-37D1-410D-BCE2-0C6847D202FF_2/Image)
@@ -43,7 +43,7 @@ func fetchThumbnail(for id: String, completion: @escaping (UIImage?, Error?) -> 
 }
 ```
 
-揭晓答案，如下面代码所示，在两处`guard/return`代码里，没有针对发生错误的场景执行`completion`回调，其结果可能是，图片的loading动画一直转，就是不显示图。从业务角度看，`fetchThumbnail`函数的任何一个return都应该执行`completion`回调；但从编译层面，Swift没办法保证return前都执行了回调处理，即我们不能借助Swift的错误处理机制在编译时发现这样的问题。因为对Swift来说，`completion`回调只是一个普通的闭包，尽管我们希望它总是执行，但Swift没法强制必须如此。所以，当使用完成回调的方式异步处理任务时，需要开发者小心谨慎，确保任何情况下完成回调总是被执行。
+揭晓答案，如下面代码所示，在两处`guard/return`代码里，没有针对发生错误的场景执行`completion`回调，其结果可能是，图片的 loading 动画一直转，就是不显示图。从业务角度看，`fetchThumbnail`函数的任何一个 return 都应该执行`completion`回调；但从编译层面，Swift 没办法保证return前都执行了回调处理，即我们不能借助Swift的错误处理机制在编译时发现这样的问题。因为对 Swift 来说，`completion`回调只是一个普通的闭包，尽管我们希望它总是执行，但Swift没法强制必须如此。所以，当使用完成回调的方式异步处理任务时，需要开发者小心谨慎，确保任何情况下完成回调总是被执行。
 
 两个同步任务（步骤1和3），两个使用完成回调的异步任务（步骤2和4），我们成功完成了相关代码的书写，而这段代码约20行、且容易引入隐蔽的bug。我们只是希望这4个任务按顺序执行，但这段代码容易写错，难以理解，且由于混杂着错误处理和各种回调，没法一眼看清楚其意图。以下是修复bug之后的代码。
 
@@ -73,15 +73,15 @@ func fetchThumbnail(for id: String, completion: @escaping (UIImage?, Error?) -> 
 }
 ```
 
-如何让我们的代码更安全呢？我们可以使用标准库的`result`类型，不过这也会让代码更丑陋也更长一些。我们也可以使用类似`Futures`和`Promises`的技巧来让异步编程更容易驾驭，也更安全，比如热门的第三方库`PromiseKit`。但其实，我们可以做得更好，这就是Swift 5.5全新引入的`async/await`。
+如何让我们的代码更安全呢？我们可以使用标准库的`result`类型，不过这也会让代码更丑陋也更长一些。我们也可以使用类似`Futures`和`Promises`的技巧来让异步编程更容易驾驭，也更安全，比如热门的第三方库`PromiseKit`。但其实，我们可以做得更好，这就是 Swift 5.5 全新引入的`async/await`。
 
 ### 用`async/await`改造我们的程序🧑🏻‍💻
 
-闲话少说，使用`async/await`的完整版的代码如下所示。上个版本，我们需要约20行代码，有5层缩进结构；新版本只有6行代码，且只有一层代码结构，没有任何额外的缩进。当你忽略两行`guard/return`代码后，会发现新版本的代码，就像一段英文段落一样容易阅读理解：
+闲话少说，使用`async/await`的完整版的代码如下所示。上个版本，我们需要约 20 行代码，有 5 层缩进结构；新版本只有 6 行代码，且只有一层代码结构，没有任何额外的缩进。当你忽略两行`guard/return`代码后，会发现新版本的代码，就像一段英文段落一样容易阅读理解：
 
    1. 创建缩略图URLRequest；
    2. 发送网络请求并接收服务端返回；
-   3. 根据返回的data创建UIImage；
+   3. 根据返回的 data 创建 UIImage；
    4. 返回获取到的缩略图。
 
 ```swift
@@ -97,15 +97,15 @@ func fetchThumbnail(for id: String) async throws -> UIImage {
 
 现在我们来详细分析下这段代码。
 
-支持异步的函数需要标记为`async`，如果该函数可能失败，则async写在throws前面；否则写在函数返回值前的箭头前面。创建URLRequest没太多可说，接着我们使用`data(for: request)`处理从服务端下载图片数据，这里同时使用了`try`和`await`。由于该方法是`awaitable`的，我们可以使用await，让线程在执行到这里后挂起，并释放出资源去执行其他任务，直到网络请求的结果返回时，再重新拾起并继续执行后续代码。
+支持异步的函数需要标记为`async`，如果该函数可能失败，则 async 写在 throws 前面；否则写在函数返回值前的箭头前面。创建 URLRequest 没太多可说，接着我们使用`data(for: request)`处理从服务端下载图片数据，这里同时使用了`try`和`await`。由于该方法是`awaitable`的，我们可以使用 await，让线程在执行到这里后挂起，并释放出资源去执行其他任务，直到网络请求的结果返回时，再重新拾起并继续执行后续代码。
 
-**await的神奇之处就是，可以像写同步调用那样去写异步调用。**再和Swift特有的guard机制结合，可谓如虎添翼。还记得之前的代码里，我们需要检查错误并明确的调用`completion`回调么？现在我们只需要一个try就解决了。就像调用有throws标记的函数需要try一样，调用async标记的函数，需要用await。如果一个表达式内含有多个async函数调用，我们只需要一次await，就像有多个throws函数调用的表达式也只需要一个try一样。如果同时使用try和await，记得把try放在前面。
+**await 的神奇之处就是，可以像写同步调用那样去写异步调用。**再和 Swift 特有的 guard 机制结合，可谓如虎添翼。还记得之前的代码里，我们需要检查错误并明确的调用`completion`回调么？现在我们只需要一个try就解决了。就像调用有throws标记的函数需要try一样，调用 async 标记的函数，需要用await。如果一个表达式内含有多个 async 函数调用，我们只需要一次 await，就像有多个 throws 函数调用的表达式也只需要一个 try 一样。如果同时使用 try 和 await，记得把 try 放在前面。
 
-接着我们再看看图片的缩略图是如何获得的。注意，这里await后面跟随的是`UIImage.thumbnail`属性，而不是一个方法。是的，我们还可以把一个属性声明成`async属性`，这样就可以利用await来简化异步处理了。
+接着我们再看看图片的缩略图是如何获得的。注意，这里 await 后面跟随的是`UIImage.thumbnail`属性，而不是一个方法。是的，我们还可以把一个属性声明成`async属性`，这样就可以利用 await 来简化异步处理了。
 
 ### async属性
 
-async属性，需要有明确的getter，并且用get async修饰，在其内部可以用await返回结果。其次，async属性不能有setter，即只能是可读属性。
+async属性，需要有明确的getter，并且用 get async 修饰，在其内部可以用 await 返回结果。其次，async 属性不能有 setter，即只能是可读属性。
 
 ```swift
 extension UIImage {
@@ -120,7 +120,7 @@ extension UIImage {
 
 ### async序列
 
-如下面代码所示，await还可以用在for循环中，来遍历async序列(async sequence)。async序列就像普通序列一样，唯一区别是它是异步提供其元素供我们使用的。所以获取其下一个元素必须标记await关键词，表明这里是异步的。
+如下面代码所示，await 还可以用在 for 循环中，来遍历 async 序列 (async sequence)。async 序列就像普通序列一样，唯一区别是它是异步提供其元素供我们使用的。所以获取其下一个元素必须标记 await 关键词，表明这里是异步的。
 
 ```swift
 for await id in staticImageIDsURL.lines {
@@ -130,9 +130,9 @@ for await id in staticImageIDsURL.lines {
 let result = await collage.draw()
 ```
 
-我们来看看下面这个有趣的例子。第一行`endpointURL`的内容是最近的地震信息。通常下载数据是个异步任务，消耗一定时间。但这里，我们不想等到全部都下载好，相反我们想边接收信息边展示它们。这就要用到新的`async/await`特性了。我们处理的是csv格式的文件，它是由逗号分隔而成的格式化文本，每一行(line)文本是完整的一行(row)数据。因为由很多行文本组成的async序列会释放出它收到的每一行文本，所以我们有机会随着收到数据的进度动态把它们呈现出来，让程序用起来响应迅速跟手。
+我们来看看下面这个有趣的例子。第一行`endpointURL`的内容是最近的地震信息。通常下载数据是个异步任务，消耗一定时间。但这里，我们不想等到全部都下载好，相反我们想边接收信息边展示它们。这就要用到新的`async/await`特性了。我们处理的是 csv 格式的文件，它是由逗号分隔而成的格式化文本，每一行(line)文本是完整的一行(row)数据。因为由很多行文本组成的 async 序列会释放出它收到的每一行文本，所以我们有机会随着收到数据的进度动态把它们呈现出来，让程序用起来响应迅速跟手。
 
-更棒的是，你可以像处理熟悉的普通序列那样处理这个新的异步场景。比如，你可以使用`for-await-in`语法来遍历async序列，而像`map`、`filter`、`reduce`以及下面代码中的`dropFirst`等函数，去处理async序列。
+更棒的是，你可以像处理熟悉的普通序列那样处理这个新的异步场景。比如，你可以使用`for-await-in`语法来遍历 async 序列，而像`map`、`filter`、`reduce`以及下面代码中的`dropFirst`等函数，去处理 async 序列。
 
 ```swift
 @main
@@ -154,9 +154,9 @@ struct QuakesTool {
 }
 ```
 
-概括的说，异步序列就是对随着时间推移如何产生值或对象的一种描述方式。所以async序列可能有零个或多个值。由于产生值的过程是异步的，所以也可能出错。当错误发生时，也是async序列也处于终止状态，错误发生后，async序列会对它的迭代器的后续next调用都返回nil。
+概括的说，异步序列就是对随着时间推移如何产生值或对象的一种描述方式。所以 async 序列可能有零个或多个值。由于产生值的过程是异步的，所以也可能出错。当错误发生时，也是 async 序列也处于终止状态，错误发生后，async 序列会对它的迭代器的后续 next 调用都返回 nil。
 
-我们先来看看普通的for循环是如何工作的。下面的代码段前半部分是for in循环的代码，后半部分则是编译器在处理for in循环代码时所做的大致转换。首先创建了一个迭代器变量`iterator`，然后使用while循环不断的取出迭代器的下一个元素。当获取下个元素失败时，也就会退出while或for循环了。
+我们先来看看普通的 for 循环是如何工作的。下面的代码段前半部分是 for in 循环的代码，后半部分则是编译器在处理for in循环代码时所做的大致转换。首先创建了一个迭代器变量`iterator`，然后使用 while 循环不断的取出迭代器的下一个元素。当获取下个元素失败时，也就会退出 while或for循环了。
 
 ```swift
 // 遍历序列
@@ -511,7 +511,7 @@ struct AsyncBytes: AsyncSequence {
 
 ![Image](https://res.craft.do/user/full/f4d6ca89-7816-10ef-0133-2b135b34972a/doc/357B7876-35F7-462F-85B8-7AD053A54DEE/447B458E-1387-4A7A-9980-C624ED17C128_2/Image)
 
-URLSession围绕代理模型设计的，能够提供对认证、metrics等事件的回调处理。新的方法不再暴露底层task，那我们如何处理认证事件呢？如下面代码所示，之前提到的这些方法，还有新的版本，能够传入额外参数——基于task的特定代理，可以支持我们去处理上述事件的响应回调。
+URLSession 围绕代理模型设计的，能够提供对认证、metrics 等事件的回调处理。新的方法不再暴露底层task，那我们如何处理认证事件呢？如下面代码所示，之前提到的这些方法，还有新的版本，能够传入额外参数——基于 task 的特定代理，可以支持我们去处理上述事件的响应回调。
 
 ```swift
 // URLSessionTask的delegate
@@ -530,7 +530,7 @@ func bytes(from url: URL, delegate: URLSessionTaskDelegate?)
 func bytes(for request: URLRequest, delegate: URLSessionTaskDelegate?)
 ```
 
-如下面这段代码所示，在Objective-C中，我们也提供了delegate属性，来实现类似的功能。注意这里的属性是强持有的，直到task执行完毕或失败结束。值得注意的是，task代理不支持background URLSession。如果一个方法同时在session代理和task代理都实现了，task代理的方法才会被调用。
+如下面这段代码所示，在 Objective-C 中，我们也提供了 delegate 属性，来实现类似的功能。注意这里的属性是强持有的，直到task执行完毕或失败结束。值得注意的是，task代理不支持 background URLSession。如果一个方法同时在 session 代理和 task 代理都实现了，task 代理的方法才会被调用。
 
 ```objectivec
 // URLSessionTask的特定delegate
@@ -542,11 +542,11 @@ func bytes(for request: URLRequest, delegate: URLSessionTaskDelegate?)
 @end
 ```
 
-接下来我们看看如何在程序中使用task代理。首先创建`AuthenticationDelegate`类，遵循`URLSessionTaskDelegate`协议。其构造函数接受参数`SignInController`。`SignInController`中已经包含了一些方便完成用户认证的方法。接着，我们实现URLSession的didReceive challenge代理方法，并在其中回应基本的HTTP认证挑战，当然还有错误处理。
+接下来我们看看如何在程序中使用 task 代理。首先创建`AuthenticationDelegate`类，遵循`URLSessionTaskDelegate`协议。其构造函数接受参数`SignInController`。`SignInController`中已经包含了一些方便完成用户认证的方法。接着，我们实现 URLSession 的 didReceive challenge 代理方法，并在其中回应基本的HTTP认证挑战，当然还有错误处理。
 
 ![Image](https://res.craft.do/user/full/f4d6ca89-7816-10ef-0133-2b135b34972a/doc/357B7876-35F7-462F-85B8-7AD053A54DEE/D01288DA-5B13-4750-9A08-B35DE96D6838_2/Image)
 
-接下来我们实例化`AuthenticationDelegate`，并把该实例作为data方法的代理参数传入。具体如下图高亮行的代码所示。注意这里的代理方法只针对具体的task实例，当我们需要差别化处理task时，这个特性会很方便。
+接下来我们实例化`AuthenticationDelegate`，并把该实例作为 data 方法的代理参数传入。具体如下图高亮行的代码所示。注意这里的代理方法只针对具体的 task 实例，当我们需要差别化处理 task 时，这个特性会很方便。
 
 ![Image](https://res.craft.do/user/full/f4d6ca89-7816-10ef-0133-2b135b34972a/doc/357B7876-35F7-462F-85B8-7AD053A54DEE/B804E667-D7AC-4800-B6B0-E64E717D3F09_2/Image)
 
@@ -554,7 +554,7 @@ func bytes(for request: URLRequest, delegate: URLSessionTaskDelegate?)
 
 ### 如何在你的工程中使用`async/await`
 
-首先看看如何在测试async代码。我们希望测试async代码就像测试同步代码一样简单，XCTest让这一切成为可能。
+首先看看如何在测试 async 代码。我们希望测试 async 代码就像测试同步代码一样简单，XCTest 让这一切成为可能。
 
 ```swift
 class MockViewModelSpec: XCTestCase {
@@ -569,7 +569,7 @@ class MockViewModelSpec: XCTestCase {
 }
 ```
 
-如上面代码所示，过去测试异步代码是冗长繁琐的，要经历设置期望、调用需要测试的API接口、完成期望、等待一段任意长的时间。现在只需要把方法标记为async，用try await执行要测试的API接口，并用XCTAssert将其包起来。
+如上面代码所示，过去测试异步代码是冗长繁琐的，要经历设置期望、调用需要测试的API接口、完成期望、等待一段任意长的时间。现在只需要把方法标记为 async，用 try await 执行要测试的 API 接口，并用 XCTAssert 将其包起来。
 
 ```swift
 class MockViewModelSpec: XCTestCase {
@@ -602,9 +602,9 @@ struct ThumbnailView: View {
 
 ![Image](https://res.craft.do/user/full/f4d6ca89-7816-10ef-0133-2b135b34972a/doc/357B7876-35F7-462F-85B8-7AD053A54DEE/E582F30E-0FCA-447E-AA28-42D0A718BB7C_2/Image)
 
-看起来，只接受同步代码的接口，不能接受我们使用了await的异步代码，即同步和异步代码之间的鸿沟需要填平，怎么解决这个问题呢？答案是使用aync任务函数。async任务把要执行的工作包裹在闭包中，并把它发送给系统，等待下一个可执行任务的线程去立即执行。就像全局`DispatchQueue`的async方法一样。
+看起来，只接受同步代码的接口，不能接受我们使用了 await 的异步代码，即同步和异步代码之间的鸿沟需要填平，怎么解决这个问题呢？答案是使用aync任务函数。async 任务把要执行的工作包裹在闭包中，并把它发送给系统，等待下一个可执行任务的线程去立即执行。就像全局`DispatchQueue`的 async 方法一样。
 
-我们只需要把异步代码放到`async{...}`闭包内，就可以填平同步、异步代码之间的鸿沟，让只接受同步代码的接口，也能接受异步代码了。async任务只是众多帮助你写出强大并行Swift代码的众多API中的一个，想了解更多，请关注[Session 10019 - 了解SwiftUI中的并发](https://developer.apple.com/videos/play/wwdc2021/10019/)和[Session 10134 - 探索Swift中的结构化并发](https://developer.apple.com/videos/play/wwdc2021/10134/)这两个Session。
+我们只需要把异步代码放到`async{...}`闭包内，就可以填平同步、异步代码之间的鸿沟，让只接受同步代码的接口，也能接受异步代码了。async 任务只是众多帮助你写出强大并行 Swift 代码的众多API中的一个，想了解更多，请关注[Session 10019 - 了解SwiftUI中的并发](https://developer.apple.com/videos/play/wwdc2021/10019/)和[Session 10134 - 探索Swift中的结构化并发](https://developer.apple.com/videos/play/wwdc2021/10134/)这两个Session。
 
 ```swift
 struct ThumbnailView: View {
@@ -627,7 +627,7 @@ SDK提供了几百个API，它们接受完成回调，来实现异步能力。
 
 ![Image](https://res.craft.do/user/full/f4d6ca89-7816-10ef-0133-2b135b34972a/doc/357B7876-35F7-462F-85B8-7AD053A54DEE/86420593-9232-4CCF-9324-AE18A6013BD5_2/Image)
 
-当如下面这样把这些接口都放到一起观察时，你会发现共同点。你调用它们，然后他们调用你提供的完成回调，并传入了它们执行获得的结果。如果我们能把这些使用完成回调的API变成async方法，那该多酷。
+当如下面这样把这些接口都放到一起观察时，你会发现共同点。你调用它们，然后他们调用你提供的完成回调，并传入了它们执行获得的结果。如果我们能把这些使用完成回调的 API 变成 async 方法，那该多酷。
 
 ```swift
 URLSession.
@@ -643,13 +643,13 @@ NSDocument.
 share(with: NSSharingService, completionHandler: (Bool) -> Void)
 ```
 
-令人兴奋的是，在Swift 5.5中，这已经是现实了。Swift编译器自动分析使用完成回调的Objective-C代码，并提供了该方法的async版本。正如下面所示。
+令人兴奋的是，在 Swift 5.5 中，这已经是现实了。Swift 编译器自动分析使用 completionHandler 的 Objective-C 代码，并提供了该方法的 async 版本。正如下面所示。
 
 ```swift
 // SDK中的异步API
 
 URLSession.
-dataTask(with: URLRequest）async throws -> (Data, URLResponse)
+data(with: URLRequest）async throws -> (Data, URLResponse)
 
 MKDirections.
 calculateETA() async throws -> ETAResponse
@@ -661,7 +661,7 @@ NSDocument.
 share(with: NSSharingService) async
 ```
 
-但是我们并没有止步于此。很多代理API会把完成回调传给使用者。调用回调方法会通知框架异步任务已经完成。我们需要在所有的返回路径上都明确调用完成回调方法。如下所示：
+但是我们并没有止步于此。很多代理 API 会把完成回调传给使用者。调用回调方法会通知框架异步任务已经完成。我们需要在所有的返回路径上都明确调用完成回调方法。如下所示：
 
 ```swift
 import ClockKit
@@ -684,7 +684,7 @@ extension ComplicationController: CLKComplicationDataSource {
 }
 ```
 
-上述代理方法也有async版本可供我们使用。首先我们去掉了函数名中的get，我们推荐所有async方法去掉诸如get之类的关键词，因为该方法不会直接返回结果。然后我们改变了代理方法的返回值类型，从之前的Void改成了时间线Entry类型。
+上述代理方法也有 async 版本可供我们使用。首先我们去掉了函数名中的 get，我们推荐所有 async 方法去掉诸如 get 之类的关键词，因为该方法不会直接返回结果。然后我们改变了代理方法的返回值类型，从之前的Void改成了时间线 Entry 类型。
 
 ```swift
 import ClockKit
@@ -711,9 +711,9 @@ extension ComplicationController: CLKComplicationDataSource {
 > [Session 10146 - AVFoundation的最新更新](https://developer.apple.com/videos/play/wwdc2021/10146/)  
 > [Session 10054 - AppKit的最新更新](https://developer.apple.com/videos/play/wwdc2021/10054/)  
 
-### 如何写自己的async方法
+### 如何写自己的 async 方法
 
-前面讲到的都是用框架提供的async方法，如果想自己实现个async方法，要怎么做呢？我们来看下面这个使用完成回调的方法，如何改造成async方法。
+前面讲到的都是用框架提供的 async 方法，如果想自己实现个 async 方法，要怎么做呢？我们来看下面这个使用完成回调的方法，如何改造成 async 方法。
 
 ```swift
 func getPersistentPosts(completion: @escaping ([Post], Error?) -> Void) {
@@ -730,13 +730,13 @@ func getPersistentPosts(completion: @escaping ([Post], Error?) -> Void) {
 }
 ```
 
-`getPersistentPosts`调用时，会调用进Core Data，一段时间后，Core Data会调用完成回调把结果传递回`getPersistentPosts`。这个过程和之前从服务端请求icon图片的过程非常相似。这里只缺少一个桥梁，衔接下图中的await和resume箭头所表示的过程。这种模式总是出现，于是他有了个名字，**继续(continuation)**。
+`getPersistentPosts`调用时，会调用进 Core Data，一段时间后，Core Data 会调用完成回调把结果传递回`getPersistentPosts`。这个过程和之前从服务端请求 icon 图片的过程非常相似。这里只缺少一个桥梁，衔接下图中的 await 和 resume 箭头所表示的过程。这种模式总是出现，于是他有了个名字，**continuation**。
 
 ![Image](https://res.craft.do/user/full/f4d6ca89-7816-10ef-0133-2b135b34972a/doc/357B7876-35F7-462F-85B8-7AD053A54DEE/B98589FE-95C4-43ED-89C3-69858391E22E_2/Image)
 
-Swift提供了让开发者能够安全便利的使用继续(continuation)的能力。我们看看如何使用继续(continuation)来完成我们的改造。下面代码中的`withCheckedThrowingContinuation`，把原本使用完成回调的方法转换成了async方法，所以我们可以在它之前使用try await，并将其返回值作为persistentPosts这个async方法的返回值。这相当于把上图中左侧的await断层衔接起来了。`withCheckedContinuation`和`withCheckedThrowingContinuation`类似，但前者用于确定不会抛出错误的场景。
+Swift提供了让开发者能够安全便利的使用 continuation 的能力。我们看看如何使用 continuation 来完成我们的改造。下面代码中的`withCheckedThrowingContinuation`，把原本使用完成回调的方法转换成了async方法，所以我们可以在它之前使用 try await，并将其返回值作为 persistentPosts 这个 async 方法的返回值。这相当于把上图中左侧的await断层衔接起来了。`withCheckedContinuation`和`withCheckedThrowingContinuation`类似，但前者用于确定不会抛出错误的场景。
 
-`continuation.resume`方法，则是连接上图右侧的resume断层的桥梁，它使得挂起的函数在合适的时候继续执行。注意下面代码中的`throwing`和`returning`两种形态。
+`continuation.resume`方法，则是连接上图右侧的 resume 断层的桥梁，它使得挂起的函数在合适的时候继续执行。注意下面代码中的`throwing`和`returning`两种形态。
 
 ```swift
 func persistenPosts() async throws -> [Post] {
@@ -751,17 +751,17 @@ func persistenPosts() async throws -> [Post] {
 }
 ```
 
-继续(continuation)有个简单但是重要的原则，`resume`方法必须在每个路径上执行，有且只有一次。但是不用担心，如果在有的路径上没有执行`resume`方法，Swift runtime会发出warning警告。
+continuation 有个简单但是重要的原则，`resume`方法必须在每个路径上执行，有且只有一次。但是不用担心，如果在有的路径上没有执行`resume`方法，Swift runtime 会发出 warning 警告。
 
 ![Image](https://res.craft.do/user/full/f4d6ca89-7816-10ef-0133-2b135b34972a/doc/357B7876-35F7-462F-85B8-7AD053A54DEE/E793CBA4-9B98-4785-8ABB-BA49E801798A_2/Image)
 
-但如果在某个路径上，`resume`执行了不止一次，这会是严重得多的问题。Swift runtime会在第二次resume调用处触发fatal error。
+但如果在某个路径上，`resume`执行了不止一次，这会是严重得多的问题。Swift runtime 会在第二次 resume 调用处触发 fatal error。
 
 ![Image](https://res.craft.do/user/full/f4d6ca89-7816-10ef-0133-2b135b34972a/doc/357B7876-35F7-462F-85B8-7AD053A54DEE/B5D17153-3289-42ED-B3DC-17A247432ECB_2/Image)
 
-最后我们再来看一个场景。很多API是事件驱动的，它们提供代理回调方法，在特定的时间节点执行相关的操作。这种场景下怎么使用async方法呢？如下所示，我们首先使用`withCheckedThrowingContinuation`，然后在其回调中把continuation保存到`self.activeConotinuation`成员变量。接着，我们在事件驱动的代理方法中，调用保存的continuation的`resume`方法，做相应的处理。执行完方法后，别忘了把该成员变量置为nil。
+最后我们再来看一个场景。很多 API 是事件驱动的，它们提供代理回调方法，在特定的时间节点执行相关的操作。这种场景下怎么使用 async 方法呢？如下所示，我们首先使用`withCheckedThrowingContinuation`，然后在其回调中把 continuation 保存到`self.activeConotinuation`成员变量。接着，我们在事件驱动的代理方法中，调用保存的continuation的`resume`方法，做相应的处理。执行完方法后，别忘了把该成员变量置为 nil。
 
-由于我们是手动处理resume行为，切记在每个路径上都调用resume方法。想了解更多包括continuation在内的Swift并行的底层细节，请关注[Session 10254 - 解密Swift并发的背后原理](https://developer.apple.com/videos/play/wwdc2021/10254/)。
+由于我们是手动处理 resume 行为，切记在每个路径上都调用 resume 方法。想了解更多包括 continuation 在内的 Swift 并行的底层细节，请关注[Session 10254 - 解密Swift并发的背后原理](https://developer.apple.com/videos/play/wwdc2021/10254/)。
 
 ```swift
 class ViewController: UIViewController {
@@ -789,5 +789,5 @@ extension ViewController: PeerSyncDelegate {
 
 ### 总结
 
-以上就是关于Swift中的async/await介绍的全部了。我们讲了async/await在运行时的工作原理，以及如何在你的工程或框架中使用它们。我们展示了SDK中已有的async API，也展示了如何把已有代码和async方法衔接起来使用。async/await是Swift并发的基石，我们期待你把它们用起来。感谢你的阅读。
+以上就是关于 Swift 中的 async/await 介绍的全部了。我们讲了 async/await 在运行时的工作原理，以及如何在你的工程或框架中使用它们。我们展示了 SDK 中已有的 async API，也展示了如何把已有代码和 async 方法衔接起来使用。async/await 是 Swift 并发的基石，我们期待你把它们用起来。感谢你的阅读。
 
