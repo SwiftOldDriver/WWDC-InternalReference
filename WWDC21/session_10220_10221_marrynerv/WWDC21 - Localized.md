@@ -18,6 +18,7 @@
 ### 可视化编程内的组件文本
 语言配置完成后，`Storyboard` 文件会自动新增对应语言的本地化文件，如下图所示：
 ![](https://images.xiaozhuanlan.com/photo/2021/7b211cae0dd019f2d3a72ebe4caf65b6.png)
+
 在本地化文件中可以通过页面控件的 `Object ID` ，设置相应的文本，如下图所示：
 ![](https://images.xiaozhuanlan.com/photo/2021/2333af5abc8080008ae1d8489026eafe.png)
 ![](https://images.xiaozhuanlan.com/photo/2021/bd57a152b2df161d345a7919786d58c3.png)
@@ -26,10 +27,13 @@
 新建 `InfoPlist.strings` 文件，文件名称必须为 InfoPlist.strings，如下图所示：
 ![](https://images.xiaozhuanlan.com/photo/2021/74b172267bebb0025f5e7b9700284d30.png)
 ![](https://images.xiaozhuanlan.com/photo/2021/1817852ced50bf142eeca7e0a359b1b4.png)
+
 选中新建好的 `InfoPlist.strings` 文件，在文件属性中找到 `Localize...` 配置项，添加本地化配置，如下图所示：
 ![](https://images.xiaozhuanlan.com/photo/2021/89a1aa85e2a53814bd87bb7a7f7ecd93.png)
+
 配置好的文件属性变化为下图所示，选中需要的本地化语言。
 ![](https://images.xiaozhuanlan.com/photo/2021/743c03ec8b7c1a61684926f9d578cccb.png)
+
 选中语言之后，`InfoPlist.strings` 文件就会自动生成对应的本地化文件，接下来就可以在对应文件中添加**工程配置项**的本地化文本，例如**应用名、隐私权限**。
 ![](https://images.xiaozhuanlan.com/photo/2021/fe9d08cbfebc9d40ccac0c9768aa3cde.png)
 > TIPS：`Info.plist`文件属性中也包含 `Localized...` 设置，但是该设置产生的本地化文件不能生效，一定要新建 `InfoPlist.strings` 文件来设置相应的本地化内容。  
