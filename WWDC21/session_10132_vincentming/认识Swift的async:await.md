@@ -308,7 +308,7 @@ let notification = await center.notifications(named: .NSPersistentStoreRemoteCha
 
 ![](https://images.xiaozhuanlan.com/photo/2021/478f40352eccf2189ba6b5491e5b27f1.png)
 
-### 如何创建自己的async序列
+### 如何创建自己的 async 序列
 
 前面提到的 API 都很酷，语法也非常简洁，但我如何创建自己的 async 序列呢？有几种方法来实现 async 序列，现在我们只关注怎么去适配已有的代码。有一些设计模式和 async 序列配合使用效果非常好，比如被调用多次的闭包，以及一些代理方法等。
 
@@ -355,7 +355,7 @@ for await quake in significantQuakes {
 }
 ```
 
-`AsyncStream`非常适合把已有代码转换成async序列，它很好的处理了安全性，迭代器，取消，甚至还有 buffer。它不仅适合创建你自己的 async 序列，还适合作为你的API的返回值类型。如果需要处理可能产生错误的 async 序列？只要用`AsyncThrowingStream`类型即可。
+`AsyncStream`非常适合把已有代码转换成 async 序列，它很好的处理了安全性，迭代器，取消，甚至还有 buffer。它不仅适合创建你自己的 async 序列，还适合作为你的 API 的返回值类型，如下面的代码段所示。如果需要处理可能产生错误的 async 序列？只要用`AsyncThrowingStream`类型即可。
 
 ```swift
 // 你好AsyncStream
@@ -690,10 +690,9 @@ extension ComplicationController: CLKComplicationDataSource {
 import ClockKit
 
 extension ComplicationController: CLKComplicationDataSource {
-    func getCurrentTimelineEntry(
-        for complication: CLKComplication,
-        withHandler handler: @escaping (CLKComplicationTimelineEntry?) -> Void
-    ) {
+    func currentTimelineEntry(
+        for complication: CLKComplication
+    ) async -> CLKComplicationTimelineEntry? {
         let date = Date()
         let thumbnail = try? await self.viewModel.fetchThumbnail(for: post.id)
         guard let thumbnail = thumbnail else {
@@ -791,3 +790,10 @@ extension ViewController: PeerSyncDelegate {
 
 以上就是关于 Swift 中的 async/await 介绍的全部了。我们讲了 async/await 在运行时的工作原理，以及如何在你的工程或框架中使用它们。我们展示了 SDK 中已有的 async API，也展示了如何把已有代码和 async 方法衔接起来使用。async/await 是 Swift 并发的基石，我们期待你把它们用起来。感谢你的阅读。
 
+### 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
