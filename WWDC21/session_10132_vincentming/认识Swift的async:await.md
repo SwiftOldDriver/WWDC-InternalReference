@@ -1,4 +1,4 @@
-# 使用Swift的Async/Await
+# 认识 Swift 的 Async/Await
 
 作为 iOS 程序员，相信大家都用过很多使用完成回调的代码，比如 UIKit 中的 `dismiss(animated:completion:)` 方法，在关闭视图控制器后执行回调，或者 AVPlayer 的 `func seek(to:completionHandler:)` 方法，在播放器跳转完成后执行回调。
 
@@ -103,9 +103,7 @@ func fetchThumbnail(for id: String) async throws -> UIImage {
 
 接着我们再看看图片的缩略图是如何获得的。注意，这里 await 后面跟随的是`UIImage.thumbnail`属性，而不是一个方法。是的，我们还可以把一个属性声明成`async属性`，这样就可以利用 await 来简化异步处理了。
 
-### async属性
-
-async属性，需要有明确的getter，并且用 get async 修饰，在其内部可以用 await 返回结果。其次，async 属性不能有 setter，即只能是可读属性。
+async属性，需要有明确的getter，并且用 get async 修饰，在其内部可以用 await 返回结果。其次，async 属性不能有 setter，即只能是可读属性。具体示例如下面代码段所示：
 
 ```swift
 extension UIImage {
@@ -118,9 +116,27 @@ extension UIImage {
 }
 ```
 
-### async序列
+### async函数背后的原理
 
-如下面代码所示，await 还可以用在 for 循环中，来遍历 async 序列 (async sequence)。async 序列就像普通序列一样，唯一区别是它是异步提供其元素供我们使用的。所以获取其下一个元素必须标记 await 关键词，表明这里是异步的。
+接下来，我们需要理解 async 函数背后的原理。
+
+先来看看普通函数执行流程。如下图所示，当`fetchThumbnail`调用`thumbnailURLRequest`时，同时也将线程控制权交给了后者。而`thumbnailURLRequest`执行结束后，则会主动交回控制权给调用它的`fetchThumbnail`，从而继续执行前者的逻辑。普通函数交出对线程的控制权的唯一方式，是该函数执行结束。而其调用者，这里的`fetchThumbnail`，则是其唯一可以交回控制权的对象。
+
+![](https://images.xiaozhuanlan.com/photo/2021/969c3ad2f149a411fad557cb22ae3a35.png)
+
+调用 async 函数时，控制权的传递则与之不同。如下图所示，`fetchThumbnail`调用 async 方法`data(for: request)`时，同时也将线程控制权交给了后者。`data(for: request)`在执行过程中，可能会挂起，并把控制权交给操作系统，而不是它的调用者`fetchThumbnail`，当 async 方法挂起时，其调用者同时也被挂起了。
+
+函数通过挂起，告诉操作系统：我知道你有很多事情要做，你来决定做什么吧！多么具有合作精神。当函数挂起时，操作系统可以把释放出来的资源拿去做其他事情，比如响应用户的按钮点击行为、喜欢一个评论等。在未来某个时间点，系统可能会决定当前最重要的工作就是继续执行之前挂起的函数。此时async函数重新获得线程的控制权，并接着执行自己的任务，如果需要，它还可以再次挂起，想多少次都行。不过，标记 async 的函数只是有可能会挂起，不代表一定会。同理如果你在代码里看到`await`，也不代表在此处一定会挂起。当async方法执行完毕后，它会把控制权再交还给它的调用者`fetchThumbnail`，并继续执行直到结束退出，从而完成整个 async 函数的调用过程。
+
+![](https://images.xiaozhuanlan.com/photo/2021/0bc4943879c9aa2ea82e0c1c4a00ea4f.png)
+
+需要注意的是，在 async 函数挂起时，程序的状态可能会发生显著的变化。当然对于完成回调也是如此，但由于它会缩进代码，所以你会更容易注意到这些变化。所以使用`async/await`时，要留意 await 关键词，它表明当前函数可能在这里挂起，而不是畅通无阻的执行下去，甚至从挂起恢复回来时，函数可能跑到另外一个线程上去了。关于需要注意的这些事项，请参考[Session 10133 - 用Swift的actors保护可变状态](https://developer.apple.com/videos/play/wwdc2021/10133/)。
+
+总结一下，当你标记一个函数为`async`时，同时意味着它可以挂起。在 async 函数中，使用`await`关键词标记在哪里可以一次或多次挂起。当 async 函数挂起时，线程并未阻塞，系统会自由安排其他任务。有时后启动的任务，可能被先执行。即你的程序状态可能在挂起时发生显著变化。当 async 函数恢复执行时，其返回的结果会自然融入到 async 函数的调用者，并在先前挂起的地方接续执行。
+
+### 认识 Async 序列
+
+获取缩略图的例子中，还有以下代码段，把 await 用在了 for 循环中，这种可以在循环中 await 的序列，我们称之为来 async 序列 (async sequence)。我们可以像使用普通序列那样使用 async 序列，唯一区别是它所提供的元素是通过异步的方式交付的。也正因为其是异步交付，所以需要使用 await 关键词来获取下一个元素。
 
 ```swift
 for await id in staticImageIDsURL.lines {
@@ -130,7 +146,7 @@ for await id in staticImageIDsURL.lines {
 let result = await collage.draw()
 ```
 
-我们来看看下面这个有趣的例子。第一行`endpointURL`的内容是最近的地震信息。通常下载数据是个异步任务，消耗一定时间。但这里，我们不想等到全部都下载好，相反我们想边接收信息边展示它们。这就要用到新的`async/await`特性了。我们处理的是 csv 格式的文件，它是由逗号分隔而成的格式化文本，每一行(line)文本是完整的一行(row)数据。因为由很多行文本组成的 async 序列会释放出它收到的每一行文本，所以我们有机会随着收到数据的进度动态把它们呈现出来，让程序用起来响应迅速跟手。
+我们再来看看下面这个有趣的例子。第一行`endpointURL`的内容是最近的地震信息。通常下载数据是个异步任务，消耗一定时间。但这里，我们不想等到全部都下载好，相反我们想边接收信息边展示它们。这就要用到新的`async/await`特性了。我们处理的是 csv 格式的文件，它是由逗号分隔而成的格式化文本，每一行(line)文本是完整的一行(row)数据。因为由很多行文本组成的 async 序列会释放出它收到的每一行文本，所以我们有机会随着收到数据的进度动态把它们呈现出来，让程序用起来响应迅速跟手。
 
 更棒的是，你可以像处理熟悉的普通序列那样处理这个新的异步场景。比如，你可以使用`for-await-in`语法来遍历 async 序列，而像`map`、`filter`、`reduce`以及下面代码中的`dropFirst`等函数，去处理 async 序列。
 
@@ -354,23 +370,7 @@ public struct AsyncStream<Element>: AsyncSequence {
 
 async 序列是非常强大的工具，它既安全，又容易上手，适合处理产生多个异步值的场景。如果你会用序列，那么你已经会用 async 序列了。非常期待你把 async 序列应用到自己的代码中。
 
-### async函数背后的原理
-
-我们接着来探究下 async 函数背后的原理。先来看看普通函数执行流程。如下图所示，当`fetchThumbnail`调用`thumbnailURLRequest`时，同时也将线程控制权交给了后者。而`thumbnailURLRequest`执行结束后，则会主动交回控制权给调用它的`fetchThumbnail`，从而继续执行前者的逻辑。普通函数交出对线程的控制权的唯一方式，是该函数执行结束。而其调用者，这里的`fetchThumbnail`，则是其唯一可以交回控制权的对象。
-
-![](https://images.xiaozhuanlan.com/photo/2021/969c3ad2f149a411fad557cb22ae3a35.png)
-
-调用 async 函数时，控制权的传递则与之不同。如下图所示，`fetchThumbnail`调用 async 方法`data(for: request)`时，同时也将线程控制权交给了后者。`data(for: request)`在执行过程中，可能会挂起，并把控制权交给操作系统，而不是它的调用者`fetchThumbnail`，当async方法挂起时，其调用者同时也被挂起了。
-
-函数通过挂起，告诉操作系统：我知道你有很多事情要做，你来决定做什么吧！多么具有合作精神。当函数挂起时，操作系统可以把释放出来的资源拿去做其他事情，比如响应用户的按钮点击行为、喜欢一个评论等。在未来某个时间点，系统可能会决定当前最重要的工作就是继续执行之前挂起的函数。此时async函数重新获得线程的控制权，并接着执行自己的任务，如果需要，它还可以再次挂起，想多少次都行。不过，标记 async 的函数只是有可能会挂起，不代表一定会。同理如果你在代码里看到`await`，也不代表在此处一定会挂起。当async方法执行完毕后，它会把控制权再交还给它的调用者`fetchThumbnail`，并继续执行直到结束退出，从而完成整个 async 函数的调用过程。
-
-![](https://images.xiaozhuanlan.com/photo/2021/0bc4943879c9aa2ea82e0c1c4a00ea4f.png)
-
-需要注意的是，在 async 函数挂起时，程序的状态可能会发生显著的变化。当然对于完成回调也是如此，但由于它会缩进代码，所以你会更容易注意到这些变化。所以使用`async/await`时，要留意 await 关键词，它表明当前函数可能在这里挂起，而不是畅通无阻的执行下去，甚至从挂起恢复回来时，函数可能跑到另外一个线程上去了。关于需要注意的这些事项，请参考[Session 10133 - 用Swift的actors保护可变状态](https://developer.apple.com/videos/play/wwdc2021/10133/)。
-
-总结一下，当你标记一个函数为`async`时，同时意味着它可以挂起。在 async 函数中，使用`await`关键词标记在哪里可以一次或多次挂起。当 async 函数挂起时，线程并未阻塞，系统会自由安排其他任务。有时后启动的任务，可能被先执行。即你的程序状态可能在挂起时发生显著变化。当 async 函数恢复执行时，其返回的结果会自然融入到 async 函数的调用者，并在先前挂起的地方接续执行。
-
-### 在URLSession中使用async/await
+### 在 URLSession 中使用 async/await
 
 Swift并发的优点是可以让你的 代码线性化、简洁，同时支持原生的错误处理。接着我们看看 iOS 15 和 macOS Monterey 给系统网络库 URLSession 带来了哪些 Swift 并发特性，如何在 URLSession 中使用 async/await。下图是我们要做的 demo 程序。它是个共享可爱狗狗图片的应用，用户还可以给图片点赞。
 
@@ -399,7 +399,7 @@ func fetchPhoto(url: URL, completionHandler: @escaping (UIImage?, Error?) -> Voi
 
 首先分析下控制流的方向，如下图所示，首先创建了 URLSession 的`dataTask`，然后跳到最后一行执行`task.resume()`方法，在 dataTask 方法的完成回调中，首先处理可能存在的错误，再处理获取到的数据，最后从 DispatchQueue 中的完成回调中跳出。可以看到代码的控制流在跳来跳去。这还只是一个最简单的任务，可想而知如果任务复杂时，代码控制流会多么混乱而难以追踪。
 
-再来看看线程，对于这么一小段代码而言，竟然出奇的复杂。总共有3个不同的执行上下文。最外层可能执行在任意线程，或者是该方法的调用者所在的队列，而URLSessionTask的完成回调则执行在 session 的代理队列上，而最终的完成回调执行在主队列上。而对于线程问题，编译器无能为力，所以作为开发者的我们要格外小心，去避免线程相关的问题，比如数据争用。这段代码还有至少3个错误：
+再来看看线程，对于这么一小段代码而言，竟然出奇的复杂。总共有 3 个不同的执行上下文。最外层可能执行在任意线程，或者是该方法的调用者所在的队列，而 URLSessionTask 的完成回调则执行在 session 的代理队列上，而最终的完成回调执行在主队列上。而对于线程问题，编译器无能为力，所以作为开发者的我们要格外小心，去避免线程相关的问题，比如数据争用。这段代码还有至少 3 个错误：
 
    1. 第一个完成回调后缺少return，导致如果发生错误，完成回调被调用了两次；
    2. 第一个和第三个完成回调没有执行在主队列上，这可能引起潜在的bug，比如触发了UI更新；
@@ -550,7 +550,7 @@ func bytes(for request: URLRequest, delegate: URLSessionTaskDelegate?)
 
 ![](https://images.xiaozhuanlan.com/photo/2021/c51283a4d26e8b4a9cfe914b755efe2e.png)
 
-接下来我们再点赞一张图片，会触发登陆界面弹起。当登陆完成后，会看到该图标被成功标记为已点赞。
+接下来我们再点赞一张图片，会触发登陆界面弹起。当登陆完成后，会看到该图标被成功标记为已点赞。至此，我们成功的完成了狗狗图片 demo 程序的实时点赞能力。
 
 ### 如何在你的工程中使用`async/await`
 
@@ -598,7 +598,7 @@ struct ThumbnailView: View {
 }
 ```
 
-我们把完成回调去掉，使用`try?`和`await`来衔接`fetchThumbnail`的调用。但是编译的时候代码报错了，下图中的报错提示我们" async 方法不能使用在不支持并行的上下文中"。这里，`onAppear`接受的是普通的同步的闭包，并不接受我们的异步代码。
+我们把完成回调去掉，使用`try?`和`await`来衔接`fetchThumbnail`的调用。但是编译的时候代码报错了，下图中的报错提示我们"async 方法不能使用在不支持并行的上下文中"。这里，`onAppear`接受的是普通的同步的闭包，并不接受我们的异步代码。
 
 ![](https://images.xiaozhuanlan.com/photo/2021/11582c0fd132d216640f3ae8e17400ff.png)
 
