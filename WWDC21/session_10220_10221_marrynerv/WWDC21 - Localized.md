@@ -66,7 +66,11 @@ NSLocalizedStringWithDefaultValue(@"key", @"tbl", @"bundle", @"val", @"comment")
 swift中则已经已经改为了单独的一个函数。
 ``` swift
 // Foundation
-public func NSLocalizedString(_ key: String, tableName: String? = nil, bundle: Bundle = Bundle.main, value: String = "", comment: String) -> String
+public func NSLocalizedString(_ key: String, 
+                              tableName: String? = nil, 
+                              bundle: Bundle = Bundle.main, 
+                              value: String = "", 
+                              comment: String) -> String
 ```
 - - - -
 ### 现存缺陷
@@ -85,7 +89,9 @@ SwiftUI 中可以直接使用本地化中的 key。系统会根据 key 自动在
 Button("Key") { ... }
 ```
 Storyboard 可以在控件可视化的属性设置相应的 key。
+
 ![](https://images.xiaozhuanlan.com/photo/2021/7c96c64b1c5cdd2943e44f0008253659.png)
+
 其他地方可以使用专用方法。
 ```swift
 // 旧api
@@ -137,16 +143,16 @@ Text("\(ticketCount) Ordered", comment: "Order summary: total number of tickets 
 指定文件名获取本地化文本。
 ```swift
 Text("\(ticketCount) Ordered",
-talbeName: "UserProfile",
-comment: "Profile subtitle: total number of tickets ordered")
+     talbeName: "UserProfile",
+     comment: "Profile subtitle: total number of tickets ordered")
 ```
 指定包名获取本地化文本。
 ```swift
 String(localized: "Complete",
-bundle: Bundle(for: AnyClassInTicketKit.self),
-comment: "Standalone ticket status: ordder finalized")
+       bundle: Bundle(for: AnyClassInTicketKit.self),
+       comment: "Standalone ticket status: ordder finalized")
 ```
-与此同时，新的Xcode也有相应的功能功能更新，在 `Xcode -> Product -> Export / Import Localizations`中可以方便的导出/导入本地化文件，方便管理和使用。
+与此同时，新的 Xcode 也有相应的功能功能更新，在 `Xcode -> Product -> Export / Import Localizations`中可以方便的导出/导入本地化文件，方便管理和使用。
 导出的文件可以直观的显示相应的内容，方便和翻译人员配合合作。
 ![](https://images.xiaozhuanlan.com/photo/2021/a3afa56b60c7ac82aca08ba46ba66d28.png)
 > TIPS: 注意 key 的命名尽量避免空格，避免空格产生的文件导入/导出时字符串的匹配问题。  
@@ -188,10 +194,10 @@ Locale.current.currencySymbol
 swiftUI 中新增的 api，可以直接使用 format 来获取货币单位。
 ```swift
 Text("Total: \(price, format: .currency(code: "USD"))", 
-comment: "Order subtitle: total price of all tickets")
+     comment: "Order subtitle: total price of all tickets")
 // Total: $9.41
-Text("Total: \(price, format: .currency(code: "zh_Hans"))", 
-comment: "Order subtitle: total price of all tickets")
+Text("Total: \(price, format: .currency(code: "CNY"))", 
+     comment: "Order subtitle: total price of all tickets")
 // Total: ¥9.41
 ```
 更多内容请参考：[Formatters: Make data human-friendly - WWDC20 - Videos - Apple Developer](https://developer.apple.com/videos/play/wwdc2020/10160/)
