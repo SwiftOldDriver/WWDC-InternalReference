@@ -1,4 +1,8 @@
 # WWDC21 - 本地化功能上新
+
+> 作者：MarryNerV，iOS 开发，就职于百度，负责百度翻译 iOS 端开发。
+> 审核：刘栋，iOS 工程师，老司机技术周报编辑，就职于丁香园，熟悉音视频、图像处理相关
+
 ## 引言
 本地化，这个在开发中不起眼的**体力活**，在最新的 WWDC 中迎来的它的新特性，这将能帮助我们简化目前的本地化的操作。尽管国内的 app 并不会有很多的本地化需求，但是如果想要希望自己的 app 能够拓宽国际化的市场，或者支持多语言的需求，本地化就是必不可少的第一步。接下来，就让我们来一起看看本地化都有了哪些新变化。
 > 本文基于   
@@ -232,3 +236,11 @@ trailing == left
 > [Localization - Apple Developer](https://developer.apple.com/localization/)  
 > [Apple Developer Documentation](https://developer.apple.com/documentation/Xcode/localization)  
 > [About Internationalization and Localization](https://developer.apple.com/library/archive/documentation/MacOSX/Conceptual/BPInternational/Introduction/Introduction.html)  
+
+## 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
