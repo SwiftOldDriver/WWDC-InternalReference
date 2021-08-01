@@ -416,4 +416,10 @@ if cameraVideoDataOuput.availableVideoPixelFormatTypes.contains(kCVPixelFormatTy
 今年 WWDC 上公布的拍摄新能力，既有着对现有能力的完善（最近对焦距离，10-bit HDR 支持），也有着无需开发者适配的全局的能力（视频特效），还有着随着越来越多吃性能新功能后，Apple 对于拍摄性能上的一些思考和最佳实践。相信随着算力的进一步提升，实时拍摄的能力会越来越变得不可思议而令人期待！
 
 
+## 关注我们
 
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
