@@ -241,6 +241,6 @@ trailing == left
 
 我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
 
-![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3)
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
 
 **关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
