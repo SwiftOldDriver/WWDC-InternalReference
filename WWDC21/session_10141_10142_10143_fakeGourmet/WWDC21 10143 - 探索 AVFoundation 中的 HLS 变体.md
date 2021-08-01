@@ -1,6 +1,10 @@
 # WWDC21 10143 - 探索 AVFoundation 中的 HLS 变体
 
-![img](https://images.xiaozhuanlan.com/photo/2021/c6e24f2d0ee2c824724483db60f5aef0.png)
+> 作者：fakeGourmet，目前在字节跳动从事 iOS 开发，对音视频领域感兴趣。
+> 
+> 审核：jojotov, iOS 开发，SwiftGG 翻译组成员，目前任职字节跳动，负责抖音直播客户端相关工作。
+
+![](https://images.xiaozhuanlan.com/photo/2021/c6e24f2d0ee2c824724483db60f5aef0.png)
 
 # Overview
 
@@ -300,3 +304,11 @@ https://developer.apple.com/videos/play/wwdc2020/10655/
 https://developer.apple.com/streaming/
 
 https://blog.csdn.net/u014219492/article/details/110184490
+
+## 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
