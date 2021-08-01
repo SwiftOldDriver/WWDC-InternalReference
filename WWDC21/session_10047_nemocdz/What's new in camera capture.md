@@ -1,5 +1,9 @@
 # WWDC21 - 相机拍摄新变化
 
+> 作者：Nemo，目前在字节跳动剪映担任客户端开发。
+> 
+> 审核：折腾范儿_唯敬，iOS/前端 开发者，就职于阿里巴巴，喜欢研究跨平台动态化混合前端相关的内容，目前从事移动应用客户端/前端相关开发工作。
+
 [TOC]
 
 > WWDC21 Session 10047 - [What's new in camera capture](https://developer.apple.com/videos/play/wwdc2021/10047/) 
