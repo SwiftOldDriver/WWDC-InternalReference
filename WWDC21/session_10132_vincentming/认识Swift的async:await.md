@@ -3,6 +3,8 @@
 > 作者：VincentMing，目前在字节跳动剪映担任客户端开发。
 > 
 > 审核：四娘，iOS 开发，老司机技术周报成员。目前就职于格隆汇，对 Swift 和编译器相关领域感兴趣
+>
+> 本文基于 session 10132 - [Meet async/await in Swift](https://developer.apple.com/videos/play/wwdc2021/10132/) 整理
 
 作为 iOS 程序员，相信大家都用过很多使用完成回调的代码，比如 UIKit 中的 `dismiss(animated:completion:)` 方法，在关闭视图控制器后执行回调，或者 AVPlayer 的 `func seek(to:completionHandler:)` 方法，在播放器跳转完成后执行回调。
 
