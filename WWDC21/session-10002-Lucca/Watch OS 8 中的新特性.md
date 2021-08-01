@@ -689,3 +689,11 @@ struct SummaryView: View {
 # 总结
 
 上文是使用 SwiftUI 结合 HealthKit 快速构建一个训练类应用的代码教学，其代码实现非常简单，同时也使用到了一些 SwiftUI 和 watchOS 8 的新特性， 大家对 Wacth 比较感兴趣的话，也可以自己使用这些新特性构建一些简单的应用。
+
+## 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
