@@ -23,3 +23,4 @@ WWDC21 10143
 ## About Me
 
 > 作者：fakeGourmet，目前在字节跳动从事 iOS 开发，对音视频领域感兴趣。
+> 审核：jojotov, iOS 开发，SwiftGG 翻译组成员，目前任职字节跳动，负责抖音直播客户端相关工作。
