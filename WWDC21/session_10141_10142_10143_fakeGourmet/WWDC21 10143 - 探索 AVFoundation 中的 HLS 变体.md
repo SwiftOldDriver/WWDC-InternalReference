@@ -295,4 +295,20 @@ dwConfig.auxiliaryContentConfigurations = [auxContentConfig]
 
 # 结语
 
-AVAssetVariant 的
+AVAssetVariant 的引入很大程度上丰富了 HLS 下载的配置，同时也简化了之前很多额外的工作。有了这些方便的特性，相信在不久的将来对 HLS 下载的支持将会成为音视频 App 的标配。
+
+# 参考资料
+
+https://developer.apple.com/videos/play/wwdc2020/10655/
+
+https://developer.apple.com/streaming/
+
+https://blog.csdn.net/u014219492/article/details/110184490
+
+## 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
