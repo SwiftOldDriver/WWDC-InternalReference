@@ -114,7 +114,7 @@
 
 ![](https://images.xiaozhuanlan.com/photo/2021/4534b96a08936f813e83313decf5e47f.png)
 
-其中比较特殊的是 ``tracks`` 和 ``metada`` 属性，它们提供了更复杂的对象，可用来访问媒体资源的层次结构：
+其中比较特殊的是 ``tracks`` 和 ``metadata`` 属性，它们提供了更复杂的对象，可用来访问媒体资源的层次结构：
 
 ![](https://images.xiaozhuanlan.com/photo/2021/d1716a6b3706304e1c560e4f8a301a32.png)
 
