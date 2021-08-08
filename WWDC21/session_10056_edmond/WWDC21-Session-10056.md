@@ -1,11 +1,6 @@
----
-title: "WWDC21 - 让您的 iPad 与 iPhon 应用程序在 M1 的 Mac 上大放异彩"
-date: 2021-06-20T00:00:00+00:00
-draft: true 
-tags: [iOS', WWDC', 'Xcode']
-categories: ['iOS', 'WWDC']
-author: "土土Edmond木"
----
+> 作者：土土Edmond木, [CocoaPods 历险记](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzA5MTM1NTc2Ng==&action=getalbum&album_id=1477103239887142918) 作者，CS & 🎿、🏃‍♀️ 爱好者。
+> 
+> 审核：Parsifal，老司机技术周报负责人，微医集团移动诊疗团队负责人
 
 ![wwdc21-10210-00-background](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10056-banner.png)
 
@@ -14,11 +9,9 @@ author: "土土Edmond木"
 > 主讲人：Nils Beck
 
 
-
 ## 本文知识目录
 
 ![wwdc21-10056-table-content](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10056-table-content.png)
-
 
 
 ## 引言
@@ -35,7 +28,6 @@ author: "土土Edmond木"
 - 一些通用的最佳实践，将帮助您的应用程序在配备 M1 的 Mac 上大放异彩；
 - 在 `macOS Big Sur` 以及 `macOS Monterey` 的软件更新中所做的改进；
 - Mac App Store 部署的注意事项。
-
 
 
 ## API mappings
@@ -154,7 +146,7 @@ override func buildMenu(with builder: UIMenuBuilder) {
 
 有许多以 iPad 为中心的 API 可以帮助您的应用程序成为出色的 iPad 应用程序。这些都能在 Mac 上完美呈现。因此，通过制作出色的 iPad 应用程序，您还可以让您的应用程序在配备 M1 的 Mac 上变得更好。
 
-如果您的应用程序根据 `UIApplicationSupportsMultipleScenes` 的 `Info.plist` key 支持多个场景，每个场景将被转换成一个单独的 window，我们自动添加一个 `menu item` 来创建一个新场景。
+如果您的应用程序根据 `UIApplicationSupportsMultipleScenes` 的 `Info.plist` key 支持多个场景，每个场景将被转换成一个单独的，我们自动添加一个 `menu item` 来创建一个新场景。
 
 ![wwdc21-10056-6-multi-scene-01](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10056-6-multi-scene-01.png)
 
@@ -302,7 +294,6 @@ protocol PKPaymentAuthorizationControllerDelegate
 有关快捷方式的更多信息，请查看演讲 "[Meet Shortcuts for macOS](https://developer.apple.com/videos/play/wwdc2021/10232/)" and "[Design great actions for Shortcuts, Siri, and Suggestions](https://developer.apple.com/videos/play/wwdc2021/10283/)。
 
 
-
 ## Mac deployment
 
 有了上述这些工具，在 `Mac App Store` 将会有越来越多应用程序。事实上，大多数应用程序都是自动存在的。正如之前提到的，在大多数情况下，使用 Mac 是有意义的。即使是专为移动设计的蓝牙门锁应用程序，如果您刚好把手机落在家里，但您手上有带 M1 芯片的 Mac，也可能会很有帮助。因此，如果您之前选择退出 `Mac App Store` 是时候重新考虑了。
@@ -334,9 +325,14 @@ protocol PKPaymentAuthorizationControllerDelegate
 最后，欢迎使用 Mac！去验证您的应用程序并选择加入。
 请记住，随着您不断改进 iPad 和 iPhone 应用程序，您也在使用改进配置了 M1 的 Mac 上的这些应用程序。
 
-
-
 ## 总结
 
 本文围绕如何让您的 iPad 和 iPhone 的应用程序在 M1 的 Mac 上有更好的使用体验。对此分了四个章节展开，有系统升级带来的优化，API 映射功能的更佳丰富，同时还提供了大量的最佳实践。通过这些内容和相关视频的了解，相信您的应用程序在使用 M1 的 Mac 上能够大放异彩。
 
+## 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
