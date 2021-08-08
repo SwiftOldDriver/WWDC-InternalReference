@@ -1,5 +1,8 @@
 ### About Me
-土土Edmond木, [CocoaPods 历险记](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzA5MTM1NTc2Ng==&action=getalbum&album_id=1477103239887142918) 作者，CS & 🎿、🏃‍♀️ 爱好者。
+
+> 作者：土土Edmond木, [CocoaPods 历险记](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzA5MTM1NTc2Ng==&action=getalbum&album_id=1477103239887142918) 作者，CS & 🎿、🏃‍♀️ 爱好者。
+> 
+> 审核：Parsifal，老司机技术周报负责人，微医集团移动诊疗团队负责人
 
 ### 标题
 
