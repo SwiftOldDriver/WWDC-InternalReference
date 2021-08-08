@@ -7,3 +7,5 @@ WWDC 21 10267 一窥 Xcode Cloud
 
 ## About Me
 > 作者：sunset, iOS 开发，Swift GG 翻译组成员。
+>
+> 审核：红纸，iOS 开发，老司机技术周报编辑，就职于淘系技术部
