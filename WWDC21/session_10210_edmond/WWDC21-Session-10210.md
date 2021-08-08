@@ -1,16 +1,17 @@
-# WWDC21 - 探索 Xcode 项目中构建配置的高级技巧
+# 【WWDC21 10210】探索 Xcode 项目中构建配置的高级技巧
+
+> 作者：Edmond, [CocoaPods 历险记](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzA5MTM1NTc2Ng==&action=getalbum&album_id=1477103239887142918) 作者，CS & 长跑爱好者，目前对 Bazel 感兴趣。
+> 
+> 审核：红纸，iOS 开发，老司机技术周报编辑，就职于淘系技术部
 
 ![wwdc21-10210-00-background](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-00-background.png)
 
 > WWDC21 Session 10210 - [Explore advanced project configuration in Xcode](https://developer.apple.com/videos/play/wwdc2021/10210/)。由于官方视频资源有问题，可访问 Youtube [链接](https://www.youtube.com/watch?v=wxISCtR0Po4)。
 
 
-
 ## 本文知识目录
 
 ![Explore advanced project configuration in Xcode](https://gitee.com/looseyi/blog-image/raw/master/uPic/Explore%20advanced%20project%20configuration%20in%20Xcode.png)
-
-
 
 ## 引言
 
@@ -475,3 +476,10 @@ Xcode 提供的另一种管理 Build Settings 的机制是 `configuration settin
 - 了解如何通过根据依赖关系顺序并行构建目标来改进项目配置和构建性能，如何正确使用 `Build Rules` 和 `Build Phases`，以及指定依赖关系的重要性。
 - 深入研究了 `Build Settings`、如何使用 build Settings files 以及更轻松地管理它们，并深入研究了它们的语法及其提供的所有构造。
 
+## 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
