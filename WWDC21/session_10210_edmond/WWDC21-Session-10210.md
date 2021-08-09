@@ -4,14 +4,14 @@
 > 
 > 审核：红纸，iOS 开发，老司机技术周报编辑，就职于淘系技术部
 
-![wwdc21-10210-00-background](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-00-background.png)
+![wwdc21-10210-00-background](https://images.xiaozhuanlan.com/photo/2021/3eff8b40d06b662facffc19d4a3ea91d.png)
 
 > WWDC21 Session 10210 - [Explore advanced project configuration in Xcode](https://developer.apple.com/videos/play/wwdc2021/10210/)。由于官方视频资源有问题，可访问 Youtube [链接](https://www.youtube.com/watch?v=wxISCtR0Po4)。
 
 
 ## 本文知识目录
 
-![Explore advanced project configuration in Xcode](https://gitee.com/looseyi/blog-image/raw/master/uPic/Explore%20advanced%20project%20configuration%20in%20Xcode.png)
+![](https://images.xiaozhuanlan.com/photo/2021/6ca397f8b68b3035436787aab93c0134.png)
 
 ## 引言
 
@@ -19,7 +19,7 @@
 
 本文将重点分三个主题展开：
 
-![wwdc21-10210-01-table](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-01-table.png)
+![wwdc21-10210-01-table](https://images.xiaozhuanlan.com/photo/2021/f98f1adba4796982c6eee96163c675d8.png)
 
 1. 讨论 multiplatform 项目和 Xcode 13 对于 `multiplatform framework` target 的支持。
 2. 介绍 target 的 scheme 设置、依赖管理、`Build Phases` 和 `Build Rules`，并提供了最佳实践。
@@ -31,13 +31,13 @@
 
 在整个演讲中，我们将使用一个名为 Fruta 的 multiplatform 项目来展示如何将这些技术应用到真实项目中。
 
-![wwdc21-10210-02-xcode](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-02-multi-platform-code.png)
+![wwdc21-10210-02-xcode](https://images.xiaozhuanlan.com/photo/2021/d652faa97c677d43c735b20ec5936055.png)
 
 > Tips: 可从官方下载 Fruta 项目的 [SampleCode](https://developer.apple.com/documentation/swiftui/fruta_building_a_feature-rich_app_with_swiftui)，不过与本文中的项目有所出入。
 
 首先讨论的是 `multiplatform frameworks`，它是由 Xcode 13 的带来的一项新功能。
 
-![wwdc21-10210-03-multi-platform-feature](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-03-multi-platform-feature.png)
+![wwdc21-10210-03-multi-platform-feature](https://images.xiaozhuanlan.com/photo/2021/17642973b3315b9954791d6f65e56c79.png)
 
 `multiplatform frameworks` 允许我们将多个框架合并为一个框架，并提供了以下优点：
 
@@ -68,32 +68,32 @@
 
 Fruta 是一个多平台应用程序，专为 macOS、iOS 和 watchOS 构建。
 
-![wwdc21-10210-04-multi-platform-app](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-04-multi-platform-app.png)
+![wwdc21-10210-04-multi-platform-app](https://images.xiaozhuanlan.com/photo/2021/a24a4d54d9a7438b9a7c7387fcbe0d8d.png)
 
 它还具有三个 framework target，每个平台一个，它们之间共享部分代码。另外值得注意的是，还有一份只能在 macOS 上编译的文件。
 
-![wwdc21-10210-05-multi-platform-targets](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-05-multi-platform-targets.png)
+![wwdc21-10210-05-multi-platform-targets](https://images.xiaozhuanlan.com/photo/2021/2df3fdde3a09a98cced486e973b7b7d9.png)
 
 维护三个独立的 framework 可能会带来挑战，例如保持 Build Settings 同步，并确保所有源文件都正确添加到编译源的 Build Phases 中。
 
 为了应对这些挑战，先将我们的一个 framework 转换为 `multiplatform framework`。首先让我们导航到 macOS framework target 的 Build Settings 选项卡。 接下来定位到 Build Settings 中的 **Supported Platforms** 设置项，并选择 **Any Platform** 来配置 framework 以针对所有平台构建。
 
-![wwdc21-10210-06-multi-platform-buildSettings-support-platforms](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-06-multi-platform-buildSettings-support-platforms.png)
+![wwdc21-10210-06-multi-platform-buildSettings-support-platforms](https://images.xiaozhuanlan.com/photo/2021/e90d28e0d16a8682798b88ed73f23d29.png)
 修改之后，您还可以看到 **Allow Multiplatform Builds** 已自动设置为 "**Yes**”。这会通知构建系统根据需要为其每个受支持的平台构建此 target 一次。既然这是一个 multiplatform framework target，回想一下原始 macOS framework 上有一个额外的文件，它只能为 macOS 构建时构建。为此，我们可以添加一个平台过滤器来指定这个文件应该只为 macOS 构建。
 
-![wwdc21-10210-08-multi-platform-buildPhases-Filters](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-08-multi-platform-buildPhases-Filters.png)
+![wwdc21-10210-08-multi-platform-buildPhases-Filters](https://images.xiaozhuanlan.com/photo/2021/47de679695c10c6edcb3b7051b4eb261.png)
 
 切换到 `Build Phases` 选项卡，展开 Compile Sources 构建阶段，找到 `Ingredient+macOS.swift` 文件并单击“**Filter**” 项，取消选中除 macOS 之外的所有内容，可以快速为 macOS 构建。配置了新的 multiplatform target 之后，我们可以删除其他两个 frameworks。
 
-![wwdc21-10210-09-multi-platform-buildSettings-delete](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-09-multi-platform-buildSettings-delete.png)
+![wwdc21-10210-09-multi-platform-buildSettings-delete](https://images.xiaozhuanlan.com/photo/2021/6a2e8a74db801bed50f73eb5671166fa.png)
 
 此外，由于我们只有一个framework，我们必须配置所有应用程序以链接和嵌入该新目标。而 macOS 应用程序已经配置了 Multiplatform。我们需要转到每个应用程序 Target 的 **General** 选项卡，并将 framework 添加到 `Frameworks and Libraries Build Phases` 中。
 
-![wwdc21-10210-10-multi-platform-buildSettings-frameworks](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-10-multi-platform-buildSettings-frameworks.png)
+![wwdc21-10210-10-multi-platform-buildSettings-frameworks](https://images.xiaozhuanlan.com/photo/2021/dc2d71fcc31c78b1d01e74a4db9098c1.png)
 
 以上就是 Xcode 13 中的 multiplatform frameworks，小结一下：
 
-![wwdc21-10210-11-multi-platform-summary](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-11-multi-platform-summary.png)
+![wwdc21-10210-11-multi-platform-summary](https://images.xiaozhuanlan.com/photo/2021/9b4331ad152ba6d3785758b950dd2aa2.png)
 
 1. 基于 macOS framework target 将其改造为 multiplatform framework；
 2. 使用 `platform filter` 来过滤各平台独有的代码和资源文件；
@@ -111,11 +111,11 @@ Fruta 是一个多平台应用程序，专为 macOS、iOS 和 watchOS 构建。
 
 首先，让我们看一下该 Scheme 的 `Build Options`，单击 Scheme 选择器进编辑，然后转到 Build 部分配置一些简单的东西。
 
-![wwdc21-10210-12-project-setting-buildOrder](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-12-project-setting-buildOrder.png)
+![wwdc21-10210-12-project-setting-buildOrder](https://images.xiaozhuanlan.com/photo/2021/dae0f36119caa8f6131a2fef81439665.png)
 
 对于 Build Order，我们建议选择 **Dependency Order**，这样项目的 target 将根据依赖关系图并行构建。这可以极大地提高多核构建性能，还可以让您更快地从持续集成中获得结果。
 
-![wwdc21-10210-13-project-setting-buildOrder-manual](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-13-project-setting-buildOrder-manual.png)
+![wwdc21-10210-13-project-setting-buildOrder-manual](https://images.xiaozhuanlan.com/photo/2021/08f4cac92c14e3a1828f52912c402718.png)
 
 相比之下，不推荐使用 **Manual Order**。使用此选项会减慢您的构建速度，并且当 Scheme 中列出的 target 顺序与您的 Build Phases 中定义的 target 依赖不一致时，可能会导致循环依赖错误。亦或者 Scheme 中列出的 target 顺序与 **Find Implicit Dependencies** 生成依赖关系不同时，同样会造成依赖冲突。
 
@@ -131,7 +131,7 @@ Fruta 是一个多平台应用程序，专为 macOS、iOS 和 watchOS 构建。
 
 ### Dependencies
 
-![wwdc21-10210-13-scheme-build-options-dependency](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-13-scheme-build-options-dependency.gif)
+![](https://images.xiaozhuanlan.com/photo/2021/255f310cb8ded4255f08c52ec4762220.gif)
 
 Xcode 是如何判别 task 之间的依赖关系，主要通过下面 5 类方式：
 
@@ -151,13 +151,13 @@ Scheme Build Options 中的另一个重要设置是 **Find Implicit Dependencies
 
 当不同 project 中的 target 存在关联关系时，该特性非常有效。当不同 project 之间无法添加显式目标依赖时，相比于使用 `manual order` 来指定 target 构建顺序的方式，此时启用 `Find Implicit Dependencies` 和 `Dependency Order` 通常是更好的解决方案。
 
-![wwdc21-10210-13-scheme-find-implict-dependencies](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-13-scheme-find-implict-dependencies.png)
+![wwdc21-10210-13-scheme-find-implict-dependencies](https://images.xiaozhuanlan.com/photo/2021/195b57fef1b9199e5f61e7a801b9f41e.png)
 
 ### `Build Phases` & `Build Rules`
 
 现在将从项目的 targets 列表中选择 SmoothieKit，然后选择 `Build Phases` 选项卡。这里我们有一个 Process Recipes 的 `Script Phase`，其中包含一些自定义构建逻辑。
 
-![wwdc21-10210-14-buildPhase-recipes](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-14-buildPhase-recipes.png)
+![](https://images.xiaozhuanlan.com/photo/2021/d2e7abec091d2535d5265740b7a497df.png)
 
 这段脚本的职责之一是从多个配置文件中生成代码，每个输入有对应的输出文件，它们将按顺序依次处理。您可能会意识到这些计算是完全相互独立的，而现在 **Build Rules 允许我们通过并行执行来优化任务执行效率**。
 
@@ -167,7 +167,7 @@ Scheme Build Options 中的另一个重要设置是 **Find Implicit Dependencies
 
 让我们看看如何将这项工作提取到 `Build Rules` 中：
 
-![wwdc21-10210-15-buildRules](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-15-buildRules.png)
+![wwdc21-10210-15-buildRules](https://images.xiaozhuanlan.com/photo/2021/47c600ae6fd531a035b4430998cdedd4.png)
 
 切到 framework 项目编辑器的 `Build Rules` 选项卡，然后单击 **+** 以添加新的构建规则。然后输入文件通配符 `*.recipe`，对应我们希望处理的的文件类型的扩展名。接着添加依赖项，**注意：这里不需要向 `Build Rules` 添加任何额外的输入**，因为它会自动获取它处理的每个输入文件作为输入。但是，我们确实需要告诉构建系统所产生的输出文件的路径规则，在 `Output Files` 下新建一个输出路径：
 
@@ -180,7 +180,7 @@ $(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).compiledrecipe
 
 接着将 `Build Phase` 的 `Process Recipes` 阶段的脚本复制到 `Build Rules` 中。
 
-![wwdc21-10210-18-buildPhase-recipes](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-18-buildPhase-recipes.png)
+![wwdc21-10210-18-buildPhase-recipes](https://images.xiaozhuanlan.com/photo/2021/12b45dc8f699936ac6dc5c2f22d45ead.png)
 
 ```shell
 // BuildRules 
@@ -197,15 +197,14 @@ $(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).compiledrecipe
 
 最后，为了让构建系统将输入文件传播到 `Build Rules` 中，我需要将所有 `.recipe` 文件添加到 framework 的 `Comiple Source Build Phase` 中。
 
-![wwdc21-10210-21-recipes](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-21-recipes.gif)
-
+![](https://images.xiaozhuanlan.com/photo/2021/f5ec8dcea6fd59d70c95569ec7de7bf3.gif)
 
 
 #### `Shell Script`
 
-现在让我们回到 `Build Phases` 将多个文本文件的内容合并到一个文件中，这样可以在运行时更有效地在应用程序中加载。为了获得更好的代码管理体验，我将脚本保留在项目文件外部，并从此处的内联脚本编辑器中调用它们。![wwdc21-10210-19-package](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-19-package.png)
+现在让我们回到 `Build Phases` 将多个文本文件的内容合并到一个文件中，这样可以在运行时更有效地在应用程序中加载。为了获得更好的代码管理体验，我将脚本保留在项目文件外部，并从此处的内联脚本编辑器中调用它们。![wwdc21-10210-19-package](https://images.xiaozhuanlan.com/photo/2021/c4ef4f335612c5837fb6b8cb1bad5bbd.png)
 
-![wwdc21-10210-20-package-call](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-20-package-call.png)
+![wwdc21-10210-20-package-call](https://images.xiaozhuanlan.com/photo/2021/ba136d3e46d95b7e97c7f823d1a97ab4.png)
 
 因为我们需要一次处理所有输入以将它们合并为一个。在这种情况下，不合适使用 `Build Rules`，因为我们无法将其分解为可以并行运行的独立单元，因此将这项工作保留在 `Script Phases` 是有意义的。
 
@@ -217,8 +216,9 @@ $(DERIVED_FILE_DIR)/$(INPUT_FILE_BASE).compiledrecipe
 
 对于这个需要大量输入的特定脚本，我们可以使用 XCFilelist 通过外部文件管理这个输入列表，而不是一个一个地在项目文件中输入。
 
-![wwdc21-10210-22-fileLists](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-22-fileLists.gif)
+![](https://images.xiaozhuanlan.com/photo/2021/f6cc2936ec48b8dbff61ee925dae200d.gif)
 
+#### 示例文字
 完整的操作路径如上图，我们将 xcfilelist 作为指定的 **Input File List**。另外还需要指定 Output File List：
 
 ```shell
@@ -308,13 +308,15 @@ HEADER_OUTPUT_DIR // This specifies the output directory to which the input file
 
 现在，如果尝试构建项目，则会遇到问题。让我们去构建日志仔细看看。
 
-![wwdc21-10210-23-prebuild](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-23-prebuild.png)
+![wwdc21-10210-23-prebuild](https://images.xiaozhuanlan.com/photo/2021/b0804258f86e220b3f340130fa26f572.png)
 
 因为 SmoothieKit 是一个 multiplatform target，它构建了两次：一次用于 iOS，一次用于 watchOS，这意味着这些构建中的每一个都试图在同一路径上生成脚本阶段的输出。**这是不允许的，因为构建系统要求整个构建中只有一个任务可以在给定路径上产生输出。**
 
 有几种不同的方法可以解决这个问题。一种简单的解决方案是更改 `Script Phases` 的输出路径，以便每次构建目标时它都是唯一的。在这种情况下，可以考虑使用不同的 `Build Settings`，如 `DERIVED_FILE_DIR`，它是特定于平台的，可以使路径足够独特并解决冲突。但是，如果 `Script Phases` 正在执行的实际工作在每个 target 的上下文中是相同的，那只会导致相同的工作被执行两次。在这种情况下，将 `Scirpt Phase` 移动到共享 framework target 所依赖的 Aggregate target 中可能是更好的选择。
 
-![wwdc21-10210-28-Resources](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-28-Resources.gif)
+![](https://images.xiaozhuanlan.com/photo/2021/f98c414d11d930f3f12340e0fcd8705f.gif)
+
+
 
 这就是我们要为该项目做的事情：
 
@@ -341,19 +343,19 @@ HEADER_OUTPUT_DIR // This specifies the output directory to which the input file
 
 让我们看看如何使用 Build Settings 编辑器来管理我们项目中的设置。
 
-![wwdc21-10210-32-buildsetting-level](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-32-buildsetting-level.png)
+![wwdc21-10210-32-buildsetting-level](https://images.xiaozhuanlan.com/photo/2021/5b2bba3b8d03384c886a328e8a9c44a3.png)
 
 首先需要在项目导航器中选择对应的 Project 和 Target，并单击选项卡栏上的 `Build Settings` 选项卡。上图我们打开的是 Fruta Project -> Fruta macOS Target 的 Build Settings 编辑器。
 
 从这里，您可以添加新的 Build Settings 或修改现有的设置。您还可以通过打开快速帮助检查器来查找所选 `Build Settings` 的其他信息。
 
-![wwdc21-10210-33-buildsetting-quickhelp](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-33-buildsetting-quickhelp.png)
+![wwdc21-10210-33-buildsetting-quickhelp](https://images.xiaozhuanlan.com/photo/2021/23c61dc44f151e8893b4f9d3e19d7c3a.png)
 
 `Build Settings` 存在在多个 “级别” 的定义，可以通过单击上图中的 `Levels` 过滤器来可视化这些级别。您可以将其视为一个定义栈，settting 值从栈底到栈顶优先级逐级覆盖。
 
 下图中，每列代表了不同级别的 Build Settings 定义，它们从右到左进行 evaluation。
 
-![wwdc21-10210-33-buildsetting-colume](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-33-buildsetting-colume.png)
+![wwdc21-10210-33-buildsetting-colume](https://images.xiaozhuanlan.com/photo/2021/b19a849f9cf42c33724765a4957ae9b1.png)
 
 - 上图中红框的为默认值，由当前选择的 SDK 定义；
 - Project 级别的配置，由 configuration settings file 指定；
@@ -379,20 +381,20 @@ Xcode 提供的另一种管理 Build Settings 的机制是 `configuration settin
 
 #### Build setting definition with conditions
 
-![wwdc21-10210-34-buildsettings-conditions](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-34-buildsettings-conditions.png)
+![wwdc21-10210-34-buildsettings-conditions](https://images.xiaozhuanlan.com/photo/2021/6368f90f43ea785e5965c4c00687bdf4.png)
 
 最基本的 `Build Settings` 由名称、赋值运算符和值组成。您可以使用条件语法缩小 `Build Settings` 的值。条件设置使用方括号定义，支持的条件包括 `config`、`arch` 和 `sdk`。如上图中的 `sdk` 条件所示，通配符也可用于匹配目的。另外也可以使用熟悉的双斜线语法来添加注释。
 
 #### Build setting evaluation
 
-![wwdc21-10210-35-buildsettings-evaluation](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-35-buildsettings-evaluation.png)
+![wwdc21-10210-35-buildsettings-evaluation](https://images.xiaozhuanlan.com/photo/2021/491dc024a7be348f28fd2759cc843ac6.png)
 
 在此处的示例中，`MY_OTHER_BUILD_SETTING` 已设置为 YES。`MY_BUILD_SETTING_NAME` 的值使用 `$` 括号来引用 `MY_OTHER_BUILD_SETTING` 所生成的值。也可以在这里生成多个值，就像我们在 `MORE_SETTINGS` 中看到的那样。
 最后，您可以通过 `$(inherited)` 变量在保留现有值的情况下来添加新的附加值。这是一种方便的形式，因为您还可以使用 `Build Settings` 名称 `APPEND_TO_EXISTING_SETTINGS`。
 
 #### Build setting composition
 
-![wwdc21-10210-36-buildsettings-composition](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-36-buildsettings-composition.png)
+![wwdc21-10210-36-buildsettings-composition](https://images.xiaozhuanlan.com/photo/2021/3dace9e4e15fbb49743e503f32648381.png)
 
 `Build Settings` evalution 语法的另一个用途是将 `Build Settings` 从一组其他 `Build Settings` 组合在一起。
 
@@ -407,7 +409,7 @@ Xcode 提供的另一种管理 Build Settings 的机制是 `configuration settin
 
 **String operators**
 
-![wwdc21-10210-38-buildsettings-evaluation-operators-string](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-38-buildsettings-evaluation-operators-string.png)
+![wwdc21-10210-38-buildsettings-evaluation-operators-string](https://images.xiaozhuanlan.com/photo/2021/74888f803e1e03bfccfadfb9c9308a7f.png)
 
 支持的字符串运算符:
 - `quote`，它对字符串中的字符进行转义；
@@ -416,19 +418,19 @@ Xcode 提供的另一种管理 Build Settings 的机制是 `configuration settin
 
 **Path operators**
 
-![wwdc21-10210-39-buildsettings-evaluation-operators-path](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-39-buildsettings-evaluation-operators-path.png)
+![wwdc21-10210-39-buildsettings-evaluation-operators-path](https://images.xiaozhuanlan.com/photo/2021/9c48fb70636a8909a5864595acda231e.png)
 
 路径运算符可以用来获取目录、文件名、基本名称、后缀和标准化路径。
 
 **Replacement operators**
 
-![wwdc21-10210-40-buildsettings-evaluation-operators-replacement](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-40-buildsettings-evaluation-operators-replacement.png)
+![wwdc21-10210-40-buildsettings-evaluation-operators-replacement](https://images.xiaozhuanlan.com/photo/2021/4f1388e86861d09a41e605210f358ec0.png)
 
 对于每个路径运算符，都有一个替换的对应物，允许您替换值的一部分。还有一个默认操作符，如果 `Build Settings` 为空，它会提供替换值，否则它使用现有值。
 
 #### Including other configuration settings files
 
-![wwdc21-10210-41-buildsettings-including](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-41-buildsettings-including.png)
+![wwdc21-10210-41-buildsettings-including](https://images.xiaozhuanlan.com/photo/2021/1c8c4352733741725a59dcfb573fe078.png)
 
 要查看的最后一项是 `xcconfig` 文件的引用能力，它可在其他 `xcconfig` 文件中被引用。我们提供了两种机制：
 - 强制引用，它要求引用的 `xcconfig` 文件在于磁盘上一定存在。如果找不到该文件，则会产生编译器错误。  
@@ -442,7 +444,7 @@ Xcode 提供的另一种管理 Build Settings 的机制是 `configuration settin
 
 让我们来看看如何在真实场景中将所有这些信息放在一起。在这个例子中，我们将看看如何解决以下问题。在我们的开发机器上，编译器应该主动警告那些需要太长时间进行类型检查的表达式。但是，CI 机器速度较慢，因此应该增加表达式检查的时间。对于我们的解决方案，有三个 `configuration setting files`：debug、common 和 ci:
 
-![wwdc21-10210-43-xcconfig](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-43-xcconfig.png)
+![wwdc21-10210-43-xcconfig](https://images.xiaozhuanlan.com/photo/2021/a0896b2d8718c4288ad648518ba8e87d.png)
 
 **debug.xcconfig file**
 用于我们的调试构建，并通过 `OTHER_SWIFT_FLAGS` 设置将一些额外的标志传递给 Swift 编译器。
@@ -455,7 +457,7 @@ Xcode 提供的另一种管理 Build Settings 的机制是 `configuration settin
 
 最后，需要告诉 Xcode 如何将这些 xcconfig 文件应用到支持的配置级别。这是通过项目编辑器完成的。您可以在 Project 或 Target 级别应用项目中的任何配置文件，用于任何定义的 `Build settings`。
 
-![wwdc21-10210-44-example-configuration](https://gitee.com/looseyi/blog-image/raw/master/uPic/wwdc21-10210-44-example-configuration.png)
+![wwdc21-10210-44-example-configuration](https://images.xiaozhuanlan.com/photo/2021/c1d6d1737d1a8886a7ecf5feed3081a5.png)
 
 在这里，您可以看到 `debug.xcconfig` 文件正在 Project 级别应用于 Fruta 的调试配置。还有 `common.xcconfig` 文件应用这在多个 target 的配置中。
 
