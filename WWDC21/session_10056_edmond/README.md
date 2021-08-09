@@ -6,7 +6,7 @@
 
 ### 标题
 
-让您的 iPad 与 iPhon 应用程序在 M1 的 Mac 上大放异彩
+让您的 iPad 与 iPhone 应用程序在 M1 的 Mac 上大放异彩
 
 ### 简介
 
