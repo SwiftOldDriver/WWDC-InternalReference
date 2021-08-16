@@ -10,7 +10,7 @@
 
 无论是网络请求、磁盘 IO、视图刷新等，都消耗一定的时间才能完成相关操作。在这段时间内，程序通常有两种选择，要么停在原地并等待操作结果的返回，再执行后续逻辑，即同步调用；要么在这段时间执行其他任务，在耗时操作完成时执行先前注册的回调逻辑，即异步调用。同步调用会让代码写起来更简单，但可能浪费性能、甚至造成界面卡死等不好的用户体验。异步调用则可以更充分地利用系统资源，在相同时间内响应更多的任务，缺点则是当多个异步调用衔接或嵌套时，尤其涉及到错误处理时，往往会让代码变得复杂而难以驾驭。
 
-### 举个栗子🌰
+## 举个栗子🌰
 
 ![](https://images.xiaozhuanlan.com/photo/2021/3a4b33a3508e6d15a2aa65c20cea28d8.png)
 
@@ -81,7 +81,7 @@ func fetchThumbnail(for id: String, completion: @escaping (UIImage?, Error?) -> 
 
 如何让我们的代码更安全呢？我们可以使用标准库的`result`类型，不过这也会让代码更丑陋也更长一些。我们也可以使用类似`Futures`和`Promises`的技巧来让异步编程更容易驾驭，也更安全，比如热门的第三方库`PromiseKit`。但其实，我们可以做得更好，这就是 Swift 5.5 全新引入的`async/await`。
 
-### 用`async/await`改造我们的程序🧑🏻‍💻
+## 用`async/await`改造我们的程序🧑🏻‍💻
 
 闲话少说，使用`async/await`的完整版的代码如下所示。上个版本，我们需要约 20 行代码，有 5 层缩进结构；新版本只有 6 行代码，且只有一层代码结构，没有任何额外的缩进。当你忽略两行`guard/return`代码后，会发现新版本的代码，就像一段英文段落一样容易阅读理解：
 
@@ -122,7 +122,7 @@ extension UIImage {
 }
 ```
 
-### async函数背后的原理
+## async函数背后的原理
 
 接下来，我们需要理解 async 函数背后的原理。
 
@@ -140,7 +140,7 @@ extension UIImage {
 
 总结一下，当你标记一个函数为`async`时，同时意味着它可以挂起。在 async 函数中，使用`await`关键词标记在哪里可以一次或多次挂起。当 async 函数挂起时，线程并未阻塞，系统会自由安排其他任务。有时后启动的任务，可能被先执行。即你的程序状态可能在挂起时发生显著变化。当 async 函数恢复执行时，其返回的结果会自然融入到 async 函数的调用者，并在先前挂起的地方接续执行。
 
-### 认识 Async 序列
+## 认识 Async 序列
 
 获取缩略图的例子中，还有以下代码段，把 await 用在了 for 循环中，这种可以在循环中 await 的序列，我们称之为来 async 序列 (async sequence)。我们可以像使用普通序列那样使用 async 序列，唯一区别是它所提供的元素是通过异步的方式交付的。也正因为其是异步交付，所以需要使用 await 关键词来获取下一个元素。
 
@@ -314,7 +314,7 @@ let notification = await center.notifications(named: .NSPersistentStoreRemoteCha
 
 ![](https://images.xiaozhuanlan.com/photo/2021/478f40352eccf2189ba6b5491e5b27f1.png)
 
-### 如何创建自己的 async 序列
+## 如何创建自己的 async 序列
 
 前面提到的 API 都很酷，语法也非常简洁，但我如何创建自己的 async 序列呢？有几种方法来实现 async 序列，现在我们只关注怎么去适配已有的代码。有一些设计模式和 async 序列配合使用效果非常好，比如被调用多次的闭包，以及一些代理方法等。
 
@@ -376,7 +376,7 @@ public struct AsyncStream<Element>: AsyncSequence {
 
 async 序列是非常强大的工具，它既安全，又容易上手，适合处理产生多个异步值的场景。如果你会用序列，那么你已经会用 async 序列了。非常期待你把 async 序列应用到自己的代码中。
 
-### 在 URLSession 中使用 async/await
+## 在 URLSession 中使用 async/await
 
 Swift并发的优点是可以让你的 代码线性化、简洁，同时支持原生的错误处理。接着我们看看 iOS 15 和 macOS Monterey 给系统网络库 URLSession 带来了哪些 Swift 并发特性，如何在 URLSession 中使用 async/await。下图是我们要做的 demo 程序。它是个共享可爱狗狗图片的应用，用户还可以给图片点赞。
 
@@ -538,7 +538,7 @@ func bytes(for request: URLRequest, delegate: URLSessionTaskDelegate?)
 
 如下面这段代码所示，在 Objective-C 中，我们也提供了 delegate 属性，来实现类似的功能。注意这里的属性是强持有的，直到 task 执行完毕或失败结束。值得注意的是，task 代理不支持 background URLSession。如果一个方法同时在 session 代理和 task 代理都实现了，task 代理的方法才会被调用。
 
-```objectivec
+```objective-c
 // URLSessionTask的特定delegate
 
 @interface NSURLSessionTask: NSObject
@@ -558,7 +558,7 @@ func bytes(for request: URLRequest, delegate: URLSessionTaskDelegate?)
 
 接下来我们再点赞一张图片，会触发登陆界面弹起。当登陆完成后，会看到该图标被成功标记为已点赞。至此，我们成功的完成了狗狗图片 demo 程序的实时点赞能力。
 
-### 如何在你的工程中使用`async/await`
+## 如何在你的工程中使用`async/await`
 
 首先看看如何在测试 async 代码。我们希望测试 async 代码就像测试同步代码一样简单，XCTest 让这一切成为可能。
 
@@ -716,7 +716,7 @@ extension ComplicationController: CLKComplicationDataSource {
 > [Session 10146 - AVFoundation的最新更新](https://developer.apple.com/videos/play/wwdc2021/10146/)  
 > [Session 10054 - AppKit的最新更新](https://developer.apple.com/videos/play/wwdc2021/10054/)  
 
-### 如何写自己的 async 方法
+## 如何写自己的 async 方法
 
 前面讲到的都是用框架提供的 async 方法，如果想自己实现个 async 方法，要怎么做呢？我们来看下面这个使用完成回调的方法，如何改造成 async 方法。
 
@@ -792,11 +792,11 @@ extension ViewController: PeerSyncDelegate {
 }
 ```
 
-### 总结
+## 总结
 
 以上就是关于 Swift 中的 async/await 介绍的全部了。我们讲了 async/await 在运行时的工作原理，以及如何在你的工程或框架中使用它们。我们展示了 SDK 中已有的 async API，也展示了如何把已有代码和 async 方法衔接起来使用。async/await 是 Swift 并发的基石，我们期待你把它们用起来。感谢你的阅读。
 
-### 关注我们
+## 关注我们
 
 我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
 
