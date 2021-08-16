@@ -1,3 +1,5 @@
+![](https://cdn.nlark.com/yuque/0/2021/png/225346/1629118320565-c5bac0ee-9e7f-454c-8b2c-b972f4d89328.png)
+
 > 本文基于 [WWDC21 - What's new in Foundation](https://developer.apple.com/videos/play/wwdc2021/10109/) 进行梳理
 
 ​
