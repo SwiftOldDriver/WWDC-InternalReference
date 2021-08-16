@@ -1,12 +1,12 @@
 # 【WWDC21 10253】使用 Swift 特性 Result Builder 定制 DSL
 
-[TOC]
-
 > 作者：冬瓜, iOS 开发，SwiftGG 翻译组成员。公众号[「一瓜技术」](https://www.desgard.com/qrcode)作者。
 >
 > 审核：lordlp，iOS 开发者
 > 
 > 审核：方秋枋（mango）, 微信高级工程师，微信支付跨平台负责人，喜欢 Simple And Stupid 的代码。
+
+[TOC]
 
 ## 何为 DSL
 
