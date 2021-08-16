@@ -1,5 +1,3 @@
-# WWDC21 - 10252 打造拥有流畅体验的列表和集合视图
-
 > 作者：[Kam](https://kam-to.github.io)， iOS 软件开发者、资深摸鱼工程师，喜欢收集小比例汽车模型、打羽球，现供职于网易。
 >
 > 审核：
@@ -221,3 +219,11 @@ preparingThumbnail cost:	 0.005650997161865234 seconds
 ## 总结
 
 本文我们回顾了往年的 Diffable Data Source 基础和关于 hitchs 的 tech talk 等内容，了解 iOS 15 在 Diffable Data Source 和 cell prefetching 上的改进，也试用了 `UIImage` 两个甜品 API，希望这些知识都能被大家实践到产品上，构建性能更优的 List 和 Collection View。
+
+## 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
