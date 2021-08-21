@@ -18,6 +18,8 @@ Apple 首次在 WWDC2018 提出 ClassKit。支持 iOS 11.4+ 系统。
 ClassKit 可以让自己开发的 App 参与到一个虚拟教室里，需要和 Apple 推出的教育生态  [Apple School Manager and Managed Apple IDs](https://www.apple.com/education/it/) ，还有 Schoolwork App 配合使用。
 ClassKit 专门为教育类 App 设计，可以帮助减轻一些工作。举例：你要开发的 App 的功能之一是教师发布作业，作业内容是学生查看和编辑文档、答题，并且要记录学生们的学习情况（学习情况：每一个同学是否完成作业、观看时长、完成进度、答题正确率等）。使用 ClassKit 后，你就不需要再为上述情况写逻辑代码或者界面代码，也不需要修改已有的逻辑。教师可以直接在 SchoolWork App 上创建分配有关你 App 内容的教学活动，和查看学生进度。
 【WWDC18 Session 215】[Introducing ClassKit](https://developer.apple.com/videos/play/wwdc2018/215)
+
+(贴一篇比较好的解读 [iOS ClassKit.Framework](https://www.jianshu.com/p/95c995cb4f1e))
 ​
 
 
@@ -29,7 +31,7 @@ Apple 在 WWDC2018 发布的教育计划，教师需要使用 Apple School Manag
 
 - **国内教育类 App 现状，使用 ClassKit 的可行性**
 
-本人在国内互联网K12教育行业工作了五年经验，目前没有听过任何一家国内互联网教育公司使用 ClassKit 。😂
+本人在国内互联网K12教育行业工作了五年，目前没有听过任何一家国内互联网教育公司使用 ClassKit 。😂
 国内K12教育类 App 主要形式有：真人在线直播课、AI互动类直播课、录播课、绘本类、游戏类。教学活动，学习情况一般会直接展示在 App 内（排名、获奖等）用来激励学生学习兴趣。
 分析国内没使用 ClassKit 的主要原因：
 
@@ -47,7 +49,7 @@ Apple 在 WWDC2018 发布的教育计划，教师需要使用 Apple School Manag
 
 ---
 
-以下是 Session 10257 的具体内容
+以下是 [Session 10257](https://developer.apple.com/videos/play/wwdc2021/10257/) 的具体内容
 
 
 ## 1.回顾 Schoolwork App，如何与 ClassKit 一起使用
@@ -70,23 +72,23 @@ App Store 中目前有19万+个教育类 App。其中有很多 App 都使用了 
 ​
 
 ### 向文件添加进度数据的API：
-向文件添加进度数据的 API 是 CLSDataStore 中的 fetchActivity ，下图中是这个 API 的异步版本和异步替代版本。调用此 API 时需要传入文件的 URL ，然后会得到 CLSActivity ，获得 CLSActivity 后，就可以添加进度数据了。上述这些方法已经在基于上下文的 API 使用，同时相同的数据类型也可以在基于文件的 API 中使用。下文会具体介绍有哪些类型的进度数据。
+向文件添加进度数据的 API 是 CLSDataStore 中的 `fetchActivity` ，下图中是这个 API 的异步版本和异步替代版本。调用此 API 时需要传入文件的 URL ，然后会得到 CLSActivity ，获得 CLSActivity 后，就可以添加进度数据了。上述这些方法已经在基于上下文的 API 使用，同时相同的数据类型也可以在基于文件的 API 中使用。下文会具体介绍有哪些类型的进度数据。
 ![](https://i.loli.net/2021/07/24/vumCYobKIWxjykL.png#id=PEW06&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
 ### CLSActivity：
 CLSActivity 是包含所有进度数据的类，以下是所有可以添加到 CLSActivity 中的数据类型。
 ![](https://i.loli.net/2021/07/24/uXv6KTGbEZHxflJ.png#id=ksvNa&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
 #### 1.duration
-duration 是学生处理文件花费的时间，处理任何类型的文件都应该添加 duration。使用这个 API，只需要调用CLSActivity上的start和stop方法。
+`duration` 是学生处理文件花费的时间，处理任何类型的文件都应该添加 `duration`。使用这个 API，只需要调用 CLSActivity 上的 `start` 和 `stop` 方法。
 ![](https://i.loli.net/2021/07/24/h9V62CJZwlHjPXA.png#id=P7HLN&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
 #### 2.progress
-progress 的值介于0和1之间，如果想通过文件确定学生的进度，就可以使用 progress。举例：假设某个音频或视频文件，学生听了或看了50%，就可以将播放进度报告设置为0.5。要添加进度，可以直接设置 progress 属性值，
+如果想通过文件确定学生的进度，就可以使用 `progress`，`progress` 的值介于0和1之间。举例：假设某个音频或视频文件，学生听了或看了50%，就可以将播放进度报告设置为0.5。要添加进度，可以直接设置 `progress` 属性值，
 也可以添加某个从开始到结束的范围。可以放心多次添加重叠范围或相同范围，底层会处理以确保向学生和老师报告的进度是正确的。
 ![](https://i.loli.net/2021/07/24/lbMG9UaeAxDmvZT.png#id=wEus9&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
 #### 3.primaryActivityItem 和 additionalActivityItems
-如果想给学生和教师突显某些数据，可在 CLSActivity 上设置 primaryActivityItem 属性。添加了 primaryActivityItem 属性的数据会在 Schoolwork App 的UI中重点显示。
-还有一个 additionalActivityItems 属性。要添加 additionalActivityItem ，对 CLSActivity 调用 addAdditionalActivityItem 函数，并传入要添加的activityItem。
+如果想给学生和教师突显某些数据，可在 CLSActivity 上设置 `primaryActivityItem` 属性。添加了 `primaryActivityItem` 属性的数据会在 Schoolwork App 的UI中重点显示。
+还有一个 `additionalActivityItems` 属性。要添加 `additionalActivityItem` ，对 CLSActivity 调用 `addAdditionalActivityItem` 函数，并传入要添加的 `activityItem`。
 ![](https://i.loli.net/2021/07/24/V8pzKnsSh2HjbAY.png#id=Sf1cE&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
-primaryActivityItem 和 additionalActivityItem 属性包含以下三个 CLSActivityItem 的子类，可以将下述子类任意组合（一个或者多个或者全部）都添加到一个活动中：
+`primaryActivityItem` 和 `additionalActivityItem` 属性包含以下三个 CLSActivityItem 的子类，可以将下述子类任意组合（一个或者多个或者全部）都添加到一个活动中：
 **1）CLSBinaryItem。**
 表示任何二进制数据类型。举例：对于测验中的问题。可以用来表示学生得到了正确或错误的答案。
 **2）CLSQuantityItem。**
@@ -99,11 +101,11 @@ primaryActivityItem 和 additionalActivityItem 属性包含以下三个 CLSActiv
 上面介绍了可以添加的数据类型，现在来通过一个具体的示例来演示如何在 App中使用这个 API。这是一个可以打开和编辑文本的示例 App 。
 ![](https://i.loli.net/2021/07/24/dxhXeIuOaZqpF37.png#id=xwCBJ&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
 当学生打开文本文件时，启动计时器，然后学生开始阅读编辑文件。
-具体实现：调用 openFile 函数，启动计时器开始追踪时间。首先获取文件 URL 的 CLS 活动，获得活动后，调用 start() 方法开启定时器，然后调用 CLSDataStore.shared.save() 提交更改。
+具体实现：调用 `openFile` 函数，启动计时器开始追踪时间。首先获取文件 URL 的 CLS 活动，获得活动后，调用 `start()` 方法开启定时器，然后调用 `CLSDataStore.shared.save()` 提交更改。
 先在这里添加一个断点，稍后在debug时回到这个断点看看调用情况。
 ![](https://i.loli.net/2021/07/24/jkwiZ2CPERFyl4Y.png#id=qIfrl&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
-当学生关闭文件时，记录总字数、停止计时器并添加 primaryActivityItem。
-具体实现：根据文件 URL 调用 CLSDataStore.shared.fetchActivity 获得活动，如果该活动的 primaryActivityItem已经存在，直接进行更新；如果还没有，创建一个新的 CLSQuantityItem 。获得 CLSQuantityItem 后，将它设置为活动的 primaryActivityItem，也可以给活动添加 progress 。最后调用 stop() 方法停止计时器，这里一定要确保调用了 CLSDataStore.shared.save() 。如果没调用，就不会保留所做的任何更改。
+当学生关闭文件时，记录总字数、停止计时器并添加 `primaryActivityItem`。
+具体实现：根据文件 URL 调用 `CLSDataStore.shared.fetchActivity` 获得活动，如果该活动的 `primaryActivityItem` 已经存在，直接进行更新；如果还没有，创建一个新的 `CLSQuantityItem` 。获得 `CLSQuantityItem` 后，将它设置为活动的 `primaryActivityItem`，也可以给活动添加 `progress` 。最后调用 `stop()` 方法停止计时器，这里一定要确保调用了 `CLSDataStore.shared.save()` 。如果没调用，就不会保留所做的任何更改。
 然后在这里也添加一个断点。
 ![](https://i.loli.net/2021/07/24/iMKTehXYxnIFSGR.png#id=WMPbV&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
 上述的两个断点可以帮助我们调试提交的学生进度数据。
@@ -118,23 +120,23 @@ primaryActivityItem 和 additionalActivityItem 属性包含以下三个 CLSActiv
 ![](https://i.loli.net/2021/07/24/QhkwZfUn2XRSWD6.png#id=XjCYc&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
 点击右上角的 Create Assignment 按钮创建作业，添加具体内容，然后发布给班级同学。
 ![](https://i.loli.net/2021/07/24/SetjEXB1G5MsNDY.png#id=wm4xa&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
-创建完作业。回到 “Settings”，找到 “Developer”>“ClassKit API”并点击Student。转变角色成学生。
+创建完作业。回到 “Settings”，找到 “Developer”>“ClassKit API”并点击 Student。转变角色成学生。
 ![](https://i.loli.net/2021/07/24/4YMf5E2PlSVgO8q.png#id=egHLC&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
 回到 Schoolwork App，目前登录身份是学生。屏幕中间显示刚刚创建的作业，点击显示作业详情。
 ![](https://i.loli.net/2021/07/24/oBqSklwFTPiWJXh.png#id=IzP5g&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
 ![](https://i.loli.net/2021/07/24/eRU2VtvCZkLImJb.png#id=lWY28&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
 点击 Schoolwork App 中的文件图标，此文件在demo App 中打开，启动计时器被调用，开始报告进度数据。可以看到断点被命中。
 ![](https://i.loli.net/2021/07/24/ZGaPkbyR2S6lFvN.png#id=X5fcl&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
-放开断点继续执行，返回到demo App，会看到学生进度横幅从顶部下降，表明保存成功，计时器启动。
+放开断点继续执行，返回到 demo App，会看到学生进度横幅从顶部下降，表明保存成功，计时器启动。
 ![](https://i.loli.net/2021/07/24/u3QVtPx1nIbiUsc.png#id=A8ATM&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
-demo App 中有一个“Done”按钮，学生编辑完文件后点击“Done”按钮，closeFile 函数被调用。可以看到第二个断点被命中，此时保存 wordCount 为 primaryActivityItem 并停止计时器。
+demo App 中有一个“Done”按钮，学生编辑完文件后点击“Done”按钮，`closeFile` 函数被调用。可以看到第二个断点被命中，此时保存 wordCount 为 `primaryActivityItem` 并停止计时器。
 ![](https://i.loli.net/2021/07/24/lCHV8T4M9pmeaEG.png#id=xDSWB&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
 然后放开断点继续执行，返回到 Schoolwork App，可以看到 demo App 提交的进度数据。
-首先，时间41分钟。这验证了正确调用 start、stop 和 save方法。接下来看看字数是否正确，因为刚才把字数设置为 primaryActivityItem。它确实显示在 UI 的主要部分，字数为558个字，说明成功提交了 CLSQuantityItem 。
+首先，时间41分钟。这验证了正确调用 `start`、`stop` 和 `save` 方法。接下来看看字数是否正确，因为刚才把字数设置为 `primaryActivityItem`。它确实显示在 UI 的主要部分，字数为558个字，说明成功提交了 CLSQuantityItem 。
 ![](https://i.loli.net/2021/07/24/blcjO73T6VIAktB.png#id=gNw3z&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
 现在，角色切换回教师，看看 demo App 提交的数据在教师端如何显示。可以看到所有学生的平均时间和平均字数。以及作业中每个学生的数据。
 ![](https://i.loli.net/2021/07/24/lRskbvw2oKjtmZu.png#id=fLWgz&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
-点击具体学生，可以看到一个学生提交的数据。这里显示 primaryActivityItem、time 和一个 additionalActivityItem：Readability Grade Level 。
+点击具体学生，可以看到一个学生提交的数据。这里显示 `primaryActivityItem`、`time` 和一个 `additionalActivityItem`：Readability Grade Level 。
 ![](https://i.loli.net/2021/07/24/Iy9KChJT5bnVaQZ.png#id=qEsAq&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
 以上就是如何使用开发人员模式测试 ClassKit 集成情况。最后别忘了把授权重新设置为 production。
 ​
