@@ -11,7 +11,7 @@ Adaptive-Sync 是由美国的非营利性标准制定组织 VESA 提出的基于
 ![Adaptive Sync ON](media/Adaptive%20Sync%20ON.png)
 
 首先，我们来快速回顾一下 Apple 平台中的几种屏幕类型；
-![](media/16296994893567.jpg)
+![](media/16297051228247.jpg)
 
 Apple 生态中的大部分显示器都是固定帧率的，也就是屏幕只要被点亮，就会以每秒固定的刷新频率进行显示；唯一的例外是iPad  Pro 的 Promotion 和最近发布的Mac 中的 Adaptive-Sync；首先，我们来了解一下 Mac 中的Adaptive-Sync 新技术；
 
