@@ -171,7 +171,7 @@ func firstTenBitFormatOfDevice(device: AVCaptureDevice) -> AVCaptureDevice.Forma
 
 > 更多细节可以参考 Apple 示例代码 [AVCam](https://developer.apple.com/documentation/avfoundation/cameras_and_media_capture/avcam_building_a_camera_app) 中 `tenBitVariantOfFormat` 部分
 >
-> 关于编辑 10-bit HDR 视频的部分，可以参考 WWDC2020 - [Edit and play back HDR video with AVFoundation](https://developer.apple.com/videos/play/wwdc2020/10009/)
+> 关于编辑 10-bit HDR 视频的部分，可以参考 WWDC2020 - [Edit and play back HDR video with AVFoundation](https://developer.apple.com/videos/play/wwdc2020/10009/)（[《WWDC20 10009 Edit and play back HDR video with AVFoundation & 10010 Export HDR media in your app with AVFoundation》](https://xiaozhuanlan.com/topic/0391485276)）
 >
 > 关于 HDR 的介绍，可以参考 Apple 技术演讲 [An Introduction to HDR Video](https://developer.apple.com/videos/play/tech-talks/502/)
 

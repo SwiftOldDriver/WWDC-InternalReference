@@ -83,7 +83,7 @@ dataSource.apply(snapshot, animatingDifferences: false)
 
 ### 重申 CellRegistration 的用法
 
-Cell Registration 是在 [WWDC 2020](https://developer.apple.com/videos/play/wwdc2020/10097/) 上推出的 cell 注册及配置 API，通过声明一个泛型结构体就能包揽 register cell，configure cell 等工作。不同类型 cell 的注册配置能分割开，不会在 cellProvider 闭包中糅合成一团，让 `UICollectionView` 的 API 更加现代化。
+Cell Registration 是在 [WWDC 2020](https://developer.apple.com/videos/play/wwdc2020/10097/)（[《WWDC20 10097 - UICollectionView 的进阶》](https://xiaozhuanlan.com/topic/7685190234)） 上推出的 cell 注册及配置 API，通过声明一个泛型结构体就能包揽 register cell，configure cell 等工作。不同类型 cell 的注册配置能分割开，不会在 cellProvider 闭包中糅合成一团，让 `UICollectionView` 的 API 更加现代化。
 
 ```swift
 let cellRegistration = UICollectionView.CellRegistration<CellClass, Item> { cell, indexPath, item in

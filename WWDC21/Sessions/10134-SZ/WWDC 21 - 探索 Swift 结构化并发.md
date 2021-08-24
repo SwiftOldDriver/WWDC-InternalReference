@@ -32,7 +32,7 @@
 
 ![](https://images.xiaozhuanlan.com/photo/2021/ed486d2b5a452d9e14841881483c4567.png)
 
-要深入了解 `async/await`，请查看 [Session 10132 “在 Swift 中认识 async/await”](https://developer.apple.com/videos/play/wwdc2021/10132/)。
+要深入了解 `async/await`，请查看 [Session 10132 “在 Swift 中认识 async/await”](https://developer.apple.com/videos/play/wwdc2021/10132/)（[《【WWDC21 10132/10133/10134】认识 Swift 中的异步与并发》](https://xiaozhuanlan.com/topic/8627905413)）。
 
 ## 任务
 

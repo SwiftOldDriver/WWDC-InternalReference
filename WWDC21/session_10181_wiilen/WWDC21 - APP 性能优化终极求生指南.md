@@ -121,8 +121,7 @@ class AppMetrics: MXMetricManagerSubscriber {
 
 ![MetricKit Animation 信息收集 API](https://images.xiaozhuanlan.com/photo/2021/53447998344db9dcab21edd4e3fbf0cd.png)
 
-使用 `mxSignpostAnimationIntervalBegin` API，能够标记自定义动画的起始位置。使用 `mxSignpost` end API，能够标记动画的结束，并收集这段时间内发生 Hitch 的比例。这两个函数不仅会收集一些细粒度上的性能数据，也会捕获在这段时间内发生的 Hitch。推荐阅读「[Understand and Eliminate Hangs from your App](https://developer.apple.com/videos/play/wwdc2021/10258/)」([《【WWDC21 10258】理解和消除 App 中的卡死》](https://xiaozhuanlan.com/topic/9027453618))这个 Session。如果想要深入了解如何定位滑动卡顿问题，推荐阅读 「[Eliminate animation hitches with XCTest](https://developer.apple.com/videos/play/wwdc2020/10077/)」([《WWDC20 10077 - 使用 XCTest 消除动画卡顿
-》](https://xiaozhuanlan.com/topic/6849175032))和「[Explore UI Animation Hitches and the Render Loop](https://developer.apple.com/videos/play/tech-talks/10855/)」两个 2020 年的 Tech Talk。
+使用 `mxSignpostAnimationIntervalBegin` API，能够标记自定义动画的起始位置。使用 `mxSignpost` end API，能够标记动画的结束，并收集这段时间内发生 Hitch 的比例。这两个函数不仅会收集一些细粒度上的性能数据，也会捕获在这段时间内发生的 Hitch。推荐阅读「[Understand and Eliminate Hangs from your App](https://developer.apple.com/videos/play/wwdc2021/10258/)」([《【WWDC21 10258】理解和消除 App 中的卡死》](https://xiaozhuanlan.com/topic/9027453618))这个 Session。如果想要深入了解如何定位滑动卡顿问题，推荐阅读 「[Eliminate animation hitches with XCTest](https://developer.apple.com/videos/play/wwdc2020/10077/)」([《WWDC20 10077 - 使用 XCTest 消除动画卡顿》](https://xiaozhuanlan.com/topic/6849175032))和「[Explore UI Animation Hitches and the Render Loop](https://developer.apple.com/videos/play/tech-talks/10855/)」两个 2020 年的 Tech Talk。
 
 ## 磁盘写入
 

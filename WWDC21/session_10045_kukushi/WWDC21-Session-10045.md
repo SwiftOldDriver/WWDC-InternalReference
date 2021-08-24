@@ -12,7 +12,7 @@
 
 Shazam 的核心技术是音频识别。通过捕获音频独特的声学特征，并在音频特征目录（Audio Catalog）中搜索匹配的内容，Shazam 实现了嘈杂环境中快速准确的音频识别。ShazamKit 支持在 Shazam 特征目录和自定义特征目录中搜索匹配。
 
-与 SoundAnalysis 不同，Shazam 并不是一个能够检测并识别出不同类别声音的音频分类器，也不能识别出音频中像是笑声和掌声的特定声音。如果你想继续了解音频分类，欢迎查看 [Discover built-in sound classification in SoundAnalysis](https://developer.apple.com/videos/play/wwdc2021/10036/) Session。
+与 SoundAnalysis 不同，Shazam 并不是一个能够检测并识别出不同类别声音的音频分类器，也不能识别出音频中像是笑声和掌声的特定声音。如果你想继续了解音频分类，欢迎查看 [Discover built-in sound classification in SoundAnalysis](https://developer.apple.com/videos/play/wwdc2021/10036/)（[《【WWDC21 10036】使用 SoundAnalysis 内置分类器实现声音分类》](https://xiaozhuanlan.com/topic/5627914803)） Session。
 
 ShazamKit 的功能大体可以分为三个部分：
 

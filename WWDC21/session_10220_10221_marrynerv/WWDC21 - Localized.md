@@ -265,7 +265,7 @@ Text("Total: \(price, format: .currency(code: "CNY"))",
 // Total: ¥9.41
 ```
 
-更多内容请参考：[Formatters: Make data human-friendly - WWDC20 - Videos - Apple Developer](https://developer.apple.com/videos/play/wwdc2020/10160/)
+更多内容请参考：[Formatters: Make data human-friendly - WWDC20 - Videos - Apple Developer](https://developer.apple.com/videos/play/wwdc2020/10160/)（[《WWDC20 10160 - Formatters: 让数据更人性化》](https://xiaozhuanlan.com/topic/2356894017)）
 
 ### 属性字符串的本地化
 
