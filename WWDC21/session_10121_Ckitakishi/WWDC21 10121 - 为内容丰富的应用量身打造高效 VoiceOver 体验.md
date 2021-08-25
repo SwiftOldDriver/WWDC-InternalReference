@@ -33,7 +33,7 @@ Accessibility 提供了非常多类型的辅助，包括视觉，听觉和其他
 
 转子可以理解为一种 VoiceOver 的增强导航系统，可以通过调节转子来更有效率地阅读页面上的内容。你可以通过阅读帮助文档来了解更多关于转子的事情：[关于 iPhone、iPad 和 iPod touch 上的旁白转子](https://support.apple.com/zh-cn/HT204783)。
 
-尽管我们今天并不会定义一个全新的转子，但我还是想稍微提及一点有关自定义转子的事情。在 iOS 10 之前，用户只能够使用内置的转子，而现在，我们可以为 App 打造更贴合功能的转子。在去年的 WWDC 中，[VoiceOver efficiency with custom rotors](https://developer.apple.com/videos/play/wwdc2020/10116/) 为我们阐述了如何实现自定义转子。
+尽管我们今天并不会定义一个全新的转子，但我还是想稍微提及一点有关自定义转子的事情。在 iOS 10 之前，用户只能够使用内置的转子，而现在，我们可以为 App 打造更贴合功能的转子。在去年的 WWDC 中，[VoiceOver efficiency with custom rotors](https://developer.apple.com/videos/play/wwdc2020/10116/)（[《WWDC 10116 - VoiceOver efficiency with custom rotors》](https://xiaozhuanlan.com/topic/9781042635)） 为我们阐述了如何实现自定义转子。
 
 ### “更多内容”转子
 

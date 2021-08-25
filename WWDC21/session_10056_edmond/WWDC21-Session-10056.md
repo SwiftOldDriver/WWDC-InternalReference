@@ -45,13 +45,13 @@
 
 当然，我们支持所有基本功能，例如文本交互、复制和粘贴、Mac 菜单栏等，但也有很多高级功能，例如后台应用程序刷新、用户通知、相机访问、`Siri Intent` 等。
 
-> Tips：[iPad and iPhone apps on Apple silicon Macs](https://developer.apple.com/videos/play/wwdc2020/10114/) 中讨论了其中许多主题，建议查看该视频以了解更多详细信息。
+> Tips：[iPad and iPhone apps on Apple silicon Macs](https://developer.apple.com/videos/play/wwdc2020/10114/)（[《WWDC20 10114 - Apple Silicon Mac 上的 iPad 与 iPhone App 运行》](https://xiaozhuanlan.com/topic/1845067932)） 中讨论了其中许多主题，建议查看该视频以了解更多详细信息。
 
 ![wwdc21-10056-3-more](https://images.xiaozhuanlan.com/photo/2021/52bd43ab28222aa842679a5a8136baea.png)
 
 如果您希望您的应用程序利用 Mac 提供的更多功能，请考虑构建 Mac Catalyst 版本的应用程序。
 
-可参阅 [Qualities of a great Mac Catalyst app](https://developer.apple.com/videos/play/wwdc2021/10053/) 和 [What's new in Mac Catalyst](https://developer.apple.com/videos/play/wwdc2021/10052) 以了解更多相关信息。
+可参阅 [Qualities of a great Mac Catalyst app](https://developer.apple.com/videos/play/wwdc2021/10053/)（[《【WWDC21 10053】优秀 Mac Catalyst App 的品质》](https://xiaozhuanlan.com/topic/9324781605)） 和 [What's new in Mac Catalyst](https://developer.apple.com/videos/play/wwdc2021/10052)（[《【WWDC21 10052】Mac Catalyst 的新功能》](https://xiaozhuanlan.com/topic/9734105682)） 以了解更多相关信息。
 
 ### Keyboard input
 
@@ -110,7 +110,7 @@ override func buildMenu(with builder: UIMenuBuilder) {
 
 ![wwdc21-10056-4-menu-bar-tipics](https://images.xiaozhuanlan.com/photo/2021/92e94073aaf8604198d66ef3397b5a31.png)
 
-有关更多信息，请参阅 "[Take your iPad apps to the next level](https://developer.apple.com/videos/play/wwdc2021/10057/)" 和 "[Focus on iPad keyboard navigation," and "Qualities of a great Mac Catalyst app](https://developer.apple.com/videos/play/wwdc2021/10260/)" 。
+有关更多信息，请参阅 "[Take your iPad apps to the next level](https://developer.apple.com/videos/play/wwdc2021/10057/)（[《【WWDC21 10057】让你的 iPad 应用更进一步》](https://xiaozhuanlan.com/topic/3958016274)）" 和 "[Focus on iPad keyboard navigation," and "Qualities of a great Mac Catalyst app](https://developer.apple.com/videos/play/wwdc2021/10260/)（[《【WWDC21 10023/10260】构建使用键盘导航的应用程序》](https://xiaozhuanlan.com/topic/2915368740)）" 。
 
 ### Drag & Drop
 
@@ -124,7 +124,7 @@ override func buildMenu(with builder: UIMenuBuilder) {
 
 ![wwdc21-10056-5-printing](https://images.xiaozhuanlan.com/photo/2021/aaad0d48b103da6acfc5e203a25c9bd2.png)
 
-有关此新 API 的更多详细信息，请参阅 [What's new in Mac Catalyst](https://developer.apple.com/videos/play/wwdc2021/10052)。
+有关此新 API 的更多详细信息，请参阅 [What's new in Mac Catalyst](https://developer.apple.com/videos/play/wwdc2021/10052)（[《【WWDC21 10052】Mac Catalyst 的新功能》](https://xiaozhuanlan.com/topic/9734105682)）。
 
 ### Settings bundle
 
@@ -272,7 +272,7 @@ protocol PKPaymentAuthorizationControllerDelegate
 ```
 
 ![wwdc21-10056-14-motery-authorizet](https://images.xiaozhuanlan.com/photo/2021/1b423543bcd1b2d7168e4cf4bce01645.png)
- 有关更多详细信息，请查看视频 [What's new in Wallet and Apple Pay](https://developer.apple.com/videos/play/wwdc2021/10092/)。
+ 有关更多详细信息，请查看视频 [What's new in Wallet and Apple Pay](https://developer.apple.com/videos/play/wwdc2021/10092/)（[《【WWDC21 10092】了解并使用 Wallet 和 Apple Pay》](https://xiaozhuanlan.com/topic/2538109674)）。
 
 #### Better AVKit
 
@@ -280,13 +280,13 @@ protocol PKPaymentAuthorizationControllerDelegate
 
 `AVPlayerView` 和 `AVPlayerViewController` 现在可以使用单独的窗口自动全屏拍摄视频。这意味着即使窗口在启动时分辨率和宽高比方面受到其他限制的应用程序也将充分利用 Mac 显示器，视视频内容而定。如果您需要更多地控制全屏体验，我们已经为 `AVPlayerViewDelegate` 和 `AVPlayerViewControllerDelegate` 添加了新的 API。**最重要的是，AVFoundation 支持在配置 M1 的 Mac 上 进行 HDR 播放和流式传输。**而你无需任何针对性的修改就能支持。
 
-最后，在 iPad 和 iPhone 应用程序中的 AVKit 控件，在 Mac 上也保持了同步。并且我们充分利用了支持新手势的 Mac 触控板。有关更多详细信息，可查阅 "[What's new in AVKit](https://developer.apple.com/videos/play/wwdc2021/10290/)"。
+最后，在 iPad 和 iPhone 应用程序中的 AVKit 控件，在 Mac 上也保持了同步。并且我们充分利用了支持新手势的 Mac 触控板。有关更多详细信息，可查阅 "[What's new in AVKit](https://developer.apple.com/videos/play/wwdc2021/10290/)（[《【WWDC21 10290】AVKit 的新变化》](https://xiaozhuanlan.com/topic/1574609238)）"。
 
 #### Shortcuts
 
 如果您的应用程序使用 SiriKit 的 Intens 来提供自定义 SiriKit 快捷方式，那么在配置 M1 的 Mac 并且操作系统为  `macOS Monterey` 的 iPad 和 iPhone 应用程序，现在也能支持这些快捷方式。
 
-有关快捷方式的更多信息，请查看演讲 "[Meet Shortcuts for macOS](https://developer.apple.com/videos/play/wwdc2021/10232/)" and "[Design great actions for Shortcuts, Siri, and Suggestions](https://developer.apple.com/videos/play/wwdc2021/10283/)。
+有关快捷方式的更多信息，请查看演讲 "[Meet Shortcuts for macOS](https://developer.apple.com/videos/play/wwdc2021/10232/)" and "[Design great actions for Shortcuts, Siri, and Suggestions](https://developer.apple.com/videos/play/wwdc2021/10283/)（[《【WWDC21 10232/10283】Shortcuts 的新功能》](https://xiaozhuanlan.com/topic/4837521960)）。
 
 
 ## Mac deployment
@@ -315,7 +315,7 @@ protocol PKPaymentAuthorizationControllerDelegate
 最后，让我们谈谈测试。在 macOS 上进行测试与在 iPad 上进行测试非常相似。您可以使用您已经熟悉的相同工作流程。对于 Xcode 中的本地测试，只需选择 `My Mac (Designed for iPad)` 作为运行目标。调试、单元测试等都可以像在其他设备上一样工作。
 
 对于 Beta 测试，我们为 `macOS Monterey` 中的所有应用程序（包括 iPhone 和 iPad 应用程序）添加了 `TestFlight` 支持，因此您现在可以将您的应用程序分发给使用配备 M1 的 Mac 的 Beta 测试人员。
-有关这方面的更多信息，请转到视频 “[Meet TestFlight on Mac](https://developer.apple.com/videos/play/wwdc2021/10170/)"。
+有关这方面的更多信息，请转到视频 “[Meet TestFlight on Mac](https://developer.apple.com/videos/play/wwdc2021/10170/)（[《【WWDC21 10204/10261/10170】云签与 Mac App 分发流程简化探索》](https://xiaozhuanlan.com/topic/7346095182)）"。
 
 最后，欢迎使用 Mac！去验证您的应用程序并选择加入。
 请记住，随着您不断改进 iPad 和 iPhone 应用程序，您也在使用改进配置了 M1 的 Mac 上的这些应用程序。

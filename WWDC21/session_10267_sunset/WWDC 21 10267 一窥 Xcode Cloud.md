@@ -75,7 +75,7 @@ Fruta 是 Apple 用来演示 Xcode Cloud 的 App。在 Xcode 13 本地打开的 
 * 执行的任务
 * 结束后执行的任务
 
-想要深入了解工作流的编辑过程，请参考 [WWDC21 10268 探索 Xcode Cloud 工作流](https://developer.apple.com/videos/play/wwdc2021/10268/)。
+想要深入了解工作流的编辑过程，请参考 [WWDC21 10268 探索 Xcode Cloud 工作流](https://developer.apple.com/videos/play/wwdc2021/10268/)（[《【WWDC21 10268/10269】探索 Xcode Cloud Workflows》](https://xiaozhuanlan.com/topic/5493872016)）。
 
 ![](https://images.xiaozhuanlan.com/photo/2021/0ac69e2ce04ae3d46a35074b1df791d1.jpeg)
 

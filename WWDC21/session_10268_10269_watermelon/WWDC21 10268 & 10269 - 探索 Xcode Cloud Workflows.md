@@ -179,7 +179,7 @@ Set up Environment  是决定 WorkFlows 如何运行的重要组成部分。
 （我还可以选择注册TestFlight 或使其为 App Store 分发做好准备，但稍后会详细自动部署）
 
 
-读者是否已经注意到，我们没有管理证书和描述文件。当我们登陆了开发者账号时Xcode Cloud 已经自动为我们关联了。要了解更多相关信息，请查看 [Session 10204](https://developer.apple.com/videos/play/wwdc2021/10204)。
+读者是否已经注意到，我们没有管理证书和描述文件。当我们登陆了开发者账号时Xcode Cloud 已经自动为我们关联了。要了解更多相关信息，请查看 [Session 10204](https://developer.apple.com/videos/play/wwdc2021/10204)（[《【WWDC21 10204/10261/10170】云签与 Mac App 分发流程简化探索》](https://xiaozhuanlan.com/topic/7346095182)）。
 
 
 ### 测试

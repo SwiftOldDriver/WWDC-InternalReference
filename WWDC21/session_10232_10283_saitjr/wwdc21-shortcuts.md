@@ -230,7 +230,7 @@ Provide Options 和 Confirm 这两个方法，大家可以根据自己的 Intent
 
 虽然此前 Task 这个例子中，并不涉及文件操作。但实际上，很多 app 都是和文件相关的。在 iOS 15 和 macOS Monterey 中，intents 新增了 file 相关参数，运行用户选择特定文件到 actions 中。
 
-如果 intents 是和文件操作相关的，记得尽量完整的覆盖相关操作。比如表格类的 app 就允许读取文件、新增数据到指定文件等操作。更多关于 Shortcuts 文件操作的例子，可以查看 [SoundAnalysis](https://developer.apple.com/videos/play/wwdc2021/10036/) 这个 Session。
+如果 intents 是和文件操作相关的，记得尽量完整的覆盖相关操作。比如表格类的 app 就允许读取文件、新增数据到指定文件等操作。更多关于 Shortcuts 文件操作的例子，可以查看 [SoundAnalysis](https://developer.apple.com/videos/play/wwdc2021/10036/)（[《【WWDC21 10036】使用 SoundAnalysis 内置分类器实现声音分类》](https://xiaozhuanlan.com/topic/5627914803)） 这个 Session。
 
 #### 跨平台的 app（Cross-platform apps）
 

@@ -385,7 +385,7 @@
 
 ​
 关于字符串与格式化器的国际化以及本地化的更多内容可以参考本次 `WWDC` 的其他 `Session`：
-[Localize your SwiftUI app](https://developer.apple.com/videos/play/wwdc2021/10220/) & [Streamline your localized strings](https://developer.apple.com/videos/play/wwdc2021/10221/)
+[Localize your SwiftUI app](https://developer.apple.com/videos/play/wwdc2021/10220/)（[《【WWDC21 10220/10221】本地化功能上新》](https://xiaozhuanlan.com/topic/6278501394)） & [Streamline your localized strings](https://developer.apple.com/videos/play/wwdc2021/10221/)（[《【WWDC21 10220/10221】本地化功能上新》](https://xiaozhuanlan.com/topic/6278501394)）
 ​
 
 ## 三、 语法协议引擎 - Grammar agreement
