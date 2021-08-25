@@ -113,7 +113,7 @@
 ![](https://wwdc21.oss-cn-hangzhou.aliyuncs.com/2021/08/23/16297040757260.jpg)
 
 ![](https://wwdc21.oss-cn-hangzhou.aliyuncs.com/2021/08/23/16297041440505.jpg)
-
+**请注意**，在 `ProMotion` 中，你可以通过给 `setPreferredFramesPerSecond` 赋值，来声明你想要的帧率，但由于 `ProMotion` 支持的帧率是有限的 120Hz、60Hz、40Hz、30Hz、24Hz ,因此申请在这些既定帧率之外的帧率（如 68Hz），系统会自动选择一个与你声明帧率就近的支持的帧率来显示（60Hz）；
 ![](https://wwdc21.oss-cn-hangzhou.aliyuncs.com/2021/08/23/16297041671638.jpg)
 
 
@@ -132,6 +132,7 @@
 
 **下面的例子包含了 `CADisplayLink` 回调延时与回调跳过两种情况**
 
+一般而言针对回调延时，会采取舍弃一帧的策略；回调跳过则一般采取舍弃一帧并提前绘制下一帧；
 现在假设这一帧的绘制工作花了太长时间，下一次回调且需等待 `runloop` 释放，因为这次回调被延迟了，那下一次回调将被直接跳过；这种情况下，如果计划提前开始绘制下一帧时，需要注意这里的可用时间是 16毫秒，而非正常的 8 毫秒；为了追踪到这个时间差，可以记录上一次 `targetTimestamp` 与本次 `targetTimestamp` 来准确获得这个时间；
 ![](https://wwdc21.oss-cn-hangzhou.aliyuncs.com/2021/08/23/16297044102692.jpg)
 
@@ -145,5 +146,6 @@
 ##### 总结上述 `ProMotion` 最佳实践
 ![](https://wwdc21.oss-cn-hangzhou.aliyuncs.com/2021/08/23/16297044888987.jpg)
 
-回顾本 `Session` ，我们先讨论了 `macOS`  中的 `Adaptive-Sync` 动态帧速率技术，以及如何基于此技术为用户提供更加顺滑的渲染效果体验；之后，我们讨论了如何在 `iPad Pro` 设备中基于 `ProMotion` 的 `CADisplayLink` 最佳实践；随着显示技术的不断发展，我们希望本 `Session` 为您在日益动态的显示时序技术应用中提供一些帮助 ；
+回顾本 `Session 10147` ，我们先讨论了 `macOS`  中的 `Adaptive-Sync` 动态帧速率技术，以及如何基于此技术为用户提供更加顺滑的渲染效果体验；之后，我们讨论了如何在 `iPad Pro` 设备中基于 `ProMotion` 的 `CADisplayLink` 最佳实践；**请注意** 这两种显示技术之间的区别，以及最佳实践的不同；
+随着显示技术的不断发展，我们希望本 `Session` 为您在日益动态的显示时序技术应用中提供一些帮助 ；
 在此向您推荐  [WWDC17 - Introducing Metal 2](https://developer.apple.com/videos/play/wwdc2017/601/) 和 [WWDC19 - Delivering Optimized Metal Apps And Games](https://developer.apple.com/videos/play/wwdc2019/606/)
