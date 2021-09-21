@@ -1,10 +1,8 @@
+> 作者：张茜倩，iOS 开发，目前就职于好未来新励步。
+>
+> 审核：JonyFang，iOS 开发，老司机技术周报编辑，就职于哔哩哔哩直播部门
+
 本文基于 [Session 10257](https://developer.apple.com/videos/play/wwdc2021/10257/) 梳理
-​
-
-> 作者：张茜倩，iOS开发，目前就职于好未来新励步。
-
-​
-
 
 - **前言**
 
@@ -139,11 +137,12 @@ demo App 中有一个“Done”按钮，学生编辑完文件后点击“Done”
 点击具体学生，可以看到一个学生提交的数据。这里显示 `primaryActivityItem`、`time` 和一个 `additionalActivityItem`：Readability Grade Level 。
 ![](https://i.loli.net/2021/07/24/Iy9KChJT5bnVaQZ.png#id=qEsAq&originHeight=2160&originWidth=3840&originalType=binary&ratio=1&status=done&style=none)
 以上就是如何使用开发人员模式测试 ClassKit 集成情况。最后别忘了把授权重新设置为 production。
-​
 
-​
 
-​
+## 关注我们
 
-​
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
 
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
