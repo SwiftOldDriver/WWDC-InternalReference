@@ -1,6 +1,12 @@
+
+![](banner.png)
+
+> 本文基于 [WWDC21 - What's new in Foundation](https://developer.apple.com/videos/play/wwdc2021/10109/) 进行梳理
+
 > 作者：leejunhui，iOS & RN 开发者。任职于云梯科技，负责跨平台应用开发
 >
 > 审核：郭鹏，老司机技术周报编辑，就职于丁香园，丁香妈妈 App 开发
+
 
 > 本文基于 [WWDC21 - What's new in Foundation](https://developer.apple.com/videos/play/wwdc2021/10109/) 进行梳理
 
@@ -74,7 +80,6 @@
 
 - Characters 字符，用来访问字符串
 - Runs 用来访问属性
-
 
 `View` 是 `Swift` 的 `Collection` 类型，那么也就是说我们可以像操作 `Array` 类型一样来操作 `View`。
 ​
@@ -162,6 +167,7 @@
 
 上述三种场景都涉及到了 `AttributedString` 的转换操作，我们依次进行分析。
 ​
+
 #### 1.7.1 从结构体类型转换为类类型
 
 ![](https://images.xiaozhuanlan.com/photo/2021/ddc41a9bc6944f014eccf54d3f049317.png)
@@ -204,11 +210,9 @@
 
 自定义属性首先会以 `^` 开头，然后是一个中括号来接收文本，最后是一个括号来表示属性。属性以 `JSON5`格式表示。
 
-
 > [JSON5](https://json5.org) 与 JSON 兼容，并允许使用不带引号的 `key`、注释和一些其它功能。
 
 > Foundation 中的 JSON 相关的 API 也已经添加了对 JSON5 的支持。
-
 
 因为自定义属性通过 `JSON` 进行表示，所以任何可以被 `JSONDecoder` 反序列化的内容自动与新的自定义 `Markdown` 语法兼容。
 
@@ -220,7 +224,6 @@
 ### 1.8 AttributedString Scopes
 
 `Scopes` 是属性 `key` 的集合。`Scopes` 在反序列化 `JSON` 或 `Markdown` 时十分有用，因为它告诉了我们想要查找的属性，以及如何反序列化这些属性。
-
 
 > Apple 分别为 `Foundation`、`UIKit`、`AppKit`、`SwiftUI` 定义了各自的 `Scope`。你可以定义属于你自己应用的 `Scope`。
 
@@ -322,7 +325,7 @@
 - 时间区间可以只显示时间，不显示日期，就像格式化单个日期那样。
 - 你也可以将时间区间格式化成一个持续时间(`timeDuration`)，可以格式化为组件(`components`)，或者是一个相对时间。
 
-#### 2.2.1 格式化AttributedString
+#### 2.2.1 格式化 AttributedString
 
 `Formatters` 另外一个新的特性是针对 `AttributedString` 进行格式化。通过全新的结构体 `AttributedString` 以及 `Formatters API`，在任何地方都可以实现格式化 `AttributedString` 的输出。在 `watchOS`中，许多 `complications` 都是格式化的字符串，因为 `Apple Watch` 是十分个性化的设备，所以考虑到用户的偏好设置是十分重要的。下面通过 `SwiftUI` 中的 `demo`，我们可以一探究竟。
 
@@ -354,6 +357,7 @@
 - 初始化一个日期解析策略，传入的格式化字符串通过字符串插值进行拼接，同时还具有代码自动补全功能，这相比于指定诸如 `YYYY-MM-DD` 这类「魔法」字符串会来得更加简单与直观。所以从现在开始，格式化字符串为日期时，不再需要考虑应该用多少个大写的 `Y` 了。
 
 ​
+
 ### 2.3 数字格式化
 
 ![](https://images.xiaozhuanlan.com/photo/2021/88e4b47c52d618918eaf99f009666f39.png)
@@ -381,6 +385,7 @@
 - 如上图所示，在原料部分我们用到了集合格式化，在价格部分用到了货币格式化，在数量部分用到了数字格式化，并在下单按钮上对下单数量做了本地化操作。
 
 ​
+
 ### 2.4 字符串和格式化器的国际化与本地化
 
 ​
@@ -465,6 +470,7 @@
 ## 四、总结
 
 `Foundation` 今年有许多强大的新功能，你可以从今天开始在你的 `app` 中使用它们。
+
 - `AttributedString` 提供了一个快速的，易用的并且 `Swift` 优先的接口，进而实现在一个字符串的范围中添加键值对以达到富文本的效果。你可以在 `SwiftUI` 中使用 `Text` 组件，并在本地化字符串中使用 `Markdown` 语法。
 - 新的格式器 `API` 将重点放在格式上，简化了代码并提高了性能。
 - 最后，自动语法协议将智能地修复本地化字符串，以便匹配语法时态，单复数以及用户自己的称谓设置。
