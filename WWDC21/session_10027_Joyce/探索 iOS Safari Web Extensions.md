@@ -62,12 +62,12 @@ iOS15 苹果在 iOS 上支持了 Safari Web Extensions，在了解了如何在 i
         * 删除对浏览器的调用
         * webRequest 是一个允许分析 Web 流量的 API，而 webRequest 事件的触发频率使该 API 与非持久性背景页不兼容
     2. 让我们看看苹果工程师的demo实现，demo实现了一个很简单的小功能，当我们点击按钮时，替换所有的文本 “fish” 为 🐟，而我们的后台页实现替换文本个数的计数监听。
-    ![后台页_逻辑代码](media/%E5%90%8E%E5%8F%B0%E9%A1%B5_%E9%80%BB%E8%BE%91%E4%BB%A3%E7%A0%81.png)
+![后台页_逻辑代码](https://images.xiaozhuanlan.com/photo/2021/0b10d1eb69aed0ba0699372e24d71ecd.png)
     后台页逻辑代码，实现后台页监听替换单词计数逻辑
-![后台页_权限配置](media/%E5%90%8E%E5%8F%B0%E9%A1%B5_%E6%9D%83%E9%99%90%E9%85%8D%E7%BD%AE.png)
+![后台页_权限配置](https://images.xiaozhuanlan.com/photo/2021/6c7d733252569df7f3f37a874e199757.png)
 权限配置
-![后台页_替换前](media/%E5%90%8E%E5%8F%B0%E9%A1%B5_%E6%9B%BF%E6%8D%A2%E5%89%8D.png)
-![后台页_替换后](media/%E5%90%8E%E5%8F%B0%E9%A1%B5_%E6%9B%BF%E6%8D%A2%E5%90%8E.png)
+![后台页_替换前](https://images.xiaozhuanlan.com/photo/2021/363fcb3d714ecd3d46a8cbbcec6068e5.png)
+![后台页_替换后](https://images.xiaozhuanlan.com/photo/2021/645431e8a07d27ee669f56b8ab30b7b7.png)
 
 ### 阻止 Web 上的内容
 * 自 2015 年以来，Safari 一直支持使用 WebKit 内容规则列表构建的内容阻止程序扩展。今年有一些改进，然而，到目前为止，Web 扩展还没有那种快速、隐私保护、内容阻止的能力。而 Chrome 最近引入的声明性请求已经拥有了以上能力。
@@ -120,13 +120,13 @@ iOS15 苹果在 iOS 上支持了 Safari Web Extensions，在了解了如何在 i
         },
     ```
 * 苹果的官方小 demo，主要实现了一个阻止图片的小功能。我们来看一下实现过程
-![拦截_逻辑代码](media/%E6%8B%A6%E6%88%AA_%E9%80%BB%E8%BE%91%E4%BB%A3%E7%A0%81.png)
+![拦截_逻辑代码](https://images.xiaozhuanlan.com/photo/2021/734db558d2f8f7bd68e72c54154fe2b4.png)
 可以看到这里设置了拦截类型为图片类型
-![拦截_原网页](media/%E6%8B%A6%E6%88%AA_%E5%8E%9F%E7%BD%91%E9%A1%B5.png)
+![拦截_原网页](https://images.xiaozhuanlan.com/photo/2021/a63c4647de50671d1257784be1e9dbb1.png)
 原网页
-![拦截_应用](media/%E6%8B%A6%E6%88%AA_%E5%BA%94%E7%94%A8.png)
+![拦截_应用](https://images.xiaozhuanlan.com/photo/2021/794dd781c0207f3b63661f51941608b2.png)
 应用拦截扩展
-![拦截_应用完成](media/%E6%8B%A6%E6%88%AA_%E5%BA%94%E7%94%A8%E5%AE%8C%E6%88%90.png)
+![拦截_应用完成](https://images.xiaozhuanlan.com/photo/2021/66a86d37daf7e81f6ff23a78dec6cf5f.png)
 可以看见图片都被拦截成功
 
 ###自定义选项卡 
@@ -142,9 +142,9 @@ iOS15 苹果在 iOS 上支持了 Safari Web Extensions，在了解了如何在 i
     }
     ```    
 * 添加自定义选项卡的资源文件到工程中 
-![add_file_new_tab](media/add_file_new_tab.png)
+![add_file_new_tab](https://images.xiaozhuanlan.com/photo/2021/e327681ba43de1278934abef260d9667.png)
 * 运行后可以看到一个自定义的选项卡界面
-![new_tab](media/new_tab.png)
+![new_tab](https://images.xiaozhuanlan.com/photo/2021/5bc04a3ad42b9a82ed0788c4d3ed070a.png)
 
 ## 总结
 以上就是这次在 iOS Safari 15 上提供的三个新的 Web Extension API。以及其用法，可以看到苹果在 Safari 拓展方面的越来越完善，虽然分发方式和发布流程还是非常"苹果做派"，但是可以通用在多平台的业务代码还是可以让我们可以快速的去在原有拓展代码上做简单修改和快速迁移。有兴趣的小伙伴赶快试试吧!
