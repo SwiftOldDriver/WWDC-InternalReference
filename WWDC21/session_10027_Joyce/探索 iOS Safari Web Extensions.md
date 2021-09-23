@@ -1,6 +1,10 @@
-# WWDC21 10027 - iOS Safari Web Extensions 实践小记
+# 【WWDC21 10027】iOS Safari Web Extensions 实践小记
 
-本文基于 Session [10027](//developer.apple.com/videos/play/wwdc2021/10027/) 梳理
+> 作者：Joyce iOS 开发，就职于 YY 欢聚时代
+> 
+> 审核：折腾范儿_唯敬，iOS/前端 开发者，就职于阿里巴巴，喜欢研究跨平台动态化混合前端相关的内容，目前从事移动应用客户端/前端相关开发工作。
+
+本文基于 Session [10027](https://developer.apple.com/videos/play/wwdc2021/10027) 梳理
 
 iOS15 苹果在 iOS 上支持了 Safari Web Extensions，在了解了如何在 iOS 上使用 Safari Web Extensions，以及如何使用 Xcode 编写拓展代码的基础上，本文将就最新的 WebExtension API展开说明。
 
@@ -144,3 +148,11 @@ iOS15 苹果在 iOS 上支持了 Safari Web Extensions，在了解了如何在 i
 
 ## 总结
 以上就是这次在 iOS Safari 15 上提供的三个新的 Web Extension API。以及其用法，可以看到苹果在 Safari 拓展方面的越来越完善，虽然分发方式和发布流程还是非常"苹果做派"，但是可以通用在多平台的业务代码还是可以让我们可以快速的去在原有拓展代码上做简单修改和快速迁移。有兴趣的小伙伴赶快试试吧!
+
+## 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
