@@ -216,6 +216,28 @@ preparingThumbnail cost:	 0.005650997161865234 seconds
 
 看来这两个 API 对由 `CIImage` 创建出来的 `UIImage` 都不大友好呀。
 
+### API - 对比
+
+上文的 API 性能定性分析比较简陋，笔者在[这里](https://github.com/Kam-To/Benchmark)放了一份稍微丰富些的测试代码，以及在模拟器、设备上的测试结果，结果上看依然是新 API 占优的：
+
+**Display**
+
+|                     | **cat.jpg** | underpass.jpg | wave.jpg |
+| ------------------- | ----------- | ------------- | -------- |
+| preparingForDisplay | **0.40**    | **0.39**      | **0.50** |
+| DrawInRect          | 0.96        | 0.92          | 1.30     |
+
+**Thumbnail**
+
+|                                              | **cat.jpg** | underpass.jpg | wave.jpg |
+| -------------------------------------------- | ----------- | ------------- | -------- |
+| preparingThumbnail                           | **0.33**    | **0.32**      | **0.59** |
+| DrawInRect(CoreGraphics)                     | 1.00        | 1.00          | 1.41     |
+| CGImageSourceCreateThumbnailAtIndex(ImageIO) | **0.32**    | **0.32**      | **0.57** |
+| UIGraphicsImageRenderer(UIKit)               | 1.27        | 1.29          | 1.72     |
+
+
+
 ## 总结
 
 本文我们回顾了往年的 Diffable Data Source 基础和关于 hitchs 的 tech talk 等内容，了解 iOS 15 在 Diffable Data Source 和 cell prefetching 上的改进，也试用了 `UIImage` 两个甜品 API，希望这些知识都能被大家实践到产品上，构建性能更优的 List 和 Collection View。
