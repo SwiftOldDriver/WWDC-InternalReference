@@ -30,8 +30,7 @@
 
 当打开一个新的空白页面时，会显示到目前为止总共发生了多少次替换，这个页面被称为 tab-page：
 
-![image-20210620221415227](qvf5ynk5g.bkt.clouddn.com/mweb/image-20210620221415227.png)
-
+![](https://images.xiaozhuanlan.com/photo/2021/91e275ef1b33100d1b58035a15ed9780.png)
 
 
 上面为大家演示了这个插件的主要功能，接下来我们看下如何把这个插件移植到 iOS 上。
@@ -44,7 +43,7 @@
 
 可以通过 Xcode 新建一个项目，选择提供的模板即可，模板中包含了创建浏览器插件所需要的全部资源，你可以根据实际情况对代码、资源进行删减。
 
-![image-20210620230401562](qvf5ynk5g.bkt.clouddn.com/mweb/image-20210620230401562.png)
+![](https://images.xiaozhuanlan.com/photo/2021/d6b2a2aa84cfca6a50f5cc83259692eb.png)
 
 下图是创建完后所有的资源文件：
 
@@ -213,8 +212,7 @@ pop-page 在 Mac 与手机上表现不一致，这一点也需要注意，手机
 
 在使用 window 上的一些 api 时，需要留意， 在 iOS 和 Mac 中有很大区别，iOS 表现如下：
 
-![image-20210626183108154](qvf5ynk5g.bkt.clouddn.com/mweb/image-20210626183108154.png)
-
+![](https://images.xiaozhuanlan.com/photo/2021/dac05a7e4561ec7a9e102d7dac837eb1.png)
 
 
 **5、fetature detection**
