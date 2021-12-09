@@ -1,3 +1,7 @@
+> 作者：DXL，iOS 开发者，就职于猿辅导。
+>
+> 审核：红纸，iOS 开发，老司机技术周报编辑，就职于淘系技术部
+
 # WWDC201 10086 - What's new in CloudKit CloudKit新特性
 
 > 本文基于[WWDC2021 Session 10086](https://developer.apple.com/videos/play/wwdc2021/10086/) 梳理
@@ -120,4 +124,12 @@ CKShare 赋予了用户把自己的私有数据库的数据共享给其他人的
 其代码如下所示：
 
 ![](https://images.xiaozhuanlan.com/photo/2021/6840a0ae910b20e9d7fe76197b7e999d.jpg)
+
+## 关注我们
+
+我们是「老司机技术周报」，一个持续追求精品 iOS 内容的技术公众号。欢迎关注。
+
+![](https://images.xiaozhuanlan.com/photo/2021/71326704716a5f65a020bfcc08f409a3.)
+
+**关注有礼，关注【老司机技术周报】，回复「WWDC」，领取 《WWDC20 内参》**
 
