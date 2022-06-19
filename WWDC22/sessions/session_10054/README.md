@@ -55,8 +55,55 @@ struct Poem: Codable, Hashable, Identifiable {
 [唐诗三百首 App 截图][poems-app-screenshot]
 
 ## 现有导航方案回顾
-### 用法
+
+从 SwiftUI 诞生起，NavigationView 加 NavigationLink 的组合就是实现导航栏的标配，使用起来也是非常的简单。在你显示内容最外层加上 NavigationView，然后在需要导航的地方加上 NavigationLink 就好。NavigationLink 通过 `destination` 来指定点击后需要导航到的目标视图。在 iPadOS 和 macOS 上，目标视图的内容会出现在下一列。其它平台将目标视图放入堆栈，并使用平台特定的控件，比如后退按钮或者滑动手势，从堆栈中删除目标视图。NavigationLink 可以出现在显示内容的任意层级，或者出现在目标视图的子视图中，而 NavigationView 通常只需要一个。
+
+[NavigiationView][navigation-view]
+
+以下代码创建了一个体裁的列表，点击不同的体裁类型后，导航到诗名列表中。
+
+```swift
+NavigationView {
+  List(viewModel.types, id: \.self) { type in
+    NavigationLink(type, destination: PoemList(poems: viewModel.poemsWith(type: type)))
+  }
+  .navigationTitle(Text("Type"))
+}
+```
+
 ### 不足
+
+这种导航能满足多数的使用场景，但是存在以下缺点：
+
+- 上述例子中的 `PoemList` 被重复创建多次
+
+以 iPhone 竖屏为例，虽然在显示体裁的时候，目标视图 `PoemList` 并不会被显示。但是 `PoemList` 需要提前被创建，数量和一页能显示的 List 数量相同。滑动体裁列表时，会有更多的 `PoemList` 被创建，即使用户不点击查看 `PoemList`。而且，基于 SwiftUI 的绘制原理，当页面上的 State 变化时，会引起目标视图的重新创建。这是一种巨大的浪费。
+
+- 状态难以管理
+
+NavigationLink 支持通过设置 `isActive` 的值来动态的激活导航栏而显示目标视图。这意味着我们可以通过编程的方式来打开或者关闭目标视图。如下面代码所示，通过设置 `isFiveWordsActive = true` 来打开五言乐府诗集列表。
+
+```swift
+@State private var isSevenWordsActive = false
+@State private var isFiveWordsActive = true
+
+var body: some View {
+  NavigationView {
+    List {
+      NavigationLink("七言乐府", destination: PoemList(poems: viewModel.poemsWith(type: type)), isActive: $isSevenWordsActive)
+      NavigationLink("五言乐府", destination: PoemList(poems: viewModel.poemsWith(type: type)), isActive: $isFiveWordsActive)
+    }
+    .navigationTitle(Text("Type"))
+  }
+}
+```
+
+这种能力提供了极大的便利性，但是存在三个问题：
+1. 需要为 List 中的每个 NavigationLink 提供一个 State 变量，比较繁琐。
+2. NavigationLink 可以存在于任意层级的子 View 中，当层数变多变深时，即使借助于 EnvironmentObject，这种状态也难以管理。
+3. 视图堆栈中的视图可能来自于编程（设置 `isActive = true`），也有可能来自点击或者手势，想要记录完整的导航路径时，就需要给路径上的所有 NavigationLink 加上 `isActive`，如果路径存在循环，那简直是一种灾难。
+
+幸好，新版的 APIs 一举解决了上述所有问题。
 
 ## 新导航方案
 ### NavigationStack
@@ -75,3 +122,4 @@ struct Poem: Codable, Hashable, Identifiable {
 [poems-app-design]: TODO
 [iOS-and-iPadOS-16-Beta-Release-Notes]: https://developer.apple.com/documentation/ios-ipados-release-notes/ios-ipados-16-release-notes
 [poems-app-screenshot]: TODO
+[navigation-view]: ./images/navigation-view.png
