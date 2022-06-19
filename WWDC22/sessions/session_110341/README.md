@@ -150,12 +150,14 @@ func handle(
 接下来我将提供一个简单的例子，来演示 iOS 16 新 API 的功能特性及效果。
 
 ### （一）新建工程
+
 打开 `Xcode` 应用，选择新建一个 `iOS` 应用工程。输入工程名 `MessageFilterTest`，这个时候我们得到一个空白的工程，选中菜单栏的`File`-`New`- `Target`，我们新建一个应用扩展。
 在 iOS 平台标签下，选择 `Message Filter Extension`。输入 `Target` 的名字。
 
 ![](./images/create_target.png)
 
 ### （二）编写筛选分类
+
 此时我们已经创建好了应用扩展，其中文件名为 `MessageFilterExtension.swfit`。
 我们在获取 `capabilitiesQueryRequest` 的函数里面返回相应的子分类数组，本示例`transactionalSubAction` 返回 3 个， `promotionalSubActions` 返回 2 个。
 
