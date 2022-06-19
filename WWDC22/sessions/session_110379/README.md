@@ -56,7 +56,9 @@ func thumbnail() throws -> UIImage {
 ```
 
 在 Demo 中使用主线程加载缩略图，启动后UI会卡住很长一段时间，直到所有截图加载完毕
+
 > 可以在这里获取 [Demo](./Demo/)
+
 ![](./images/demo1.gif)
 
 所以今年 `AVAssetImageGenerator` 新增了一个异步截图的方法 `image(at:) async`，新方法返回的是一个元祖，包括缩略图 `image` 和图像实际时间 `actualTime`。
@@ -78,7 +80,9 @@ func thumbnail() async throws -> UIImage {
 ```
 
 Demo 中使用了新的 API 截图，整个加载变得顺滑流畅
+
 > 可以在这里获取 [Demo](./Demo/)
+
 ![](./images/demo2.gif)
 
 > 不了解 Async/Await 可能比较难以理解，这两年 Async/Await 的应用非常广泛，想要有更深入的理解，推荐阅读 WWDC21 内参的《[【WWDC21 10132】认识 Swift 的 Async/Await](https://xiaozhuanlan.com/topic/9307851264)》 和 Swift 官方文档 《[Concurrency](https://docs.swift.org/swift-book/LanguageGuide/Concurrency.html)》
@@ -337,7 +341,7 @@ myFunction(thatUses: composition.duration,
 1. 减少内存使用，因为它不会缓存大量数据
 2. 提升播放器的起播速度，因为不用等缓存到一定数量的数据才开始播放
 
-同时需要注意，`entireLengthAvailableOnDemand` 应该只在加载本地资源的时候使用，有任何网络加载的场景使用它，都可能造成播放不稳定。
+需要注意，`entireLengthAvailableOnDemand` 应该只在加载本地资源的时候使用，有任何网络加载的场景使用它，都可能造成播放不稳定。
 
 > 关于 AVAssetResourceLoader，除了Apple举的例子。我们也可以用它来做视频边下边播缓存逻辑。一个已经实现的方案可以参看 [VIMediaCache](https://github.com/vitoziv/VIMediaCache)，其中也包括技术原理的说明。
 
