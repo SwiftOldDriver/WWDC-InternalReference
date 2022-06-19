@@ -1,0 +1,412 @@
+---
+session_ids: [10119]
+---
+
+# WWDC22 - Optimize your use of Core Data and CloudKit / 优化 CoreData & CloudKit 实现
+
+> 作者：小庆儿很小气儿，iOS独立开发者，[GitHub: LabLawliet](https://github.com/RyukieSama)
+
+## 前言
+
+作为一名 iOS 独立开发者，开发了多个个人项目，CloudKit 是我构建项目体系的核心。本 Session 旨在通过单元测试、Instruments、日志收集三方面，覆盖开发流程的三个重要方面：探索、分析与反馈，帮助开发者优化 **CoreData & CloudKit** 方案实现，做出更好的产品。
+
+![DevelopmentWaterFlow](images/development-water-flow.png)
+
+> 本文基于下列 [WWDC22: 10119 - Optimize your use of Core Data and CloudKit](https://developer.apple.com/videos/play/wwdc2022/10119/) 梳理。
+> 
+> 本 Session 侧重点为优化实现方案，更适用于对 CoreData & CloudKit 以及数据库知识有一定理解的开发者，如果想要了解更多实际使用的知识，推荐阅读文末的相关 Session。
+
+## 一、 探索
+
+### 1.1 带着问题开始探索
+
+在开发 CloudKit 相关工功能的时候，可能会有下面的问题：
+
+- 点击按钮会怎么样？
+- 当我保存数据时 NSPersistentCloudKitContainer 是否会同步？
+- 处理大量数据时，是否会耗尽内存？
+
+这些问题都和具体使用的数据有关。
+
+以帖子管理为例，通常包含标题、内容等文本内容。同时也可能包含一些附件，比如图片资源，这些附件有可能非常大。
+
+因此在设计数据结构的时候，图片资源建议单独存储，并于附件简历一对一的关系，以便在需要使用的时候按需进行加载。
+
+![](images/exploration-data.png)
+
+下面我们通过单元测试，来测试通过 NSPersistentCloudKitContainer 同步数据的可行性。
+
+### 1.2 数据准备
+
+为了探索更庞大的数据集，我们创建一个数据生成器 LargeDataGenerator，并提供一个 generateData 的方法来构建数据。
+
+可以生成一组 60 个帖子，每个帖子都有 11 个图片附件，共 660 张。每个图片大小 10-20MB，生成的数据大小近 10GB。
+
+```Swift
+class LargeDataGenerator {
+    func generateData(context: NSManagedObjectContext) throws {
+        try context.performAndWait {
+            for postCount in 1...60 {
+                // 创建帖子 
+                for attachmentCount in 1...11 {
+                    // 添加一个图片作为附件
+                    let attachment = Attachment(context: context)
+                    let imageData = ImageData(context: context)
+                    imageData.attachment = attachment
+                    imageData.data = autoreleasepool {
+                        let imageFileData = NSData(contentsOf: url!)!
+                        attachment.thumbnail = Attachment.thumbnail(from: imageFileData,        
+                                                                    thumbnailPixelSize: 80)
+                        return imageFileData
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+### 1.3 单元测试
+
+有了上面的 LargeDataGenerator，我们就可以方便的编写单元测试了。
+
+```Swift
+class TestLargeDataGenerator: CoreDataCloudKitDemoUnitTestCase {
+    func testGenerateData() throws {
+        let context = self.coreDataStack.persistentContainer.newBackgroundContext()
+        // 通过 LargeDataGenerator 生成数据
+        try self.generator.generateData(context: context)
+        try context.performAndWait {                     
+            let posts = try context.fetch(Post.fetchRequest())
+            for post in posts {
+                // 验证数据是否包含 11 个图片附件
+                self.verify(post: post, has: 11, matching: imageDatas)
+            }
+        }
+    }
+}
+```
+
+#### 导出数据
+
+既然用到 CloudKit，我们就会进行数据同步，下面我们编写一段导出数据的用例：
+
+```Swift
+func testExportThenImport() throws {
+    // NSPersistentCloudKitContainer 实例
+    let exportContainer = newContainer(role: "export", postLoadEventType: .setup)
+    // 生成数据
+    try self.generator.generateData(context: exportContainer.newBackgroundContext())
+    self.expectation(for: .export, from: exportContainer)
+    // 等待多点时间确保测试数据导出
+    self.waitForExpectations(timeout: 1200)
+}
+```
+
+这里为每个导出事件添加一个 XCTestExpectation，用来监听 NSPersistentCloudKitContainer 变化的 Notification，并在回调中验证数。
+
+```Swift
+func expectation(for eventType: NSPersistentCloudKitContainer.EventType,
+                 from container: NSPersistentCloudKitContainer) -> [XCTestExpectation] {
+    var expectations = [XCTestExpectation]()
+    for store in container.persistentStoreCoordinator.persistentStores {
+        // 监听通知
+        let expectation = self.expectation(
+            forNotification: NSPersistentCloudKitContainer.eventChangedNotification,
+            object: container
+        ) { notification in
+            // 处理通知
+            let userInfoKey = NSPersistentCloudKitContainer.eventNotificationUserInfoKey
+            let event = notification.userInfo![userInfoKey]
+            // 验证数据                
+            return (event.type == eventType) &&
+                (event.storeIdentifier == store.identifier) &&
+                (event.endDate != nil)
+        }
+        expectations.append(expectation)
+    }
+    return expectations
+}
+```
+
+通过上面的操作，我们就可以将测试用例中的关键点与 NSPersistentCloudKitContainer 的相关事件紧密关联起来。
+
+#### 导入数据
+
+上面我们完成的是导出的流程，下面我们继续完善用例 `testExportThenImport`，完成同步操作中重要的另一步：导入。
+
+```Swift
+func testExportThenImport() throws {
+    // 导出
+    let exportContainer = newContainer(role: "export", postLoadEventType: .setup)
+    try self.generator.generateData(context: exportContainer.newBackgroundContext())
+    self.expectation(for: .export, from: exportContainer)
+    self.waitForExpectations(timeout: 1200)
+    
+    // 导入
+    let importContainer = newContainer(role: "import", postLoadEventType: .import)
+    self.waitForExpectations(timeout: 1200)
+}
+```
+
+我们可以通过 LargeDataGenerator 配合单元测试验证我们的数据与通过 NSPersistentCloudKitContainer 进行同步的可行性。
+
+## 二、 分析
+
+上面我们完成了构建数据与数据同步功能，接下来我们通过使用工具来分析应用程序是如何处理大量的数据的。
+
+![](images/analysis.png)
+
+### 2.1 Instruments
+
+通过点击对应测试用例的 `Profile` 可以在执行用例的同时调起 Instruments。
+
+![](images/test-profile.png)
+
+### 2.2 分析时间瓶颈 TimeProfiler
+
+通过 TimeProfiler 我们可以分析程序的时间瓶颈。
+
+![](images/Instruments-time-profiler.png)
+
+#### 疑似瓶颈
+
+这里可以发现测试用例中 LargeDataGenerator 花费了大量时间生成图片。
+
+![](images/instruments-images.png)
+
+但通过对比实际情况，由于图片数据都是单独存储的，并不会直接存在于帖子数据中，所以这里是在用例中可以删除的。
+
+![](images/instruments-nocreate-images.png)
+
+#### 真实瓶颈
+
+移除生成图片的代码后，我们再次运行用例，发现大部分时间用在了存储图片数据的过程中。这与我们对于应用程序逻辑与数据结构的设计的期望事相符的。
+
+![](images/instruments-save-images.png)
+
+### 2.3 分析内存占用 Allocations
+
+以上我们学习了如何使用 TimeProfiler 寻找程序的时间瓶颈并进行优化对比。下面我们通过 Instruments 的另一个工具 Allocations 分析在处理近 10GB 数据的时候是怎么样的。
+
+#### 瓶颈分析
+
+![](images/instruments-allocations.png)
+
+可以看出，在测试期间占用了超过 10GB 的内存。我们选择一段点击进入详情。
+
+![](images/instruments-allocations-sel.png)
+
+这里列出了选段内的所有内存占用情况。
+
+![](images/instruments-allocations-sel2.png)
+
+我们进一步点击箭头进入详情，这里能够看到 malloc 与 dealloc 情况。
+
+![](images/instruments-allocations-sel3.png)
+
+为了清楚定位到具体位置，可以通过查看右侧调用堆栈。
+
+![](images/instruments-allocations-sel4.png)
+
+![](images/instruments-allocations-sel5.png)
+
+下面是 verifyPosts 相关代码，可以看出这里选择了直接获取所有数据的形式来进行数据验证，导致了内存用量持续增加。通过优化时间瓶颈我们猜想：是否也可以通过只获取 ID 的方式来优化呢？
+
+```Swift
+func verifyPosts(in context: NSManagedObjectContext) throws {
+    try context.performAndWait {
+        let fetchRequest = Post.fetchRequest()
+        let posts = try context.fetch(fetchRequest)
+
+        for post in posts {
+            // verify post
+            let attachments = post.attachments as! Set<Attachment>
+            for attachment in attachments {
+                XCTAssertNotNil(attachment.imageData)
+                //verify image
+            }
+        }
+    }
+}
+```
+
+#### 通过获取ID优化存储瓶颈
+
+通过设置 resultType 为 managedObjectIDResultType 可以使返回的结果全部是数据ID，大大减少了循环时的内存增长。
+
+同时通过设定验证超过10个就重置上下文的方式，我们也能进一步减轻循环中的内存占用。
+
+```Swift
+func verifyPosts(in context: NSManagedObjectContext) throws {
+    try context.performAndWait {
+        let fetchRequest = Attachment.fetchRequest()
+        // 指定结果以 ID 返回
+        fetchRequest.resultType = .managedObjectIDResultType
+        let attachments = try context.fetch(fetchRequest) as! [NSManagedObjectID]
+
+        for index in 0...attachments.count - 1 {
+            let attachment = context.object(with: attachments[index]) as! Attachment
+
+            //verify attachment
+            let post = attachment.post!
+            //verify post
+
+            if 0 == (index % 10) {
+                context.reset()
+            }
+        }
+    }
+}
+```
+
+### 2.4 实时获取日志
+
+上面介绍了如何通过 Instruments 的一些工具分析时间、空间性能瓶颈。另一方面，日志收集也是我们进一步排查问题重要的取经。
+
+在学习如何获取日志之前，我们需要了解在使用 CoreData 与 CloudKit 进行开发的过程中，会涉及到那些系统服务。
+
+#### 2.4.1 数据交换的生命周期
+
+**导出**
+
+![](images/lifecycle-of-change.png)
+
+- 当数据写入 NSPersistentCloudKitContainer 时，会询问 dasd 系统服务，当前是否适合将数据导出到 CloudKit。
+- 如果是 dasd 会通知 NSPersistentCloudKitContainer 执行。
+- NSPersistentCloudKitContainer 通过系统服务 cloudd 将更改的对象导出到 CloudKit。
+
+**导入**
+
+当数据导入时，整个流程会有一些不同：
+
+![](images/lifecycle-of-change2.png)
+
+- 系统服务 apsd 接收推送通知，将其转发给应用程序。
+- 然后 NSPersistentCloudKitContainer 询问系统服务 dasd，当前是否合适导入
+- 然后 cloudd 从 CloudKit 将数据导入到本地数据库
+
+#### 2.4.2 实时获取日志
+
+这里涉及到了多个系统服务，多个进程，接下来我们学习如何通过控制台实时查看每个进程的日志。
+
+下面列举了一些终端命令，在终端内输入，即可实时查看日志
+
+**CoreData & CloudKit 日志**
+
+```shell
+# Application
+log stream --predicate 'process = "CoreDataCloudKitDemo" AND 
+                        (sender = "CoreData" OR sender = "CloudKit")'
+```
+
+**cloudd 日志**
+
+```shell
+# CloudKit 
+log stream --predicate 'process = "cloudd" AND
+                        message contains[cd] "iCloud.com.example.CloudKitCoreDataDemo"'
+```
+
+**apsd 日志**
+
+```shell
+# Push
+log stream --predicate 'process = "apsd" AND message contains[cd] "CoreDataCloudKitDemo"'
+```
+
+**dasd 日志**
+
+```shell
+# Scheduling
+log stream --predicate 'process = "dasd" AND 
+                        message contains[cd] "com.apple.coredata.cloudkit.activity" AND
+                        message contains[cd] "CEF8F02F-81DC-48E6-B293-6FCD357EF80F"'
+```
+
+## 三、 日志反馈收集
+
+在应用开发完成之后获得日志是我们排查问题的重要手段。接下来介绍如何从任何设备上获取日志。
+
+### 3.1 CloudKit Profile
+
+#### 下载
+
+![](images/Profiles-and-Logs.png)
+
+通过 [Profiles and Logs](https://developer.apple.com/bug-reporting/profiles-and-logs/) 网页，下载 CloudKit Profile 并在系统设置里安装，然后重启设备。
+
+### 3.2 获取日志
+
+同时按住**两个音量键** + **电源键**几秒钟后，然后放开。
+
+![](images/log-reboot.png)
+
+过一会儿系统日志就可以在设置中找到了：
+
+![](images/logs1.png)
+
+![](images/logs2.png)
+
+![](images/logs3.png)
+
+这里就可以看到日志文件了，可以通过分享按钮获取文件。
+
+![](images/logs-all.png)
+
+### 3.3 查询目标日志
+
+获取系统日志之后，我们可以通过命令行设置一些参数，获取到我们需要的日志，首先我们在终端 CD 到日志目录里。
+
+#### 指定进程搜索
+
+```shell
+log show --info --debug
+    # 指定进程
+    --predicate 'process = "apsd" AND
+                 message contains[cd] "iCloud.com.example.CloudKitCoreDataDemo"'
+    system_logs.logarchive
+```
+
+#### 时间段 + 指定进程搜索
+
+```shell
+# 多条件搜索
+log show --info --debug
+    # 指定时间范围
+    --start "2022-06-04 09:40:00"
+    --end "2022-06-04 09:42:00"
+    # 指定进程
+    --predicate 'process = "apsd" AND 
+                 message contains[cd] "iCloud.com.example.CloudKitCoreDataDemo"'
+    system_logs.logarchive
+```
+
+#### 时间段 + 多进程搜索
+
+```shell
+log show --info --debug
+    --start "2022-06-04 09:40:00" --end "2022-06-04 09:42:00"
+    --predicate '(process = "CoreDataCloudKitDemo" AND
+                      (sender = "CoreData" or sender = "CloudKit")) OR
+                 (process = "cloudd" AND
+                      message contains[cd] "iCloud.com.example.CloudKitCoreDataDemo") OR
+                 (process = "apsd" AND message contains[cd] "CoreDataCloudKitDemo") OR 
+                 (process = "dasd" AND
+                     message contains[cd] "com.apple.coredata.cloudkit.activity" AND
+                     message contains[cd] "CEF8F02F-81DC-48E6-B293-6FCD357EF80F")'
+    system_logs.logarchive
+```
+
+## 推荐阅读
+
+> [WWDC22: 10115 - What’s new in CloudKit Console](https://developer.apple.com/videos/play/wwdc2022/10115/)
+> 
+> [WWDC21: 10015 Build apps that share data through CloudKit and Core Data](https://developer.apple.com/videos/play/wwdc2021/10015)
+> 
+> [WWDC19: 202 Using Core Data With CloudKit](https://developer.apple.com/videos/play/wwdc2019/202)
+> 
+> [WWDC20: Diagnose performance issues with the Xcode Organizer](https://developer.apple.com/videos/play/wwdc2020/10076)
+> 
+> [WWDC19: Getting Started with Instruments](https://developer.apple.com/videos/play/wwdc2019/411)
+
