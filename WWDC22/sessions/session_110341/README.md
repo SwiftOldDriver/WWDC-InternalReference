@@ -20,7 +20,7 @@ session_ids: [110341]
 
 目前在 App Store 上面有许多做得非常好的短信过滤应用扩展，就是基于这个  `IdentityLookup` 框架能力。有兴趣的可以在 App Store 搜索`短信过滤`等关键词，可以找到很多优秀的短信应用扩展，甚至有些应用扩展还加入 `ML Core` 机器学习框架等能力，帮助增强过滤规则的准确率。
 
-今年的 WWDC 2022 大会，iOS 16 在短信过滤 API 这方面带来了一些新的特性。 分别针对 `transaction` （交易短信）和 `promotion` （推广短信）两种类别进行了扩展，增加了 12 个子类型。如下图：
+今年的 WWDC 2022 大会，iOS 16 在短信过滤 API 这方面带来了一些新的特性。分别针对 `transaction` （交易短信）和 `promotion` （推广短信）两种类别进行了扩展，增加了 12 个子类型。如下图：
 
 ![](./images/ios_16_transaction_promotion_12_subaction.png)
 
@@ -56,7 +56,7 @@ session_ids: [110341]
 
 ### （一）本地逻辑过滤
 
-为了验证某条未知发件人的消息是否需要进行筛选归类，系统信息 App 会对系统目前已启用的短信过滤应用扩展进行问询，通过 `ILMessageFilterQueryRequest` 对象将消息内容传递给过滤器扩展。其中内容包括 `sender` （发送者号码）、 `messageBody` （信息内容）、 `receiverISOCountryCode` （接收号码对应的标准ISO 3166-2国家区号）。 经过一些逻辑判断过滤，过滤器扩展将判定结果通过 对象返还给系统信息 `ILMessageFilterQueryResponse` App。其流程如下图：
+为了验证某条未知发件人的消息是否需要进行筛选归类，系统信息 App 会对系统目前已启用的短信过滤应用扩展进行问询，通过 `ILMessageFilterQueryRequest` 对象将消息内容传递给过滤器扩展。其中内容包括 `sender`（发送者号码）、`messageBody`（信息内容）、`receiverISOCountryCode` （接收号码对应的标准ISO 3166-2国家区号）。经过一些逻辑判断过滤，过滤器扩展将判定结果通过 对象返还给系统信息 `ILMessageFilterQueryResponse` App。其流程如下图：
 
 ![](./images/message_filter_query_request.png)
 
@@ -126,7 +126,7 @@ func handle(_ capabilitiesQueryRequest: ILMessageFilterCapabilitiesQueryRequest,
 
 ![](./images/message_filter_sub_action.png)
 
-当信息 App 接收到未知发件人的信息时，会向应用扩展发起问询，传递相应的数据，由过滤器扩展处理后，返回它的决策结果，信息 App 再进行UI更新，此阶段为 `runtime classification` 运行时分类。数据处理为如下方法： 
+当信息 App 接收到未知发件人的信息时，会向应用扩展发起问询，传递相应的数据，由过滤器扩展处理后，返回它的决策结果，信息 App 再进行 UI 更新，此阶段为 `runtime classification` 运行时分类。数据处理为如下方法： 
 
 ```swift 
 func handle(
@@ -145,14 +145,14 @@ func handle(
 接下来我将提供一个简单的例子，来演示 iOS 16 新 API 的功能特性及效果。
 
 ###（一）新建工程
-打开 Xcode 应用，选择新建一个 iOS 应用工程。输入工程名 MessageFilterTest ,这个时候我们得到一个空白的工程，选中菜单栏的File - New - Target，我们新建一个应用扩展。
-在iOS平台标签下，选择 Message Filter Extension。输入Target 的名字。
+打开 `Xcode` 应用，选择新建一个 `iOS` 应用工程。输入工程名 `MessageFilterTest`，这个时候我们得到一个空白的工程，选中菜单栏的`File`-`New`- `Target`，我们新建一个应用扩展。
+在iOS平台标签下，选择 `Message Filter Extension`。输入 `Target` 的名字。
 
 ![](./images/create_target.png)
 
 ###（二）编写筛选分类
 此时我们已经创建好了应用扩展，其中文件名为 `MessageFilterExtension.swfit`。
-我们在获取 `capabilitiesQueryRequest` 的函数里面返回相应的子分类数组， 本示例`transactionalSubAction` 返回 3 个， `promotionalSubActions` 返回 2 个。
+我们在获取 `capabilitiesQueryRequest` 的函数里面返回相应的子分类数组，本示例`transactionalSubAction` 返回 3 个， `promotionalSubActions` 返回 2 个。
 
 ```swift
     func handle(_ capabilitiesQueryRequest: ILMessageFilterCapabilitiesQueryRequest, context: ILMessageFilterExtensionContext, completion: @escaping (ILMessageFilterCapabilitiesQueryResponse) -> Void) {
@@ -191,7 +191,7 @@ func handle(
 
 > 这里需要注意的是，返回的 Action 和 subAction 必须匹配，否则子分类会不生效。
 
-之后运行工程，成功在我们真机上面安装后，在`设置`-`信息`-`未知与过滤信息`中，勾选我们的MessageFilterTest这个过滤器。此时到 信息 App 这个界面，就可以看到我们的分类入口了。 
+之后运行工程，成功在我们真机上面安装后，在`设置`-`信息`-`未知与过滤信息`中，勾选我们的 `MessageFilterTest` 这个过滤器。此时到 信息 App 这个界面，就可以看到我们的分类入口了。 
 
 ![](./images/phase_1.png)
 
@@ -199,7 +199,7 @@ func handle(
 
 ![](./images/phase_2.png)
 
-当我们测试短信里面包含`天气`这个关键词时，则会归类到 `transactionalWeather` （天气） 这个分类下面。
+当我们测试短信里面包含`天气`这个关键词时，则会归类到 `transactionalWeather`（天气）这个分类下面。
 
 ![](./images/phase_3.png)
 
@@ -209,7 +209,7 @@ func handle(
 
 由于可以申请后端查询服务，所以就算我们本地逻辑无法处理的，也可以通过后端实时更新规则来判定，另外，也可以通过主 App 工程来进行变更。由于应用扩展是运行在沙盒中，隔绝了跟主 App 的数据传输，但是我们可以通过 `App Groups` 这个功能来进行数据共享。
 
-在 Xcode 工程中，开启 `App Groups` 这项权限，勾选同一个 Groups ，本示例使用 `UserDefault` 来进行共享数据。
+在 Xcode 工程中，开启 `App Groups` 这项权限，勾选同一个 `Groups`，本示例使用 `UserDefault` 来进行共享数据。
 
 ![](./images/phase_4.png)
 
@@ -276,7 +276,7 @@ public enum AppGroupUserDefault: String {
     }
 ```
 
-到此，我们的Demo演示介绍告一段落，通过这个简单的示例，我们可以编写各种符合当下国情短信的规则、关键词，来将一些陌生人信息进行归档，避免太多的信息打扰。以上如有错漏之处，欢迎指出: mail2chensh@gmail.com 。
+到此，我们的 `Demo` 演示介绍告一段落，通过这个简单的示例，我们可以编写各种符合当下国情短信的规则、关键词，来将一些陌生人信息进行归档，避免太多的信息打扰。以上如有错漏之处，欢迎指出: mail2chensh@gmail.com 。
 
 > Demo工程文件下载： [点击这里](https://github.com/mail2chensh/MessageFilterTest)
 
