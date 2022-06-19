@@ -10,11 +10,11 @@ session_ids: [110341]
 >
 > 审核：橙汁。
 
-## 前言 
+## 前言
 
-苹果从 iOS 11 的时候就已经推出了 `IdentityLookup` 框架,该框架在保护用户隐私的基础上，提供了一系列 API 接口来帮助用户过滤或上报一些短信SMS或者彩信MMS。
+苹果从 iOS 11 的时候就已经推出了 `IdentityLookup` 框架,该框架在保护用户隐私的基础上，提供了一系列 API 接口来帮助用户过滤或上报一些短信 SMS 或者彩信 MMS。
 
-之后在 iOS 14，苹果增加了2种过滤器的筛选类型，分别是 `transaction` （交易短信） 和 `promotion` （推广短信）两种类别，它们将会在短信 App 的入口界面，增加了相应的文件夹入口。如下图：
+之后在 iOS 14，苹果增加了 2 种过滤器的筛选类型，分别是 `transaction` （交易短信） 和 `promotion` （推广短信）两种类别，它们将会在短信 App 的入口界面，增加了相应的文件夹入口。如下图：
 
 ![](./images/ios_14_transaction_promotion.png)
 
@@ -24,7 +24,8 @@ session_ids: [110341]
 
 ![](./images/ios_16_transaction_promotion_12_subaction.png)
 
-其中 `transaction` （交易短信）增加了9个子类别，分别是： 
+其中 `transaction` （交易短信）增加了 9 个子类别，分别是：
+
 - Finace （金融类）
 - Reminders （各类提醒）
 - Orders （订单）
@@ -35,14 +36,15 @@ session_ids: [110341]
 - Rewards （薪资报酬类）
 - Others （其他）
 
- `promotion` （推广短信）增加了3个子类别，分别是：
+ `promotion` （推广短信）增加了 3 个子类别，分别是：
+
 - Offers （各类营销信息、工作机会等）
 - Coupons （各类优惠券）
 - Others （其他）
 
 > 小编吐槽：由于国情不一样 ，其实对于国内情况来说，最好的方式还是提供自定义字段类型，例如验证码、提醒信息、垃圾短信等
 
-新增的12个子类型，这给开发者带来了更多的便利，可以给用户提供更为详细的分类筛选。接下来本文将有两个内容介绍：
+新增的 12 个子类型，这给开发者带来了更多的便利，可以给用户提供更为详细的分类筛选。接下来本文将有两个内容介绍：
 
 - 介绍系统短信过滤的原理；
 
@@ -56,7 +58,7 @@ session_ids: [110341]
 
 ### （一）本地逻辑过滤
 
-为了验证某条未知发件人的消息是否需要进行筛选归类，系统信息 App 会对系统目前已启用的短信过滤应用扩展进行问询，通过 `ILMessageFilterQueryRequest` 对象将消息内容传递给过滤器扩展。其中内容包括 `sender`（发送者号码）、`messageBody`（信息内容）、`receiverISOCountryCode` （接收号码对应的标准ISO 3166-2国家区号）。经过一些逻辑判断过滤，过滤器扩展将判定结果通过 对象返还给系统信息 `ILMessageFilterQueryResponse` App。其流程如下图：
+为了验证某条未知发件人的消息是否需要进行筛选归类，系统信息 App 会对系统目前已启用的短信过滤应用扩展进行问询，通过 `ILMessageFilterQueryRequest` 对象将消息内容传递给过滤器扩展。其中内容包括 `sender`（发送者号码）、`messageBody`（信息内容）、`receiverISOCountryCode` （接收号码对应的标准 ISO 3166-2 国家区号）。经过一些逻辑判断过滤，过滤器扩展将判定结果通过 对象返还给系统信息 `ILMessageFilterQueryResponse` App。其流程如下图：
 
 ![](./images/message_filter_query_request.png)
 
@@ -73,6 +75,7 @@ func deferQueryRequestToNetwork(completion: @escaping (ILNetworkResponse?, Error
 ![](./images/message_filter_query_request_server.png)
 
 其中网络端的逻辑服务，需要注意的有几点：
+
 - App 里面需要在 `Associated Domains` 加上我们后端的域名。
 - 应用扩展 Target 的 `Info.plist` 文件要固定一个访问地址，该地址用于系统发起问询服务。形式如下：
 
@@ -92,6 +95,7 @@ func deferQueryRequestToNetwork(completion: @escaping (ILNetworkResponse?, Error
 ```
 
 - 后端要配置 [Shared Web Credentials](https://developer.apple.com/documentation/security/shared_web_credentials)，在对应的 `apple-app-site-association` 文件中，加入 `messagefilter` 字段，形式如下：
+
 ```json
 {
     "messagefilter": {
@@ -104,12 +108,13 @@ func deferQueryRequestToNetwork(completion: @escaping (ILNetworkResponse?, Error
 ### （三）新特性：子分类筛选流程
 
 当应用扩展包含 iOS 16 新的 API 功能后，系统信息在加载的时候，会分为两个阶段：
+
 - configuration 配置加载；
 - runtime classification 运行时分类。
 
-当我们在系统的`设置`-`信息`-`未知与过滤信息`中，勾选已经安装的短信过滤扩展后，系统会向该短信扩展发起问询，此阶段属于 configuration `配置加载`阶段。调用函数如下： 
+当我们在系统的`设置`-`信息`-`未知与过滤信息`中，勾选已经安装的短信过滤扩展后，系统会向该短信扩展发起问询，此阶段属于 configuration `配置加载`阶段。调用函数如下：
 
-```swift 
+```swift
 func handle(_ capabilitiesQueryRequest: ILMessageFilterCapabilitiesQueryRequest, context: ILMessageFilterExtensionContext, completion: @escaping (ILMessageFilterCapabilitiesQueryResponse) -> Void) {
         let response = ILMessageFilterCapabilitiesQueryResponse()
         // TODO: Update subActions from ILMessageFilterSubAction enum
@@ -122,13 +127,13 @@ func handle(_ capabilitiesQueryRequest: ILMessageFilterCapabilitiesQueryRequest,
     }
 ```
 
-应用扩展则返回相应的 `ILMessageFilterSubAction` 数组对象。新增的12种子分类上文已经提及，信息 App 会根据拿到的子分类数组，进行界面更新，增加相应的分类入口，如下图： 
+应用扩展则返回相应的 `ILMessageFilterSubAction` 数组对象。新增的 12 种子分类上文已经提及，信息 App 会根据拿到的子分类数组，进行界面更新，增加相应的分类入口，如下图：
 
 ![](./images/message_filter_sub_action.png)
 
-当信息 App 接收到未知发件人的信息时，会向应用扩展发起问询，传递相应的数据，由过滤器扩展处理后，返回它的决策结果，信息 App 再进行 UI 更新，此阶段为 `runtime classification` 运行时分类。数据处理为如下方法： 
+当信息 App 接收到未知发件人的信息时，会向应用扩展发起问询，传递相应的数据，由过滤器扩展处理后，返回它的决策结果，信息 App 再进行 UI 更新，此阶段为 `runtime classification` 运行时分类。数据处理为如下方法：
 
-```swift 
+```swift
 func handle(
     _ queryRequest: ILMessageFilterQueryRequest,
     context: ILMessageFilterExtensionContext,
@@ -144,13 +149,13 @@ func handle(
 
 接下来我将提供一个简单的例子，来演示 iOS 16 新 API 的功能特性及效果。
 
-###（一）新建工程
+### （一）新建工程
 打开 `Xcode` 应用，选择新建一个 `iOS` 应用工程。输入工程名 `MessageFilterTest`，这个时候我们得到一个空白的工程，选中菜单栏的`File`-`New`- `Target`，我们新建一个应用扩展。
-在iOS平台标签下，选择 `Message Filter Extension`。输入 `Target` 的名字。
+在 iOS 平台标签下，选择 `Message Filter Extension`。输入 `Target` 的名字。
 
 ![](./images/create_target.png)
 
-###（二）编写筛选分类
+### （二）编写筛选分类
 此时我们已经创建好了应用扩展，其中文件名为 `MessageFilterExtension.swfit`。
 我们在获取 `capabilitiesQueryRequest` 的函数里面返回相应的子分类数组，本示例`transactionalSubAction` 返回 3 个， `promotionalSubActions` 返回 2 个。
 
@@ -191,7 +196,7 @@ func handle(
 
 > 这里需要注意的是，返回的 Action 和 subAction 必须匹配，否则子分类会不生效。
 
-之后运行工程，成功在我们真机上面安装后，在`设置`-`信息`-`未知与过滤信息`中，勾选我们的 `MessageFilterTest` 这个过滤器。此时到 信息 App 这个界面，就可以看到我们的分类入口了。 
+之后运行工程，成功在我们真机上面安装后，在`设置`-`信息`-`未知与过滤信息`中，勾选我们的 `MessageFilterTest` 这个过滤器。此时到 信息 App 这个界面，就可以看到我们的分类入口了。
 
 ![](./images/phase_1.png)
 
@@ -213,9 +218,9 @@ func handle(
 
 ![](./images/phase_4.png)
 
-创建一个枚举类型 `AppGroupUserDefault`，方便后期不同的需求扩展,代码如下： 
+创建一个枚举类型 `AppGroupUserDefault`，方便后期不同的需求扩展,代码如下：
 
-```swift 
+```swift
 public enum AppGroupUserDefault: String {
     case widget = "group.com.company.MessageFilterTest"
     public var standard: UserDefaults {
@@ -231,9 +236,9 @@ public enum AppGroupUserDefault: String {
 }
 ```
 
-在主工程 App 里面增加一个按钮，用来动态调整过滤规则的关键词。原本的过滤词只有`京东`，当按钮打开后，会增加`淘宝`、`天猫`两个关键词。代码如下： 
+在主工程 App 里面增加一个按钮，用来动态调整过滤规则的关键词。原本的过滤词只有`京东`，当按钮打开后，会增加`淘宝`、`天猫`两个关键词。代码如下：
 
-```swift 
+```swift
     // 此处为演示动态增删关键词（规则），通过 App Group 实现数据共享
     @IBAction func keywordSwitchValueDidChanged(_ sender: Any) {
         //
@@ -248,7 +253,7 @@ public enum AppGroupUserDefault: String {
     }
 ```
 
-最后，在应用扩展的代码里，相应地增加动态获取关键词的逻辑即可。 
+最后，在应用扩展的代码里，相应地增加动态获取关键词的逻辑即可。
 
 ```swift
     private func offlineAction(for queryRequest: ILMessageFilterQueryRequest) -> (ILMessageFilterAction, ILMessageFilterSubAction) {
@@ -278,12 +283,4 @@ public enum AppGroupUserDefault: String {
 
 到此，我们的 `Demo` 演示介绍告一段落，通过这个简单的示例，我们可以编写各种符合当下国情短信的规则、关键词，来将一些陌生人信息进行归档，避免太多的信息打扰。以上如有错漏之处，欢迎指出: mail2chensh@gmail.com 。
 
-> Demo工程文件下载： [点击这里](https://github.com/mail2chensh/MessageFilterTest)
-
-
-
-
-
-
-
-
+> Demo 工程文件下载： [点击这里](https://github.com/mail2chensh/MessageFilterTest)
