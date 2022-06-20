@@ -18,7 +18,7 @@ session_ids: [10054]
 
 第四部分探索新 API 一些适用的场景。
 
-最后一部分通过一个完整的例子验证本文中提到的技术。
+最后一部分给出一些使用的建议。
 
 ## 唐诗三百首 App
 
@@ -53,6 +53,8 @@ struct Poem: Codable, Hashable, Identifiable {
 读完这篇文章，你将能轻松地实现一个应用如下图所示：
 
 [唐诗三百首 App 截图][poems-app-screenshot]
+
+本文所使用的代码开源在[Github][poems-source-code]上.
 
 ## 现有导航方案回顾
 
@@ -363,16 +365,21 @@ NavigationLink(... tag: ... selection:) | NaviationLink(... value: ...)
 具体迁移细节，请查看官方[文档][migrating-to-new-navigation-types]。
 
 ## 新 API 适用的场景
-### Deeplink
+### 配合 Regex 实现 Deeplink
 
-## 唐诗三百首的详细实现
-### 实现
-### 技巧 tips
+TBD
+
+## 使用建议
+
+1. 在能使用 NavigationSplitView 的场景尽量使用 NavigationSplitView。
+2. 组合使用 NavigationSplitView、NagivationStack 和 List 实现复杂的导航效果。
+3. 将 navigationDestination 放在主视图上，方便组织。
 
 
 [poems-app-design]: TODO
 [iOS-and-iPadOS-16-Beta-Release-Notes]: https://developer.apple.com/documentation/ios-ipados-release-notes/ios-ipados-16-release-notes
-[poems-app-screenshot]: TODO
+[poems-app-screenshot]: ./images/poems-app-screenshot.png
+[poems-source-code]: https://github.com/zddhub/poems
 [navigation-view]: ./images/navigation-view.png
 [navigation-stack-diagram]: TODO
 [migrating-to-new-navigation-types]: https://developer.apple.com/documentation/swiftui/migrating-to-new-navigation-types
