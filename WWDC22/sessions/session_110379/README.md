@@ -6,30 +6,30 @@ session_ids: [110379]
 
 本文基于 WWDC22 110379 [Create a more responsive media app](https://developer.apple.com/videos/play/wwdc2022/110379/) 整理
 
-> 作者：Vito，iOS开发，专注于音视频领域
-> 
+> 作者：Vito，iOS 开发，专注于音视频领域
+>
 > 审核： // TODO..
-
 
 本 Session 主要介绍 AVFoundation 中资源加载上的注意点和优化方式
 
 ## 前言
 
-作为有一定经验的 iOS 开发，或多或少都会接触到多媒体处理的需求。比如获取视频缩略图，获取视频文件的时长、格式等信息，更深入的会做一些音视频编辑的功能。而这些功能都涉及到资源文件的加载，如果将这个操作放在主线程中执行，就很可能会发生UI卡顿问题。
+作为有一定经验的 iOS 开发，或多或少都会接触到多媒体处理的需求。比如获取视频缩略图，获取视频文件的时长、格式等信息，更深入的会做一些音视频编辑的功能。而这些功能都涉及到资源文件的加载，如果将这个操作放在主线程中执行，就很可能会发生 UI 卡顿问题。
 
-为了防止UI卡顿，我们首先需要识别哪些功能可能会产生资源加载行为，并使用异步的方式在后台线程加载资源，再回到主线程更新UI。
+为了防止 UI 卡顿，我们首先需要识别哪些功能可能会产生资源加载行为，并使用异步的方式在后台线程加载资源，再回到主线程更新 UI。
 
 之前 AVFoundation 已经提供了异步加载资源的方法，今年基于 Swift 的 Async/Await 优化了异步加载的 API，让异步代码写起来更安全和简洁。
 
 **主要内容：**
-- 视频截图（`AVAssetImageGenerator`）新增基于 Async/Await 方式的截图API
-- 视频编辑对象 `AVComposition`、`AVVideoComposition` 新增基于Async/Await 的剪辑API
+
+- 视频截图（`AVAssetImageGenerator`）新增基于 Async/Await 方式的截图 API
+- 视频编辑对象 `AVComposition`、`AVVideoComposition` 新增基于 Async/Await 的剪辑 API
 - `AVAsset` 获取资源属性的接口，只推荐使用基于 Async/Await 的 API，老 API 被废弃
 - `AVAssetResourceLoader` 中加载本地自定义资源可以跳过原本的缓存逻辑
 
 ## 视频截图优化
 
-我们通常都会使用 `AVAssetImageGenerator` 来获取视频的缩略图。 `AVAssetImageGenerator`原本就提供了两个接口来实现截图，一个同步的`copyCGImage(at:actualTime:)`，一个异步的`generateCGImagesAsynchronously(forTimes:completionHandler:)`
+我们通常都会使用 `AVAssetImageGenerator` 来获取视频的缩略图。 `AVAssetImageGenerator`原本就提供了两个接口来实现截图，一个同步的 `copyCGImage(at:actualTime:)`，一个异步的`generateCGImagesAsynchronously(forTimes:completionHandler:)`
 
 ```swift
 // 同步截图
@@ -39,13 +39,13 @@ open func copyCGImage(at requestedTime: CMTime, actualTime: UnsafeMutablePointer
 open func generateCGImagesAsynchronously(forTimes requestedTimes: [NSValue], completionHandler handler: @escaping AVAssetImageGeneratorCompletionHandler)
 ```
 
-`AVAssetImageGenerator`做截图时，需要先加载视频文件中的图像帧数据。如果是本地文件，需要解码视频和裁剪图像。如果是一个在线视频文件，还需要先把视频文件下载到本地。
+`AVAssetImageGenerator` 做截图时，需要先加载视频文件中的图像帧数据。如果是本地文件，需要解码视频和裁剪图像。如果是一个在线视频文件，还需要先把视频文件下载到本地。
 
 ![](./images/pic1.png)
 
 ### 同步截图 API 优化
 
-使用 `copyCGImage(at:actualTime:)` 的问题是，对于新手，这些耗时的资源加载和处理都是隐式的。如果不知道其中细节，很可能就会直接在主线程调用，而造成UI卡顿。
+使用 `copyCGImage(at:actualTime:)` 的问题是，对于新手，这些耗时的资源加载和处理都是隐式的。如果不知道其中细节，很可能就会直接在主线程调用，而造成 UI 卡顿。
 
 ```swift
 func thumbnail() throws -> UIImage {
@@ -55,7 +55,7 @@ func thumbnail() throws -> UIImage {
 }
 ```
 
-在 Demo 中使用主线程加载缩略图，启动后UI会卡住很长一段时间，直到所有截图加载完毕
+在 Demo 中使用主线程加载缩略图，启动后 UI 会卡住很长一段时间，直到所有截图加载完毕
 
 > 可以在这里获取 [Demo](./Demo/)
 
@@ -89,7 +89,7 @@ Demo 中使用了新的 API 截图，整个加载变得顺滑流畅
 
 ### 截图速度优化
 
-视频是经过压缩的，在做视频帧截图的时候，视频需要解码。解码视频内有个 GOP 的概念，简单来说是压缩的视频文件中一组连续的图像数据，其中关键帧（I帧）可以被直接解码成完整的图像，其它帧（P帧、B帧）需要依赖附近的参考帧才能被正确解码成完整图像。
+视频是经过压缩的，在做视频帧截图的时候，视频需要解码。解码视频内有个 GOP 的概念，简单来说是压缩的视频文件中一组连续的图像数据，其中关键帧（I 帧）可以被直接解码成完整的图像，其它帧（P 帧、B 帧）需要依赖附近的参考帧才能被正确解码成完整图像。
 
 默认情况下 `image(at:) async` 会找到传入时间附近的关键帧来解码并创建缩略图，这样可以提升截取缩略图的速度。
 
@@ -158,7 +158,7 @@ public func images(for times: [CMTime]) -> AVAssetImageGenerator.Images
 1. 传入的时间数组，不用再转成 NSValue，直接使用 CMTime 类型就可以
 2. 基于新的 async/await 设计简化异步实现
 
-新的写法我们可以直接获取截图结果的异步序列（Async Sequence），并通过 for 循环处理每一个值，在异步序列的for循环中，每当有一个内容已经处理好，就会进入循环内的处理，然后继续等待下一个内容处理完成再继续执行循环。
+新的写法我们可以直接获取截图结果的异步序列（Async Sequence），并通过 for 循环处理每一个值，在异步序列的 for 循环中，每当有一个内容已经处理好，就会进入循环内的处理，然后继续等待下一个内容处理完成再继续执行循环。
 
 ```swift
 func timelineThumbnails(for times: [CMTime]) async {
@@ -218,7 +218,7 @@ let composition = AVMutableComposition()
 try await composition.insertTimeRange(timeRange, of: asset, at: startTime)
 ```
 
-`AVVideoComposition` 也有几个类似的API问题，今年全部 async/await 安排上。
+`AVVideoComposition` 也有几个类似的 API 问题，今年全部 async/await 安排上。
 之前需要优先确保资源的 duration 和 tracks 数据异步加载好。
 
 ```swift
@@ -238,6 +238,7 @@ try await videoComposition.isValid(for: asset, timeRange: range, validationDeleg
 ```
 
 ### 视频资源信息加载优化
+
 当我们想要获取媒体文件的信息时，可以使用 AVAsset 对象访问属性来获取，比如：`asset.duration`、`asset.tracks`。如果 `AVAsset` 指向的资源是云端文件，这种直接获取属性的方式，会隐式的触发资源下载，如果在主线程中直接访问这些属性，就很可能造成 UI 卡顿。所以对这些属性的访问，最好是先通过异步接口加载，再访问资源属性。`loadValuesAsynchronously(forKeys:)` 是目前版本提供的加载方法
 
 ```swift
@@ -248,16 +249,16 @@ asset.loadValuesAsynchronously(forKeys: ["duration", "tracks"]) {
 }
 ```
 
-这种方式要求通过传入字符串key来选择要加载哪些资源属性，这个 API 有两个潜在问题：
+这种方式要求通过传入字符串 key 来选择要加载哪些资源属性，这个 API 有两个潜在问题：
 
-1. 如果使用字符串的方式由于拼写错误，导致属性资源没有加载，那么等到再回调里面访问属性的时候，就会触发同步加载数据，出现UI卡顿。
+1. 如果使用字符串的方式由于拼写错误，导致属性资源没有加载，那么等到再回调里面访问属性的时候，就会触发同步加载数据，出现 UI 卡顿。
 2. 如果因为业务逻辑修改，在回调 block 中新增了其它属性的使用，由于没有编译检查，很有可能会忘记在加载的时候添加新增属性的 key 值
 
 去年的 WWDC 提供了新的异步 `load(_:)` 方法。
 
-> 关于这部分可以看 WWDC21 内参 《[【WWDC21 10146】AVFoundation 的新变化](https://xiaozhuanlan.com/topic/2879104653)》 
+> 关于这部分可以看 WWDC21 内参 《[【WWDC21 10146】AVFoundation 的新变化](https://xiaozhuanlan.com/topic/2879104653)》
 
-把上面远古时代遗留下来的，通过传入字符串key的方式，改成了类型安全的 key。新的方式通过编译检查防止了我们不小心拼错字符串，造成的问题。并且到底加载了哪些属性，直接通过元祖返回，在后续使用的时候直接使用返回值，确保不会误访问没有加载的值。
+把上面远古时代遗留下来的，通过传入字符串 key 的方式，改成了类型安全的 key。新的方式通过编译检查防止了我们不小心拼错字符串，造成的问题。并且到底加载了哪些属性，直接通过元祖返回，在后续使用的时候直接使用返回值，确保不会误访问没有加载的值。
 
 ```swift
 let (duration, tracks) = try await asset.load(.duration, .tracks)
@@ -270,7 +271,7 @@ myFunction(thatUses: duration, and: tracks)
 2. 直接返回加载的属性值
 3. 在编译器做检查
 
-基于以上原因，今年直接废除了（标记为 deprecated）老的字符串传key的方法 `loadValuesAsynchronously(forKeys:)`，在 Swift 下只推荐使用新的异步 `load(_:)` 方法。
+基于以上原因，今年直接废除了（标记为 deprecated）老的字符串传 key 的方法 `loadValuesAsynchronously(forKeys:)`，在 Swift 下只推荐使用新的异步 `load(_:)` 方法。
 
 ![](./images/pic6.png)
 
@@ -328,7 +329,7 @@ myFunction(thatUses: composition.duration,
 
 ![](./images/pic11.png)
 
-在某些情况下，我们可能无法直接通过URL指向资源文件，比如：可能把mp4的原始字节数据存储在一个自定义文件中。对于这种情况，`AVAsset` 可以使用 `AVAssetResourceLoader` 来解决。`AVAssetResourceLoader` 会拦截 `AVAsset` 的数据加载逻辑，我们可以在内部实现自己的数据加载逻辑。不过由于 `AVAsset` 不再处理数据加载，就无法预测每块数据需要多长时间才能加载完，所以如果实现了自定义的 `AVAssetResourceLoader`，播放器播放时，`AVAsset` 会当成是在做网络数据加载，让数据经过缓存逻辑，等待缓存达到一定量才开始播放。如果自定义文件不是在网络中，这种经过缓存的逻辑，其实不是很合理。
+在某些情况下，我们可能无法直接通过 URL 指向资源文件，比如：可能把 mp4 的原始字节数据存储在一个自定义文件中。对于这种情况，`AVAsset` 可以使用 `AVAssetResourceLoader` 来解决。`AVAssetResourceLoader` 会拦截 `AVAsset` 的数据加载逻辑，我们可以在内部实现自己的数据加载逻辑。不过由于 `AVAsset` 不再处理数据加载，就无法预测每块数据需要多长时间才能加载完，所以如果实现了自定义的 `AVAssetResourceLoader`，播放器播放时，`AVAsset` 会当成是在做网络数据加载，让数据经过缓存逻辑，等待缓存达到一定量才开始播放。如果自定义文件不是在网络中，这种经过缓存的逻辑，其实不是很合理。
 
 ![](./images/pic12.png)
 
@@ -343,7 +344,7 @@ myFunction(thatUses: composition.duration,
 
 需要注意，`entireLengthAvailableOnDemand` 应该只在加载本地资源的时候使用，有任何网络加载的场景使用它，都可能造成播放不稳定。
 
-> 关于 AVAssetResourceLoader，除了Apple举的例子。我们也可以用它来做视频边下边播缓存逻辑。一个已经实现的方案可以参看 [VIMediaCache](https://github.com/vitoziv/VIMediaCache)，其中也包括技术原理的说明。
+> 关于 AVAssetResourceLoader，除了 Apple 举的例子。我们也可以用它来做视频边下边播缓存逻辑。一个已经实现的方案可以参看 [VIMediaCache](https://github.com/vitoziv/VIMediaCache)，其中也包括技术原理的说明。
 
 ### 总结
 
@@ -352,4 +353,4 @@ myFunction(thatUses: composition.duration,
 1. 在视频截图、编辑、资源信息加载几个场景，提供了更新的 async/await 的方式做异步数据加载，让异步数据加载更简单安全
 2. `AVAssetResourceLoader` 新增本地模式，提升播放器加载速度
 
-今年主要对 `AVFoundation` 中原本不是很合理的同步API做了异步优化，同时将 async/await 应用到了更多API中，让API更安全的同时还能保持易用，不得不说 Swift 大法好啊（但国内大厂们何时可以用上 Swift？令人头秃）。
+今年主要对 `AVFoundation` 中原本不是很合理的同步 API 做了异步优化，同时将 async/await 应用到了更多 API 中，让 API 更安全的同时还能保持易用，不得不说 Swift 大法好啊（但国内大厂们何时可以用上 Swift？令人头秃）。
