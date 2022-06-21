@@ -353,14 +353,12 @@ var body: some View {
 
 ### 迁移指引
 
-由于 NavigationView 在 iOS 16, iPadOS 16, macOS 13, tvOS 16, 或者 watchOS 9 及以上版本中被废弃，将代码迁移到最新版本是必要的，总体来说，有四种需要迁移的情况：
+由于 NavigationView 在 iOS 16, iPadOS 16, macOS 13, tvOS 16, 或者 watchOS 9 及以上版本中被废弃，将代码迁移到最新版本是必要的，总体来说，有三种需要迁移的情况：
 
-迁移前|迁移后
-:-|:-
-NavigationView {...}.navigationViewStyle(.stack)| NavigationStack
-NavigationView {...} | NavigationSplitView
-NavigationLink(... isActive: ...) | NaviationLink(... value: ...)
-NavigationLink(... tag: ... selection:) | NaviationLink(... value: ...)
+- 将 `NavigationView {...}.navigationViewStyle(.stack)` 替换成 `NavigationStack`
+- 将 `NavigationView {...}` 替换成 `NavigationSplitView`
+- 将 `NavigationLink(... isActive: ...)` 或者 `NavigationLink(... tag: ... selection:)` 替换成 `NaviationLink(... value: ...)`
+- 将  替换成 `NaviationLink(... value: ...)`
 
 具体迁移细节，请查看官方[文档][migrating-to-new-navigation-types]。
 
