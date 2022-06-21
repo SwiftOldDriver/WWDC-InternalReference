@@ -24,7 +24,7 @@ session_ids: [10054]
 
 唐朝是中国诗歌发展的黄金时代，云蒸霞蔚，名家辈出，唐诗数量多达五万余首。其中广为流传的唐诗选集《唐诗三百首》，收录名诗三百一十余首。包含五言古诗、五言乐府、七言古诗、七言乐府、五言律诗、七言律诗、五言绝句和七言绝句共八种体裁，七十余位唐代名家作品。非常适合用来展示导航的使用。
 
-[唐诗三百首 App 设计图][poems-app-design]
+![唐诗三百首 App 设计图][poems-app-design]
 
 该 App 第一级导航按体裁将唐诗分成八个部分，第二级导航罗列某一体裁下的所有诗词列表，点击某诗名后进入诗词详情页。在详情页的最后，会罗列出该作者在相同题材下的其它诗词，供读者扩展阅读。程序所用的原始数据如下：
 
@@ -52,7 +52,7 @@ struct Poem: Codable, Hashable, Identifiable {
 
 读完这篇文章，你将能轻松地实现一个应用如下图所示：
 
-[唐诗三百首 App 截图][poems-app-screenshot]
+![唐诗三百首 App 截图][poems-app-screenshot]
 
 本文所使用的代码开源在[Github][poems-source-code]上.
 
@@ -60,7 +60,7 @@ struct Poem: Codable, Hashable, Identifiable {
 
 从 SwiftUI 诞生起，NavigationView 加 NavigationLink 的组合就是实现导航栏的标配，使用起来也是非常的简单。在你显示内容最外层加上 NavigationView，然后在需要导航的地方加上 NavigationLink 就好。NavigationLink 通过 `destination` 来指定点击后需要导航到的目标视图。在 iPadOS 和 macOS 上，目标视图的内容会出现在下一列。其它平台将目标视图放入堆栈，并使用平台特定的控件，比如后退按钮或者滑动手势，从堆栈中删除目标视图。NavigationLink 可以出现在显示内容的任意层级，或者出现在目标视图的子视图中，而 NavigationView 通常只需要一个。
 
-[NavigiationView][navigation-view]
+![NavigiationView][navigation-view]
 
 以下代码创建了一个体裁的列表，点击不同的体裁类型后，导航到诗名列表中。
 
@@ -168,7 +168,7 @@ var body: some View {
 }
 ```
 
-[NavigationStack 说明][navigation-stack-diagram]
+![NavigationStack 说明][navigation-stack-diagram]
 
 上述例子中，path 的值为 Poem 数组。根据链接传递的值的类型不同，`navigationDestination` 可设置多个，此时，path 需要使用 NavigationPath 来替代，以管理不同类型的数据，在文章后面的例子中，有详细的示例。
 
