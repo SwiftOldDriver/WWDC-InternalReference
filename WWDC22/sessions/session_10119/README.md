@@ -8,7 +8,7 @@ session_ids: [10119]
 
 ## 前言
 
-作为一名 iOS 独立开发者，开发了多个个人项目，CloudKit 是我构建项目体系的核心。本 Session 旨在通过单元测试、Instruments、日志收集三方面，覆盖开发流程的三个重要方面：探索、分析与反馈，帮助开发者优化 **CoreData & CloudKit** 方案实现，做出更好的产品。
+作为一名 iOS 独立开发者，开发了多个个人项目，CloudKit 是我构建项目体系的核心。本 Session 旨在通过单元测试、Instruments、日志收集三方面，覆盖开发流程的三个重要方面：探索、分析与反馈，帮助开发者优化 **CoreData & CloudKit** 方案实现，做出更好的产品。同时了解到 CloudKit 的同步流程和那些系统服务相关。
 
 ![DevelopmentWaterFlow](images/development-water-flow.png)
 
@@ -18,23 +18,67 @@ session_ids: [10119]
 
 ## 一、 探索
 
-### 1.1 带着问题开始探索
+我在开发我的第一款应用[扫雷：无尽天梯Elic](https://apps.apple.com/cn/app/id1488204246)，用来熟悉对 CloudKit 的使用时，就遇到了数据结构设计不合理导致的问题。
 
-在开发 CloudKit 相关工功能的时候，可能会有下面的问题：
+这里是一个基于 CloudKit 建立的扫雷成绩排行榜，这里包含了用户头像、昵称、成绩等信息。
 
-- 点击按钮会怎么样？
-- 当我保存数据时 NSPersistentCloudKitContainer 是否会同步？
-- 处理大量数据时，是否会耗尽内存？
+![](images/mine_rank.png)
 
-这些问题都和具体使用的数据有关。
+最初头像的数据是以 Asset 形式直接存在 User 的数据中：
 
-以帖子管理为例，通常包含标题、内容等文本内容。同时也可能包含一些附件，比如图片资源，这些附件有可能非常大。
+![](images/user_avatar.png)
 
-因此在设计数据结构的时候，图片资源建议单独存储，并于附件简历一对一的关系，以便在需要使用的时候按需进行加载。
+这样在获取列表数据时会同时获取完整的图片数据，如此一来就需要等待很长时间。而为了更好的体验，我们期望达到图片能够异步加载的效果。
+
+那么能否将将头像数据独立出来，通过索引的方式加载呢？
+
+这里我建立了 AvatarSpace 用来专门存储用户头像
+
+![](images/avatar_space.png)
+
+这里通过 userID 将 AvatarSpace 的数据和 User 关联起来，在列表中去异步加载，达到类似于 SDWebImage 加载网络图片的效果。核心代码如下：
+
+```Swift
+static func loadCloudImage(imageInfo: CloudImageCacheBaseInfo,resultCallBack: CloudImageCallBack? = nil) {
+    // FromDisk
+    if let image = getImageFromDisk(recordName: imageInfo) {
+        if let cb = resultCallBack {
+            cb(image)
+        }
+        return
+    }
+    
+    // DownLoad
+    CloudUser.fetchAvatar(userRecordName: CKRecord.ID(recordName: imageInfo.userID), success: { (record) in
+        guard let resu = record, let image = UIImage.image(fromRecord: resu, forAssetKey: RecordTypeAvatar.image.rawValue) else {
+            if let cb = resultCallBack {
+                cb(nil)
+            }
+            return
+        }
+        self.saveImageToDisk(image: image, imageName: imageInfo)
+        if let cb = resultCallBack {
+            cb(image)
+        }
+    }) { (error) in
+        if let cb = resultCallBack {
+            cb(nil)
+        }
+    }
+}
+```
+
+> 更多关于我在该项目中的实践可以查看我的文章：[LabLawliet: 基于iCloud构建独立项目用户体系](https://mp.weixin.qq.com/s/W7XuE3rNaIyjFblrkEoDtQ)
+
+### 1.1 目标设定
+
+从我的实际经历可以看出，在开发 CloudKit 相关工功能的时候，合理的数据结构设计直接影响到应用程序的性能表现与用户体验。
+
+下面我们以一个简单的帖子管理为例，通常会包含标题、内容等文本。同时也包含附件：图片。
+
+我们通过为该例子建立单元测试的方式，更便捷的验证数据结构设计的是否合理高效。
 
 ![](images/exploration-data.png)
-
-下面我们通过单元测试，来测试通过 NSPersistentCloudKitContainer 同步数据的可行性。
 
 ### 1.2 数据准备
 
@@ -68,7 +112,7 @@ class LargeDataGenerator {
 
 ### 1.3 单元测试
 
-有了上面的 LargeDataGenerator，我们就可以方便的编写单元测试了。
+有了上面的 LargeDataGenerator，我们就可以编写测试用例：
 
 ```Swift
 class TestLargeDataGenerator: CoreDataCloudKitDemoUnitTestCase {
@@ -103,7 +147,7 @@ func testExportThenImport() throws {
 }
 ```
 
-这里为每个导出事件添加一个 XCTestExpectation，用来监听 NSPersistentCloudKitContainer 变化的 Notification，并在回调中验证数。
+这里为每个导出事件添加一个 XCTestExpectation，用来监听 NSPersistentCloudKitContainer 变化的 Notification，并在回调中验证数据。
 
 ```Swift
 func expectation(for eventType: NSPersistentCloudKitContainer.EventType,
@@ -129,8 +173,6 @@ func expectation(for eventType: NSPersistentCloudKitContainer.EventType,
 }
 ```
 
-通过上面的操作，我们就可以将测试用例中的关键点与 NSPersistentCloudKitContainer 的相关事件紧密关联起来。
-
 #### 导入数据
 
 上面我们完成的是导出的流程，下面我们继续完善用例 `testExportThenImport`，完成同步操作中重要的另一步：导入。
@@ -149,13 +191,11 @@ func testExportThenImport() throws {
 }
 ```
 
-我们可以通过 LargeDataGenerator 配合单元测试验证我们的数据与通过 NSPersistentCloudKitContainer 进行同步的可行性。
+完成了测试用例的编写，我们就可以进入下一步：分析。
 
 ## 二、 分析
 
-上面我们完成了构建数据与数据同步功能，接下来我们通过使用工具来分析应用程序是如何处理大量的数据的。
-
-![](images/analysis.png)
+上面我们完成了构建数据与数据同步功能，接下来我们通过使用一些工具来分析应用程序是处理大量数据时的表现。
 
 ### 2.1 Instruments
 
@@ -211,7 +251,7 @@ func testExportThenImport() throws {
 
 ![](images/instruments-allocations-sel5.png)
 
-下面是 verifyPosts 相关代码，可以看出这里选择了直接获取所有数据的形式来进行数据验证，导致了内存用量持续增加。通过优化时间瓶颈我们猜想：是否也可以通过只获取 ID 的方式来优化呢？
+下面是 verifyPosts 相关代码，可以看出这里选择了直接获取所有数据的形式（包括 imageData ）来进行数据验证，导致了内存用量持续增加。通过优化时间瓶颈我们猜想：是否也可以通过只获取 ID 的方式来优化呢？
 
 ```Swift
 func verifyPosts(in context: NSManagedObjectContext) throws {
@@ -260,9 +300,9 @@ func verifyPosts(in context: NSManagedObjectContext) throws {
 }
 ```
 
-### 2.4 实时获取日志
+### 2.4 实时日志
 
-上面介绍了如何通过 Instruments 的一些工具分析时间、空间性能瓶颈。另一方面，日志收集也是我们进一步排查问题重要的取经。
+上面介绍了如何通过 Instruments 的一些工具分析时间、空间性能瓶颈。另一方面，日志也是我们进一步分析问题重要的途径。
 
 在学习如何获取日志之前，我们需要了解在使用 CoreData 与 CloudKit 进行开发的过程中，会涉及到那些系统服务。
 
@@ -400,6 +440,8 @@ log show --info --debug
 
 ## 推荐阅读
 
+> [LabLawliet: 基于iCloud构建独立项目用户体系](https://mp.weixin.qq.com/s/W7XuE3rNaIyjFblrkEoDtQ)
+> 
 > [WWDC22: 10115 - What’s new in CloudKit Console](https://developer.apple.com/videos/play/wwdc2022/10115/)
 > 
 > [WWDC21: 10015 Build apps that share data through CloudKit and Core Data](https://developer.apple.com/videos/play/wwdc2021/10015)
