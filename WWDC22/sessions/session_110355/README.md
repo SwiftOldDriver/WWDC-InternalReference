@@ -11,7 +11,7 @@ session_ids: [110355]
 
 阅读本文需要一定的基础，包括：
 
-1. Async/Awit 对于异步方法的执行和实现，参考视频链接 [Meet async/await in Swift](https://developer.apple.com/videos/play/wwdc2021/10132) 
+1. Async/Awit 对于异步方法的执行和实现，参考视频链接 [Meet async/await in Swift](https://developer.apple.com/videos/play/wwdc2021/10132)
 2. 了解 AsyncSequence 协议，理解其实现的原理，参考视频链接 [Meet AsyncSequence](https://developer.apple.com/videos/play/wwdc2021/10058)
 
 不了解但有时间的同学可以先观看上面的视频。本文会对使用到的相关语法和结构做一些简单的解释，以保证不影响阅读。
@@ -36,7 +36,7 @@ session_ids: [110355]
 
 在视频的一开始就提到了下面这句话，**第一个问题**，也就是说 AsyncSequence 在使用上和 Sequence 保持了几乎一致的语法。为什么要这么去实现？
 
->  In short, if you know how to use Sequence, you already know how to use AsyncSequence.
+> In short, if you know how to use Sequence, you already know how to use AsyncSequence.
 
 在 2021 年的 WWDC 上已经提出了 Swift Algorithms 和 Swift Collections。
 那么 2022 进一步的提出 Async Algorithms ，配合上 2021 年的 AsyncSequence，**第二个问题**，在异步下的那些组合算法又是如何实现的。
@@ -220,7 +220,7 @@ do {
  } catch {
     print ("Error: \(error)")
  }
-```    
+```
 
 #### 延伸
 
@@ -229,7 +229,7 @@ do {
 
 比如 [Do we want forEach?](https://forums.swift.org/t/do-we-want-foreach/56929) 讨论了 forEach 是否需要，以及和 for-in 用法的区别。
 
-### Merge 
+### Merge
 
 Zip 处理 AsyncSequence 成对的出现，那对应的不需要成对就加入到新 AsyncSequence 中去的方法也有，那就是 Merge
 
@@ -352,7 +352,7 @@ let sleep: Task<Partial, Never> = Task { [tolerance, clock] in
 
 ### ContinuousClock
 
-在 debounce 算法里，我们可以发现默认使用的就是 
+在 debounce 算法里，我们可以发现默认使用的就是
 
 ```Swift
 public func debounce(for interval: Duration, tolerance: Duration? = nil) -> AsyncDebounceSequence<Self, ContinuousClock> {
@@ -391,6 +391,7 @@ enum _ClockID: Int32 {
 <!-- （注：对于 AsyncChannel 在 rx 和 combine 应该都有。可以接受信息并传递信息） -->
 
 ### chunked(by:)
+
 根据一定时间分块的数据进行处理，同样是实现了 [AsyncChunksOfCountOrSignalSequence](https://github.com/apple/swift-async-algorithms/blob/434591a571/Sources/AsyncAlgorithms/AsyncChunksOfCountOrSignalSequence.swift) 结构
 
 通过对应的测试代码 [TestChunk](https://github.com/apple/swift-async-algorithms/blob/434591a571/Tests/AsyncAlgorithmsTests/TestChunk.swift) 可以看到可以实现的算法结果。
