@@ -510,3 +510,38 @@ python3 build.py -u /Applications/2021.3.3f1c1
 4、打开项目配置，我们可以看到插件还在 Unity 里定制了配置界面，如图:
 
 ![](./images/project-settings.png)
+
+5、若发现导入的库报错 `xxx has no meta file, but it's in an immutable folder. The asset will be ignored` ，可以在 Package Manager 里移除之前的 6 个插件。然后将之前编译好的 `xxx.tgz` 解压，再打开 Package Manager ，选择 `Add package from disk...` ，找到 `xxx.tgz` 解压后的文件夹，选择里面的 `package.json` 方式导入插件库。导入完以后，将不会报错，可以正常使用这些插件库。
+
+6、接下来在项目里引入插件库，接着可以根据上文第二部分描述的使用方式或是官方开发者网站提供的 API 进行开发。
+
+![](./images/plugin-link.png)
+
+由于 Apple 插件库是苹果系平台独有功能,建议在调用相关 API 时候，在需要的情况下判断下平台，不然在其它平台运行会报错。代码示例:
+
+```csharp
+
+async void Start()
+{
+    // 判断平台
+    if (Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.OSXPlayer)
+    {
+        try
+        {
+            GKLocalPlayer _localPlayer = await GKLocalPlayer.Authenticate();
+            Debug.Log($"GameKit Authentication: isAuthenticated => {_localPlayer.IsAuthenticated}, displayName: {_localPlayer.DisplayName}");
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError(exception);
+        }
+    }
+    else
+    {
+        // 其它平台逻辑
+    }
+}
+
+```
+
+## 使用 Apple 的六个 Unity 插件使用的场景或是注意点
