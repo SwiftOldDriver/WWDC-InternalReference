@@ -1,15 +1,12 @@
-
 ---
 session_ids: [10049]
 ---
 
-# WWDC22 10049 - What's new in WKWebView
+# Session 10049 - 探索 iOS 16 中 WKWebView 的新功能
 
-> 作者：Style_月月，iOS程序媛，简书/掘金文章贡献者，目前任职于小米，侧重于海外相关业务
->
-> 审核：
+> 作者：Style 月月，iOS 程序媛，简书/掘金文章贡献者，目前任职于小米，侧重于海外相关业务
 
-本文是根据 WWDC22 中的 [What's new in WKWebView - session 10049](https://developer.apple.com/videos/play/wwdc2022/10049/) 撰写，主要是了解 WKWebView 在 iOS 16 中的新增功能。
+本文是根据 WWDC22 中的 [What's new in WKWebView](https://developer.apple.com/videos/play/wwdc2022/10049/) 撰写，主要是了解 WKWebView 在 iOS 16 中的新增功能。
 
 ## 引言
 
@@ -19,17 +16,18 @@ session_ids: [10049]
 ![ Web 相关技术图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.0/img/wwdc_session_10049/session_10049_01.jpg)
 
 如果对 WKWebView 了解的还不够全面，建议回顾下往期 WWDC 中关于 WKWebView 的解读，分别是：
-- [WWDC20 - Discover WKWebView enhancements](https://xiaozhuanlan.com/topic/2619738450) ，介绍了 iOS 14 中新增的 JS 与 Native 的交互能力。
+- [发掘 WKWebView 的神奇妙用](https://xiaozhuanlan.com/topic/2619738450) ，介绍了 iOS 14 中新增的 JS 与 Native 的交互能力。
 
-- [WWDC21 - Explore WKWebView additions](https://xiaozhuanlan.com/topic/1352486079)，介绍了 UIWebView、WKWebView、SFSafariViewController 的使用方式，以及 iOS 15 中新增的功能。
+- [探索 WKWebView 新增功能](https://xiaozhuanlan.com/topic/1352486079)，介绍了 UIWebView、WKWebView、SFSafariViewController 的使用方式，以及 iOS 15 中新增的功能。
 
 综合往期 WKWebView 的更新，绘制了以下更新的图示（包含本文新增的功能）：
 ![WKWebView发展历程图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.0/img/wwdc_session_10049/session_10049_02.png)
 
-## WWDC22 中 WKWebView 的新增功能
+## WKWebView 的新功能
 
 根据 [What's new in WKWebView](https://developer.apple.com/videos/play/wwdc2022/10049/) 解读可知，iOS 16 中新增的功能主要分为 4 种：
 ![iOS 16 新增功能图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.0/img/wwdc_session_10049/session_10049_03.jpg)
+
 - Web content interaction： 与 Web 内容交互的新方式
 - Content blocking： 内容拦截器的新功能
 - Encrypted media： 加密媒体
@@ -37,12 +35,13 @@ session_ids: [10049]
 
 下面针对上述的更新，分别进行一一说明。
 
-## 与 Web 内容交互的新方式（ Web content interaction ）
+## 与 Web 内容交互的新方式
 
 首先介绍 iOS 16 用于 Web 交互的 API，为 App 与 Web 的交互提供了更多的可能性。主要有以下 3 种交互的新方式：
 ![新增 Web Content 交互方式](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.0/img/wwdc_session_10049/session_10049_04.jpg)
-- Fullscreen support 全屏API
-- CSS viewport units 新的CSS视口单元
+
+- Fullscreen support 全屏 API
+- CSS viewport units 新的 CSS 视口单元
 - Find interactions 查找交互
 
 ### 全屏 API（ Fullscreen support  ）
@@ -52,16 +51,17 @@ session_ids: [10049]
 
 其关键代码如下所示，主要分别 3 步：
 ![全屏 API 关键代码](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.0/img/wwdc_session_10049/session_10049_06.jpg)
+
 - 将 `WKPreferences` 的 `isElementFullscreenEnabled` 属性设置为 `true`，表示是否启用元素的全屏展示；
 - 加载 Web 内容，并通过 JS 添加按钮事件，即点击按钮使用全屏 API；
 - 如果对默认的过渡动画不满意，想要实现自定义过渡动画，可以通过监听 WKWebView 的 **fullscreenState** 来实现，该属性让 App 可以准确的知道网页内容何时全屏或返回。
 
 **演示**
 
-下面通过自定义实现一个 H5 页面，在H5页面中有一个按钮 + 图片，然后点击按钮实现图片全屏展示。其最终效果如下
+下面通过自定义实现一个 H5 页面，在 H5 页面中有一个按钮和图片，然后点击按钮实现图片全屏展示。其最终效果如下
 ![演示案例效果图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.0/img/wwdc_session_10049/session_10049_07.gif)
 
-- 简单实现一个html页面，核心代码如下
+- 简单实现一个 HTML 页面，核心代码如下
 
 ```html
 <script>
@@ -95,6 +95,7 @@ session_ids: [10049]
 ```
 
 - 通过 WKWebView 加载本地 HTML 页面的，关键代码如下
+
 ```swift
 self.webView = WKWebView.init(frame: self.view.frame)
 self.view.addSubview(self.webView)
@@ -122,7 +123,7 @@ let htmlString = try! String(contentsOfFile: Bundle.main.path(forResource: "01-w
 webView.loadHTMLString(htmlString, baseURL: Bundle.main.resourceURL)
 ```
 
-### 新的CSS视口单位（ CSS viewport units ）
+### 新增 CSS 视口单位
 
 在介绍 CSS 新增的视口单位前，我们先来了解下什么是视口，常见的视口单位有哪些。
 
@@ -133,17 +134,18 @@ webView.loadHTMLString(htmlString, baseURL: Bundle.main.resourceURL)
 
 #### 常见视口单位
 
-根据CSS3的规范，视口单位主要包含以下4个
+根据 CSS3 的规范，视口单位主要包含以下 6 种
+
 - `vw（viewport width，视口宽度）`：是相对视口的宽度而定，1vw 等于视口宽度的 1%；
 - `vh（viewport height，视口高度）`：是相对视口的高度而定，1vh 等于视口高度的 1%；
 - `vmin（viewport minimum，视口最小值）`：是相对于视口的高度和宽度两者之间的最小值，选取 vw 和 vh 中最小的那个；
 - `wmax（viewport maximum，视口最大值）`：是相对于视口的高度和宽度两者之间的最大值，选取 vw 和 vh 中最大的那个。
-- `vi（viewport inline，视口行内轴宽度）`：是视口内联方向长度的 1%，即初始包含块大小的 1%，在根元素的**行内轴（inline axis，简单理解就是x轴）**方向上。
+- `vi（viewport inline，视口行内轴宽度）`：是视口内联方向长度的 1%，即初始包含块大小的 1%，在根元素的**行内轴（inline axis，简单理解就是 x 轴）**方向上。
 - `vb（viewport block，视口区块轴高度）`：是视口块方向长度的 1%，即初始包含块大小的 1%，在根元素的**区块轴（block axis，简单理解就是 y 轴）**方向上。
 
 #### 新增 CSS 视口单位
 
-除了上述常见的视口单位外，iOS 16 中还新增了 20 种新的视口单位，其中包括svh、lvh、dvh等。
+除了上述常见的视口单位外，iOS 16 中还新增了 20 种新的视口单位，其中包括 svh、lvh、dvh等。
 ![新增 CSS 视口单位](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.0/img/wwdc_session_10049/session_10049_08.jpg)
 
 新增的视口单位主要用于`根据视口大小来布局 Web 内容`，它允许 Web 开发人员根据最小、最大和动态的视口大小来修改 Web 布局。下面是对新增视口单位的解释和说明
