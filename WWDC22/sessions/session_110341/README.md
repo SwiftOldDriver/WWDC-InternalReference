@@ -63,13 +63,13 @@ session_ids: [110341]
 > （2）通讯录里的联系人发来的信息不会被拦截.
 > （3）回复会话达到 3 次也不会被拦截。
 
-### （一）本地逻辑过滤
+### 本地逻辑过滤
 
 为了验证某条未知发件人的消息是否需要进行筛选归类，系统信息 App 会对系统目前已启用的短信过滤应用扩展进行问询，通过 `ILMessageFilterQueryRequest` 对象将消息内容传递给过滤器扩展。其中内容包括 `sender`（发送者号码）、`messageBody`（信息内容）、`receiverISOCountryCode`（接收号码对应的标准 `ISO 3166-2` 国家区号）。经过一些逻辑判断过滤，过滤器扩展将判定结果通过 `ILMessageFilterQueryResponse` 对象返还给系统信息 App。其流程如下图：
 
 ![](./images/message_filter_query_request.png)
 
-### （二）网络逻辑过滤
+### 网络逻辑过滤
 
 如果您的本地处理逻辑因为信息不足无法判定结果，还可以借助服务端来进行判断。通过如下 API，可以向系统申请网络服务。
 
@@ -112,7 +112,7 @@ func deferQueryRequestToNetwork(completion: @escaping (ILNetworkResponse?， Err
 }
 ```
 
-当应用扩展发起网络问询时，系统会根据我们配置 ILMessageFilterExtensionNetworkURL 的地址发起一个 Https 的 POST 类型请求。[参考官方文档格式](https://developer.apple.com/documentation/sms_and_call_reporting/ilmessagefilterextensioncontext/2880240-deferqueryrequesttonetwork)，请求的内容体大致如下： 
+当应用扩展发起网络问询时，系统会根据我们配置 `ILMessageFilterExtensionNetworkURL` 的地址发起一个 `Https` 的 `POST` 类型请求。[参考官方文档格式](https://developer.apple.com/documentation/sms_and_call_reporting/ilmessagefilterextensioncontext/2880240-deferqueryrequesttonetwork)，请求的内容体大致如下： 
 
 ```
 POST /server-endpoint HTTP/1.1
@@ -132,6 +132,35 @@ Content-Length: 148
     }
 }
 ```
+
+为了验证这个网络处理功能，我这边简单用 `Express` 这个框架来实现后端接口功能。新增一个 `Post` 接口，用于接收苹果传递的数据，并且固定返回过滤结果，如下：
+
+```javascript
+// 固定返回过滤结果为真，并且子分类为 10001，即 transactionalFinance （财务）这个子分类
+router.post('/', function(req, res, next) {
+    logger.info(req.body);
+    res.json({"filter": true, "subAction" : 10001}); 
+});
+```
+
+由上面的代码可以看出，我们后端接口返回的数据结构是由我们自己自定义的，并没有固定要求，只需要我们的 iOS 客户端和后端协商好即可。
+
+这里不由得提一下小编踩到的`一个坑`，在处理网络了逻辑请求时，应用扩展的网络请求函数 `deferQueryRequestToNetwork` 一直返回报错，错误如下：
+
+```log
+Printing description of error:
+▿ Optional<Error>
+  - some : Error Domain=com.apple.IdentityLookup.error.messagefilter Code=4 "(null)" 
+  UserInfo={NSUnderlyingError=0x102d08700 {Error Domain=NSURLErrorDomain Code=-1009 "The Internet connection appears to be offline." UserInfo={_kCFStreamErrorDomainKey=1, _NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <3CF7F1F3-BC7B-4E3C-ACE7-194925EE1208>.<1>, _NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalDataTask <3CF7F1F3-BC7B-4E3C-ACE7-194925EE1208>.<1>"
+), NSLocalizedDescription=The Internet connection appears to be offline.,
+ NSErrorFailingURLStringKey=https://www.chensh.fun/messagefilter, 
+ NSErrorFailingURLKey=https://www.chensh.fun/messagefilter, _kCFStreamErrorCodeKey=50}}}
+```
+
+这里的错误 `Code` 一会为 3，一会为 4，搞得小编头大，前前后后检查了工程配置，没找到问题。最后在打开其他新下载的 App 时，才突然找到苗头，问题就在于我的主 App 工程没有进行网络请求，所以系统也没有弹出是否允许 App 使用无线数据的弹窗，导致应用扩展没有网络请求权限，所以就有了后来的网络访问一直失败。
+
+![](./images/wireless_request.png)
 
 ### 新特性：子文件夹分类筛选流程
 
