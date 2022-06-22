@@ -4,7 +4,7 @@ session_ids: [110345]
 
 # WWDC22 110345 - MAC 端点安全新特性
 
-> 作者：抛瓦，iOS 挖掘机
+> 作者：抛瓦，坐标北京，iOS 挖掘机
 >
 > 审核：苹果 API 搬运工，爱写文章的 ARKit 开发者。专栏[《ARKit 与计算几何》](https://xiaozhuanlan.com/computationalgeometry)，[《Metal Shader 快速使用入门》](https://xiaozhuanlan.com/metalforbeginner)
 
@@ -18,13 +18,6 @@ session_ids: [110345]
 
 最后一部分是关于 eslogger 可以以 JSON 形式输出端点安全事件。
 
-> 阅读建议
-> 如果你是被 RoomPlan 吸引的 AR/MR 新手，建议全文阅读，并配合以往的小专栏文章进行学习；
->
-> 如果你只关心最新 RoomPlan 的 API，可以直接跳到文章的第二部分
->
-> 如果你想了解使用 RoomPlan 的注意事项以及 AR/MR 应用的设计原则，可以直接跳转到文章的第三部分
->
 > 相关 Session ：
 >
 > [Session 10159 Build an Endpoint Security app](https://developer.apple.com/videos/play/wwdc2020/10159)
