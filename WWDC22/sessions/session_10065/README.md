@@ -26,16 +26,17 @@ session_ids: [10065]
 
 最后一部分是关于使用这些插件的场景以及相关建议。
 
-> 阅读建议：
+> 阅读建议：  
 > 
 > 如果您是 Unity 新手或是第一次接触 Apple 相关功能的接入，建议阅读全文，并结合 Apple 官方文档进行学习；
 >
 > 如果您以往有对接过 Game Center、Game Controller 等原生插件，可以直接跳到文章的第二部分开始阅读；
 >
 > 如果你想了解使用 Apple 的六个 Unity 插件使用的场景或是注意点，可以直接跳转到文章的第三部分。
->
+  
+
 > 相关 Session ：
-> 
+>   
 > [Session 10065 : Plug-in and play: Add Apple frameworks to your Unity game projects
 ](https://developer.apple.com/videos/play/wwdc2022/10065/)
 >
@@ -44,10 +45,6 @@ session_ids: [10065]
 > [Session 10064 : Reach new players with Game Center dashboard](https://developer.apple.com/videos/play/wwdc2022/10064/)
 >
 > [Session 110930 : WWDC22 Day 2 recap](https://developer.apple.com/videos/play/wwdc2022/110930/)
->
-> [WWDC21 Session 10079 : Discover geometry-aware audio with the Physical Audio Spatialization Engine (PHASE)](https://developer.apple.com/videos/play/wwdc2021/10079/)
->
-> [WWDC21 Session 10081 : Tap into virtual and physical game controllers](https://developer.apple.com/videos/play/wwdc2021/10081/)
 
 ## Apple 的 Unity 插件功能说明
 
@@ -63,7 +60,7 @@ session_ids: [10065]
 
 ![](./images/applecore-import.png)
 
-为了保证原生库被正确的引入、Info.plist 和权限描述被合理的设置， Apple.Core 定义了一个 Unity PostProcessBuild 来保证这些任务按步骤执行。 此外，Apple.Core 还定义了一个抽象类 AppleBuildStep，以便为所有 Apple Unity 插件使用此功能。事实上，任何包含 Apple.Core 的项目也可以定义自定义构建步骤。
+为了保证原生库被正确的引入、Info.plist 和权限描述被合理的设置， Apple.Core 定义了一个 Unity PostProcessBuild 来保证这些任务按步骤执行。 此外，Apple.Core 还定义了一个抽象类 AppleBuildStep ，以便为所有 Apple Unity 插件使用此功能。事实上，任何包含 Apple.Core 的项目也可以定义自定义构建步骤。
 
 定义自定义构建步骤就像创建一个新脚本一样简单，并且定义的新对象需要继承自 AppleBuildStep 。 开发者可以选择覆盖 AppleBuildStep 中定义的任何方法。 此外，任何公共字段都将自动显示为 Apple Build Settings UI 中的选项。以下是一个实现自定义构建步骤的简单示例：
 
@@ -183,7 +180,7 @@ advPlayer.Stop();
    > [小专栏: Core Haptics 初体验](https://xiaozhuanlan.com/topic/0382695741)
 
 ### 4. Apple.GameController
-[Apple.GameController](https://developer.apple.com/documentation/gamecontroller?language=objc)支持用户通过物理或虚拟游戏控制器与您的应用或游戏进行交互。目前游戏控制器支持以下产品： DualShock 4 、DualSense 和 Xbox ，以及鼠标、键盘和 Siri Remote 。在您的游戏中，物理控制器被表示成 [GCController](https://developer.apple.com/documentation/gamecontroller/gccontroller?language=objc) 对象。当连接控制器时，游戏控制器框架会自动创建一个 GCController 对象。然后，您可以使用此对象来配置控制器并读取其输入。
+[Apple.GameController](https://developer.apple.com/documentation/gamecontroller?language=objc) 支持用户通过物理或虚拟游戏控制器与您的应用或游戏进行交互。目前游戏控制器支持以下产品： DualShock 4 、DualSense 和 Xbox ，以及鼠标、键盘和 Siri Remote 。在您的游戏中，物理控制器被表示成 [GCController](https://developer.apple.com/documentation/gamecontroller/gccontroller?language=objc) 对象。当连接控制器时，游戏控制器框架会自动创建一个 GCController 对象。然后，您可以使用此对象来配置控制器并读取其输入。
 
 ![](./images/gamecontroller-02.png)
 
@@ -401,6 +398,7 @@ catch(GameKitException exception)
 
 ```
 
+Apple 近几年持续为游戏社交带来了很多新特性，在这里不得不感叹一声：给力！但是，随着近几年游戏出海全球化战略、跨平台兴起，尤其是移动端游戏，考虑到安卓端的大量用户，目前市场上已经很难出现 iOS 独占游戏。安卓商店更是良莠不齐(还活着的非谷歌安卓商店至少有 50 家)，谷歌商店是有成就相关功能，但是不能跟 Apple GameKit 提供的其它功能一一对齐。再加上大陆是没有办法使用谷歌商店一些特性，对中国大陆发行的游戏来说，由于没有办法在 iOS 和 Android 双端保持一致的功能，那么游戏厂商会放弃苹果提供的某些功能，而是由游戏内直接实现。《原生》游戏的跨端成功，对于很多游戏公司来说也是一次学习和探索的机会，除了考虑移动端，还得兼顾 PC 、 Switch 端的发行可能。 GameKit 提供的独有功能优势将会变得更低。不过，对于一些轻度、休闲的游戏，且对双端功能不追求一致性，只是为了获得 iOS 侧更多用户的开发商来讲，还是非常有吸引力的。
 
    > 相关文章推荐
    >
@@ -417,4 +415,98 @@ Reach new players with Game Center dashboard](https://developer.apple.com/videos
 
 ### 6. Apple.PHASE
 
+[PHASE (Physical Audio Spatialization Engine)](https://developer.apple.com/documentation/phase?language=objc) 能够帮助开发者为应用程序和游戏构建复杂、交互式和身临其境的音频场景。 PHASE 可以实时控制声音层并调整音频参数，帮助开发者在开发过程中创建空间音景和场景，而不是等到后期制作。开发者可以使用 PHASE 结合视觉场景的动态变化，给出动态且有空间属性的音频反馈，提升应用或游戏的整体体验。 PHASE 主要包含四个部分，包括 Sources 、 Listeners 、 Acoustic Geometry 和 Materials 。
 
+![](./images/PHASE-renderedDark.png)
+
+我们来看一下代码示例：
+
+
+
+   > 相关文章推荐
+   >
+   > [Apple.PHASE Usage](https://github.com/apple/unityplugins/blob/main/plug-ins/Apple.PHASE/Apple.PHASE_Unity/Assets/Documentation~/Apple.PHASE.md)
+   >
+   > [WWDC2021: Discover geometry-aware audio with the Physical Audio Spatialization Engine (PHASE)](https://developer.apple.com/videos/play/wwdc2021/10079/)
+   >
+   > [小专栏: 使用 PHASE 探索几何感知的音频](https://xiaozhuanlan.com/topic/5479286310)
+   
+## 如何下载、编译、引入 Unity 插件？
+
+如果您是使用 Unity 插件的新手，这一部分内容可以帮助您快速上手。
+
+#### 环境要求：
+
+- Python3
+- npm
+- Xcode
+- Unity 2020.3.33f1
+
+   > 特别说明：
+   >
+   > 苹果官方强烈建议使用 Unity 2020.3.33f1 进行编译插件。待编译完成后，可以给到更高的 Unity 版本使用。
+   >
+   
+### 1. 从 Github 下载 [Unity 插件源码](https://github.com/apple/unityplugins)
+
+```bash
+git clone https://github.com/apple/unityplugins.git
+``` 
+该仓库下，包含 6 个插件的源码以及对应的文档说明，编译脚本 `build.py` 。其中 Apple.Core 是必须要导入的，其它 5 个插件可以根据需要导入。
+
+
+| Plug-In | Readme |
+|:--------|:------|
+| Apple.Core | [Apple.Core Documentation](../plug-ins/Apple.Core/Apple.Core_Unity/Assets/Apple.Core/Documentation~/Apple.Core.md) |
+| Apple.Accessibility | [Apple.Accessibility Documentation](../plug-ins/Apple.Accessibility/Apple.Accessibility_Unity/Assets/Apple.Accessibility/Documentation~/Apple.Accessibility.md) |
+| Apple.CoreHaptics | [Apple.CoreHaptics Documentation](../plug-ins/Apple.CoreHaptics/Apple.CoreHaptics_Unity/Assets/Apple.CoreHaptics/Documentation~/Apple.CoreHaptics.md) |
+| Apple.GameController | [Apple.GameController Documentation](../plug-ins/Apple.GameController/Apple.GameController_Unity/Assets/Apple.GameController/Documentation~/Apple.GameController.md) | 
+| Apple.GameKit | [Apple.GameKit Documentation](../plug-ins/Apple.GameKit/Apple.GameKit_Unity/Assets/Apple.GameKit/Documentation~/Apple.GameKit.md) | 
+| Apple.PHASE | [Apple.PHASE Documentation](../plug-ins/Apple.PHASE/Apple.PHASE_Unity/Assets/Documentation~/Apple.PHASE.md) | 
+
+### 2. 编译
+调用苹果给我们写好的脚本：
+
+```bash
+cd  xxx/unityplugins (进入到下载下来的仓库里，然后执行下面命令)
+python3 build.py
+```
+作者本地执行过程中遇到了下述 ⚠️ ：
+
+```
+STDOUT:
+xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer directory '/Library/Developer/CommandLineTools' is a command line tools instance
+
+[WARNING]: No Unity installation tracked with version: 2020.3.33f1
+```
+第一个问题是环境设置问题，需要打开 Xcode -> Preference -> Locations -> Command Line Tools ,勾选安装的 Xcode 版本。
+
+![](./images/Xcode-set-01.png = 200x)
+![](./images/Xcode-set-02.png)
+
+第二个问题是由于本地没有安装 Unity 2020.3.33f1 或是安装的路径跟脚本里默认的路径不一致导致。我们需要指定我们本地的 Unity 安装路径即可。例如作者本地的 Unity 路径是 `/Applications/2021.3.3f1c1` ，那我们只要使用以下命令:
+
+```bash
+python3 build.py -u /Applications/2021.3.3f1c1
+```
+编译成功后，可以在本地看到编译后的库，以 `.tgz` 结尾:
+
+![](./images/plugin-build.png)
+
+### 3. 将库导入到 Unity 项目里
+
+1、作者使用了 Unity 官方提供的游戏学习项目，打开 Unity项目 -> Window -> Package Manager :
+
+![](./images/import-open-pm.png)
+
+2、选择 `Add package from tarball...` ,然后将上文编译的 `xxx.tgz` 文件导入:
+
+![](./images/import-add-plugin.png)
+
+3、这里我们将 6 个库全部导入，如图:
+
+![](./images/import-unity.png)
+
+4、打开项目配置，我们可以看到插件还在 Unity 里定制了配置界面，如图:
+
+![](./images/project-settings.png)
