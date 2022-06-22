@@ -8,7 +8,7 @@ session_ids: [10119]
 
 ## 前言
 
-作为一名 iOS 独立开发者，开发了多个个人项目，CloudKit 是我构建项目体系的核心。本 Session 旨在通过单元测试、Instruments、日志收集三方面，覆盖开发流程的三个重要方面：探索、分析与反馈，帮助开发者优化 **CoreData & CloudKit** 方案实现，做出更好的产品。同时了解到 CloudKit 的同步流程和那些系统服务相关。
+作为一名 iOS 独立开发者，开发了多个个人项目，CloudKit 是我构建项目体系的核心。本 Session 旨在通过单元测试、Instruments、日志收集三方面，覆盖开发流程的三个重要方面：探索、分析与反馈，帮助开发者优化 CoreData & CloudKit 方案实现，做出更好的产品。同时了解到 CloudKit 的同步流程和那些系统服务相关。
 
 ![DevelopmentWaterFlow](images/development-water-flow.png)
 
@@ -28,15 +28,13 @@ session_ids: [10119]
 
 ![](images/user_avatar.png)
 
-这样在获取列表数据时会同时获取完整的图片数据，如此一来就需要等待很长时间。而为了更好的体验，我们期望达到图片能够异步加载的效果。
+这样在获取列表数据时会同时获取完整的图片数据，如此一来就需要等待很长时间。而为了更好的体验，我们期望达到图片是异步加载的。
 
-那么能否将将头像数据独立出来，通过索引的方式加载呢？
-
-这里我建立了 AvatarSpace 用来专门存储用户头像
+那么能否将将头像数据独立出来，通过索引的方式加载呢？这里我建立了 AvatarSpace 用来专门存储用户头像
 
 ![](images/avatar_space.png)
 
-这里通过 userID 将 AvatarSpace 的数据和 User 关联起来，在列表中去异步加载，达到类似于 SDWebImage 加载网络图片的效果。核心代码如下：
+并通过 userID 将 AvatarSpace 的数据和 User 关联起来，在列表中去异步加载，达到类似于 SDWebImage 加载网络图片的效果。核心代码如下：
 
 ```Swift
 static func loadCloudImage(imageInfo: CloudImageCacheBaseInfo,resultCallBack: CloudImageCallBack? = nil) {
@@ -72,7 +70,7 @@ static func loadCloudImage(imageInfo: CloudImageCacheBaseInfo,resultCallBack: Cl
 
 ### 1.1 目标设定
 
-从我的实际经历可以看出，在开发 CloudKit 相关工功能的时候，合理的数据结构设计直接影响到应用程序的性能表现与用户体验。
+从我的经历可以看出，没有高效的数据结构设计，会导致开发测试过程中回头返工的情况发生。如果在初步设计数据结构的时候编写进行单元测试用例就能使问题更早的暴露出来。
 
 下面我们以一个简单的帖子管理为例，通常会包含标题、内容等文本。同时也包含附件：图片。
 
@@ -97,6 +95,7 @@ class LargeDataGenerator {
                     let attachment = Attachment(context: context)
                     let imageData = ImageData(context: context)
                     imageData.attachment = attachment
+                    // 直接添加了图片实例
                     imageData.data = autoreleasepool {
                         let imageFileData = NSData(contentsOf: url!)!
                         attachment.thumbnail = Attachment.thumbnail(from: imageFileData,        
@@ -199,31 +198,19 @@ func testExportThenImport() throws {
 
 ### 2.1 Instruments
 
-通过点击对应测试用例的 `Profile` 可以在执行用例的同时调起 Instruments。
+Instruments 不光可以用于项目分析，还可用于测试用例分析。通过右击用例左侧的菱形，选择 `Profile` 就可以为用例调起 Instruments。
 
 ![](images/test-profile.png)
 
 ### 2.2 分析时间瓶颈 TimeProfiler
 
-通过 TimeProfiler 我们可以分析程序的时间瓶颈。
+通过 TimeProfiler 我们可以分析程序执行耗时较多的区块。
 
 ![](images/Instruments-time-profiler.png)
-
-#### 疑似瓶颈
 
 这里可以发现测试用例中 LargeDataGenerator 花费了大量时间生成图片。
 
 ![](images/instruments-images.png)
-
-但通过对比实际情况，由于图片数据都是单独存储的，并不会直接存在于帖子数据中，所以这里是在用例中可以删除的。
-
-![](images/instruments-nocreate-images.png)
-
-#### 真实瓶颈
-
-移除生成图片的代码后，我们再次运行用例，发现大部分时间用在了存储图片数据的过程中。这与我们对于应用程序逻辑与数据结构的设计的期望事相符的。
-
-![](images/instruments-save-images.png)
 
 ### 2.3 分析内存占用 Allocations
 
@@ -251,7 +238,7 @@ func testExportThenImport() throws {
 
 ![](images/instruments-allocations-sel5.png)
 
-下面是 verifyPosts 相关代码，可以看出这里选择了直接获取所有数据的形式（包括 imageData ）来进行数据验证，导致了内存用量持续增加。通过优化时间瓶颈我们猜想：是否也可以通过只获取 ID 的方式来优化呢？
+下面是 verifyPosts 相关代码，可以看出这里选择了直接获取完整数据的形式（包括 imageData ）来进行数据验证，导致了内存用量持续增加。
 
 ```Swift
 func verifyPosts(in context: NSManagedObjectContext) throws {
@@ -271,7 +258,9 @@ func verifyPosts(in context: NSManagedObjectContext) throws {
 }
 ```
 
-#### 通过获取ID优化存储瓶颈
+这里我们是否可以通过获取索引而非完整数据的方式进行数据验证，进而优化大量数据场景下的数据获取体验呢？
+
+**优化：通过获取ID优化存储瓶颈**
 
 通过设置 resultType 为 managedObjectIDResultType 可以使返回的结果全部是数据ID，大大减少了循环时的内存增长。
 
@@ -304,7 +293,7 @@ func verifyPosts(in context: NSManagedObjectContext) throws {
 
 上面介绍了如何通过 Instruments 的一些工具分析时间、空间性能瓶颈。另一方面，日志也是我们进一步分析问题重要的途径。
 
-在学习如何获取日志之前，我们需要了解在使用 CoreData 与 CloudKit 进行开发的过程中，会涉及到那些系统服务。
+在学习如何获取日志之前，我们需要了解在使用 CoreData 与 CloudKit 进行开发的过程中，会涉及到哪些系统服务。
 
 #### 2.4.1 数据交换的生命周期
 
@@ -364,7 +353,7 @@ log stream --predicate 'process = "dasd" AND
                         message contains[cd] "CEF8F02F-81DC-48E6-B293-6FCD357EF80F"'
 ```
 
-## 三、 日志反馈收集
+## 三、 反馈
 
 在应用开发完成之后获得日志是我们排查问题的重要手段。接下来介绍如何从任何设备上获取日志。
 
@@ -437,6 +426,10 @@ log show --info --debug
                      message contains[cd] "CEF8F02F-81DC-48E6-B293-6FCD357EF80F")'
     system_logs.logarchive
 ```
+
+## 总结
+
+作为对 CloudKit 重度依赖的独立开发者，本 Session 给我个人带来的了一些启发。比如通过单元测试提前验证数据结构设计的合理性，更重要的是日志收集与分析上给我提供了很好的思路。有经历过面对用户的反馈却缺乏可用日志的尴尬局面。
 
 ## 推荐阅读
 
