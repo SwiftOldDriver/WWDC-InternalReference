@@ -4,7 +4,7 @@ session_ids: [10119]
 
 # WWDC22 - Optimize your use of Core Data and CloudKit / 优化 CoreData & CloudKit 实现
 
-> 作者：小庆儿很小气儿，iOS独立开发者，[GitHub: LabLawliet](https://github.com/RyukieSama)
+> 作者：Ryukie，在广州搬砖，iOS独立开发者，[GitHub](https://github.com/RyukieSama)。
 
 ## 前言
 
