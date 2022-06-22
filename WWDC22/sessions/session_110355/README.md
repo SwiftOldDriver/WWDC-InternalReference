@@ -34,14 +34,14 @@ session_ids: [110355]
 
 在阅读本文之前，我剧透的先提出几个问题：
 
-**第一个问题**，在视频的一开始就提到了下面这句话，也就是说 AsyncSequence 在使用上和 Sequence 保持了几乎一致的语法。为什么要这么去实现？
+在视频的一开始就提到了下面这句话，**第一个问题**，也就是说 AsyncSequence 在使用上和 Sequence 保持了几乎一致的语法。为什么要这么去实现？
 
 >  In short, if you know how to use Sequence, you already know how to use AsyncSequence.
 
-**第二个问题**，在 2021 年的 WWDC 上已经提出了 Swift Algorithms 和 Swift Collections。
-2022 进一步的提出 Async Algorithms ，配合上 2021 年的 AsyncSequence，在异步下的那些组合算法又是如何实现的。
+在 2021 年的 WWDC 上已经提出了 Swift Algorithms 和 Swift Collections。
+那么 2022 进一步的提出 Async Algorithms ，配合上 2021 年的 AsyncSequence，**第二个问题**，在异步下的那些组合算法又是如何实现的。
 
-**第三个问题**,简介中是这么描述此 Session 的，视频中提到的 Clock 类型能够支持 AsyncSequence 在时间上实现一些算法。那具体的实现逻辑是怎么样的呢？
+简介中是这么描述此 Session 的，视频中提到的 Clock 类型能够支持 AsyncSequence 在时间上实现一些算法。**第三个问题**，那具体的实现逻辑是怎么样的呢？
 
 > We'll also share best practices for combining multiple AsyncSequences and using the Swift Clock type to work with values over time.
 > The Swift Async Algorithms package is a set of algorithms specifically focused on processing values over time using AsyncSequence.
@@ -213,12 +213,12 @@ extension QuakeMonitor {
 
 ```Swift
 do {
-     for try await quake in throwingQuakes {
-         print ("Quake: \(quake.date)")
-     }
-     print ("Stream done.")
+    for try await quake in throwingQuakes {
+        print ("Quake: \(quake.date)")
+    }
+    print ("Stream done.")
  } catch {
-     print ("Error: \(error)")
+    print ("Error: \(error)")
  }
 ```    
 
