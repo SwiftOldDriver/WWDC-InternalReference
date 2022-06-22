@@ -108,4 +108,3 @@ cat out.json | jq .event
 ```
 
 ![](./images/pic8.png)
-
