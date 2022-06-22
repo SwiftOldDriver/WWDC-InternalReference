@@ -4,7 +4,7 @@ session_ids: [10119]
 
 # WWDC22 - Optimize your use of Core Data and CloudKit / 优化 CoreData & CloudKit 实现
 
-> 作者：Ryukie，在广州搬砖，iOS独立开发者，[GitHub](https://github.com/RyukieSama)。
+> 作者：Ryukie，在广州搬砖，iOS 独立开发者，[GitHub](https://github.com/RyukieSama)。
 
 ## 前言
 
@@ -13,14 +13,14 @@ session_ids: [10119]
 ![DevelopmentWaterFlow](images/development-water-flow.png)
 
 > 本文基于 [WWDC22: 10119 - Optimize your use of Core Data and CloudKit](https://developer.apple.com/videos/play/wwdc2022/10119/) 梳理。
-> 
+>
 > 本 Session 侧重点为优化实现方案，更适用于对 `CoreData & CloudKit` 以及数据库知识有一定理解的开发者，如果想要了解更多实际使用的知识，推荐阅读文末的相关 Session。
-> 
+>
 > 同时 [WWDC22: 10115 - What’s new in CloudKit Console](https://developer.apple.com/videos/play/wwdc2022/10115/) 也介绍了 CloudKit 控制台的一些有用更新，本文也会进行一些介绍。
 
 ## 一、 探索
 
-合理的数据结构设计，是一款 `CloudKit` 应用程序的核心。我在开发我的第一款应用[扫雷：无尽天梯Elic](https://apps.apple.com/cn/app/id1488204246)，用来熟悉对 `CloudKit` 的使用时，就遇到了数据结构设计不合理导致的问题。
+合理的数据结构设计，是一款 `CloudKit` 应用程序的核心。我在开发我的第一款应用[扫雷：无尽天梯 Elic](https://apps.apple.com/cn/app/id1488204246)，用来熟悉对 `CloudKit` 的使用时，就遇到了数据结构设计不合理导致的问题。
 
 这里是一个基于 `CloudKit` 建立的扫雷成绩排行榜，这里包含了用户头像、昵称、成绩等信息。
 
@@ -68,7 +68,7 @@ static func loadCloudImage(imageInfo: CloudImageCacheBaseInfo,resultCallBack: Cl
 }
 ```
 
-> 更多关于我在该项目中的实践可以查看我的文章：[LabLawliet: 基于iCloud构建独立项目用户体系](https://mp.weixin.qq.com/s/W7XuE3rNaIyjFblrkEoDtQ)
+> 更多关于我在该项目中的实践可以查看我的文章：[LabLawliet: 基于 iCloud 构建独立项目用户体系](https://mp.weixin.qq.com/s/W7XuE3rNaIyjFblrkEoDtQ)
 
 ### 1.1 反思
 
@@ -262,11 +262,11 @@ func verifyPosts(in context: NSManagedObjectContext) throws {
 
 这里我们是否可以通过获取索引而非完整数据的方式进行数据验证，进而优化大量数据场景下的数据获取体验呢？
 
-**优化：通过获取ID优化存储瓶颈**
+**优化：通过获取 ID 优化存储瓶颈**
 
-通过设置 `resultType` 为 `managedObjectIDResultType` 可以使返回的结果全部是数据ID，大大减少了循环时的内存增长。
+通过设置 `resultType` 为 `managedObjectIDResultType` 可以使返回的结果全部是数据 ID，大大减少了循环时的内存增长。
 
-同时通过设定验证超过10个就重置上下文的方式，我们也能进一步减轻循环中的内存占用。
+同时通过设定验证超过 10 个就重置上下文的方式，我们也能进一步减轻循环中的内存占用。
 
 ```Swift
 func verifyPosts(in context: NSManagedObjectContext) throws {
@@ -468,15 +468,14 @@ log show --info --debug
 
 ## 推荐阅读
 
-> [LabLawliet: 基于iCloud构建独立项目用户体系](https://mp.weixin.qq.com/s/W7XuE3rNaIyjFblrkEoDtQ)
-> 
+> [LabLawliet: 基于 iCloud 构建独立项目用户体系](https://mp.weixin.qq.com/s/W7XuE3rNaIyjFblrkEoDtQ)
+>
 > [WWDC22: 10115 - What’s new in CloudKit Console](https://developer.apple.com/videos/play/wwdc2022/10115/)
-> 
+>
 > [WWDC21: 10015 Build apps that share data through CloudKit and Core Data](https://developer.apple.com/videos/play/wwdc2021/10015)
-> 
+>
 > [WWDC19: 202 Using Core Data With CloudKit](https://developer.apple.com/videos/play/wwdc2019/202)
-> 
+>
 > [WWDC20: Diagnose performance issues with the Xcode Organizer](https://developer.apple.com/videos/play/wwdc2020/10076)
-> 
+>
 > [WWDC19: Getting Started with Instruments](https://developer.apple.com/videos/play/wwdc2019/411)
-

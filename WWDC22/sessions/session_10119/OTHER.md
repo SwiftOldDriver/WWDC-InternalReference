@@ -1,6 +1,6 @@
 ## 个人介绍
 
-Ryukie，在广州搬砖，iOS独立开发者，[GitHub](https://github.com/RyukieSama)。
+Ryukie，在广州搬砖，iOS 独立开发者，[GitHub](https://github.com/RyukieSama)。
 
 ## 审核介绍
 
