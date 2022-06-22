@@ -14,4 +14,4 @@ Kem
 
 ## 公众号/小专栏图文头图
 
-<img src="./images/banner.png" />
+![image](./images/async-algorithms.png)
