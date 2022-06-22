@@ -8,7 +8,7 @@ session_ids: [110355]
 > 
 > 审核：Kem
 
-> （注：备注？）
+> 
 
 ## 前言
 
@@ -20,34 +20,35 @@ session_ids: [110355]
 
 ## 正文
 
-本文基于 [Session 110355](https://developer.apple.com/videos/play/wwdc2022/110355/)梳理，介绍的是苹果又一新开源包 Swift Async Algorithms ([Github 地址](https://github.com/apple/swift-async-algorithms)｜[Doc 地址](https://developer.apple.com/documentation/swift/asyncsequence))，主要用于实现 AsyncSequences 数据结构相关的算法。
+本文基于 [Session 110355](https://developer.apple.com/videos/play/wwdc2022/110355/) 梳理，介绍的是苹果又一新开源包 Swift Async Algorithms ([Github 地址](https://github.com/apple/swift-async-algorithms)｜[Doc 地址](https://developer.apple.com/documentation/swift/asyncsequence))，主要用于实现 AsyncSequences 数据结构相关的算法。
 
-async-algorithms.png
+![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/async-algorithms.png)
 
 除此之外，视频内还介绍了一个新的时钟 [Clock](https://developer.apple.com/documentation/swift/time-and-duration?changes=latest_major&language=o_8) 协议，将会在 Swift 5.7 新增，现在还处在 Beta 阶段。协议的内容主要可以分为三个部分：
 1. Clock： 时钟类型：ContinuousClock/SuspendingClock
 2. Instant： 时钟 Clock 的一个准确的瞬间（时间戳）
 3. Duration：两个 Instant 之间做差
 
-开源包提议文件地址[Github](https://github.com/apple/swift-evolution/blob/main/proposals/0298-asyncsequence.md)
+开源包提议文件 [Github](https://github.com/apple/swift-evolution/blob/main/proposals/0298-asyncsequence.md) 中，对这个开源包出发的动机和未来的发展有更加详细的介绍。
 
 本文介绍的顺序并不完全按照视频内讲述的方法的顺序。相对原视频更多的是补充和扩展，感兴趣的同学最多只要花花 `13 分 01 秒` 就能观看完视频。
 
 在阅读本文之前，我剧透的先提出几个问题：
 
-第一个问题，在视频的一开始就提到了：
+**第一个问题**，在视频的一开始就提到了下面这句话，也就是说 AsyncSequence 在使用上和 Sequence 保持了几乎一致的语法。为什么要这么去实现？
 >  In short, if you know how to use Sequence, you already know how to use AsyncSequence.
-也就是说 AsyncSequence 在使用上和 Sequence 保持了几乎一致的语法。为什么要这么去实现？
 
 
-第二个问题，在 2021 年的 WWDC 上已经提出了 Swift Algorithms 和 Swift Collections。2022 进一步的提出 Async Algorithms ，配合上 2021 年的 AsyncSequence，在异步下的那些组合算法又是如何实现的。
+
+**第二个问题**，在 2021 年的 WWDC 上已经提出了 Swift Algorithms 和 Swift Collections。
+2022 进一步的提出 Async Algorithms ，配合上 2021 年的 AsyncSequence，在异步下的那些组合算法又是如何实现的。
 
 
-第三个问题，简介中是这么描述此 Session 的：
+
+**第三个问题**,简介中是这么描述此 Session 的，视频中提到的 Clock 类型能够支持 AsyncSequence 在时间上实现一些算法。那具体的实现逻辑是怎么样的呢？
 > We'll also share best practices for combining multiple AsyncSequences and using the Swift Clock type to work with values over time.
-> ----
 > The Swift Async Algorithms package is a set of algorithms specifically focused on processing values over time using AsyncSequence.
-两句话的关键词分别有： Swift Clock ，over time。视频中提到的 Clock 类型能够支持 AsyncSequence 在时间上实现一些算法。那具体的实现逻辑是怎么样的呢？
+
 
 
 > 其实如果了解 Rx 和 Combine 的话，可以近乎的理解 AsyncSequence 分别对应的是 Operators 和 Publisher。虽然在 Swift 中协议的名字里还是 Sequence ，其实更像是 Stream 的概念（正如官方自定义的结构体 AsyncStream）。这样更应该是为了和 Sequence 使用方式的统一，包括协议里的方法。
@@ -55,12 +56,12 @@ async-algorithms.png
 ## 多输入 AsyncSequence
 对应的在 [Swift Algorithms](https://github.com/apple/swift-algorithms) 有一系列的，针对多输入 Sequence 的算法。
 支持多输入 AsyncSequence 的 [Swift Async Algorithms](https://github.com/apple/swift-async-algorithms) 算法好像有着一些相同的方法：
-（注：需要修改）
-Combining 类型的 `zip/chain/join`。但是由于底层数据格式的不同，大部分算法都是没有重合的
+<!-- （注：需要修改） -->
+<!-- Combining 类型的 `zip/chain/join`。但是由于底层数据格式的不同，大部分算法都是没有重合的 -->
 
 ### Zip
 
-zip-algorithms.png
+![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/zip-algorithms.png)
 
 在一般的 Zip 使用场景，我们是将两个需要匹配的序列，根据其中个数较少的，依次遍历然后进行处理。
 在视频的例子中，videos 和 previews 都是 AsyncSequence。如果要实现像一般 Zip 算法效果，我们需要实现
@@ -161,6 +162,7 @@ AsyncSequence2:   "-1-----2---------3----|"
 
 AsyncSequenceOut: "-(a,1)--(b,2)----(c,3)|"
 ```
+
 #### 错误处理
 在前面的关于方法实现的代码里，可以发现调用的几个方法里都有返回错误的情况，比如 next 方法有 rethrows 关键词。
 从对应代码的逻辑可以看出，是只要当其中一个 AsyncSequence 报错了，也就是返回了 nil，zip 方法就会停止。
@@ -179,9 +181,9 @@ class QuakeMonitor {
 ```
 
 Continuation 就是 AsyncStream 里用来处理值相关的结构体，
-1. 传递值的方法： yield 方法
-2. 结束并抛出错误的方法： finish(throwing: )
-3. 当然也有直接结束的方法：finish()
+1. 传递值的方法： `yield` 方法
+2. 结束并抛出错误的方法： `finish(throwing: )`
+3. 当然也有直接结束的方法：`finish()`
 
 ```Swift
 extension QuakeMonitor {
@@ -203,7 +205,7 @@ extension QuakeMonitor {
 }
 ```
 
-这里就可以拿到 finish(throwing:) 抛出的错误。
+这里就可以拿到 `finish(throwing:)` 抛出的错误。
 ```Swift
 do {
      for try await quake in throwingQuakes {
@@ -219,12 +221,12 @@ do {
 在 Swift 的论坛中，继续讨论了 zip 的实现方向。
 比如 [withLatestFrom](https://forums.swift.org/t/pitch-withlatestfrom/56487) 方法,对应的 [pull request](https://github.com/apple/swift-async-algorithms/pull/147) 。这个方法处理的就是两个 AsyncSequence 已不同速率更新值的时候，使用的都是最新的值。
 
-比如 [Do we want `forEach`?](https://forums.swift.org/t/do-we-want-foreach/56929) 讨论了 forEach 是否需要，以及和 for-in 用法的区别。
+比如 [Do we want forEach?](https://forums.swift.org/t/do-we-want-foreach/56929) 讨论了 forEach 是否需要，以及和 for-in 用法的区别。
 
 ### Merge 
 Zip 处理 AsyncSequence 成对的出现，那对应的不需要成对就加入到新 AsyncSequence 中去的方法也有，那就是 Merge
 
-merge-algorithms.png
+![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/merge-algorithms.png)
 
 [AsyncMerge2Sequence](https://github.com/apple/swift-async-algorithms/blob/main/Sources/AsyncAlgorithms/AsyncMerge2Sequence.swift) 和 zip 方法不一样的是，merge 方法里其中一个 AsyncSequence 返回了 nil 并不会导致方法结束。只有当所有的 AsyncSequence 都结束之后 merge 方法才会结束
 Merge 方法中设置了 state 来记录两个 AsyncSequence 的状态
@@ -251,7 +253,6 @@ case .first(let result, let iterator):
 
 内部的代码可以发现，其实是对其中一个异步序列返回 nil 的情况下选择停止方法。只是 init 方法里 iterTerminatesOnNil 默认给的都是 false。
 观察这里的 next 方法会发现 zip 方法忽视掉的一个代码逻辑 `next -> iterator -> task` ：
-
 ```Swift
 switch state {
     case (.idle(let iterator1), .idle(let iterator2)):
@@ -290,17 +291,17 @@ A mechanism in which to measure time, and delay work until a given point in time
 
 字面意思的理解，就是将需要执行的任务延迟一定的时间执行了。仅仅如此的话，GCD 里的延迟函数也能实现，为什么还需要特意写了一个协议出来呢？
 
-clock-protocol.png
+![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/clock-protocol.png)
 
 视频里解释 Clock 想要解决的是一定时间之后唤醒任务。查看 [Clock 协议](https://developer.apple.com/documentation/swift/clock) 文档，现在内部定义了两种类型的时钟：[SuspendingClock](https://github.com/apple/swift/blob/2d2b6f26b597d20b58efc26165626c8d095cb07a/stdlib/public/Concurrency/SuspendingClock.swift) 和 [ContinuousClock](https://github.com/apple/swift/blob/2d2b6f26b5/stdlib/public/Concurrency/ContinuousClock.swift)。
 这两者的区别就在于，后者 incrementing while the system is asleep，而且前者 not。与机器相关的比如动画使用 SuspendingClock。而与人相关的任务，则更适合 ContinuousClock。
-（注：需要补充）
+<!-- （注：需要补充） -->
 
 ### Debounce
-（注：需要补充）
+<!-- （注：需要补充） -->
 去抖动，以一定的间隔来响应任务。对应的算法，是在 Clock 的基础上实现
 
-debounce-algorithms.png
+![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/debounce-algorithms.png)
 
 查看 [Debounce](https://github.com/apple/swift-async-algorithms/blob/434591a571a8c4fe073500926414356d3b40f460/Sources/AsyncAlgorithms/AsyncDebounceSequence.swift) 算法源码，内部实现了一个 AsyncDebounceSequence 结构体。
 
@@ -317,7 +318,6 @@ case .produce(let result, let iter):
 ```
 
 这里抽取出 next 方法里核心的几行，大概也能理解 debounce 的实现逻辑：建立了 sleep 和 produce 两个 Task。
-
 ```Swift
 let deadline = (last ?? clock.now).advanced(by: interval)
 let sleep: Task<Partial, Never> = Task { [tolerance, clock] in
@@ -336,7 +336,7 @@ let sleep: Task<Partial, Never> = Task { [tolerance, clock] in
 
 另外根据代码实现可以发现，debounce 算法的第一个有效返回值会在等待 300ms 之后返回。
 
-（注： debounce 里的 task.select 和 withTaskGroup 比较）
+<!-- （注： debounce 里的 task.select 和 withTaskGroup 比较） -->
 
 ### ContinuousClock
 
@@ -375,21 +375,16 @@ enum _ClockID: Int32 {
 
 提一句视频中使用到的 [AsyncChannel](https://github.com/apple/swift-async-algorithms/blob/a973b06d06f2be355c562ec3ce031373514b03f5/Sources/AsyncAlgorithms/AsyncChannel.swift) 结构体。
 
-（注：对于 AsyncChannel 在 rx 和 combine 应该都有。可以接受信息并传递信息）
-
+<!-- （注：对于 AsyncChannel 在 rx 和 combine 应该都有。可以接受信息并传递信息） -->
 
 ### chunked(by:)
 根据一定时间分块的数据进行处理，同样是实现了 [AsyncChunksOfCountOrSignalSequence](https://github.com/apple/swift-async-algorithms/blob/434591a571/Sources/AsyncAlgorithms/AsyncChunksOfCountOrSignalSequence.swift) 结构
 
 通过对应的测试代码 [TestChunk](https://github.com/apple/swift-async-algorithms/blob/434591a571/Tests/AsyncAlgorithmsTests/TestChunk.swift) 可以看到可以实现的算法结果。
 
-algorithms-list.png
-
-
-用法截图.png
-
 ### Clock 一些用法
 
+这里列举一些例子，来说明 Clock 可以做到的事和实现的效果
 ```Swift
 // 可以阻塞当前线程，延迟执行下一步
 try await Task.sleep(nanoseconds: 1 * 1_000_000_000) //nanoseconds 纳秒
@@ -405,6 +400,15 @@ let elapsed = await clock.measure {
 }
 
 ```
+
+
+### other
+贴出几乎所有方法的截图
+![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/algorithms-list.png)
+
+在 [Github README](https://github.com/apple/swift-async-algorithms) 里可以看到关于这些方法的对应的系列和分类，这个和接下来的比较部分内容有关。
+
+
 ## 比较
 
 文章的前面部分，主要阅读了一些算法和新增协议的源码。重点在于算法的实现，一些新东西的用法
@@ -412,8 +416,10 @@ let elapsed = await clock.measure {
 仔细观察 AsyncSequence 这些方法，包括方法名，会发现这和面向过程框架里的 Rx 和 Combine 非常的相似
 
 以 zip 方法举例：
-[ReactiveX Zip](https://reactivex.io/documentation/operators/zip.html) 
-[Combine Zip](https://developer.apple.com/documentation/combine/publisher/zip(_:)) 
+
+[ReactiveX Zip](https://reactivex.io/documentation/operators/zip.html) 地址
+
+[Combine Zip](https://developer.apple.com/documentation/combine/publisher/zip(_:)) 地址
 
 从结果上来看，zip 方法的得到的结果是一致的，都是以相同速度来处理两个序列新增的值。
 
