@@ -15,6 +15,8 @@ session_ids: [10119]
 > 本文基于下列 [WWDC22: 10119 - Optimize your use of Core Data and CloudKit](https://developer.apple.com/videos/play/wwdc2022/10119/) 梳理。
 > 
 > 本 Session 侧重点为优化实现方案，更适用于对 CoreData & CloudKit 以及数据库知识有一定理解的开发者，如果想要了解更多实际使用的知识，推荐阅读文末的相关 Session。
+> 
+> [WWDC22: 10115 - What’s new in CloudKit Console](https://developer.apple.com/videos/play/wwdc2022/10115/) 也介绍了 CloudKit 控制台的一些有用更新。
 
 ## 一、 探索
 
@@ -426,6 +428,39 @@ log show --info --debug
                      message contains[cd] "CEF8F02F-81DC-48E6-B293-6FCD357EF80F")'
     system_logs.logarchive
 ```
+
+## 四、 CloudKit 控制台的一些小更新
+
+今年在 [WWDC22: 10115 - What’s new in CloudKit Console](https://developer.apple.com/videos/play/wwdc2022/10115/) 对 [CloudKit 控制台](https://icloud.developer.apple.com/dashboard/) 的新功能也做了一些介绍。
+
+### 4.1 以 iCloud 账号方式登录
+
+以往在使用 CloudKit 控制台的时候，都是使用开发者账号进行登录的。在开发时，我们一般会使用自己的账号进行调试，但是想要查数据的时候就麻烦了：
+
+- 获取自己 userRecordID
+- 到对应的数据表中进行筛选
+
+现在添加了 `Act as iCloud Account` 的功能：
+
+![](images/database_as_icloud.jpg)
+
+点击之后就可以直接登录 iCloud 账号，查看存在 CloudKit 中的数据了：
+
+![](images/database_act_icloud.jpg)
+
+这里我登录了自己的账号，直接显示出了我在扫雷游戏排行榜上的数据，点击顶部 Stop 按钮即可回到开发者模式。
+
+![](images/database_icloud_data.jpg)
+
+### 4.2 隐藏 Container
+
+![](images/cloudkit_manager.jpg)
+
+在有多个 Container 的时候可以选择隐藏一些，看起来更简洁，不容易选错。
+
+> 我有两个 Container 名字比较像，不止一次选错 Container 还以为数据出问题了
+
+![](images/cloudkit_manager_sel.jpg)
 
 ## 总结
 
