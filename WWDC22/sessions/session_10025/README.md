@@ -555,3 +555,5 @@ func updateViaAsyncStream() async {
 ## 总结
 
 iOS SDK 为我们提供了多种创建机器视觉工作流的选项。在过去，实时的捕获视频源中的文本、条码以前可能需要大量代码，需要开发者手动集成 AVFoundation、Vision。而 WWDC 21 给我们带来了 Live Text，WWDC 22 时我们可以将 Live Text 加入我们自己的应用程序中，也给我们提供了更智能的 `DataScannerViewController`，除了更优异的识别体验，在用户指导标签、项目突出显示、交互优化上的支持也非常有吸引力。在语法上， Swift 并发语法的支持也为开发者带来更加优雅的处理方式和更加高效的运行能力。也许我们正在创建一个需要通过实时视频进行源扫描文本或条码的应用程序，那么我们可以尝试使用 VisionKit 的机器视觉方案，用它们来实现与系统应用程序风格相匹配的自定义扫描和识别体验。虽然方案也存在一些限制，例如 iOS 16 的系统版本要求、不兼容没有配备 Apple 神经引擎的旧设备等，但我们仍然信这个 API 在未来会受到广大开发者的青睐。
+
+> 我们公开了[文章所讲解的 Demo 及相关文件](https://github.com/LLLLLayer/WWDC22-Session-10025-Capture-machine-readable-codes-and-text-with-VisionKit)，欢迎大家共同交流！
