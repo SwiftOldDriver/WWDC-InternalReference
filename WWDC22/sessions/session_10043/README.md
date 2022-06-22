@@ -2,7 +2,7 @@
 session_ids: [10043]
 ---
 
-# 【WWDC22 10043/10044/110404】App Store Connect中的新特性及最佳实践
+# 【WWDC22 10043/10044/110404】App Store Connect 中的新特性及最佳实践
 
 本文基于 session [10043](https://developer.apple.com/videos/play/wwdc2022/10043/) 、[10044](https://developer.apple.com/videos/play/wwdc2022/10044/) 、[110404](https://developer.apple.com/videos/play/wwdc2022/110404/) 整理。
 
@@ -73,7 +73,6 @@ session_ids: [10043]
   	</div>
 </center>
 
-
  <center>
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
@@ -141,7 +140,7 @@ session_ids: [10043]
 
 #### API 讲解
 
-我们如何在 app 启动时获取到用户的订阅状态，以此来展示对应的个性化界面呢？这里主要有三个步骤：开启App Store交易监听，确定客户的产品状态，检查是否有正在生效的自动更新订阅。通过这三个步骤所获得的数据我们就可以判定用户所处的状态及他购买的产品信息，以此来决定 app 启动后展示给用户的界面是怎么样的。
+我们如何在 app 启动时获取到用户的订阅状态，以此来展示对应的个性化界面呢？这里主要有三个步骤：开启 App Store 交易监听，确定客户的产品状态，检查是否有正在生效的自动更新订阅。通过这三个步骤所获得的数据我们就可以判定用户所处的状态及他购买的产品信息，以此来决定 app 启动后展示给用户的界面是怎么样的。
 
 ##### StoreKit 2
 
@@ -290,4 +289,3 @@ if (subscriptionGroupStatus == .expired) {
 ## 总结
 
 本次 App Store Connect 的更新真的很多，本文只是取了其中的几个重点更新：增强的 App Store 提交体验、应用基准测试工具、用户订阅状态即时获取来进行了讲解，其他内容可以查阅前面提到的一些 session 去进一步深挖。总体来说，应用基准测试工具、用户订阅状态即时获取这两个功能都能较大地帮助开发者对自己 app 的表现进行分析和有方向性地提高，促进 app 的收益，希望对你们有帮助！
-
