@@ -68,7 +68,7 @@ es_mute_path(client, "/Library/LaunchDaemons", ES_MUTE_PATH_TYPE_TARGET_PREFIX)
 
 ## eslogger 更便捷的端点安全事件获取方式
 
-从 macOS Ventura 开始，开发者可以通过命令行工具就可以使用端点安全功能。eslogger 记录了端点安全的事件流并以 JSON 格式进行输出。数据结构与原生客户端使用的展示形式一样。eslogger 支持全部类型的端点防护事件。
+从 macOS Ventura 开始，开发者可以通过命令行工具就可以使用端点安全功能。eslogger 记录了端点安全的事件流并以 JSON 格式进行输出。数据结构与原生客户端使用的展示形式一样。eslogger 支持全部类型的端点安全事件。
 ![](./images/pic4.png)
 
 eslogger 搭载在 macOS Ventura 中，需要 root 权限以及完全磁盘访问权限。eslogger 的输出结果会受到操作系统升级影响。不能保证会像端点安全 API 一样的，提供相同的性能特征或者相同的功能集。
