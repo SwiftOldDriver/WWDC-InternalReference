@@ -4,7 +4,7 @@ session_ids: [10049]
 
 # Session 10049 - 探索 iOS 16 中 WKWebView 的新功能
 
-> 作者：Style 月月，iOS 程序媛，简书/掘金文章贡献者，目前任职于小米，侧重于海外相关业务
+> 作者：Style 月月， iOS 程序媛，简书/掘金文章贡献者，目前任职于小米，侧重于海外相关业务
 
 本文是根据 WWDC22 中的 [What's new in WKWebView](https://developer.apple.com/videos/play/wwdc2022/10049/) 撰写，主要是了解 WKWebView 在 iOS 16 中的新增功能。
 
