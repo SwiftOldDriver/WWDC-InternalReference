@@ -20,7 +20,7 @@
 
 ##### 1.1 SwiftChart
 
-[Image](http://www.baidu.com/xxxx)
+[Image](./images/chartall.png)
 
 之前在项目中使用过Charts的小伙伴应该有些基础了解。
 不同之处在于Apple推出的Chart库默认支持Accessibility，以及跨平台。
