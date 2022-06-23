@@ -13,9 +13,9 @@ session_ids: [10119]
 ![DevelopmentWaterFlow](images/development-water-flow.png)
 
 > 本文基于 [WWDC22: 10119 - Optimize your use of Core Data and CloudKit](https://developer.apple.com/videos/play/wwdc2022/10119/) 梳理。
->
+>  
 > 本 Session 侧重点为优化实现方案，更适用于对 `CoreData & CloudKit` 以及数据库知识有一定理解的开发者，如果想要了解更多实际使用的知识，推荐阅读文末的相关 Session。
->
+>  
 > 同时 [WWDC22: 10115 - What’s new in CloudKit Console](https://developer.apple.com/videos/play/wwdc2022/10115/) 也介绍了 CloudKit 控制台的一些有用更新，本文也会进行一些介绍。
 
 ## 一、 探索
@@ -469,13 +469,13 @@ log show --info --debug
 ## 推荐阅读
 
 > [LabLawliet: 基于 iCloud 构建独立项目用户体系](https://mp.weixin.qq.com/s/W7XuE3rNaIyjFblrkEoDtQ)
->
+>  
 > [WWDC22: 10115 - What’s new in CloudKit Console](https://developer.apple.com/videos/play/wwdc2022/10115/)
->
+>  
 > [WWDC21: 10015 Build apps that share data through CloudKit and Core Data](https://developer.apple.com/videos/play/wwdc2021/10015)
->
+>  
 > [WWDC19: 202 Using Core Data With CloudKit](https://developer.apple.com/videos/play/wwdc2019/202)
->
+>  
 > [WWDC20: Diagnose performance issues with the Xcode Organizer](https://developer.apple.com/videos/play/wwdc2020/10076)
->
+>  
 > [WWDC19: Getting Started with Instruments](https://developer.apple.com/videos/play/wwdc2019/411)
