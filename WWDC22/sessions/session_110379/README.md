@@ -87,8 +87,9 @@ Demo 中使用了新的 API 截图，整个加载变得顺滑流畅
 
 > 不了解 Async/Await 可能比较难以理解，这两年 Async/Await 的应用非常广泛，想要有更深入的理解，推荐阅读
 > 
-> - WWDC21 内参的《[【WWDC21 10132】认识 Swift 的 Async/Await](https://xiaozhuanlan.com/topic/9307851264)》，里面主要讲述 async/await 在运行时的工作原理，以及如何在你的工程或框架中使用它们
-> - Swift 官方文档 《[Concurrency](https://docs.swift.org/swift-book/LanguageGuide/Concurrency.html)》，里面讲述 Swift 并行相关，更全面系统化的知识和概念
+> 1.WWDC21 内参的《[【WWDC21 10132】认识 Swift 的 Async/Await](https://xiaozhuanlan.com/topic/9307851264)》，里面主要讲述 async/await 在运行时的工作原理，以及如何在你的工程或框架中使用它们
+> 
+> 2.Swift 官方文档 《[Concurrency](https://docs.swift.org/swift-book/LanguageGuide/Concurrency.html)》，里面讲述 Swift 并行相关，更全面系统化的知识和概念
 
 ### 截图速度优化
 
