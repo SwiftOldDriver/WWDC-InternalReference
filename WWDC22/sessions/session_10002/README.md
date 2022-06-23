@@ -9,7 +9,7 @@ session_ids: [10002]
 
 > 作者：Mellow，就职于腾讯，iOS/macOS 开发者。给 macOS QQ 适配过 Apple Silicon，给 iOS QQ 适配过 MacCatalyst。
 >
-> 审核：
+> 审核：黄骋志，目前就职于字节跳动西瓜视频，负责基础技术相关工作，协助复杂业务进行重构。曾参与长视频支付相关工作
 
 ![banner](./images/banner.png)
 
