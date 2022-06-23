@@ -57,7 +57,7 @@ func thumbnail() throws -> UIImage {
 
 在 Demo 中使用主线程加载缩略图，启动后 UI 会卡住很长一段时间，直到所有截图加载完毕
 
-> 可以在这里获取 [Demo](./Demo/)
+> 可以在这里获取 [Demo](https://github.com/vitoziv/ResponsiveMediaApp)
 
 ![](./images/demo1.gif)
 
@@ -81,11 +81,13 @@ func thumbnail() async throws -> UIImage {
 
 Demo 中使用了新的 API 截图，整个加载变得顺滑流畅
 
-> 可以在这里获取 [Demo](./Demo/)
+> 可以在这里获取 [Demo](https://github.com/vitoziv/ResponsiveMediaApp)
 
 ![](./images/demo2.gif)
 
-> 不了解 Async/Await 可能比较难以理解，这两年 Async/Await 的应用非常广泛，想要有更深入的理解，推荐阅读 WWDC21 内参的《[【WWDC21 10132】认识 Swift 的 Async/Await](https://xiaozhuanlan.com/topic/9307851264)》 和 Swift 官方文档 《[Concurrency](https://docs.swift.org/swift-book/LanguageGuide/Concurrency.html)》
+> 不了解 Async/Await 可能比较难以理解，这两年 Async/Await 的应用非常广泛，想要有更深入的理解，推荐阅读
+> - WWDC21 内参的《[【WWDC21 10132】认识 Swift 的 Async/Await](https://xiaozhuanlan.com/topic/9307851264)》，里面主要讲述 async/await 在运行时的工作原理，以及如何在你的工程或框架中使用它们
+> - Swift 官方文档 《[Concurrency](https://docs.swift.org/swift-book/LanguageGuide/Concurrency.html)》，里面讲述 Swift 并行相关，更全面系统化的知识和概念
 
 ### 截图速度优化
 
@@ -183,7 +185,7 @@ func timelineThumbnails(for times: [CMTime]) async {
 }
 ```
 
-> 关于异步序列，推荐阅读 WWDC21 的 Session 《[Meet AsyncSequence](https://developer.apple.com/videos/play/wwdc2021/10058)》
+> 关于异步序列，推荐阅读 WWDC21 的 Session 《[Meet AsyncSequence](https://developer.apple.com/videos/play/wwdc2021/10058)》，里面主要讲述 AsyncSequence 基础概念和使用方法
 
 ## 视频编辑优化
 
@@ -256,7 +258,7 @@ asset.loadValuesAsynchronously(forKeys: ["duration", "tracks"]) {
 
 去年的 WWDC 提供了新的异步 `load(_:)` 方法。
 
-> 关于这部分可以看 WWDC21 内参 《[【WWDC21 10146】AVFoundation 的新变化](https://xiaozhuanlan.com/topic/2879104653)》
+> 关于这部分可以看 WWDC21 内参 《[【WWDC21 10146】AVFoundation 的新变化](https://xiaozhuanlan.com/topic/2879104653)》。里面主要讲述：音频元信息，视频元数据合成和字幕创作相关内容
 
 把上面远古时代遗留下来的，通过传入字符串 key 的方式，改成了类型安全的 key。新的方式通过编译检查防止了我们不小心拼错字符串，造成的问题。并且到底加载了哪些属性，直接通过元祖返回，在后续使用的时候直接使用返回值，确保不会误访问没有加载的值。
 
@@ -353,4 +355,6 @@ myFunction(thatUses: composition.duration,
 1. 在视频截图、编辑、资源信息加载几个场景，提供了更新的 async/await 的方式做异步数据加载，让异步数据加载更简单安全
 2. `AVAssetResourceLoader` 新增本地模式，提升播放器加载速度
 
-今年主要对 `AVFoundation` 中原本不是很合理的同步 API 做了异步优化，同时将 async/await 应用到了更多 API 中，让 API 更安全的同时还能保持易用，不得不说 Swift 大法好啊（但国内大厂们何时可以用上 Swift？令人头秃）。
+同步接口会使得大家常常忽略函数本身的耗时问题而导致性能问题。异步回掉接口虽然能避免同步接口的问题，但是上下文切换和管理使得 API 使用起来不太方便。
+
+今年苹果在视频剪辑场景，对原本不是很合理的同步 API 使用 Swift 并发做了优化，确实解决了不少问题，让 API 更安全的同时还能保持易用，不得不说 Swift 大法好啊（但国内大厂们何时可以用上 Swift？令人头秃）。建议还没有开始迁移 Swift 的小伙伴可以早日迁移起来，开始享用现代语言设计带来的编程快感~
