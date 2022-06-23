@@ -285,7 +285,7 @@ macOS 上的商业虚拟机产品  Parallels Desktop 17 使用了 Virtualization
 
 #### 下载示例代码
 
-https://developer.apple.com/documentation/virtualization/running_gui_linux_in_a_virtual_machine_on_a_mac
+<https://developer.apple.com/documentation/virtualization/running_gui_linux_in_a_virtual_machine_on_a_mac>
 
 #### 配置 entitlement 文件
 
@@ -752,9 +752,9 @@ C4DBUILDID=RBBenchmark330542
 
 支持 Linux VM 的更多功能：EFI BootLoader、VirtIO 图形、Rosetta 支持
 
-#### 下载示例代码
+#### 下载 Linux 示例代码
 
-https://developer.apple.com/documentation/virtualization/running_linux_in_a_virtual_machine
+<https://developer.apple.com/documentation/virtualization/running_linux_in_a_virtual_machine>
 
 #### 安装 Linux
 
