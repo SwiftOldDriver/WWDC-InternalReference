@@ -3,6 +3,7 @@
 
 大家好，今天我们来介绍一下今年SwiftUI推出了哪些新的内容。
 从近些年苹果的事件来看， SwiftUI即是未来。
+![](./images/wwdc22New.png)
 
 ### 1. What's New In SwiftUI
 ### 2. SwiftUI 发展历史对比
@@ -20,7 +21,7 @@
 
 ##### 1.1 SwiftChart
 
-[Image](./images/chartall.png)
+![](./images/chartall.png)
 
 之前在项目中使用过Charts的小伙伴应该有些基础了解。
 不同之处在于Apple推出的Chart库默认支持Accessibility，以及跨平台。
@@ -35,7 +36,7 @@
 以及持续关注我们，后续我们也会更新Charts相关Session。
   
 这里先进行一些简单实用介绍
-1.1 柱状图(BarMark)
+1.1 柱状图(```BarMark```)
 ```
 Chart(partyTasksRemaining) { task in
     BarMark(
@@ -44,9 +45,8 @@ Chart(partyTasksRemaining) { task in
     )
 }
 ```
-[image]()
 
-1.2 折线图(LineMark)
+1.2 折线图(```LineMark```)
 ```
 Chart(partyTasksRemaining) { task in
     LineMark(
@@ -56,10 +56,9 @@ Chart(partyTasksRemaining) { task in
     .foregroundStyle(byL .value("Category", task.category))
 }
 ```
-[image]()
 
-1.3 基准线(RuleMark)
-甚至可以为其添加文字说明(.annotation(...))。
+1.3 基准线(```RuleMark```)
+甚至可以为其添加文字说明```.annotation(...)```。
 ```
 Chart(partyTasksRemaining) { task in
     AnyCharts{ ... }
@@ -73,7 +72,20 @@ Chart(partyTasksRemaining) { task in
     )
 }
 ```
-[image]()
+除此之外还可以进行图表的叠加，只需要合理操作Chart数据源，即可实现
+```
+Chart(date.source) { source in
+    BarMark(x: .value("data", source.date, unit: .hour),                    
+            y: .value("value", source.value))
+            
+    LineMark(x: .value("data", source.date, unit: .hour),
+             y: .value("value", source.lineValue))
+        .foregroundStyle(Color.red)
+            
+    RuleMark(y: .value("value", source.value))
+}
+```
+![](./images/chartBarLine.png)
 
 ---
 
@@ -83,14 +95,13 @@ Chart(partyTasksRemaining) { task in
 
 2.1 NavigationStack
 
-具有与过去NavigationView类似的功能，下面简单列举其不同之处。
+具有与过去```NavigationView```类似的功能，下面简单列举其不同之处。
 更多详细内容可以参照WWDC Session: [The SwiftUI cookbook for navigation](https://developer.apple.com/videos/play/wwdc2022/10054/)
 我们也会在后续Session推出相关文章。
 
 2.1.1 比以前更简洁的跳转方式
 
-   .navigationDestination可以在点击NavigationLink后接收value而统一处理跳转。
-   示例代码中点击后跳转到FoodDetailView中，不需要将Destination写的到处都是了。
+```NavigationStack```可以在点击```NavigationLink```后接收value而交给```.navigationDestination```统一处理跳转。
 ```
 NavigationStack {
     List(foodItem) { item in
@@ -104,9 +115,10 @@ NavigationStack {
 }
 ```
 
-2.1.2 可以使用Stack管理，像管理数组一样管理导航栏堆栈。
+与```NavigationView```不同之处在于，可以使用Stack管理，像管理数组一样管理导航栏堆栈。与UIKit的```UINavigaitonViewController.viewControllers```类似，但是胜在view与model的绑定，只需要操作model，即可完成UI交互。
 
-如示例中selectedItems便是与NavigationStack相互绑定的数据，通过与下一级View，FoodDetailView进行的Binding，即可操作NavigationStack进行pop/push操作，更自由的实现跳转。
+如示例中```selectedItems```便是与```NavigationStack```相互绑定的数据，通过与下一级View，```FoodDetailView```进行的Binding，即可操作```NavigationStack```进行pop/push操作，更自由的实现跳转。
+
 ```
 @State private var selectedItems: [FoodItem] = []
 NavigationStack(path: $selectedItems) {
@@ -140,7 +152,7 @@ struct FoodDetailView: View {
 
 2.2 SplitViews
 
-SwiftUI有了与UIKit中UISplitViewController，AppKit中的HSplitView类似的NavigationSplitView，替换原有的单一的NavigationView，可以为iPad等更好的适配半屏模式等。
+SwiftUI有了与UIKit中```UISplitViewController```，AppKit中的```HSplitView```类似的```NavigationSplitView```，替换原有的单一的```NavigationView```，可以为iPad等更好的适配半屏模式等。
 ```
 @State private var selectedTask: PartyTask?
 NavigationSplitView {
@@ -177,7 +189,7 @@ struct PartyPlanner: App {
     }
 }
 ```
-SwiftUI作为一款跨平台语言，BudgetView也可以重用于iOS，在iOS16中的present/sheet也推出了新的半屏模式，可以自定义高度。
+SwiftUI作为一款跨平台语言，```BudgetView```也可以重用于iOS，在iOS16中的```present/sheet```也推出了新的半屏模式，可以自定义高度。
 ```
 NavigationSplitView {
     SiderbarView()
@@ -190,7 +202,7 @@ NavigationSplitView {
         .presentationIndicator(.visible)
 }
 ```
-另外对于Mac右上角的MenuBar也有更好的支持
+另外对于Mac右上角的```MenuBarExtra```也有更好的支持
 ```
 @main
 struct PartyPlanner: App {
@@ -201,7 +213,7 @@ struct PartyPlanner: App {
     .menuBarExtraStyle(.window)
 }
 ```
-[image]()
+![image](./images/macMenubar.png)
 
 在Xcode中对于多平台的支持等更新也有很多。
 关于更多Xcode更新内容，可以关注
@@ -211,7 +223,7 @@ struct PartyPlanner: App {
 > 3. Advanced controls
 
 3.1 Forms
-SwiftUI中的form增加了新的style, 当然form会自动适配iOS/iPadOS/MacOS。
+SwiftUI中的```form```增加了新的style, 当然```form```会自动适配iOS/iPadOS/MacOS。
 ```
 Form {
     Section { 
@@ -231,66 +243,24 @@ Form {
 }
 .formStyle(.grouped)
 ```
-[image]()
+![image](./images/form.png)
 
 3.2 Controls
 
-3.2.1 .lineLimit
-这是一个对于Text/TextField等都有效的modifier。
+3.2.1 ```.lineLimit```
+这是一个对于```Text/TextField```等都有效的modifier。
 ```
-Text(model.description)
+Text("Hello World")
     .lineLimt(2...3)
     
 TextField("Description", text: $description, axis: .vertical)
     .lineLimit(5...10)
 ```
+![](./images/textLinelimit.png)
+
 这个modifier的存在可以解决过去SwiftUI对于垂直布局页面支持的不足。
-比如有一个两列的LazyVGrid, 每一个item由顶部一张图片，中间一段描述语句，底部一个日期组成。
-```
-LazyVGrid(columns: [GridItem( ... ),
-                    GridItem( ... )]) {
-    ForEach(sources) { model in
-        VStack {
-            Image(model.image)
-                ...
-            Text(model.description)
-                .lineLimit(2)
-            Text(mode.dateString)
-                .lineLimit(1)
-        }
-    }
-}
-```
-设计图类似于
-```
-Image               
-description info
-description info
-2022
-```
-而由于适配Accessibility动态字体，所以不可以给固定高度。
-由于model.description的内容不确定性，导致中间text可能为1-2行,最后呈现效果会出现一定不对齐性质，无论使用leading/trailing/center.
-```
-Image                   Image 
-description info        description info
-description info        2022
-2022
-```
-在iOS16之后只需要 
-```
-Text(model.description)
-    .lineLimit(2...2)
-```
-而iOS16之前只能使用一些技巧，并不方便，比如
-```
-Text("\n\n")
-    .frame(maxWidth: .infinity)
-    .overlay(
-        Text(model.description)
-            .lineLimit(2)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-    )
-```
+比如有一个两列的```LazyVGrid```, 之前使用```.lineLimit(2)```, 由于服务器数据的不确定性，无法保证每个item的相同大小，需要进行额外的适配操作。
+当然使用iOS16的```Grid``` + ```GridRwo```也可以避免这个问题，我们稍后进行介绍。
 
 3.2.2 MultiDatePicker 
 日期选择器支持多选了。
@@ -301,10 +271,10 @@ var body: some View {
     MultiDatePicker("Dates", selection: $activityDates)
 }
 ```
-[image]()
+![image](./images/datePicker.png)
 
 3.2.3 Mixed-state
-> DisclosureGroup可以将简单的进行toggle等的全选了。
+> ```DisclosureGroup```可以将简单的进行toggle等的全选了。
 ```
 DisclosureGroup {
     Toggle("Balloons", isOn: $includeBalloons)
@@ -320,7 +290,8 @@ DisclosureGroup {
     ])
 }
 ```
-当然也可以对DisclosureGroup进行一定的自定义
+![](./images/toggles.gif)
+当然也可以对```DisclosureGroup```进行一定的自定义
 ```
 struct MyDisclosureStyle: DisclosureGroupStyle {
     func makeBody(configuration: Configuration) -> some View {
@@ -348,7 +319,7 @@ struct MyDisclosureStyle: DisclosureGroupStyle {
     }
 }
 ```
-> Picker也支持与DisclosureGroup类似的组合多选方式。
+> ```Picker```也支持与```DisclosureGroup```类似的组合多选方式，不过仅仅MacOS可用。
 ```
 @Binding var selectedDecorations: [Decoration]
 
@@ -366,8 +337,9 @@ var body: some View {
     .pickerStyle(.radioGroup)
 }
 ```
-[image]()
-除了.radioGroup style以外还有.inline/.wheel/.menu/.segmented/.automatic等风格，大家可以多多尝试。
+除了```.radioGroup```（仅MacOS可用） style以外还有```.inline/.wheel/.menu/.segmented/.automatic```等风格，大家可以多多尝试。
+![](./images/Picker.png)
+
 
 > .toggleStyle
 > 
@@ -394,13 +366,13 @@ var body: some View {
     .buttonStyle(.bordered)
 }
 ```
-[image]()
-[image]()
+![image](./images/toggleStyle(.button).png)
+
 除此之外Menu/Picker也有各自的组合style。
 
-> Stepper
+> ```Stepper```
 
-Stepper新增format, 支持number/百分比等13种类型。
+```Stepper```新增```format```, 支持number/百分比等13种类型。
 且自动适配MacOS支持数字填写，iOS为+-按钮，watchOS也有对应适配。
 ```
 Stepper(value: $value,
@@ -411,8 +383,8 @@ Stepper(value: $value,
 ```
 3.3 Table
 MacOS之前推出的Table，现在在iPadOS/iOS中也可以使用，方便快捷的创建多列列表。
-只是在iOS中会默认只显示首列TableColumn，在iPad和Mac中效果会更好。
-也提供了contextMenu的点击事件响应。
+只是在iOS中会默认只显示首列```TableColumn```，在iPad和Mac中效果会更好。
+也提供了```contextMenu```的点击事件响应。
 ```
 @State private var attendees: [Attendee]
 
@@ -441,13 +413,10 @@ var body: some View {
         ...
     }
 }
-
-
-
 ```
-[image]()
+![image](./images/table.png)
 
-对于iPadOS的toobar也进行了一些加强。
+对于iPadOS的```.toobar```也进行了一些加强。
 ```
 Table(attendees, selection: $selection) {
     ...
@@ -460,7 +429,8 @@ Table(attendees, selection: $selection) {
     }
 }
 ```
-Table同时也支持iOS15为List推出的.searchable, 甚至可以分scope进行条件搜索。
+![](./images/iPadToobar.png)
+Table同时也支持iOS15为List推出的```.searchable```, 甚至可以分```scope```进行范围搜索。
 更多详情可以参考WWDC
 [SwiftUI on iPad: Organize your interface](https://developer.apple.com/videos/play/wwdc2022/10058/)
 [SwiftUI on iPad: Add toobars, titles, and more](https://developer.apple.com/videos/play/wwdc2022/110343/)
@@ -468,7 +438,7 @@ Table同时也支持iOS15为List推出的.searchable, 甚至可以分scope进行
 [SwiftUI on the Mac: Build the fundamentals](https://developer.apple.com/videos/play/wwdc2021/10062/)
 
 > 4. Sharing
-新推出了ShareLink API，方便唤起系统进行数据向外部的分享
+新推出了```ShareLink``` API，方便唤起系统进行数据向外部的分享
 ```
 Gallery( ... )
     .toobar {
@@ -478,7 +448,7 @@ Gallery( ... )
         )
     }
 ```
-[image]()
+![image](./images/share.png)
 
 与之对应，也有从外部向App传递数据的API。
 ```
@@ -491,8 +461,8 @@ Gallery( ... )
     }
 ```
 数据传递默认可以支持如下类型
-String, Data, URL, Attributed String, Image.
-如果想要更多数据类型，可以遵守Transferable协议进行自定义。
+```String, Data, URL, Attributed String, Image```.
+如果想要更多数据类型，可以遵守```Transferable```协议进行自定义。
 ```
 struct BirthdayFilter: Codable {
     ...
@@ -510,8 +480,8 @@ extension BirthdayFilter: Transferable {
 ##### Graphics and layout
 
 获得更惊艳的UI效果，配合SF Symbol效果更佳。
-示例中蓝色的背景使用backgroundStyle带有了渐变效果，而SF Symbol/Text 则带有了阴影效果，这些新的modifier为编程带来了很多便利。
-同时也都适配了变化的animation
+示例中蓝色的背景使用```backgroundStyle```带有了渐变效果，而SF Symbol/Text 则带有了阴影效果，这些新的modifier为编程带来了很多便利。
+同时也都适配了动画。
 ```
 struct CalendarIcon: View {
     var body: some View {
@@ -528,11 +498,11 @@ struct CalendarIcon: View {
     }
 }
 ```
-[image]()
-
+![image](./images/backgroundStyle.png)
+![](./images/sysymbols.png)
 
 ##### Grid
-Grid提供了一种新的Layout方式，不再局限于LazyVGrid/LazyHGrid,开放了GridRow与.gridCellColumns(count)。
+```Grid```提供了一种新的Layout方式，不再局限于```LazyVGrid/LazyHGrid```,开放了GridRow与```.gridCellColumns(count)```。
 ```
 var body: some View {
     Grid {
@@ -554,6 +524,6 @@ var body: some View {
 .gridCellUnsizedAxes(Axis.Set)
 让layout更自由。
 ```
-[image]()
+![image](./images/layout.png)
 其他Layout相关可以参考相关Session，我们之后也会进一步更新。
 [Compose custom layouts with SwiftUI](https://developer.apple.com/videos/play/wwdc2022/10056/)
