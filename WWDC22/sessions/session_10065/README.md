@@ -20,11 +20,9 @@ session_ids: [10065]
 
 本文将主要聚焦于 Apple 的六个 Unity 插件功能说明与使用。全文共分为 3 个部分：
 
-第一部分是针对 Apple 的插件：Apple.Core、Game Center、Game Controller、Accessibility、Core Haptics 和 PHASE 的功能说明。
-
-第二部分是如何下载、编译、引入这些插件到您的工程。
-
-最后一部分是关于使用这些插件的场景以及相关建议。
+- 第一部分，是针对 Apple 的插件：Apple.Core、Game Center、Game Controller、Accessibility、Core Haptics 和 PHASE 的功能说明。
+- 第二部分，是如何下载、编译、引入这些插件到您的工程。
+- 最后一部分，是关于使用这些插件的场景以及相关建议。
 
 > 阅读建议：  
 > 
@@ -92,12 +90,113 @@ namespace MyProject.Editor
 
 ### 2. Apple.Accessibility
 
-[Apple.Accessibility](https://developer.apple.com/videos/play/wwdc2022/10151) 作为开源辅助功能插件，合理运用将会提升您的游戏在 Apple 平台上无障碍触达性。下文将用一个 Unity 示例游戏项目使用 VoiceOver 和 Switch Control 等辅助技术，并且向您展示如何使用动态缩放文本，以及界面调整：例如降低透明度或增加对比度等等。
+[Apple.Accessibility](https://developer.apple.com/videos/play/wwdc2022/10151) 作为开源辅助功能插件，合理运用将会提升您的游戏在 Apple 平台上无障碍触达性。今年 WWDC 用[一个 Unity 示例游戏项目](https://developer.apple.com/videos/play/wwdc2022/10151)使用 VoiceOver 和 Switch Control 等辅助技术，并且向您展示如何使用动态缩放文本，以及界面调整：例如降低透明度或增加对比度等等。
 
 ![](./images/accessibility-textsize.png)
 
- Apple Accessibility 插件将会给 Unity 无障碍游戏带来巨大飞跃，我们将重点介绍其中的三项技术。第一种， VoiceOver 是一款可以帮助盲人或视力低下用户的屏幕阅读器。它能够读取屏幕上的项目，并为用户提供自定义手势来实现控件交互。第二种， Switch control 允许幼儿、老人或是残障人士通过额外的开关来控制交互。第三种， Dynamic Type 允许用户根据自己的阅读能力设置文本大小。后续我们将用官方提供的一个卡牌游戏来介绍如何使用这些特性。
+ Apple Accessibility 插件将会给 Unity 无障碍游戏带来巨大飞跃，我们将重点介绍其中的三项技术。第一种， VoiceOver 是一款可以帮助盲人或视力低下用户的屏幕阅读器。它能够读取屏幕上的项目，并为用户提供自定义手势来实现控件交互。第二种， Switch control 允许幼儿、老人或是残障人士通过额外的开关来控制交互。第三种， Dynamic Type 允许用户根据自己的阅读能力设置文本大小。
  
+![](./images/accessibility-dynamictype.png)
+ 
+针对视力缺陷的用户，设置支持 Dynamic Type 文本，代码示例：
+
+```csharp
+
+public class AccessibilityTextSizeAdjustment : MonoBehaviour
+{
+    Text axNode;
+    int initialSize;
+
+    void Awake()
+    {
+        axNode = GetComponent<Text>();
+        initialSize = axNode.fontSize;
+    }
+
+    void Start()
+    {
+        AdjustTextSize();
+    }
+    
+    // 设置文本自动缩放回调
+    private void OnEnable()
+    {
+        AccessibilitySettings.onPreferredContentSizeChanged += AdjustTextSize;
+    }
+    
+    // 移除文本自动缩放侦听
+    private void OnDisable()
+    {
+        AccessibilitySettings.onPreferredContentSizeChanged -= AdjustTextSize;
+    }
+
+    void AdjustTextSize()
+    {
+        var scale = AccessibilitySettings.PreferredContentSizeMultiplier;
+        axNode.fontSize = (int)(scale * initialSize);
+    }
+}
+
+
+```
+
+![](./images/accessibility-voiceover.png)
+
+针对盲人的旁白( VoiceOver )功能以及色盲用户群体的颜色反转开启示例代码：
+
+```csharp
+internal class AccessibilitySettingsWatcher : MonoBehaviour
+{
+    public Text voText = null;
+    public Text invertText = null;
+    public RawImage image = null;
+    void Start()
+    {
+        _updateSettingsText();
+       
+    }
+
+    void OnEnable()
+    {
+        // 设置旁白侦听回调函数
+        AccessibilitySettings.onIsVoiceOverRunningChanged += _settingChanged;
+        // 设置颜色反转侦听回调函数
+        AccessibilitySettings.onIsInvertColorsEnabledChanged += _settingChanged;
+    }
+    
+    void OnDisable()
+    {
+        // 移除旁白侦听回调
+        AccessibilitySettings.onIsVoiceOverRunningChanged -= _settingChanged;
+        // 移除颜色反转侦听回调
+        AccessibilitySettings.onIsInvertColorsEnabledChanged -= _settingChanged;
+    }
+
+    void _settingChanged()
+    {
+        _updateSettingsText();
+    }
+
+    void _updateSettingsText()
+    {
+        // 获取旁白、颜色反转当前状态
+        bool voEnabled = AccessibilitySettings.IsVoiceOverRunning;
+        bool invertEnabled = AccessibilitySettings.IsInvertColorsEnabled;
+        voText.text = voEnabled ? "VoiceOver: ON" : "VoiceOver: OFF";
+        invertText.text = invertEnabled ? "Invert Colors: ON" : "Invert Colors: OFF";
+        float hue = 29f / 360f;
+
+        if (!invertEnabled)
+        {
+            hue += 0.5f;
+        }
+        // 反转颜色
+        image.color = Color.HSVToRGB(hue, 1.0f, 1.0f);
+    }
+}
+
+```
+
    > 相关文章推荐
    >
    > [WWDC2018: Deliver an Exceptional Accessibility Experience](https://developer.apple.com/videos/play/wwdc2018/230)
@@ -417,11 +516,43 @@ Reach new players with Game Center dashboard](https://developer.apple.com/videos
 
 [PHASE (Physical Audio Spatialization Engine)](https://developer.apple.com/documentation/phase?language=objc) 能够帮助开发者为应用程序和游戏构建复杂、交互式和身临其境的音频场景。 PHASE 可以实时控制声音层并调整音频参数，帮助开发者在开发过程中创建空间音景和场景，而不是等到后期制作。开发者可以使用 PHASE 结合视觉场景的动态变化，给出动态且有空间属性的音频反馈，提升应用或游戏的整体体验。 PHASE 主要包含四个部分，包括 Sources 、 Listeners 、 Acoustic Geometry 和 Materials 。
 
+应用或游戏如果想模拟复杂环境的声音，将会给开发带来大量修改。假若开发者在熟悉了 PHASE 基于场景设计相关概念后，可以让音频根据场景的参数配置播放。当您修改场景（例如添加游戏关卡）时，音频会跟随关卡的视觉变化而变化。 PHASE 将声音与视觉相结合，通过以下四种方式可以最大限度地减少音频维护的成本：
+
+- 发生场景对象遇到一些几何体阻碍，音量将会衰减。例如，当玩家躲在墙后时，PHASE 会降低来袭火球的音量。
+- 在您的应用或是游戏运行时提供复杂的声音事件。
+- 根据不同空间物体的形状产生不同的音效。当您向 PHASE 提供场景对象的形状时，音量会根据玩家相对于该形状的距离和方向进行衰减。
+- PHASE 为开发者提供添加混响和定时音频反射功能，可以制造环境效果并模拟室内场景。
+
 ![](./images/PHASE-renderedDark.png)
 
-我们来看一下代码示例：
+我们来看一下 Sample 里实现的 PHASE 混响自定义面板：
 
+![](./images/phase-voice-mixer.png)
 
+触发上述音效的代码逻辑：
+
+```csharp
+
+using UnityEngine;
+using Apple.PHASE;
+
+public class AmbienceBlender : MonoBehaviour
+{
+    [Range(0.0f, 50.0f)]
+    [SerializeField] private float _crowdBlend = 0.0f;
+
+    [SerializeField] private PHASESource _source = null;
+
+    // Update is called once per frame
+    void Update()
+    {
+        _source.SetMetaParameterValue("CrowdCheer", _crowdBlend);
+    }
+}
+
+```
+
+通过类似蓝图这样的自定义面板来实现声音的合成、编辑，非常有利于非软件技术出身的音频同事来进行游戏的音效设计。合理的分工，利用 PHASE 赋予音效的能力，结合视角的变幻，将会给游戏玩家带来沉浸式体验。
 
    > 相关文章推荐
    >
@@ -481,7 +612,7 @@ xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer dire
 ```
 第一个问题是环境设置问题，需要打开 Xcode -> Preference -> Locations -> Command Line Tools ,勾选安装的 Xcode 版本。
 
-![](./images/Xcode-set-01.png = 200x)
+![](./images/Xcode-set-01.png)
 ![](./images/Xcode-set-02.png)
 
 第二个问题是由于本地没有安装 Unity 2020.3.33f1 或是安装的路径跟脚本里默认的路径不一致导致。我们需要指定我们本地的 Unity 安装路径即可。例如作者本地的 Unity 路径是 `/Applications/2021.3.3f1c1` ，那我们只要使用以下命令:
@@ -545,3 +676,14 @@ async void Start()
 ```
 
 ## 使用 Apple 的六个 Unity 插件使用的场景或是注意点
+
+首先，还是非常感谢 Apple 为我们提供的六个 Unity 插件，这让很多不熟悉 ObjC 或是 Swift 的 Unity 开发者减轻了学习新语言的成本，就可以直接通过 C# 完成 Apple 的这些插件功能调用。另外一方面，也方便了 Unity 开发者可以更容易的控制 Unity 项目编译前后的流程把控与参数配置。最近几年不断地为游戏提供新特性，也让我们看到了 Apple 对游戏开发者的重视。不过这些插件很多功能特性是 Apple 平台独有，所以开发者在调用这些功能时候，一定要注意当前平台是否可以使用。
+
+关于这些插件使用的注意点总结：
+
+- Apple.Core 是使用其它插件的基础，若使用其它五个插件的任意一个，都必须导入 Apple.Core 。另外， Apple.Core 还提供的编译前后控制以及 Info.plist 设置、权限设置等功能，是推荐开发者早日使用的。
+- Game Center 里提供了登录认证、成就系统、积分榜、多人对战邀请、游戏语音频道等功能极大地提升了游戏了竞技性和互动性。但是在使用这些功能时候，要考虑多端实现的问题，会有功能不对齐的陷阱，还是要整体考虑。
+- Game Controller 为玩家提供了外设控制的功能，对于一些操作性要求较高的游戏，比如篮球、足球、赛车、格斗等这些题材的游戏，还是非常推荐使用该插件。不过，要提醒的一点是，使用外设的玩家相比不使用外设的玩家是占据优势的。所以，开发者如果使用该插件一定要考虑下公平性原则，比如使用外设的玩家匹配到一起竞技。
+- Accessibility 为儿童、老人、残障人士提供了很多很棒的特性。虽然目前很多游戏并没有很好的支持这一群体，但还是希望各个游戏厂商能够提供无障碍的功能，帮助这一群体尽可能的像正常人一样参与到竞技中来。
+- Core Haptics 提供的触觉和音频反馈，能够提升我们游戏的体验性。例如，对战匹配成功、大招技能释放等场景合理使用触觉反馈，能够给玩家带来不一样的体验。
+- PHASE 能够为游戏构建复杂、交互式和身临其境的音频场景。对于那些重度游戏，且游戏厂商对游戏品质追求高的游戏，推荐尽快使用该功能。
