@@ -8,7 +8,7 @@ session_ids: [110379]
 
 > 作者：Vito，iOS 开发，专注于音视频领域
 >
-> 审核： // TODO..
+> 审核：青稞，字节音乐客户端基础技术负责人。
 
 本 Session 主要介绍 AVFoundation 中资源加载上的注意点和优化方式
 
