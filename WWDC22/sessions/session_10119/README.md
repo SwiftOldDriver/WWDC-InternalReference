@@ -377,10 +377,6 @@ log stream --predicate 'process = "dasd" AND
 
 ![](images/logs1.png)
 
-![](images/logs2.png)
-
-![](images/logs3.png)
-
 这里就可以看到日志文件了，可以通过分享按钮获取文件。
 
 ![](images/logs-all.png)
