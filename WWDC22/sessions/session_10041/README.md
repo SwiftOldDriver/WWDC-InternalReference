@@ -3,7 +3,8 @@ session_ids: [10041]
 ---
 
 # WWDC22 10041 - Wallet 和 Apple Pay 的新功能
-> 作者：**展菲**，目前在某上市企业从事移动端项目研发。[#公众号:Swift社区](https://mp.weixin.qq.com/mp/homepage?__biz=MzAxNzgzNTgwMw==&hid=1&sn=a7c21e2cd8e35545b737dc6c549fb1d7&scene=18 "公众号:Swift社区") 负责人，《ESP32-C3 物联网工程开发实战》作者。CSDN 博客专家，iOS 领域新星创作者，技术博客总访问量已达数百万。
+
+> 作者：**展菲**，目前在某上市企业从事移动端项目研发。[#公众号:Swift 社区](https://mp.weixin.qq.com/mp/homepage?__biz=MzAxNzgzNTgwMw==&hid=1&sn=a7c21e2cd8e35545b737dc6c549fb1d7&scene=18 "公众号:Swift社区") 负责人，《ESP32-C3 物联网工程开发实战》作者。CSDN 博客专家，iOS 领域新星创作者，技术博客总访问量已达数百万。
 >
 > 审核：//TODO..
 
@@ -27,9 +28,15 @@ iOS 16 在 Wallet 和 Apple Pay 的更新除了常规的功能更新优化，还
 
 ![](./images/sheet.png)
 
-### SwiftUI 中添加 Apple Wallet 按钮
+### SwiftUI 新增 API
 
-新的 SwiftUI API 可以帮助开发者更加容易的集成 Apple Wallet 或 Apple Pay 按钮。新的 API 可以大大的减少需要编写的代码量。下面让我们看看在代码中是如何实现：
+新的 SwiftUI API 可以帮助开发者更加容易的集成 Apple Wallet 或 Apple Pay 按钮。如下图：
+
+![](./images/WalletAndApplePayBtn.png)
+
+#### 添加 Apple Wallet 按钮
+
+新的 API 可以大大的减少需要编写的代码量。下面让我们看看在代码中是如何实现：
 
 ```Swift
 // Add "Add to Apple Wallet" button
@@ -48,13 +55,13 @@ iOS 16 在 Wallet 和 Apple Pay 的更新除了常规的功能更新优化，还
 }
 ```
 
-通过上面的示例代码可以看到，首先通过 `createAirlinePass ` 创建 pass，并且判断处理如果没有成功加载的情况。如果传输的数据格式错误或者签名失效，会在 Fallback 中进行处理。
+通过上面的示例代码可以看到，首先通过 `createAirlinePass` 创建 pass，并且判断处理如果没有成功加载的情况。如果传输的数据格式错误或者签名失效，会在 Fallback 中进行处理。
 
 如果是成功状态，接下来会调用 `AddPassToWalletButton`，其中的参数是以数组的形式传入，示例中只有一个参数。执行的结果以 `Bool` 的形式返回。项目中可以将这个结果保存下来，用于进一步的操作使用。
 
-另外还可以分别调用 `.frame` 和 `. addPassToWalletButtonStyle ` 自定义按钮的大小和样式。示例中是默认尺寸。
+另外还可以分别调用 `.frame` 和 `.addPassToWalletButtonStyle` 自定义按钮的大小和样式。示例中是默认尺寸。
 
-### 使用 Apple Pay 按钮添加付款
+#### 添加 Apple Pay 按钮
 
 如何使用 Apple Pay 按钮添加付款，我们通过下面的示例进行分析：
 
@@ -80,7 +87,7 @@ PayWithApplePayButton(
 
 通过上面的示例代码可以看到，首先使用 `PKPaymentRequest()` 创建一个支付请求，并设置好常用配置。然后创建一个 `authorizationChange` 方法。接下来添加 Apple Pay 按钮。
 
-调用 `PayWithApplePayButton` 传入 `.plain`、`paymentRequest `对象、``authorizationChange方法。如果当前设备不支持 Apple Pay，可以在 Fallback 中处理。
+调用 `PayWithApplePayButton` 传入 `.plain`、`paymentRequest`对象、`authorizationChange`方法。如果当前设备不支持 Apple Pay，可以在 Fallback 中处理。
 
 最后，和添加 Apple Wallet 按钮一样，可以自定义按钮的大小和样式。系统给出了 17 种不同的标签，您可以根据当前的支付环境选择合适的按钮。
 
@@ -98,7 +105,7 @@ PayWithApplePayButton(
 
 ![](./images/multiple.png)
 
-### 代码解析
+### 多商户支付代码解析
 
 下面通过代码来看看是如何实现多商户支付：
 
@@ -159,7 +166,7 @@ paymentRequest.multiTokenContexts = multiTokenContexts
 1. 定期常用付款 (recurring payments)
 2. 自动重新加载付款 (Automatic reload payments)
 
-**定期常用付款**的常用场景例如：订阅、分期付款、定期计费等场景。
+**定期常用付款**的常用场景例如：订阅、分期付款、定期计费等场景。这个功能是为了更好的满足喜欢稍后支付的用户，这类用户在国外的支付市场占比很大，说明 Apple Pay 在全力的满足各类用户的需求。
 
 **自动重新加载付款**场景例如：商店会员卡余额充值等场景。
 
@@ -278,7 +285,7 @@ paymentRequest.paymentSummaryItems = [total]
 
 ![](./images/orderDetails.png)
 
-### 代码解析
+### 订单跟踪代码解析
 
 下面我们看一下代码中如何实现订单跟踪功能：
 
@@ -332,7 +339,7 @@ paymentRequest.show().then((response) => {
 
 ## 身份验证
 
-在 iOS 16 中新增了API，允许 App 从 Wallet 中的获取用户绑定的卡片信息，用于验证用户的年龄或身份。
+在 iOS 16 中新增了 API，允许 App 从 Wallet 中的获取用户绑定的卡片信息，用于验证用户的年龄或身份。使用这个接口可以帮助用户的反欺诈模型来验证用户的信用度，可以有效降低欺诈率。
 
 如果要使用这个 API，需要登录开发者账号申请并配置 Merchant ID 和 Encryption 证书，这个配置流程和配置 Apple Pay 流程差不多。实现这个功能可以分为 4 步
 
@@ -386,7 +393,7 @@ func createRequest() -> PKIdentityRequest {
 
 首先创建一个 `PKIdentityDriversLicenseDescriptor`，使用 `addElements` 方法指定想要请求的参数，并且选择是否需要存储这些信息。代码中连续调用了两次，第一次是获取 age 不做存储，第二次获取 `givenName`，`familyName`，`portrait` 这些数据存储 30 天。
 
-然后创建 `PKIdentityRequest`，将需要请求的信息赋值给 `descriptor`。接下来配置 `merchantIdentifier`，这里的内容需要登录开发者账号进行配置。最后需要指定一个 `nonce`，这是一个重要的参数，可以方式重复发起请求，并且可以绑定到特定的方法用于接收 API 的回调。设置了所有属性之后，点按钮会打开用户验证页面。如下图：
+然后创建 `PKIdentityRequest`，将需要请求的信息赋值给 `descriptor`。接下来配置 `merchantIdentifier`，这里的内容需要登录开发者账号进行配置。最后需要指定一个 `nonce`，这是一个重要的参数，可以方便重复发起请求，并且可以绑定到特定的方法用于接收 API 的回调。设置了所有属性之后，点按钮会打开用户验证页面。如下图：
 
 ![](./images/identity.png)
 	
@@ -442,9 +449,10 @@ do {
     // handle errors
 }
 ```
+
 使用 Swift 可以用 `PKIdentityButton` 和 `PKIdentityAuthorizationController` 来实现相同的功能。
 
-## 应用场景更新
+## Apple Pay 应用场景
 
 ### 交通卡支持的城市和地点
 
@@ -458,13 +466,63 @@ do {
 
 ![](./images/device.png)
 
-### 支持 Apple Pay 商户
+### 线上支付
+
+目前 `Apple Pay` 在 `App`和网页上作为主流支付之一，下面截图只是展示其中一部分平台：
+
+![](./images/Apps.png)
+
+### 线下支付
 
 在各大商场、超市、餐厅都陆续支持使用 `Apple Pay`，如果发现以下标识，就代表该商家支持 `Apple Pay`：
 
-![](https://images.xiaozhuanlan.com/photo/2021/fe416acb009e00e112edfc2fb32385f9.png)
+![](./images/unionPay.png)
 
-如果想知道有哪些商家、App 和网页支持 Apple Pay，点击[这个链接](https://www.apple.com.cn/apple-pay/where-to-use/ "支持 Apple Pay")查看。
+下面截图只是展示其中一部分商家：
+
+![](./images/merchants.png)
+
+如果想知道更多有哪些商家、App 和网页支持 Apple Pay，点击[这个链接](https://www.apple.com.cn/apple-pay/where-to-use/ "支持 Apple Pay")查看。
+
+## Wallet 应用场景
+
+Apple Wallet 目前支持登机证、优惠券、活动门票、通用通行证等功能，方便用户使用。同时支持在 iPhone、iPod touch 和 Apple Watch 设备上使用。如下图：
+
+![](./images/Wallet.png)
+
+### 登机证
+
+火车票、航空公司登机牌和其他类型的通行证。这里的通行证需要具有起点和终点的单次通行特性。如下图：
+
+![](./images/Boarding.png)
+
+### 优惠券
+
+优惠券包含：商品优惠券、特别优惠和其他折扣等。页面中包含商品信息、优惠力度、优惠券到期日等信息。如下图：
+
+![](./images/Coupons.png)
+
+### 活动门票
+
+活动门票就是指音乐会、电影、戏剧、体育赛事或者其他活动的通行证等。通常情况，一张通行证对应一个活动，但是也有可能一张通行证对应多个活动，就像一个地区所有景点的季卡或者年卡。如下图：
+
+![](./images/Event.png)
+
+### 存储卡
+
+存储卡包含存储会员卡、折扣卡、积分卡和礼品卡。如果与商店卡相关的账户余额，可以在卡包中查看余额以及更新时间等信息。如下图：
+
+![](./images/StoreCards.png)
+
+### 通用通行证
+
+通用通行证包含任何类型的通行证，例如健身房会员卡、店内取货收据或者物品领取支票等。其中内容包含通信证名字、持有人姓名、持有人 ID 等信息。 如下图：
+
+![](./images/Generic.png)
+
+## 总结
+
+相比去年更新 WWDC22 支付模块新增了很多内容，从视频时长就可以看出，今年视频时长是去年的两倍。更新的内容更贴合用户使用场景，同时跟进 API 更新使开发者用更短的时间完成这些功能。
 
 ### 配置支付环境
 
@@ -473,6 +531,3 @@ do {
 ### Demo 源码
 
 [文章中涉及到的演示源码](https://github.com/fanbaoying/WWDC-FBYApplePay "文章中涉及到的演示源码")已上传，有需要的小伙伴请自取。
-
-
-
