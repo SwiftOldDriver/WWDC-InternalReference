@@ -54,6 +54,8 @@ struct Poem: Codable, Hashable, Identifiable {
 
 ![唐诗三百首 App 截图][poems-app-screenshot]
 
+*注：因为 macOS 13 还没有发布，图中 mac App 暂时使用 iPad App 代替，后期会替换。*
+
 本文所使用的代码开源在 [Github][poems-source-code] 上.
 
 ## 现有导航方案回顾
