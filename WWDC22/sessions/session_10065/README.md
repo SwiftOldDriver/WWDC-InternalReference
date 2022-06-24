@@ -14,7 +14,7 @@ session_ids: [10065]
 
 翻开手游引擎的老黄历，最早比较知名的 iOS 平台游戏引擎： Cocos2d-iPhone 。后来，为了兼顾安卓平台，国人重写了 Cocos2d-iPhone ，于是出现了风靡一时的 2D 开源游戏引擎 Cocos2d-X 。随着手机性能的爆发性增长，以及传统的轻度休闲、卡牌类游戏已不能满足日益增长的玩家需求， 3D 重度游戏应运而生。作为工具链齐全、功能强大的 3D 游戏引擎 Unity 脱颖而出。曾经被 Adobe 拒绝收购的 Unity 快速占领手机游戏引擎市场，据 Unity 2022 年的[官方报告](https://developer.unity.cn/projects/62938cebedbc2a001d6cac25)统计，过去一年上线的手机游戏，超过 50% 的游戏使用了 Unity 作为游戏引擎 。大家熟知的游戏：《王者荣耀》、《英雄联盟手游》、《APEX》、《原神》、《万国觉醒》、《使命召唤手游》、《Pokemon Go》等都使用了 Unity 作为游戏引擎。当然，《和平精英》和《堡垒之夜》使用的是另外一个知名游戏引擎 Unreal 。目前，国内除了网易还在使用自研的游戏引擎 Messiah 和 NeoX ，诸如腾讯、米哈游等一线游戏厂商基本上使用 Unity 或是 Unreal 作为主流游戏引擎开发手机游戏。面对游戏每年提供给 Apple 的巨额分成，尤其是占据半壁江山的功勋 Unity ，苹果爸爸今年终于为 Unity 提供了 C# 版本的 Apple 插件。
 
-本篇文章将帮助您的 Unity 应用或游戏在 Apple 平台上获得更好的体验。让我们一起学习，如何在您的项目里直接使用这六个插件：Apple.Core、Game Center、Game Controller、Accessibility、Core Haptics 和 PHASE。我们将向您展示如何添加新的游戏机制，使您的游戏更易于访问，并充分利用最新的 Apple 功能和服务。
+本文将帮助开发者如何在 Unity 应用或游戏中快速集成 Apple 的一些原生功能插件，以提升作品的体验。本次 WWDC ， Apple 为我们带来了六个基于 Unity 版本的插件：Apple.Core、Game Center、Game Controller、Accessibility、Core Haptics 和 PHASE。我们将分别介绍它们的功能，以及如何快速编译、导入到开发者的项目中。文末，还给出了使用这些插件的一些场景以及注意点。
 
 ![](./images/unity-plugins.png)
 
@@ -46,7 +46,7 @@ session_ids: [10065]
 
 ## Apple 的 Unity 插件功能说明
 
-首先，我们先了解一下 Unity 插件的设计原则和理念。有 iOS 或是 Mac 开发经验的开发者一定知道，Apple Frameworks 通常是以模块化方式进行封装设计。这样设计的优势是使开发者可以为项目选择合适的技术，同时保持紧凑、高效的代码。对于 Unity 插件，也遵循同样的模式。每个插件都映射到一个单一的底层 Framework ，开发者可以根据游戏的需要选择要使用的插件集。每个插件都公开了基于 C# 的 Unity 脚本，脚本尽可能直接映射到底层 Framework 。并且，底层 Framework 和 Unity 插件具有很多相似的 API 。这样设计的好处是，如果开发者对底层 Framework 非常熟悉的话，那你将能够快速上手 Unity 插件。反之，通过学习 Unity 插件，开发者将间接地熟悉了底层 Framework 。
+首先，我们先了解一下 Unity 插件的设计原则和理念。有 iOS 或是 Mac 开发经验的开发者一定知道，Apple Frameworks 通常是以模块化方式进行封装设计。这样设计的优势是使开发者可以为项目选择合适的技术，同时保持紧凑、高效的代码。对于 Unity 插件，也遵循了同样的模式。每个插件都映射到一个单一的底层 Framework ，开发者可以根据游戏的需要选择要使用的插件集。每个插件都公开了基于 C# 的 Unity 脚本，脚本尽可能直接映射到底层 Framework 。并且，底层 Framework 和 Unity 插件具有很多相似的 API 。这样设计的好处是，如果开发者对底层 Framework 非常熟悉的话，那你将能够快速上手 Unity 插件。反之，通过学习 Unity 插件，开发者将间接地熟悉了底层 Framework 。
 
 另外不得不提的是，这些 Unity 插件是以 Apple 平台原生库基础上构建的。这些原生库充当 C# 脚本和底层 Framework API 之间的胶水层。 Apple Unity 插件适用于 Unity packages ，因此开发者可以通过 Unity Editor 内置的 Package Manager 管理项目里的插件。在一些场景中，这些插件具有定制的编辑器功能，这样可以大大提升开发者的接入效率。除此之外，每个插件都配有详细的自述文件、示例和相关的 Apple Developer 文档等。
 
@@ -60,7 +60,7 @@ session_ids: [10065]
 
 为了保证原生库被正确的引入、Info.plist 和权限描述被合理的设置， Apple.Core 定义了一个 Unity PostProcessBuild 来保证这些任务按步骤执行。 此外，Apple.Core 还定义了一个抽象类 AppleBuildStep ，以便为所有 Apple Unity 插件使用此功能。事实上，任何包含 Apple.Core 的项目也可以定义自定义构建步骤。
 
-定义自定义构建步骤就像创建一个新脚本一样简单，并且定义的新对象需要继承自 AppleBuildStep 。 开发者可以选择覆盖 AppleBuildStep 中定义的任何方法。 此外，任何公共字段都将自动显示为 Apple Build Settings UI 中的选项。以下是一个实现自定义构建步骤的简单示例：
+定义自定义构建步骤非常简单，开发者只需创建一个新脚本，并且定义的新对象需要继承自 AppleBuildStep 。另外，开发者可以选择覆盖 AppleBuildStep 中定义的任何方法，且任何公共字段都将自动显示为 Apple Build Settings UI 中的选项。以下是一个实现自定义构建步骤的简单示例：
 
 ```
 using Apple.Core;
@@ -90,15 +90,23 @@ namespace MyProject.Editor
 
 ### 2. Apple.Accessibility
 
-[Apple.Accessibility](https://developer.apple.com/videos/play/wwdc2022/10151) 作为开源辅助功能插件，合理运用将会提升您的游戏在 Apple 平台上无障碍触达性。今年 WWDC 用[一个 Unity 示例游戏项目](https://developer.apple.com/videos/play/wwdc2022/10151)使用 VoiceOver 和 Switch Control 等辅助技术，并且向您展示如何使用动态缩放文本，以及界面调整：例如降低透明度或增加对比度等等。
+[Apple.Accessibility](https://developer.apple.com/videos/play/wwdc2022/10151) 作为无障碍辅助功能插件，合理运用将会提升您的游戏在 Apple 平台上无障碍触达性。今年 WWDC 用[一个 Unity 示例游戏项目](https://developer.apple.com/videos/play/wwdc2022/10151)使用 VoiceOver （旁白）和 Switch Control （切换控制）等辅助技术，并且向您展示如何使用动态缩放文本，以及界面调整：例如降低透明度或增加对比度等等。
 
 ![](./images/accessibility-textsize.png)
 
- Apple Accessibility 插件将会给 Unity 无障碍游戏带来巨大飞跃，我们将重点介绍其中的三项技术。第一种， VoiceOver 是一款可以帮助盲人或视力低下用户的屏幕阅读器。它能够读取屏幕上的项目，并为用户提供自定义手势来实现控件交互。第二种， Switch control 允许幼儿、老人或是残障人士通过额外的开关来控制交互。第三种， Dynamic Type 允许用户根据自己的阅读能力设置文本大小。
+ Apple Accessibility 插件将会给 Unity 无障碍游戏带来巨大飞跃，我们将重点介绍其中的三项技术。第一种， VoiceOver 是一款可以帮助盲人或视力低下用户的屏幕阅读器。它能够读取屏幕上的项目，并为用户提供自定义手势来实现控件交互。
+ 
+![](./images/accessibility-voiceover.png)
+
+第二种， Switch control 允许行动不便的老人或是残障人士通过额外的开关来控制交互。
+ 
+![](./images/switchcontrol.png) 
+ 
+第三种， Dynamic Type 允许用户根据自己的阅读能力设置文本大小。
  
 ![](./images/accessibility-dynamictype.png)
  
-针对视力缺陷的用户，设置支持 Dynamic Type 文本，代码示例：
+针对视力缺陷的用户，设置支持文本自动缩放，代码示例：
 
 ```csharp
 
@@ -140,9 +148,7 @@ public class AccessibilityTextSizeAdjustment : MonoBehaviour
 
 ```
 
-![](./images/accessibility-voiceover.png)
-
-针对盲人的旁白( VoiceOver )功能以及色盲用户群体的颜色反转开启示例代码：
+针对盲人的旁白功能以及色盲用户群体的颜色反转，以及针对有运动障碍的切换控制示例代码：
 
 ```csharp
 internal class AccessibilitySettingsWatcher : MonoBehaviour
@@ -162,6 +168,8 @@ internal class AccessibilitySettingsWatcher : MonoBehaviour
         AccessibilitySettings.onIsVoiceOverRunningChanged += _settingChanged;
         // 设置颜色反转侦听回调函数
         AccessibilitySettings.onIsInvertColorsEnabledChanged += _settingChanged;
+        // 设置切换控制侦听回调函数
+        AccessibilitySettings.onIsSwitchControlRunningChanged += _settingChanged;
     }
     
     void OnDisable()
@@ -170,6 +178,8 @@ internal class AccessibilitySettingsWatcher : MonoBehaviour
         AccessibilitySettings.onIsVoiceOverRunningChanged -= _settingChanged;
         // 移除颜色反转侦听回调
         AccessibilitySettings.onIsInvertColorsEnabledChanged -= _settingChanged;
+        // 移除切换控制侦听回调
+        AccessibilitySettings.onIsSwitchControlRunningChanged -= _settingChanged;
     }
 
     void _settingChanged()
@@ -212,7 +222,9 @@ internal class AccessibilitySettingsWatcher : MonoBehaviour
    > [WWDC2022: Add accessibility to your Unity games](https://developer.apple.com/videos/play/wwdc2022/10151)
 
 ### 3. Apple.CoreHaptics
-[Core Haptics](https://developer.apple.com/documentation/corehaptics) 可让您将自定义的触觉和音频反馈添加到您的应用程序。 通过使用触觉、音频与用户进行物理互动，可以吸引注意力并强化行动。一些系统提供的界面元素（如 UISwitch、UISlider、UIPickerView ）会在用户与其交互时自动提供触觉反馈。 使用 Core Haptics，您可以通过组合触觉模式来扩展此功能。 Core Haptics 里的触觉事件分为持续( Continuous )事件和瞬时( Transient )事件。前者可设置持续时间控制持续振动，后者类似轻敲或者撞击的短暂事件。另外，我们可以控制事件的锐度( sharpness )和强度( intensity )。游戏开发者在播放剧情动画、抽奖页面抽到 SSS 级道具、匹配到对手或是释放大招技能等场景加上触觉反馈，能够提升用户的体验以及趣味性。
+[Core Haptics](https://developer.apple.com/documentation/corehaptics) 可让开发者自定义的触觉和音频反馈添加到应用或是游戏中。通过使用触觉、音频与用户进行物理互动，可以吸引用户注意力并强化他们的行为。一些系统提供的界面元素（如 UISwitch、UISlider、UIPickerView ）会在用户与其交互时自动提供触觉反馈。 使用 Core Haptics，开发者还可以通过组合触觉模式来扩展此功能。
+
+ Core Haptics 里的触觉事件分为持续( Continuous )事件和瞬时( Transient )事件。前者可设置持续时间控制持续振动，后者类似轻敲或者撞击的短暂事件。另外，我们可以控制事件的锐度( sharpness )和强度( intensity )。游戏开发者在播放剧情动画、抽奖页面抽到 SSS 级道具、匹配到对手或是释放大招技能等场景加上触觉反馈，能够提升用户的体验以及趣味性。
 
 若开发者需要使用触觉反馈功能，只需要了解以下四个部分：  
 
@@ -279,7 +291,7 @@ advPlayer.Stop();
    > [小专栏: Core Haptics 初体验](https://xiaozhuanlan.com/topic/0382695741)
 
 ### 4. Apple.GameController
-[Apple.GameController](https://developer.apple.com/documentation/gamecontroller?language=objc) 支持用户通过物理或虚拟游戏控制器与您的应用或游戏进行交互。目前游戏控制器支持以下产品： DualShock 4 、DualSense 和 Xbox ，以及鼠标、键盘和 Siri Remote 。在您的游戏中，物理控制器被表示成 [GCController](https://developer.apple.com/documentation/gamecontroller/gccontroller?language=objc) 对象。当连接控制器时，游戏控制器框架会自动创建一个 GCController 对象。然后，您可以使用此对象来配置控制器并读取其输入。
+[Apple.GameController](https://developer.apple.com/documentation/gamecontroller?language=objc) 支持用户通过物理或虚拟游戏控制器与应用或游戏进行交互。目前游戏控制器支持以下产品： DualShock 4 、DualSense 和 Xbox ，以及鼠标、键盘和 Siri Remote 。在游戏中，物理控制器被表示成 [GCController](https://developer.apple.com/documentation/gamecontroller/gccontroller?language=objc) 对象。当连接控制器时，游戏控制器框架会自动创建一个 GCController 对象。然后，开发者可以使用此对象来配置控制器并读取其输入的数据。
 
 ![](./images/gamecontroller-02.png)
 
@@ -293,6 +305,8 @@ advPlayer.Stop();
 - 获取外设的指令，并在游戏里做出动作响应
 - 控制器回调事件处理
 - 其它，例如：获取控制器详细信息或特征值
+
+![](./images/gamecontroller-01.png)
 
 代码示例：
 
@@ -356,7 +370,7 @@ Incorporating Controllers into Your Game](https://developer.apple.com/library/ar
 
 ![](./images/gamekit-friends-play.png)
 
-开发者可以为游戏添加排行榜，让玩家了解他们在世界各地的朋友和玩家中的排名。另外，实时排行榜和定期比赛，可以激发玩家的玩游戏欲望。玩家还可以通过解锁各种成就来获得额外的奖励。
+开发者可以为游戏添加排行榜，让玩家了解他们在世界各地的朋友和玩家中的排名。另外，实时排行榜和定期比赛，可以激发玩家的玩游戏欲望，并且玩家还可以通过解锁各种成就来获得额外的奖励。
 
 ![](./images/gamekit-leaderboards.png)
 
@@ -364,13 +378,13 @@ GameKit 支持实时和回合制多人游戏，玩家可以选择自动匹配或
 
 ![](./images/gamekit-invite.png)
 
-另外，即使您的游戏不在前台，玩家也可以收到好友的游戏邀请。
+另外，即使游戏不在前台，玩家也可以收到好友的游戏邀请。
 
 ![](./images/gamekit-invite-message.png)
 
-GameKit 还为玩家提供了用户界面组件，可以在游戏中直接查看精彩片段并访问他们的 Game Center 数据。例如，他们可以浏览个人资料、排行榜和成就，以及管理好友列表。
+GameKit 还为玩家提供了用户界面组件，可以在游戏中直接查看[精彩片段](https://xiaozhuanlan.com/topic/1068759324)并访问他们的 Game Center 数据。例如，他们可以浏览个人资料、排行榜和成就，以及管理好友列表。
 
-由于对 GameKit 的大多数调用都是异步的，因此公共方法是基于 Task 或 Task<> 的。如果 GameKit 报告错误，将抛出 GameKitException 。所以，开发者需要使用 try -catch 来正确处理异常。
+由于对 GameKit 的大多数调用都是异步的，因此公共方法是基于 `Task` 或 `Task<>` 的。如果 GameKit 报告错误，将抛出 GameKitException 。所以，开发者需要使用 `try -catch` 来正确处理异常。
 
 接下来我们看下基础功能代码示例：
 
@@ -514,14 +528,16 @@ Reach new players with Game Center dashboard](https://developer.apple.com/videos
 
 ### 6. Apple.PHASE
 
-[PHASE (Physical Audio Spatialization Engine)](https://developer.apple.com/documentation/phase?language=objc) 能够帮助开发者为应用程序和游戏构建复杂、交互式和身临其境的音频场景。 PHASE 可以实时控制声音层并调整音频参数，帮助开发者在开发过程中创建空间音景和场景，而不是等到后期制作。开发者可以使用 PHASE 结合视觉场景的动态变化，给出动态且有空间属性的音频反馈，提升应用或游戏的整体体验。 PHASE 主要包含四个部分，包括 Sources 、 Listeners 、 Acoustic Geometry 和 Materials 。
+[PHASE (Physical Audio Spatialization Engine)](https://developer.apple.com/documentation/phase?language=objc) 能够帮助开发者为应用程序和游戏构建复杂、交互式和身临其境的音频场景。 PHASE 可以实时控制声音层并调整音频参数，帮助开发者在开发过程中创建空间音景和场景，而不是等到后期制作阶段。另外，开发者还可以使用 PHASE 结合视觉场景的动态变化，给出动态且有空间属性的音频反馈，提升应用或游戏的整体体验。 
 
-应用或游戏如果想模拟复杂环境的声音，将会给开发带来大量修改。假若开发者在熟悉了 PHASE 基于场景设计相关概念后，可以让音频根据场景的参数配置播放。当您修改场景（例如添加游戏关卡）时，音频会跟随关卡的视觉变化而变化。 PHASE 将声音与视觉相结合，通过以下四种方式可以最大限度地减少音频维护的成本：
+在过去，开发者需要做出大量修改才能实现应用或游戏模拟复杂环境音。现在，开发者在熟悉了 PHASE 后，开发者只需要根据配置场景不同音频的参数，就能实现复杂环境音。并且，当开发者修改场景（例如添加游戏关卡）时，音频会跟随关卡的视觉变化而变化。 PHASE 将声音与视觉相结合，通过以下四种方式可以最大限度地减少音频维护的成本：
 
 - 发生场景对象遇到一些几何体阻碍，音量将会衰减。例如，当玩家躲在墙后时，PHASE 会降低来袭火球的音量。
 - 在您的应用或是游戏运行时提供复杂的声音事件。
 - 根据不同空间物体的形状产生不同的音效。当您向 PHASE 提供场景对象的形状时，音量会根据玩家相对于该形状的距离和方向进行衰减。
 - PHASE 为开发者提供添加混响和定时音频反射功能，可以制造环境效果并模拟室内场景。
+
+PHASE 主要包含四个部分，包括 Sources 、 Listeners 、 Acoustic Geometry 和 Materials 。如果想更系统的学习 PHASE ，可以参考去年老司机小专栏文章：[《使用 PHASE 探索几何感知的音频》](https://xiaozhuanlan.com/topic/5479286310)。
 
 ![](./images/PHASE-renderedDark.png)
 
@@ -682,8 +698,8 @@ async void Start()
 关于这些插件使用的注意点总结：
 
 - Apple.Core 是使用其它插件的基础，若使用其它五个插件的任意一个，都必须导入 Apple.Core 。另外， Apple.Core 还提供的编译前后控制以及 Info.plist 设置、权限设置等功能，是推荐开发者早日使用的。
-- Game Center 里提供了登录认证、成就系统、积分榜、多人对战邀请、游戏语音频道等功能极大地提升了游戏了竞技性和互动性。但是在使用这些功能时候，要考虑多端实现的问题，会有功能不对齐的陷阱，还是要整体考虑。
+- Game Center 里提供了登录认证、成就系统、积分榜、仪表盘、多人对战邀请、游戏语音频道等功能极大地提升了游戏了竞技性和互动性。但是在使用这些功能时候，要考虑多端实现的问题，会有功能不对齐的陷阱，还是要整体考虑。
 - Game Controller 为玩家提供了外设控制的功能，对于一些操作性要求较高的游戏，比如篮球、足球、赛车、格斗等这些题材的游戏，还是非常推荐使用该插件。不过，要提醒的一点是，使用外设的玩家相比不使用外设的玩家是占据优势的。所以，开发者如果使用该插件一定要考虑下公平性原则，比如使用外设的玩家匹配到一起竞技。
-- Accessibility 为儿童、老人、残障人士提供了很多很棒的特性。虽然目前很多游戏并没有很好的支持这一群体，但还是希望各个游戏厂商能够提供无障碍的功能，帮助这一群体尽可能的像正常人一样参与到竞技中来。
+- Accessibility 为儿童、老人、残障人士提供了旁白、颜色反转、字体放大等很多很棒的特性。虽然目前很多游戏并没有很好的支持这一用户群体，但还是希望各个游戏厂商能够提供无障碍的功能，帮助这一群体尽可能的像正常人一样参与到竞技中来。
 - Core Haptics 提供的触觉和音频反馈，能够提升我们游戏的体验性。例如，对战匹配成功、大招技能释放等场景合理使用触觉反馈，能够给玩家带来不一样的体验。
 - PHASE 能够为游戏构建复杂、交互式和身临其境的音频场景。对于那些重度游戏，且游戏厂商对游戏品质追求高的游戏，推荐尽快使用该功能。
