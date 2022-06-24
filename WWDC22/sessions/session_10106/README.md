@@ -1,3 +1,7 @@
+---
+session_ids: [10106]
+---
+
 # WWDC22 - 游戏内存调试与优化
 
 本文基于 [Session 10106](https://developer.apple.com/videos/play/wwdc2022/10106/) 梳理
