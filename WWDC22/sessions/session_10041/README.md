@@ -396,7 +396,7 @@ func createRequest() -> PKIdentityRequest {
 然后创建 `PKIdentityRequest`，将需要请求的信息赋值给 `descriptor`。接下来配置 `merchantIdentifier`，这里的内容需要登录开发者账号进行配置。最后需要指定一个 `nonce`，这是一个重要的参数，可以方便重复发起请求，并且可以绑定到特定的方法用于接收 API 的回调。设置了所有属性之后，点按钮会打开用户验证页面。如下图：
 
 ![](./images/identity.png)
-	
+
 用户可以选择使用 Face ID 或者 Touch ID 通过这个验证请求，或者关闭页面，停止请求。用户操作完成，代码中会收到回调结果。代码如下：
 
 ```Swift
