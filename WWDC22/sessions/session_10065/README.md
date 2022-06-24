@@ -584,7 +584,7 @@ public class AmbienceBlender : MonoBehaviour
 
 如果您是使用 Unity 插件的新手，这一部分内容可以帮助您快速上手。
 
-#### 环境要求
+环境要求：
 
 - Python3
 - npm
