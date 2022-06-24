@@ -34,7 +34,7 @@ session_ids: [10049]
 - [探索 WKWebView 新增功能](https://xiaozhuanlan.com/topic/1352486079)，介绍了 UIWebView、WKWebView、SFSafariViewController 的使用方式，以及 iOS 15 中新增的功能。
 
 综合往期 WKWebView 的更新，绘制了以下更新的图示（包含本文新增的功能）：
-![WKWebView发展历程图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.3/img/wwdc_session_10049/session_10049_02.png)
+![WKWebView发展历程图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.6/img/wwdc_session_10049/session_10049_27.png)
 
 ## WKWebView 的新功能
 
@@ -53,9 +53,9 @@ session_ids: [10049]
 首先介绍 iOS 16 用于 Web 交互的 API，为 App 与 Web 的交互提供了更多的可能性。主要有以下 3 种交互的新方式：
 ![新增 Web Content 交互方式](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.3/img/wwdc_session_10049/session_10049_04.jpg)
 
-- Fullscreen support 全屏 API
-- CSS viewport units 新的 CSS 视口单元
-- Find interactions 查找交互
+- Fullscreen support 全屏 API；
+- CSS viewport units 新的 CSS 视口单元；
+- Find interactions 查找交互。
 
 ### 全屏 API（ Fullscreen support  ）
 
@@ -71,10 +71,10 @@ session_ids: [10049]
 
 **演示**
 
-下面通过自定义实现一个 H5 页面，在 H5 页面中有一个按钮和图片，然后点击按钮实现图片全屏展示。其最终效果如下
+下面通过自定义实现一个 H5 页面，在 H5 页面中有一个按钮和图片，然后点击按钮实现图片全屏展示。其最终效果如下：
 ![演示案例效果图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.3/img/wwdc_session_10049/session_10049_07.gif)
 
-- 简单实现一个 HTML 页面，核心代码如下
+- 简单实现一个 HTML 页面，核心代码如下：
 
 ```html
 <script>
@@ -107,7 +107,7 @@ session_ids: [10049]
 </body>
 ```
 
-- 通过 WKWebView 加载本地 HTML 页面的，关键代码如下
+- 通过 WKWebView 加载本地 HTML 页面的，关键代码如下：
 
 ```swift
 self.webView = WKWebView.init(frame: self.view.frame)
@@ -339,7 +339,7 @@ action（操作）只有两个有效字段：`type（类型）` 和 `selector（
 | ignore-previous-rules | 前面触发的规则不执行 |
 | make-https | 把网页里的 http 请求改为 https 请求 |
 
-结合上述介绍，下面来进行实践，此处的代码是将 Web 的 http 请求改为 https，代码如下
+结合上述介绍，下面来进行实践，此处的代码是将 Web 的 http 请求改为 https，代码如下：
 
 ```swift
 let request = URLRequest(url: URL(string: "http://www.baidu.com")!)
@@ -371,13 +371,13 @@ WKContentRuleListStore.default().compileContentRuleList(forIdentifier: "ContentB
 
 将维基百科嵌入 H5 的 iframe 中，并编写一条规则来阻止维基百科中的图像。
 
-- 未添加规则前的展示
+1. 首先在 H5 页面中嵌入维基百科页面，在无拦截规则情况时，展示效果如下：
 ![未添加拦截规则的效果图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.3/img/wwdc_session_10049/session_10049_17.jpg)
 
-- 在 JSON 规则的 trigger 中添加新增的 `if-frame-url` 键，并将其应用于 WKWebViewConfiguration，示例代码如下
+2. 在 JSON 规则的 trigger 中添加新增的 `if-frame-url` 键，并将其应用于 WKWebViewConfiguration，示例代码如下：
 ![Web 内容拦截的核心代码](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.3/img/wwdc_session_10049/session_10049_18.jpg)
 
-- `if-frame-url` 键的正则表达式作用于发出请求的 URL 上，其效果如下所示，成功的阻止了维基百科的图像展示。
+3. `if-frame-url` 键的正则表达式作用于发出请求的 URL 上，其效果如下所示，成功的阻止了维基百科的图像展示。
 ![添加拦截规则后的效果图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.3/img/wwdc_session_10049/session_10049_19.jpg)
 
 > **Tips**: 笔者尝试去实现官方的案例，但是并没有生效，感兴趣的小伙伴可以玩玩，成功了记得留言哈~
@@ -392,7 +392,7 @@ WKContentRuleListStore.default().compileContentRuleList(forIdentifier: "ContentB
 
 ## 允许三方浏览器远程调试 Web （ Remote Web Inspector ）
 
-在这个功能之前，Apple 只允许在 Safari 中调试 App 中的内嵌 H5 页面。但在 iOS 16 中，如果您的 App 具备浏览器功能，它可以像 Safari 一样，在 debug 模式下调试 Web 页面。
+在这个功能之前，Apple 只允许在 Safari 中调试 App 中的内嵌 H5 页面。但在 iOS 16 中，您可以使用第三方浏览器在 debug 模式下，无需添加任何代码或更改任何代码就可调试 Web 页面，调试流程与 Safari 一样。相比之前单一的调试 Web 方式，这次增加了开发者更多的选择性，以及为跨端调试提供便利。
 
 > 注：Safari 调试内嵌 H5 必须在 debug 模式下进行，release 环境下无法进行调试
 
@@ -402,13 +402,13 @@ WKContentRuleListStore.default().compileContentRuleList(forIdentifier: "ContentB
 
 如果您的 App 中有内嵌 H5 页面，您可以通过 macOS 中的 Safari 调试 App 中的 Web 页面，其操作步骤如下：
 
-- 首先在 iOS 设备中开启 Web Inspector（Web 检查器），路径为：`设置 - Safari - 高级 - Web Inspector`，如下所示
+- 首先在 iOS 设备中开启 Web Inspector（Web 检查器），路径为：`设置 - Safari - 高级 - Web Inspector`，如下所示：
 ![iOS 设备开启 Web 调试](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.3/img/wwdc_session_10049/session_10049_21.jpg)
 
-- 在 macOS 上的 Safari 浏览器的高级设置中启用开发菜单，路径为：`偏好设置 - ☑️ 在菜单栏中显示“开发”菜单`，如下所示
+- 在 macOS 上的 Safari 浏览器的高级设置中启用开发菜单，路径为：`偏好设置 - ☑️ 在菜单栏中显示“开发”菜单`，如下所示：
 ![Safari 启用开发菜单](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.3/img/wwdc_session_10049/session_10049_22.jpg)
 
-- 将手机连接到 Mac，并在 macOS 上的 Safari 浏览器的开发菜单中查找您的设备，如果此时 App 打开了内嵌的 Web，那么此时就能找到对应的 H5 页面进行调试了
+- 将手机连接到 Mac，并在 macOS 上的 Safari 浏览器的开发菜单中查找您的设备，如果此时 App 打开了内嵌的 Web，那么此时就能找到对应的 H5 页面进行调试了；
 ![iOS 设备开始调试 Web](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.3/img/wwdc_session_10049/session_10049_23.jpg)
 
 - 选择对应的域名后，会打开一个 Safari 调试窗口，其中有许多用于调试 Web 内容的工具，如下所示，您可以探索 DOM，运行和调试 JavaScript 的执行，查看页面加载的时间线、H5 页面内的网络请求等。
@@ -418,7 +418,7 @@ WKContentRuleListStore.default().compileContentRuleList(forIdentifier: "ContentB
 
 综上所述，WKWebView 新增点汇总如下：
 
-- Web content interaction：新增了 3 种交互方式，分别是 full screen、20 种新增的 CSS 视口单位以及查找交互功能；
-- Content blocking：新增了特定 URL 特定规则的拦截场景；
-- Encrypted media：可以像在 macOS 中一样在 iPadOS App 中加密媒体资源；
-- Remote Web Inspector：通过开启 Web 检查器，实现在具备浏览器功能的第三方应用中调试 Web。
+1. Web content interaction：新增了 3 种交互方式，分别是 full screen、20 种新增的 CSS 视口单位以及查找交互功能；
+2. Content blocking：新增了特定 URL 特定规则的拦截场景；
+3. Encrypted media：可以像在 macOS 中一样在 iPadOS App 中加密媒体资源；
+4. Remote Web Inspector：通过开启 Web 检查器，实现在第三方浏览器中调试 App 内嵌的 Web页面。
