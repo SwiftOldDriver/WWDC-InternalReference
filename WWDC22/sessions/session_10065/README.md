@@ -25,16 +25,15 @@ session_ids: [10065]
 - 最后一部分，是关于使用这些插件的场景以及相关建议。
 
 > 阅读建议：  
-> 
+>
 > 如果您是 Unity 新手或是第一次接触 Apple 相关功能的接入，建议阅读全文，并结合 Apple 官方文档进行学习；
 >
 > 如果您以往有对接过 Game Center、Game Controller 等原生插件，可以直接跳到文章的第二部分开始阅读；
 >
 > 如果你想了解使用 Apple 的六个 Unity 插件使用的场景或是注意点，可以直接跳转到文章的第三部分。
   
-
 > 相关 Session ：
->   
+>
 > [Session 10065 : Plug-in and play: Add Apple frameworks to your Unity game projects
 ](https://developer.apple.com/videos/play/wwdc2022/10065/)
 >
@@ -95,17 +94,17 @@ namespace MyProject.Editor
 ![](./images/accessibility-textsize.png)
 
  Apple Accessibility 插件将会给 Unity 无障碍游戏带来巨大飞跃，我们将重点介绍其中的三项技术。第一种， VoiceOver 是一款可以帮助盲人或视力低下用户的屏幕阅读器。它能够读取屏幕上的项目，并为用户提供自定义手势来实现控件交互。
- 
+
 ![](./images/accessibility-voiceover.png)
 
 第二种， Switch control 允许行动不便的老人或是残障人士通过额外的开关来控制交互。
- 
-![](./images/switchcontrol.png) 
- 
+
+![](./images/switchcontrol.png)
+
 第三种， Dynamic Type 允许用户根据自己的阅读能力设置文本大小。
- 
+
 ![](./images/accessibility-dynamictype.png)
- 
+
 针对视力缺陷的用户，设置支持文本自动缩放，代码示例：
 
 ```csharp
@@ -222,21 +221,22 @@ internal class AccessibilitySettingsWatcher : MonoBehaviour
    > [WWDC2022: Add accessibility to your Unity games](https://developer.apple.com/videos/play/wwdc2022/10151)
 
 ### 3. Apple.CoreHaptics
+
 [Core Haptics](https://developer.apple.com/documentation/corehaptics) 可让开发者自定义的触觉和音频反馈添加到应用或是游戏中。通过使用触觉、音频与用户进行物理互动，可以吸引用户注意力并强化他们的行为。一些系统提供的界面元素（如 UISwitch、UISlider、UIPickerView ）会在用户与其交互时自动提供触觉反馈。 使用 Core Haptics，开发者还可以通过组合触觉模式来扩展此功能。
 
  Core Haptics 里的触觉事件分为持续( Continuous )事件和瞬时( Transient )事件。前者可设置持续时间控制持续振动，后者类似轻敲或者撞击的短暂事件。另外，我们可以控制事件的锐度( sharpness )和强度( intensity )。游戏开发者在播放剧情动画、抽奖页面抽到 SSS 级道具、匹配到对手或是释放大招技能等场景加上触觉反馈，能够提升用户的体验以及趣味性。
 
 若开发者需要使用触觉反馈功能，只需要了解以下四个部分：  
 
- - 创建并启动触觉引擎： CHHapticEngine
- - 创建触觉事件： CHHapticEvent
- - 创建触觉事件队列容器： CHHapticPattern
- - 基于触觉引擎创建播放器： CHHapticPlayer ，并播放触觉事件
+- 创建并启动触觉引擎： CHHapticEngine
+- 创建触觉事件： CHHapticEvent
+- 创建触觉事件队列容器： CHHapticPattern
+- 基于触觉引擎创建播放器： CHHapticPlayer ，并播放触觉事件
 
 ![](./images/haptics.png)
 
 接下来我们提供一个基于 CHHapticAdvancedPatternPlayer 实现的触觉反馈示例：
- 
+
 ```C#
 using Apple.CoreHaptics;
 
@@ -280,8 +280,8 @@ advPlayer.Play();
 
 // 关闭播放
 advPlayer.Stop();
-``` 
- 
+```
+
    > 相关文章推荐
    >
    > [WWDC2019: Introducing Core Haptics](https://developer.apple.com/videos/play/wwdc2019/520)
@@ -291,6 +291,7 @@ advPlayer.Stop();
    > [小专栏: Core Haptics 初体验](https://xiaozhuanlan.com/topic/0382695741)
 
 ### 4. Apple.GameController
+
 [Apple.GameController](https://developer.apple.com/documentation/gamecontroller?language=objc) 支持用户通过物理或虚拟游戏控制器与应用或游戏进行交互。目前游戏控制器支持以下产品： DualShock 4 、DualSense 和 Xbox ，以及鼠标、键盘和 Siri Remote 。在游戏中，物理控制器被表示成 [GCController](https://developer.apple.com/documentation/gamecontroller/gccontroller?language=objc) 对象。当连接控制器时，游戏控制器框架会自动创建一个 GCController 对象。然后，开发者可以使用此对象来配置控制器并读取其输入的数据。
 
 ![](./images/gamecontroller-02.png)
@@ -327,10 +328,10 @@ private void OnControllerConnected(object sender, ControllerConnectedEventArgs a
     GCControllerService.StopWirelessDiscovery();
     
     // 获取已经连接
-	controllers = GCControllerService.GetConnectedControllers();
-	 
-	// 获取其中一个外设控制器，实际开发中需要考虑多外设的情况，分别做出响应
-	if (controllers != null && controllers.Count > 0) controller = controllers[0];
+ controllers = GCControllerService.GetConnectedControllers();
+  
+ // 获取其中一个外设控制器，实际开发中需要考虑多外设的情况，分别做出响应
+ if (controllers != null && controllers.Count > 0) controller = controllers[0];
 }
 
 private void OnControllerDisconnected(object sender, ControllerConnectedEventArgs args)
@@ -351,7 +352,7 @@ if(controller != null && controller.GetButton(GCControllerInputName.ButtonA))
 
 
 ```
- 
+
    > 相关文章推荐
    >
    > [WWDC2019: Supporting New Game Controllers](https://developer.apple.com/videos/play/wwdc2019/616)
@@ -364,6 +365,7 @@ if(controller != null && controller.GetButton(GCControllerInputName.ButtonA))
 Incorporating Controllers into Your Game](https://developer.apple.com/library/archive/documentation/ServicesDiscovery/Conceptual/GameControllerPG/IncorporatingControllersintoYourDesign/IncorporatingControllersintoYourDesign.html)
 
 ### 5. Apple.GameKit
+
 [GameKit](https://developer.apple.com/documentation/gamekit?language=objc) 允许玩家能与朋友互动、提供排行榜排名、获得成就以及能够参与多人游戏。因此，开发者可以通过使用 GameKit 框架为游戏实现 Game Center 社交功能。补充说明， Game Center 是一项 Apple 服务，它提供了一个单一帐户，可以在所有游戏和设备上识别到这个玩家。玩家在他们的设备上登录 Game Center 后，他们可以访问他们的朋友以及其它 Game Center 功能。在今年的 [WWDC](https://developer.apple.com/videos/play/wwdc2022/10064) 中， Apple 给我们介绍了使用 Game Center 仪表板吸引新玩家。通过仪表盘可以更直观地让玩家看到成就、高分记录、排行榜的变化，激发玩家的游戏热情。
 
 另外，玩家可以在 App Store 游戏详情页面可以看到正在玩此款游戏的好友。
@@ -528,7 +530,7 @@ Reach new players with Game Center dashboard](https://developer.apple.com/videos
 
 ### 6. Apple.PHASE
 
-[PHASE (Physical Audio Spatialization Engine)](https://developer.apple.com/documentation/phase?language=objc) 能够帮助开发者为应用程序和游戏构建复杂、交互式和身临其境的音频场景。 PHASE 可以实时控制声音层并调整音频参数，帮助开发者在开发过程中创建空间音景和场景，而不是等到后期制作阶段。另外，开发者还可以使用 PHASE 结合视觉场景的动态变化，给出动态且有空间属性的音频反馈，提升应用或游戏的整体体验。 
+[PHASE (Physical Audio Spatialization Engine)](https://developer.apple.com/documentation/phase?language=objc) 能够帮助开发者为应用程序和游戏构建复杂、交互式和身临其境的音频场景。 PHASE 可以实时控制声音层并调整音频参数，帮助开发者在开发过程中创建空间音景和场景，而不是等到后期制作阶段。另外，开发者还可以使用 PHASE 结合视觉场景的动态变化，给出动态且有空间属性的音频反馈，提升应用或游戏的整体体验。
 
 在过去，开发者需要做出大量修改才能实现应用或游戏模拟复杂环境音。现在，开发者在熟悉了 PHASE 后，开发者只需要根据配置场景不同音频的参数，就能实现复杂环境音。并且，当开发者修改场景（例如添加游戏关卡）时，音频会跟随关卡的视觉变化而变化。 PHASE 将声音与视觉相结合，通过以下四种方式可以最大限度地减少音频维护的成本：
 
@@ -577,12 +579,12 @@ public class AmbienceBlender : MonoBehaviour
    > [WWDC2021: Discover geometry-aware audio with the Physical Audio Spatialization Engine (PHASE)](https://developer.apple.com/videos/play/wwdc2021/10079/)
    >
    > [小专栏: 使用 PHASE 探索几何感知的音频](https://xiaozhuanlan.com/topic/5479286310)
-   
-## 如何下载、编译、引入 Unity 插件？
+
+## 如何下载、编译、引入 Unity 插件
 
 如果您是使用 Unity 插件的新手，这一部分内容可以帮助您快速上手。
 
-#### 环境要求：
+#### 环境要求
 
 - Python3
 - npm
@@ -593,31 +595,33 @@ public class AmbienceBlender : MonoBehaviour
    >
    > 苹果官方强烈建议使用 Unity 2020.3.33f1 进行编译插件。待编译完成后，可以给到更高的 Unity 版本使用。
    >
-   
+
 ### 1. 从 Github 下载 [Unity 插件源码](https://github.com/apple/unityplugins)
 
 ```bash
 git clone https://github.com/apple/unityplugins.git
-``` 
-该仓库下，包含 6 个插件的源码以及对应的文档说明，编译脚本 `build.py` 。其中 Apple.Core 是必须要导入的，其它 5 个插件可以根据需要导入。
+```
 
+该仓库下，包含 6 个插件的源码以及对应的文档说明，编译脚本 `build.py` 。其中 Apple.Core 是必须要导入的，其它 5 个插件可以根据需要导入。
 
 | Plug-In | Readme |
 |:--------|:------|
 | Apple.Core | [Apple.Core Documentation](../plug-ins/Apple.Core/Apple.Core_Unity/Assets/Apple.Core/Documentation~/Apple.Core.md) |
 | Apple.Accessibility | [Apple.Accessibility Documentation](../plug-ins/Apple.Accessibility/Apple.Accessibility_Unity/Assets/Apple.Accessibility/Documentation~/Apple.Accessibility.md) |
 | Apple.CoreHaptics | [Apple.CoreHaptics Documentation](../plug-ins/Apple.CoreHaptics/Apple.CoreHaptics_Unity/Assets/Apple.CoreHaptics/Documentation~/Apple.CoreHaptics.md) |
-| Apple.GameController | [Apple.GameController Documentation](../plug-ins/Apple.GameController/Apple.GameController_Unity/Assets/Apple.GameController/Documentation~/Apple.GameController.md) | 
-| Apple.GameKit | [Apple.GameKit Documentation](../plug-ins/Apple.GameKit/Apple.GameKit_Unity/Assets/Apple.GameKit/Documentation~/Apple.GameKit.md) | 
-| Apple.PHASE | [Apple.PHASE Documentation](../plug-ins/Apple.PHASE/Apple.PHASE_Unity/Assets/Documentation~/Apple.PHASE.md) | 
+| Apple.GameController | [Apple.GameController Documentation](../plug-ins/Apple.GameController/Apple.GameController_Unity/Assets/Apple.GameController/Documentation~/Apple.GameController.md) |
+| Apple.GameKit | [Apple.GameKit Documentation](../plug-ins/Apple.GameKit/Apple.GameKit_Unity/Assets/Apple.GameKit/Documentation~/Apple.GameKit.md) |
+| Apple.PHASE | [Apple.PHASE Documentation](../plug-ins/Apple.PHASE/Apple.PHASE_Unity/Assets/Documentation~/Apple.PHASE.md) |
 
 ### 2. 编译
+
 调用苹果给我们写好的脚本：
 
 ```bash
 cd  xxx/unityplugins (进入到下载下来的仓库里，然后执行下面命令)
 python3 build.py
 ```
+
 作者本地执行过程中遇到了下述 ⚠️ ：
 
 ```
@@ -626,6 +630,7 @@ xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer dire
 
 [WARNING]: No Unity installation tracked with version: 2020.3.33f1
 ```
+
 第一个问题是环境设置问题，需要打开 Xcode -> Preference -> Locations -> Command Line Tools ,勾选安装的 Xcode 版本。
 
 ![](./images/Xcode-set-01.png)
@@ -636,13 +641,14 @@ xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer dire
 ```bash
 python3 build.py -u /Applications/2021.3.3f1c1
 ```
+
 编译成功后，可以在本地看到编译后的库，以 `.tgz` 结尾:
 
 ![](./images/plugin-build.png)
 
 ### 3. 将库导入到 Unity 项目里
 
-1、作者使用了 Unity 官方提供的游戏学习项目，打开 Unity项目 -> Window -> Package Manager :
+1、作者使用了 Unity 官方提供的游戏学习项目，打开 Unity 项目 -> Window -> Package Manager :
 
 ![](./images/import-open-pm.png)
 
