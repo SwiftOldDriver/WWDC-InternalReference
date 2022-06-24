@@ -6,9 +6,9 @@ session_ids: [110341]
 
 本文基于[Session 110341](https://developer.apple.com/videos/play/wwdc2022/110341)梳理。
 
-> 作者：Chensh。
+> 作者：Chensh，iOS 独立开发者。
 >
-> 审核：橙汁。
+> 审核：黄骋志，老司机周报编辑，现于西瓜视频负责稳定性 OOM/Watchdog 相关工作。
 
 ## 前言
 
