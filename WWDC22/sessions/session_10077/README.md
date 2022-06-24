@@ -51,10 +51,11 @@ using the same key with probability non-negligibly larger than 1/N.）
 由于 RSA 盲签名算法 在 PAT 方案中扮演了重要角色，所以先了解其算法原理。
 
 ### RSA 盲签名算法
+
 假如 Bob 有一段消息 m 需要让 Alice 签名，但是又不想让 Alice 知道消息的内容。Alice 的 RSA 私钥是 d ，公钥是 (n,e)。那么签名流程如下：
 
 1. Bob 首先选择一个因子 r，然后计算 m' = m * r^e mod n
-2. Alice 收到 m' 后用私钥进行签名，s' = m'^d mod n = (m * r^e)^d mod n = m^d * r mod n
+2. Alice 收到 m' 后用私钥进行签名，s' = m'^d mod n = (m *r^e)^d mod n = m^d* r mod n
 3. Bob 拿到 s 后再进行去盲化处理得到原始签名，s = s' * r^{-1} = m^d mod n
 4. 消息的接收方可以使用 Alice 的公钥 (n,e) 进行验签，s^e = m^{ed} mod n = m mod n
 
@@ -72,11 +73,12 @@ using the same key with probability non-negligibly larger than 1/N.）
 ![pat-step-2](./images/pat-step-2.png)
 
 2. 此时客户端将要向证明者 (iCloud) 请求凭证。此过程需要完成以下工作：
-  * 客户端对质询中的消息进行盲化处理，保证凭证无法关联到服务网站。
-  * iCloud 利用设备 Secure Enclave 中的证书验证设备是否正常。
-  * iCloud 会验证该客户端登录的 Apple ID 账户是否信誉良好。
-  * iCloud 还可以检测该客户端请求凭证的频率，综合判定其是否为黑灰产机架上的设备。
-  * 如果客户端通过了以上检验，那么 iCloud 会代表客户端向凭证签发者发送凭证创建请求。
+
+* 客户端对质询中的消息进行盲化处理，保证凭证无法关联到服务网站。
+* iCloud 利用设备 Secure Enclave 中的证书验证设备是否正常。
+* iCloud 会验证该客户端登录的 Apple ID 账户是否信誉良好。
+* iCloud 还可以检测该客户端请求凭证的频率，综合判定其是否为黑灰产机架上的设备。
+* 如果客户端通过了以上检验，那么 iCloud 会代表客户端向凭证签发者发送凭证创建请求。
 
 ![pat-step-3](./images/pat-step-3.png)
 
@@ -93,12 +95,16 @@ using the same key with probability non-negligibly larger than 1/N.）
 ![fastly](./images/cloudflare-fastly.png)
 
 1. 凭证签发者应该是服务端受信任的提供商，由该提供商为服务端提供访问凭证。这里的提供商可以是正在使用的验证码服务商或者 CDN 服务商。
-  * Fastly 和 Cloudflare 已经和苹果合作，可以对外提供私有访问凭证的颁发服务。
-  * 在最新的 iOS 16 和 macOS Ventura 测试版系统中，可以试用这两家凭证签发者的服务。
-  * 其他验证码服务商或者 CDN 服务商也可以成为凭证签发者，注册通道将在 [register.apple.com](https://register.apple.com) 开启。苹果对签发者的服务规模有一定要求：至少能服务 100+ 的网站。
+
+* Fastly 和 Cloudflare 已经和苹果合作，可以对外提供私有访问凭证的颁发服务。
+* 在最新的 iOS 16 和 macOS Ventura 测试版系统中，可以试用这两家凭证签发者的服务。
+* 其他验证码服务商或者 CDN 服务商也可以成为凭证签发者，注册通道将在 [register.apple.com](https://register.apple.com) 开启。苹果对签发者的服务规模有一定要求：至少能服务 100+ 的网站。
+
 2. 当客户端访问服务端时，服务端使用 PrivateToken 方案发送 HTTP 身份验证质询。服务端有两个选择来实现该过程：
-  * 与现有的 验证码 或 防欺诈提供商 合作，将此流程构建在他们的服务中。
-  * 服务端自己实现。如果自己实现，那么质询请求中的域名必须来自服务端的主域名或子域名，不能是其他第三方域名。
+
+* 与现有的 验证码 或 防欺诈提供商 合作，将此流程构建在他们的服务中。
+* 服务端自己实现。如果自己实现，那么质询请求中的域名必须来自服务端的主域名或子域名，不能是其他第三方域名。
+
 3. 当服务端接收到凭证之后，需要使用签发者的公钥验证它们的有效性。
 
 #### 客户端适配
@@ -112,7 +118,7 @@ using the same key with probability non-negligibly larger than 1/N.）
 ## 安全问题
 
 1. DoS 攻击：因为使用 PAT 的成本比其他验证方式（比如 IP 地址验证）要高，因此当服务端遭受 PAT 流量攻击时，其承受的压力会更大。
-2. 信道安全：如果攻击者侵入 iCloud 和签发者之间的通信信道，那么就有可能干扰凭证的签发结果。如果攻击者侵入客户端与服务端之间的信道，那么就可以窃取已经签名的凭证，并在之后进行重放。前一个问题可以使用HTTPS并进行证书校验来降低被攻击的风险；后一个问题可以在凭证中增加随机数来解决。
+2. 信道安全：如果攻击者侵入 iCloud 和签发者之间的通信信道，那么就有可能干扰凭证的签发结果。如果攻击者侵入客户端与服务端之间的信道，那么就可以窃取已经签名的凭证，并在之后进行重放。前一个问题可以使用 HTTPS 并进行证书校验来降低被攻击的风险；后一个问题可以在凭证中增加随机数来解决。
 
 ## 总结
 
@@ -120,7 +126,7 @@ using the same key with probability non-negligibly larger than 1/N.）
 
 因此，为了能彻底解决这些问题，苹果利用自身优势推出了一种既能保护用户隐私又能识别机器人流量的新技术 Private Access Token。该技术利用真实用户识别机制 和 RSA 盲签名机制来完成对可疑流量的检查和对用户身份信息的保护。
 
-所有为苹果用户提供服务的提供商都应该适配PAT，只要 PAT 可用就应该避免使用验证码，这样可以为用户带来更好的使用体验。
+所有为苹果用户提供服务的提供商都应该适配 PAT，只要 PAT 可用就应该避免使用验证码，这样可以为用户带来更好的使用体验。
 
 **参考资料：**
 
