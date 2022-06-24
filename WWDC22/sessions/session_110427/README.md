@@ -6,7 +6,6 @@ session_ids: [110427]
 
 本文基于 [Session 110427](https://developer.apple.com/videos/play/wwdc2022/110427/) 梳理
 
-
 > 作者：Chafferer，现就职于米哈游平台组，从事米哈游 iOS SDK 的研发工作
 >
 > 审核：红纸 🤯
@@ -29,10 +28,11 @@ session_ids: [110427]
 ### 编译速度优化
 
 为了提升编译速度，Xcode 14 对编译流程做了些改动，我们都知道，一般编译是串行的过程，这里以 Swift 应用程序为例，简化的 Swift 应用程序编译流程主要有以下几步：
+
 * 编译 Swift 源码
 * 生成 Swift Module
 * 编译应用程序资源文件
-* 链接完成构建 
+* 链接完成构建
 ![](./images/gif5.gif)
 
 Xcode 14 对编译流程进行了重新编排，通过提前构建 Swift Module 等手段，缩短了整个编译流程的路径，加快了编译的效率
@@ -43,7 +43,7 @@ Xcode 14 对编译流程进行了重新编排，通过提前构建 Swift Module 
 ![](./images/pic12.png)
 
 > Tips:
-> [更多关于并行构建可以参考 Session 110364 - Demystify parallelization in Xcode builds ](https://developer.apple.com/videos/play/wwdc2022/110364/)
+> [更多关于并行构建可以参考 Session 110364 - Demystify parallelization in Xcode builds](https://developer.apple.com/videos/play/wwdc2022/110364/)
 > [更多关于链接优化可以参考 Session 110362 - Link fast: Improve build and launch times](https://developer.apple.com/videos/play/wwdc2022/110362/)
 
 ### 测试速度优化
@@ -117,17 +117,18 @@ class People {
 ![](./images/pic9.png)
 
 针对 Swift，Xcode 14 还提供了其他的一些优化：
+
 * 添加了对 Swift 正则表达式的语法高亮和编辑支持：现在我们可以通过 Editor -> Refactoring -> Convert to Regex Builder 将正则表达式文字转换为与其等效的正则表达式构建器，在正则表达式中移动光标时，会突出显示正则表达式的封闭子结构
   ![](./images/pic10.png)
 * 在 Swift 代码中提供了 if case 语句的代码片段补全
 
 ### 编译时间可视化
 
-随着项目的不断增大，编译耗时也会以肉眼可见的速度增加，这时候我们往往会进行编译耗时优化，那么该怎么优化，或者说需要针对哪些部分做优化，这就需要了解在整个编译过程中，各个部分的耗时，找到相应的瓶颈进行优化。那么如何统计各部分编译耗时呢，目前，Xcode 在编译的过程中会显示各个任务的耗时，我们可以使用诸如 ` XCLogParser` 之类的工具来系统的进行统计，但是需要我们手动安装工具，流程稍微复杂。现在，Xcode 14 中已经集成了 timeline 功能，通过对编译 timeline 的查看，我们可以很直观的了解到哪些编译任务耗时过长，以便进行点对点进行优化将大大降低我们的优化成本
+随着项目的不断增大，编译耗时也会以肉眼可见的速度增加，这时候我们往往会进行编译耗时优化，那么该怎么优化，或者说需要针对哪些部分做优化，这就需要了解在整个编译过程中，各个部分的耗时，找到相应的瓶颈进行优化。那么如何统计各部分编译耗时呢，目前，Xcode 在编译的过程中会显示各个任务的耗时，我们可以使用诸如 `XCLogParser` 之类的工具来系统的进行统计，但是需要我们手动安装工具，流程稍微复杂。现在，Xcode 14 中已经集成了 timeline 功能，通过对编译 timeline 的查看，我们可以很直观的了解到哪些编译任务耗时过长，以便进行点对点进行优化将大大降低我们的优化成本
 ![](./images/pic13.png)
 
 > Tips:
-> [更多关于编译时间可视化可以参考 Session 110364 - Demystify parallelization in Xcode builds ](https://developer.apple.com/videos/play/wwdc2022/110364/)
+> [更多关于编译时间可视化可以参考 Session 110364 - Demystify parallelization in Xcode builds](https://developer.apple.com/videos/play/wwdc2022/110364/)
 
 ### 多平台
 
@@ -163,7 +164,7 @@ Xcode 14 现在为 Swift Package 插件提供了 XcodeProjectPlugin API，扩展
 
 现在在 Xcode 14 中，可以像本地化应用程序一样本地化 Swift 包资源，你可以设置 Swift 包资源的默认本地化，Xcode 14 为工作区中包含的所有项目和 Swift 包生成单个本地化目录，我们可以使用 xcodebuild -importLocalizations 和 xcodebuild -exportLocalizations 来导出或导入 Swift 包
 
->Tips: 
+>Tips:
 > [更多关于本地化参考 Session 110110 - Building global apps: Localization by example](https://developer.apple.com/videos/play/wwdc2022/10110/)
 
 ### 设备选择器
@@ -181,13 +182,13 @@ Xcode 14 在 Organizer（window -> Organizer）中新增了 feedback，以便我
 Xcode 14 提供了应用卡顿的检测机制 hangs，通过 hangs 可以了解 App Store 上应用的卡顿情况。之前我们监控卡顿需要自行写相关代码实现（一般是在子线程监控 RunLoop 的 BeforeSource0 和 AfterWaiting 或者通过 ping 主线程实现，然后抓取堆栈上报）成本都比较高，现在 Xcode 14 集成了卡顿检测功能，我们只需要进入 hangs 列表，查看当前 hangs 比较严重的代码的堆栈，进行相应的优化即可
 ![](./images/pic19.png)
 
-> Tips: 
+> Tips:
 > [更多关于 hangs 参考 Session 10082 - Track down hangs with Xcode and on-device detection](https://developer.apple.com/videos/play/wwdc2022/10082/)
 
 ### 资源目录
 
-现在在 Xcode 14 中，可以使用一张 1024 * 1024 的图片充当应用程序的图标，Xcode 会自动针对图片应用的目标调整大小：
-拖入 1024 * 1024 的图片 & 设置 Single Size
+现在在 Xcode 14 中，可以使用一张 1024 *1024 的图片充当应用程序的图标，Xcode 会自动针对图片应用的目标调整大小：
+拖入 1024* 1024 的图片 & 设置 Single Size
 ![](./images/gif9.gif)
 
 此外，可以将 Finder 中的图像直接粘贴到资源目录大纲中，双击图像可以打开文件面板并选择替换资源图片
