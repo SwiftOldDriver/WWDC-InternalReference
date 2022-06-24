@@ -194,7 +194,7 @@ leaks GameName --outputGraph foo.memgraph
 
 通过前面的准备，是时候使用 Xcode Memory Debugger 以及终端中的一些多功能命令行工具来检查此内存图，以找出分析内存分配、占用情况了。
 
-#### 按类别分解使用情况 - 使用 footprint 工具
+### 按类别分解使用情况 - 使用 footprint 工具
 
 `footprint`命令使用内存图中的信息来重新创建内存高级摘要。通常，首先要关注内存较大的类别。
 
@@ -231,7 +231,7 @@ mmap 内存映射自定义标签方法（ iOS ）：
 
 ```
 
-#### 区分 Dirty 和 Compressed Memory - 使用 vmmap 工具
+### 区分 Dirty 和 Compressed Memory - 使用 vmmap 工具
 
 在上面的`footprint`命令中，Dirty 大小还包括 Compressed/Swapped 大小，所以把它看作是每个 Category 的总开销。
 
@@ -253,7 +253,7 @@ vmap /path/to/foo.memgraph
 
 **小结：** 使用`vmmap`命令，可以从活跃内存中提取和优化较少使用的脏内存。通常，游戏中也有大量各种大小的动态分配，或 malloc 的堆内存使用。他们需要额外查看。
 
-#### 检查类实例 - 使用 heap 工具
+### 检查类实例 - 使用 heap 工具
 
 `heap`命令按类名对 malloc 的资源进行分组，并按实例计数进行排序。这些类由 C++ 虚表、Objective-C 或 Swift 确定。
 这里使用 -quiet 参数来跳过有关某些元数据的信息。今年起堆在识别对象类型方面更智能^**新特性** 。它使用 Malloc Stack Logging 记录的信息来显示调用者或响应库，因此一个巨大的非对象已成为过去。
@@ -281,7 +281,7 @@ NSConcreteMutableData（Bytes Storage）（255049728 bytes）
 
 **小结：**`heap`工具按类名对 malloc 的资源进行分组，改进了实例的对象识别。
 
-#### 追踪对象内存调用栈 - 使用 malloc_history & Xcode Memory Debugger
+### 追踪对象内存调用栈 - 使用 malloc_history & Xcode Memory Debugger
 
 取决于游戏使用技术栈和特定的内存模式，您可以以任何适合您需求的方式使用`footprint`， `vmmap`，和`heap tools`这三种工具。
 
@@ -296,7 +296,7 @@ NSConcreteMutableData（Bytes Storage）（255049728 bytes）
 
 **小结：** 无论是使用 Xcode 还是 malloc_history ，都可以回溯内存分配堆栈，以决定是否要更深入地挖掘分析。
 
-#### 检视对象引用计数 - 使用 leaks & Xcode Memory Debugger
+### 检视对象引用计数 - 使用 leaks & Xcode Memory Debugger
 
 最后但同样重要的是，调查对象引用也很有帮助。内存图总是记录对象引用，即使出于各种原因没有启用 Malloc Stack Logging。前面使用了`leaks`命令来捕获 Xcode 以外的内存图，它也可以检查内存图中的所有引用，通过使用`--traceTree`参数和堆中的对象地址来获取对对象的引用树。
 ![](./images/p3-1-step5-1.png)
