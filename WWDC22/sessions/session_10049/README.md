@@ -44,7 +44,7 @@ session_ids: [10049]
 - Web content interaction：与 Web 内容交互的新方式
 - Content blocking：内容拦截器的新功能
 - Encrypted media：加密媒体
-- Remote Web Inspector：允许三方浏览器远程调试 Web 
+- Remote Web Inspector：允许三方浏览器远程调试 Web
 
 下面针对上述的更新，分别进行一一说明。
 
@@ -137,8 +137,8 @@ webView.loadHTMLString(htmlString, baseURL: Bundle.main.resourceURL)
 ```
 
 > **使用场景**
-> - 应用于 App 中通过 H5 上传图片的功能，便于核对信息的准确性；
-> - Fullacreen 结合 canvas 应用到 H5 页面游戏中，提升用户游戏体验。
+> 1、应用于 App 中通过 H5 上传图片的功能，便于核对信息的准确性；
+> 2、Fullacreen 结合 canvas 应用到 H5 页面游戏中，提升用户游戏体验。
 
 ### 新增 CSS 视口单位（CSS viewport units）
 
