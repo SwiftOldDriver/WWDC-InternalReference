@@ -22,12 +22,11 @@ session_ids: [10040]
 
 **App Store Server Notifications** 今年将提供更加实时的通知，开发者可以掌握更多生命周期里的通知状态。
 
-所以，本文分成2个部分，分别是 App Store Server API 和 App Store Server Notifications，并结合去年和今年推出的新特性，进行深入浅出的探索。如果大家对于去年 WWDC21 相关的主题内容不太熟悉的话，可以先阅读我们去年的文章：
+所以，本文内容分成两个主题，分别是 App Store Server API 和 App Store Server Notifications，并结合去年和今年推出的新特性，进行深入浅出的探索。如果大家对于去年 WWDC21 相关的主题内容不太熟悉的话，可以先阅读我们去年的文章：
 
 - [初见 StoreKit 2](https://mp.weixin.qq.com/s/arA0_uyc4CWMQ7WJ2RanJA)
 - [IAP 后台通信优化与实践](https://mp.weixin.qq.com/s/dWsRKRJsYMRl0GX_36T-kg)
 - [IAP 用户退款与客诉处理优化](https://mp.weixin.qq.com/s/MtytymgkcP3_oAH7JyI1og)
-
 
 ## App Store Server API
 
