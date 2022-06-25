@@ -366,7 +366,7 @@ actor ParallelCompressor {
         status.update(url: url, compressedSize: compressedSize)
       }
     }
-    // 对 log 需要访问需要 actor 保护 
+    // 对 log 的访问需要 actor 保护 
     log(update: "Ending for \(url)")
     return compressedData
   }
