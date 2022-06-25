@@ -23,7 +23,7 @@
 
 这样一来，从你的 App 往外发送的数据包不得不等待该积压队列全部处理完毕才能通过。在这个最慢的节点上的等待增大了 App 到服务器之间的往返时间；带宽的增加并不能够改善这种积压的问题，因此我们可以知道，升级带宽并不一定能改善网络延迟。
 
-### 网络延迟 = RTT 次数 * RTT时间
+### 网络延迟 = RTT(Round Trip Time) 次数 * RTT时间
 当应用请求需要经过多次往返才能获得响应的时候，因积压导致的网络延迟问题会被放大。举例来说，一个常见的https请求需要经过4次往返才能获得响应（tcp 1次，tls 2次，http 1次，如下图），而且每次往返都会受到积压队列的影响，这个响应的总时间最终变得非常长。
 
 ![](./images/httprtts.png)
@@ -32,188 +32,72 @@
 ![](./images/rtt.png)
 
 ## App侧的优化建议
+### 使用现代网络协议
+我们通过使用现代网络协议即可显著的降低应用的网络延迟，主要包括 IPv6、TLS 1.3 和 HTTP/3等。只要服务端支持这些协议，在App 侧，你只需要使用 URLSession 和 Network.framework 框架的 API即可自动使用以上的协议。目前，通过 Safari 浏览器的流量有 20% 是基于 HTTP/3 来承载的；统计数据显示，HTTP/3 可以显著的提升请求完成的时间，仅约为HTTP/1.1的一半（如下图所示）。
+![](./images/safari_http3.png)
 
+### 启用 handover 处理网络切换
+就我们以往的经验来看，在网络切换的场景下，我们的连接需要重新建立（主要是基于 TCP 的长连接），这个过程往往会相当耗时，很影响用户体验；但现在我们可以启用 handover 来优化这个过程, 苹果称之为连接迁移。配置连接迁移的核心代码如下：
+
+```swift
+// URLSession
+let configuration = URLSessionConfiguration.default
+configuration.multipathServiceType = .handover
+
+// Network.framework
+let parameters = NWParameters.quic(alpn: ["myproto"])
+parameters.multipathServiceType = .handover
+```
+启用 handover 并且确保它正常工作，我们就可以获得无缝切换的效果。
+![](./images/http_compare.png)
+
+### 启用 QUIC 数据报
+如果你使用基于UDP的自有协议, 在 iOS 16 和 macOS Ventura 下，苹果建议我们启用 QUIC 数据报，在该协议配置下，通过优化的拥塞控制算法可以显著的降低 RTT 时间并减少丢包。具体配置代码如下：
+
+```swift
+// Only one datagram flow can be created per connection
+let options = NWProtocolQUIC.Options()
+options.isDatagram = true
+options.maxDatagramFrameSize = 65535
+```
 ## 服务端侧的优化建议
+### 网络质量检测工具介绍
+尽管我们的服务器很可能采用了很高水准的硬件配置，但它们仍然可能成为网络延迟的罪魁祸首。在 macOS Monterey 我们引入了网络质量检测工具，你可以使用该工具来检测服务提供商的网络和你的服务器上是否存在“缓冲膨胀 （buffer bloat）”。在该工具中需要把你的服务器配置成目标，并和苹果的默认服务器进行对比测试。如果苹果的默认服务器得分情况良好，但你的服务器表现不佳，那么你的服务器在网络层面很可能需要改进。具体的配置和运行参考如下：
 
+```
+Configure your server
+https://github.com/network-quality/server
+
+// networkQuality tool in macOS
+networkQuality -s -C https://myserver.example.com/config
+```
+### 合理的缓冲配置
+在很多情况下，不合理或者说过大的缓冲配置会导致数据包在服务器侧形成巨大的缓冲队列，带来额外的延迟。苹果通过一个视频流媒体拖放的场景来对比了两种截然不同的配置下的表现：一种是相对过大的缓冲配置（TCP 4MB、TLS 256KB、HTTP 4MB），另外一种是苹果推荐的相对合理的经验配置（TCP 128KB、TLS 16KB、HTTP 256KB）。结合 macOS 中的网络质量检测工具的使用，我们可以很方便的定位到了该问题；所有最新发送的数据包都要等待缓冲的数据发送完毕，因此拖放的体验会非常差。相对应的，在 Apache Traffic Server （ATS）上的具体配置如下：
+
+```
+% cat /opt/ats/etc/trafficserver/records.config
+
+# Set not-sent low-water mark trigger threshold to 128 kilobytes
+# tcp 128KB
+CONFIG proxy.config.net.sock_notsent_lowat INT 131072
+
+# Set Socket Options flag to the sum of the options we want
+#  TCP_NODELAY +  TCP_FASTOPEN + TCP_NOTSENT_LOWAT 
+# TCP_NODELAY(1) + TCP_FASTOPEN(8) + TCP_NOTSENT_LOWAT(64) = 73
+CONFIG proxy.config.net.sock_option_flag_in INT 73
+
+...
+# Enable Dynamic TLS record sizes
+CONFIG proxy.config.ssl.max_record_size INT -1
+...
+
+# Reduce low-water mark and buffer block size for HTTP/2
+CONFIG proxy.config.http2.default_buffer_water_mark INT  32768
+# http 256KB
+CONFIG proxy.config.http2.write_buffer_block_size   INT 262144
+```
+在上面的配置中，我们启用了TCP_NODELAY / TCP_FASTOPEN / TCP_NOTSENT_LOWAT，并将TCP的缓存水位值设置在了128KB； 将动态 TLS 记录大小设置为启用；将HTTP2 的缓存大小设置为 256KB。 在其他的 web 服务器上也需要寻求等价的配置来进行设置即可。
 ## L4S 最佳实践
-
-人脸分析是 Vision 框架中人物分析的基石。Vision 框架目前主要提供了三方面的能力：
-
-- 人脸识别
-- 面部特征点识别
-- 面部捕捉质量检测
-
-#### 人脸识别
-
-
-人脸识别相关的能力主要通过 DetectFaceRectanglesRequest 来实现，之前人脸识别支持了眼镜和帽子场景下的识别，最近引入了佩戴口罩场景的支持（至于原因大家都懂，新冠病毒让大家都戴上了口罩，因此这个场景就变成了刚需）。面部识别最主要的任务当然是识别出一个面部包围盒，但除此之外 Vision 还提供了面部姿态度量的检测。这里的度量参考了航空系统中的坐标系，其度量的维度分为三个：
-
-分别是 roll (围绕 z 轴旋转的翻滚角) 、yaw（围绕 y 轴旋转的偏航角）、pitch（围绕 x 轴旋转的俯仰角，也是新加入的度量维度）。
-这些度量结果目前可以实时的持续返回，也就是说我们可以动态的监控面部的姿态了。具体来说，它们是在 FaceObservation 的属性中返回，属于 DetectFaceRectanglesRequest 执行的结果。
-
-#### 面部特征点识别
-
-
-这部分能力是通过 DetectFaceLandmarksRequest 来实现，目前最新的修订版是版本三。这个版本提供了 76 个特征点的识别，包含了主要的面部区域和精确的瞳孔识别。
-
-#### 面部捕捉质量检测
-
-针对含有人脸的图像，Vision 提供了用来评价其中人脸质量的 API ：DetectFaceLandmarksRequest，目前最新的修订版是版本二。这个功能主要是让大家对比同一个人的人脸在不同情况下拍出来的照片质量的好坏，例如上图中左侧的人脸得分明显高于右侧的。这个评价标准综合了表情、光照、遮挡物、模糊度、聚焦程度等，进行一个综合的打分。它可以被用在相册等场景中（为用户自动选出或者推荐高质量的照片）。PS：截图右侧的就是 Vision 框架的大佬毛子哥了，哈哈哈。
-
-### 人体检测
-
-
-目前人体检测支持两种设置：仅上半身和全身。上面示意图的左侧和右侧分别展示了两种设置下的结果，大家可以根据自己的场景来使用。其中全身设置是新加入的，支持的最新修订版为版本二。为了和老版本兼容，默认情况下的设置是仅上半身。相关能力通过 DetectHumanBodyPoseRequest API 来提供。
-
-### 人体姿势检测
-
-
-### 手势检测
-
-最新的手势检测 API 支持了对左右手的识别。关于这部分内容，可以参考 Session 10039（笔者对该 Session 也进行了二次创作）。
-
-## 设计开发更具响应性的 App
-
-### 人像分割介绍
-
-
-下面就是重头戏了，毛子哥大部分时间都在讲解最新引入的人像分割技术。人像分割已经在很多领域（例如在线视频、自动驾驶、实时体育分析等）得到了广泛的应用。什么是人像分割呢？从上面的示意图我们可以很容易的理解到，人像分割就是把人像从场景中分离的技术。苹果设备中的肖像模式就利用到了人像分割的能力。这个特性被设计成和每一帧图像一起工作，也就是说，你既可以用它来进行实时的视频流处理，也适合用来做离线操作。这个特性不仅适用于 iOS，也可以在 macOS、iPadOS 和 tvOS 中使用。值得一提的是，Vision 框架实现的是语义人像分割，它意味着对于图像中的所有人像，只会返回一个单独的遮罩。
-
-### 人像分割技术细节
-
-Vision 中的人像分割能力通过 GeneratePersonSegmentationRequest 来实现。和 Vision 框架中的其他请求类型不同的是，这是一个有状态的请求。这意味着改请求在帧序列中是复用的。这样的设计也让我们在实时场景中可以保证一个相对平滑的体验。
-
-人像分割的工作流如下：
-
-- 创建一个请求；
-- 创建请求的处理回调；
-- 通过回调来处理请求的响应；
-- 检查结果。
-
-示例代码如下：
-
-```swift
-// Create request ，创建请求
-let request = VNGeneratePersonSegmentationRequest()
-
-// Create request handler，创建回调
-let requestHandler = VNImageRequestHandler(url: imageURL, options: options)
-
-// Process request 处理请求
-try requestHandler.perform([request])
-
-// Review results 检查结果
-let mask = request.results!.first!
-let maskBuffer = mask.pixelBuffer
-```
-
-请求结果中最重要的就是这个 maskBuffer , 它是从 VNPixelBufferObservation 中的 pixelBuffer 获取而来，它保存了产生的遮罩的信息。
-
-
-对于请求来说有几个属性需要我们进行设置，主要是以下几个：
-
-- revision 修订版本号，建议显式指定，保证行为的一致性
-- qualityLevel 质量级别，分为三级，可以用来在速度和效果之间取得权衡
-- outputPixelFormat 输出遮罩的格式，也分为三级，8 bit 整型，16 bit 浮点和 32 bit 浮点型
-
-质量级别设置：
-
-其中 accurate 级别为最高级，适用于静态图片处理场景；balanced 为中等级别，使用于视频处理； fast 适合于实时性要求高的流式处理场景。
-下图展示了不同质量级别设置下的性能表现，可以看出差异是非常巨大的。
-
-
-既然性能差异如此大，结果的视觉效果差异如何呢？请看下图：
-
-
-可以看到，视觉效果的差异同样很明显，因此我们必须要根据我们的应用场景作出恰当的决策。
-
-
-输出遮罩格式设置：
-
-最后，我们要如何使用遮罩呢？
-给定一个 input image， 一个 mask image, 一个 background image, 三者进行一个混合操作，得到最终的结果。
-示例代码如下：
-
-```swift
-let input = CIImage?(contentsOf: imageUrl)!
-let mask = CIImage(cvPixelBuffer: maskBuffer)
-let background = CIImage?(contentsOf: backgroundImageUrl)!
-
-let maskScaleX = input.extent.width / mask.extent.width
-let maskScaleY = input.extent.height / mask.extent.height
-let maskScaled = mask.transformed(by: __CGAffineTransformMake(
-                                  maskScaleX, 0, 0, maskScaleY, 0, 0))
-
-let backgroundScaleX = input.extent.width / background.extent.width
-let backgroundScaleY = input.extent.height / background.extent.height
-let backgroundScaled = background.transformed(by: __CGAffineTransformMake(
-                          backgroundScaleX, 0, 0, backgroundScaleY, 0, 0))
-
-let blendFilter = CIFilter.blendWithRedMask()
-blendFilter.inputImage = input
-blendFilter.backgroundImage = backgroundScaled
-blendFilter.maskImage = maskScaled
-
-let blendedImage = blendFilter.outputImage
-```
-
-最终效果演示：
-
-### 多框架中使用人像分割
-
-除了 Vision 框架外，我们还可以在其他多个技术框架中使用人像分割技术。
-上图给出了一个对比，我们可以在适合的场景下自由选择使用，这让人像分割的应用对于开发者来说更加友好。这里贴出各个场景下的实例代码。
-
-AVFoundation 中使用人像分割:
-
-```swift
-private let photoOutput = AVCapturePhotoOutput()
-…
-if self.photoOutput.isPortraitEffectsMatteDeliverySupported {
-    self.photoOutput.isPortraitEffectsMatteDeliveryEnabled = true
-}
-
-open class AVCapturePhoto {
-    …
-    var portraitEffectsMatte: AVPortraitEffectsMatte? { get } // nil if no people in the scene
-    …
-}
-```
-	
-ARKit 中使用人像分割：
-
-```swift
-if ARWorldTrackingConfiguration.supportsFrameSemantics(.personSegmentationWithDepth) {
-    // Proceed with getting Person Segmentation Mask
-    …
-}
-
-open class ARFrame {
-    …
-    var segmentationBuffer: CVPixelBuffer? { get }
-    …
-}
-```
-	
-CoreImage 中使用人像分割：
-
-```swift
-let input = CIImage?(contentsOf: imageUrl)!
-
-let segmentationFilter = CIFilter.personSegmentation()
-segmentationFilter.inputImage = input
-
-let mask = segmentationFilter.outputImage
-```
-	
-### 人像分割最佳实践
-
-毛子哥还给我们分享了以下的最佳实践:
-
-- 画面中最多不超过四个人；
-- 人像高度起码要达到画面高度的一半；
-- 距离不要太远；
-- 画面中不要出现雕像、人像照片等，避免误判情况产生。
 
 
 ## 总结
