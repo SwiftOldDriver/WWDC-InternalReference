@@ -370,6 +370,7 @@ actor ParallelCompressor {
     log(update: "Ending for \(url)")
     return compressedData
   }
+}
 ```
 
 我们思考一下不难发现，其实这个 `Actor` 里，真正有线程安全的问题的是 `logs` 这个属性可能被多线程读写，以及 UI 相关的属性更新需要在 `Main Actor` 执行，而`compressFile` 这个方法其余的部分其实是可以并发执行的，并不一定要在 `Actor` 中执行，我们完全可以把这个方法抽出来交给线程池派发到其他线程执行，当它需要读写 `logs` 属性的时候，再切换隔离域 **`跳跃 (actor hopping)`**  到原先的 `Actor` 上，需要读写 UI 相关的属性时， 再切换隔离域到 `Main Actor` 上，不需要访问这两者的时候，切换隔离域到其他的线程上，这样可以大大减少对 `Actor` 的访问时间。也允许多个 `compressFile` 方法同时执行，只是同时间内只有一个可以访问 `Main Actor` 或者 `ParallelCompresssor Actor`。
