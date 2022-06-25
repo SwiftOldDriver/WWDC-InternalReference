@@ -39,8 +39,8 @@ session_ids: [10119]
 并通过 `userID` 将 `AvatarSpace` 的数据和 `User` 关联起来，在列表中去异步加载，达到类似于 `SDWebImage` 加载网络图片的效果。核心代码如下：
 
 ```Swift
-static func loadCloudImage(imageInfo: CloudImageCacheBaseInfo,resultCallBack: CloudImageCallBack? = nil) {
-    // FromDisk
+static func loadCloudImage(imageInfo: CloudImageCacheBaseInfo, resultCallBack: CloudImageCallBack? = nil) {
+    // 检查本地缓存
     if let image = getImageFromDisk(recordName: imageInfo) {
         if let cb = resultCallBack {
             cb(image)
@@ -48,7 +48,7 @@ static func loadCloudImage(imageInfo: CloudImageCacheBaseInfo,resultCallBack: Cl
         return
     }
     
-    // DownLoad
+    // 没有本地缓存，通过 CloudKit 获取头像资源
     CloudUser.fetchAvatar(userRecordName: CKRecord.ID(recordName: imageInfo.userID), success: { (record) in
         guard let resu = record, let image = UIImage.image(fromRecord: resu, forAssetKey: RecordTypeAvatar.image.rawValue) else {
             if let cb = resultCallBack {
@@ -56,6 +56,7 @@ static func loadCloudImage(imageInfo: CloudImageCacheBaseInfo,resultCallBack: Cl
             }
             return
         }
+        // 异步保存到本地
         self.saveImageToDisk(image: image, imageName: imageInfo)
         if let cb = resultCallBack {
             cb(image)
@@ -64,6 +65,29 @@ static func loadCloudImage(imageInfo: CloudImageCacheBaseInfo,resultCallBack: Cl
         if let cb = resultCallBack {
             cb(nil)
         }
+    }
+}
+
+// 通过创建者 recordID 获取头像图片资源
+static func fetchAvatar(userRecordName: CKRecord.ID? = nil, success: @escaping CloudRecordCallBack, fail: @escaping CloudErrorCallBack) {
+    var recordName = ""
+    
+    if userRecordName != nil {
+        recordName = userRecordName?.recordName ?? ""
+    }
+    else {
+        recordName = CloudUser.currentUserRecordId ?? ""
+    }
+    
+    let ref = CKRecord.Reference(recordID: CKRecord.ID(recordName: recordName), action: .none)
+    let predicate = NSPredicate(format: "creatorUserRecordID == %@", ref)
+    
+    CloudCenter.publicDataBase.query(type: .AvatarSpace, predicate: predicate) { (records, cursor, error) in
+        if error != nil {
+            fail(error)
+            return
+        }
+        success(records?.first)
     }
 }
 ```
@@ -431,10 +455,9 @@ log show --info --debug
 
 ### 4.1 以 iCloud 账号方式登录
 
-以往在使用 `CloudKit` 控制台的时候，都是使用开发者账号进行登录的。在开发时，我们一般会使用自己的账号进行调试，但是想要查数据的时候就麻烦了，以往我们需要这样做：
+以往在使用 `CloudKit` 控制台的时候，都是使用开发者账号进行登录的。对 `CloudKit` 有一定了解的开发者都知道，常有的有两种存储空间，公开的和私有的，类似我的排行榜功能使用的就是公开的空间。
 
-- 获取自己 `userRecordID`
-- 到对应的数据表中进行筛选
+在进行公共空间的开发时，我们一般会使用自己的账号进行调试，但是想要查数据的时候可以到控制台根据自己的 `userRecordID` 进行数据筛选。在进行私有空间开发时，如果想要在控制台查看数据，以往是不可能的。
 
 现在添加了 `Act as iCloud Account` 的功能：
 
@@ -448,15 +471,61 @@ log show --info --debug
 
 ![](images/database_icloud_data.jpg)
 
+该功能极大提升了开发者在开发阶段查找调试数据的效率，尤其是基于私有空间进行开发的项目，简直不要太方便！
+
+#### 注意
+
+- 用 `Act as iCloud Account` 方式登录只有当前用户创建的数据可以背解析展示，其他用户的数据依旧是加密的无法访问的，这也是 `iCloud` 保证数据安全的核心。
+- 我的扫雷游戏的排行榜由于设置的是 `PublicDataBase` 类型，每个用户创建自己的数据，且对所有用户可见，这是 `CloudKit` 的一种特殊场景。
+
 ### 4.2 隐藏 Container
 
 ![](images/cloudkit_manager.jpg)
 
-在有多个 `Container` 的时候可以选择隐藏一些，看起来更简洁，不容易选错。
+我们经常会有多个 `Container` 有一些我们不经常查看的，一直显示在列表中就比较影响效率，甚至容易误操作（我有两个 `Container` 名字比较像，不止一次选错 `Container` 还以为数据出问题了）。
 
-> 我有两个 `Container` 名字比较像，不止一次选错 `Container` 还以为数据出问题了。
+现在我们可以选择隐藏 `Container` 了。
 
 ![](images/cloudkit_manager_sel.jpg)
+
+这些变更也会同步达到 `Xcode` 中，以及其他有权限访问的开发者。这样就可以避免一些用于个人调试的无用 `Container` 出现在其他团队成员的列表中。
+
+![](images/hide_container_xcode.jpg)
+
+### 4.3 共享空间
+
+`CloudKit` 可以使用户间安全的共享数据。主要分为两种
+
+- 公开的共享空间
+  - 所有用户都可以访问
+- 私有共享空间
+  - 特定授权用户可以访问
+
+![](images/zone_share_public_private.png)
+
+#### 设置公开共享空间
+
+可以设置只读或者可读可写权限。
+
+![](images/zone_share_public.png)
+
+#### 设置私有共享空间
+
+1. 设置 `Zone` 为私有
+
+![](images/zone_share_private.png)
+
+2. 获取 `ShortGUID` 
+
+![](images/zone_share_private_shortGUID.png)
+
+通过将这个 ID 给到可以访问的人，就可以在控制台加入共享。
+
+3. 设置接受共享数据 `ShortGUID` 
+
+![](images/zone_share_private_shortGUID2.png)
+
+设置完成后，所有在这个 `Zone` 内创建的记录会被自动共享。
 
 ## 总结
 
