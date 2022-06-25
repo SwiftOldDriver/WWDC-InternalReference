@@ -1,3 +1,7 @@
+---
+session_ids: [10078]
+---
+
 # WWDC22 - 如何降低网络延迟以打造更具响应性的 App
 本文基于 [Session 10078](https://developer.apple.com/videos/play/wwdc2022/10078) 梳理，如需了解更多，可以浏览文末的参考来源。
 
