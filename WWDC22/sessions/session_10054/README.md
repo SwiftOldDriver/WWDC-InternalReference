@@ -194,6 +194,8 @@ SwiftUI 为了方便在大屏上做分屏显示，提供了一个非常便利的
 
 创建两列视图时使用构造函数 `init(sidebar:detail:)`，其中第一列叫做侧边栏，第二列叫做详情页。
 
+![Two-column View][two-column-view]
+
 以下代码使用 `NavigationSplitView + List + NavigationLink` 组合，创建了一个诗词列表的导航。当用户选择第一列的 List 时，会更新传给 selection 的 poem 状态，详情页拿到 poem 后通过 PoemDetail 显示详细信息。注意 List 的 id 参数很重要，此处传递的值为 `\.self`。所以 selection 接收的类型为 Poem。如果更换为 `\.id`，那么只能使用 `@State private var poemId: Int?` 类型来接收了, 使用时需要特别注意。另外，用来选择的 poem 是可选的，空表示没有选择任何 poem。
 
 ```swift
@@ -225,6 +227,8 @@ var body: some View {
 #### 三列视图
 
 创建三列视图时使用构造函数 `init(sidebar:content:detail:)`，其中第一列叫做侧边栏，第二列为内容页，第三列叫做详情页。
+
+![Three-column View][three-column-view]
 
 以下代码是一个稍微复杂的例子，使用 `NavigationSplitView + List + NavigationLink + NavigationStack + navigationDestination` 的组合，来创建一个三列的分屏视图。
 
@@ -600,5 +604,7 @@ class PoemsDataModel: ObservableObject {
 [poems-app-screenshot]: ./images/poems-app-screenshot.png
 [poems-source-code]: https://github.com/zddhub/poems
 [navigation-stack-diagram]: ./images/navigation-stack-diagram.gif
+[two-column-view]: ./images/two-column-view.png
+[three-column-view]: ./images/three-column-view.png
 [migrating-to-new-navigation-types]: https://developer.apple.com/documentation/swiftui/migrating-to-new-navigation-types
 [wwdc-110358]: https://developer.apple.com/videos/play/wwdc2022/110358/
