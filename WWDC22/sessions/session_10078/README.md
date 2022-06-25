@@ -1,14 +1,13 @@
-# WWDC21 - 使用 Vision 框架来检测人物、人脸和姿势
-本文基于 [Session 10040](https://developer.apple.com/videos/play/wwdc2021/10040) 梳理，如需了解更多，可以浏览文末的参考来源。
+# WWDC22 - 如何降低网络延迟以打造更具响应性的 App
+本文基于 [Session 10078](https://developer.apple.com/videos/play/wwdc2022/10078) 梳理，如需了解更多，可以浏览文末的参考来源。
 
 ## 前言
-作为苹果图像视觉/机器学习相关的能力在设备端的载体，Vision 框架也在不断的演进。在本文中我们主要谈论了两个话题：人物分析技术和人像分割。其中人像分割能力是 WWDC21 最新引入到 Vision 框架中的，它可以在诸多场景下得到很好的应用（例如现在流行的视频会议中的背景替换）。人物分析技术方面，Vision 框架也引入了一系列实用的更新帮助我们更好的利用苹果设备的视觉能力。这篇分享是 Vision 框架团队工程师谢尔盖的独角戏。谢尔盖是一个常见的俄罗斯男性名字，因此下面我们会亲切的称呼他为毛子哥；毛子哥的视频口音比较重，笔者反复看了多遍才写下了这篇文章，希望它可以对读者朋友们有所帮助！
+如何打造更具响应性的 App ，对于开发者来说是一个永恒的课题；原因无他，因为对于一个以网络交互为核心的现代应用来说，这是用户体验的核心所在：它意味着更流畅的音视频播放、低延迟的网络会议、快速加载的页面和资源、更少的游戏等待时间等等。基于此，苹果在去年的 [Session 10239: Reduce network delays for your app](https://developer.apple.com/videos/play/wwdc2021/10239) 基础上，又为我们带来了这一篇实战意义颇强的分享，从客户端侧、服务端侧、网络协议侧三个方面入手提供一系列行之有效的建议，帮助开发者们更好的分析并改善应用的网络延迟状况，从而打造更具响应性的 App 。
 
 ## 人物分析技术
 
 ### 人脸分析
 
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167759126-74364053-7c59-4d4a-9d97-26baaaff551d.png)
 
 人脸分析是 Vision 框架中人物分析的基石。Vision 框架目前主要提供了三方面的能力：
 
@@ -17,45 +16,38 @@
 - 面部捕捉质量检测
 
 #### 人脸识别
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167752230-1cecd9ca-404e-4038-8a14-b9006f18f320.png)
+
 
 人脸识别相关的能力主要通过 DetectFaceRectanglesRequest 来实现，之前人脸识别支持了眼镜和帽子场景下的识别，最近引入了佩戴口罩场景的支持（至于原因大家都懂，新冠病毒让大家都戴上了口罩，因此这个场景就变成了刚需）。面部识别最主要的任务当然是识别出一个面部包围盒，但除此之外 Vision 还提供了面部姿态度量的检测。这里的度量参考了航空系统中的坐标系，其度量的维度分为三个：
-
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167671576-106b5d57-c009-4059-bad5-48d991638fe1.png)
 
 分别是 roll (围绕 z 轴旋转的翻滚角) 、yaw（围绕 y 轴旋转的偏航角）、pitch（围绕 x 轴旋转的俯仰角，也是新加入的度量维度）。
 这些度量结果目前可以实时的持续返回，也就是说我们可以动态的监控面部的姿态了。具体来说，它们是在 FaceObservation 的属性中返回，属于 DetectFaceRectanglesRequest 执行的结果。
 
 #### 面部特征点识别
 
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167770843-50496b34-fcdc-406f-b749-fc264c311920.png)
 
 这部分能力是通过 DetectFaceLandmarksRequest 来实现，目前最新的修订版是版本三。这个版本提供了 76 个特征点的识别，包含了主要的面部区域和精确的瞳孔识别。
 
 #### 面部捕捉质量检测
 
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167769940-783f1308-9e84-4b9e-9a32-cd0570b2f9d8.png)
 针对含有人脸的图像，Vision 提供了用来评价其中人脸质量的 API ：DetectFaceLandmarksRequest，目前最新的修订版是版本二。这个功能主要是让大家对比同一个人的人脸在不同情况下拍出来的照片质量的好坏，例如上图中左侧的人脸得分明显高于右侧的。这个评价标准综合了表情、光照、遮挡物、模糊度、聚焦程度等，进行一个综合的打分。它可以被用在相册等场景中（为用户自动选出或者推荐高质量的照片）。PS：截图右侧的就是 Vision 框架的大佬毛子哥了，哈哈哈。
 
 ### 人体检测
 
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167762559-9fea3a4a-c01c-44e3-8a24-869859891c3c.png)
 
 目前人体检测支持两种设置：仅上半身和全身。上面示意图的左侧和右侧分别展示了两种设置下的结果，大家可以根据自己的场景来使用。其中全身设置是新加入的，支持的最新修订版为版本二。为了和老版本兼容，默认情况下的设置是仅上半身。相关能力通过 DetectHumanBodyPoseRequest API 来提供。
 
 ### 人体姿势检测
 
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167677294-d7f5a822-1cb3-48f5-b35f-551ac6e014b7.png) 
 
 ### 手势检测
 
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167746731-8c00d149-cb3d-4253-bf64-6d7f797d4f24.png)
 最新的手势检测 API 支持了对左右手的识别。关于这部分内容，可以参考 Session 10039（笔者对该 Session 也进行了二次创作）。
 
 ## 人像分割
 
 ### 人像分割介绍
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167757010-43eb56ec-5559-45dc-9876-fd8cac9e52b6.png)
+
 
 下面就是重头戏了，毛子哥大部分时间都在讲解最新引入的人像分割技术。人像分割已经在很多领域（例如在线视频、自动驾驶、实时体育分析等）得到了广泛的应用。什么是人像分割呢？从上面的示意图我们可以很容易的理解到，人像分割就是把人像从场景中分离的技术。苹果设备中的肖像模式就利用到了人像分割的能力。这个特性被设计成和每一帧图像一起工作，也就是说，你既可以用它来进行实时的视频流处理，也适合用来做离线操作。这个特性不仅适用于 iOS，也可以在 macOS、iPadOS 和 tvOS 中使用。值得一提的是，Vision 框架实现的是语义人像分割，它意味着对于图像中的所有人像，只会返回一个单独的遮罩。
 
@@ -89,7 +81,6 @@ let maskBuffer = mask.pixelBuffer
 
 请求结果中最重要的就是这个 maskBuffer , 它是从 VNPixelBufferObservation 中的 pixelBuffer 获取而来，它保存了产生的遮罩的信息。
 
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167759974-1a5371d5-b382-4b81-9813-48f0a9f0f4cc.png)
 
 对于请求来说有几个属性需要我们进行设置，主要是以下几个：
 
@@ -98,21 +89,18 @@ let maskBuffer = mask.pixelBuffer
 - outputPixelFormat 输出遮罩的格式，也分为三级，8 bit 整型，16 bit 浮点和 32 bit 浮点型
 
 质量级别设置：
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167754830-fefb0dd2-f923-4e02-82d4-bb19275bdd9d.png)
+
 其中 accurate 级别为最高级，适用于静态图片处理场景；balanced 为中等级别，使用于视频处理； fast 适合于实时性要求高的流式处理场景。
 下图展示了不同质量级别设置下的性能表现，可以看出差异是非常巨大的。
 
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167766556-2a682995-45cf-4054-be7f-34d8a3e89996.png)
 
 既然性能差异如此大，结果的视觉效果差异如何呢？请看下图：
 
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167771683-20e24c9f-e1f3-41c2-8420-66c73da13190.png)
 
 可以看到，视觉效果的差异同样很明显，因此我们必须要根据我们的应用场景作出恰当的决策。
 
 
 输出遮罩格式设置：
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167751537-56298cf5-779f-4dae-a8b5-e1210fc234ad.png)
 
 最后，我们要如何使用遮罩呢？
 给定一个 input image， 一个 mask image, 一个 background image, 三者进行一个混合操作，得到最终的结果。
@@ -143,11 +131,7 @@ let blendedImage = blendFilter.outputImage
 
 最终效果演示：
 
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167764228-68199533-18e6-430a-8c57-dcd448d041ce.png)
-
-
 ### 多框架中使用人像分割
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167741459-9878674e-2ee7-41ad-9f90-266c408af534.png)
 
 除了 Vision 框架外，我们还可以在其他多个技术框架中使用人像分割技术。
 上图给出了一个对比，我们可以在适合的场景下自由选择使用，这让人像分割的应用对于开发者来说更加友好。这里贴出各个场景下的实例代码。
@@ -196,7 +180,6 @@ let mask = segmentationFilter.outputImage
 	
 ### 人像分割最佳实践
 
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167667495-6991dc68-7dab-4a12-bec4-9b8717f5b9b3.png)
 毛子哥还给我们分享了以下的最佳实践:
 
 - 画面中最多不超过四个人；
@@ -207,12 +190,11 @@ let mask = segmentationFilter.outputImage
 
 ## 总结
 
-![](https://cdn.nlark.com/yuque/0/2021/png/21877648/1624167755780-579b3bf5-935f-4f16-b35b-99f5c47100dd.png)
 这篇分享主要介绍了人像分割以及 Vision 框架在人物分析方面的新能力；其简单易用的 API、多框架支持的设计对开发者非常的友好。如果这篇文章给了你一些启发或是你脑子里有了一些新点子，那么还等什么？跟随毛子哥的脚步，赶紧去动手实践吧！
 
 
 ## 参考
-- [Apple - Detect people, faces, and poses using Vision](https://developer.apple.com/videos/play/wwdc2021/10040/)
-- [Apple - Classify hand poses and actions with Create ML](https://developer.apple.com/videos/play/wwdc2021/10039/)
-- [Apple - Detect Body and Hand Pose with Vision](https://developer.apple.com/videos/play/wwdc2020/10653/)
-- [Apple - Understanding Images in Vision Framework](https://developer.apple.com/videos/play/wwdc2019/222/)
+- [Apple - Reduce networking delays for a more responsive app](https://developer.apple.com/videos/play/wwdc2022/10078/)
+- [Apple - Reduce network delays for your app](https://developer.apple.com/videos/play/wwdc2021/10239/)
+
+
