@@ -15,13 +15,13 @@ session_ids: [10043]
 
 ## App Store Connect 新特性
 
-App Store Connect 作为苹果提供给开发者用来管理 App 信息、提交审核、查看 App 数据等功能平台，一直都是应用开发最重要的交付流程。本次WDCC22中苹果对 App Store Connect 做了不少的完善改进，我们来看看吧。
+App Store Connect 作为苹果提供给开发者用来管理 App 信息、提交审核、查看 App 数据等功能平台，一直都是应用开发最重要的交付流程。本次 WDCC22 中苹果对 App Store Connect 做了不少的完善改进，我们来看看吧。
 
 本次 App Store Connect 的更新主要有以下几点：
 
-1. **App Clips API** ：轻应用自WWDC20上线以来，提供了一种“即时使用”的方式，使得用户无需在 App Store 下载完整的应用程序，就可以在特定场景下很方便地体验 App 内的核心功能。本次的更新对 App Clips API 进行了进一步的补充和完善，[session 10097](https://developer.apple.com/videos/play/wwdc2022/10097/) 中有详细的讲解。
-2. **自定优惠代码**：在2020年年末时苹果首次推出订阅优惠代码，它由一组独特的、由数字和字母构成的编码，用户可以在 App 中输入来获得自动续订的折扣价格或免费优惠，对于开发者来说，这无疑是一个吸引、留住甚至赢回订阅用户的好机会。不过之前的优惠代码都是一次性的，只可兑换一次，此次的更新苹果推出了自定优惠代码，可以被自定义为可供多个用户兑换的优惠代码，比如 MyGame2022。这个更新对开发者来说极大节省了申请优惠代码的精力，在一些大型营销活动时就可以直接使用自定优惠代码设置一个和活动主题相关的优惠代码，这样用户就可以使用这个优惠代码来进行兑换，即宣传了活动主题又吸引了用户，可谓是一举两得。
-3. **TestFlight for Mac** ：TestFlight 是苹果旗下的应用测试平台，能帮助开发者邀请用户对 App 进行测试，方便开发者更好地改进和完善 App。之前 TF 只有 iPhone、iPad以及 Apple TV 版，即开发者只能测设在这三个平台的 App 版本。而在本次更新后， Mac 平台下也可以进行下载和使用，这进一步拓宽了应用测试的渠道，对于多渠道的应用来说无疑大大提高了测试的便捷性和有效性。
+1. **App Clips API** ：轻应用自 WWDC20 上线以来，提供了一种“即时使用”的方式，使得用户无需在 App Store 下载完整的应用程序，就可以在特定场景下很方便地体验 App 内的核心功能。本次的更新对 App Clips API 进行了进一步的补充和完善，[session 10097](https://developer.apple.com/videos/play/wwdc2022/10097/) 中有详细的讲解。
+2. **自定优惠代码**：在 2020 年年末时苹果首次推出订阅优惠代码，它由一组独特的、由数字和字母构成的编码，用户可以在 App 中输入来获得自动续订的折扣价格或免费优惠，对于开发者来说，这无疑是一个吸引、留住甚至赢回订阅用户的好机会。不过之前的优惠代码都是一次性的，只可兑换一次，此次的更新苹果推出了自定优惠代码，可以被自定义为可供多个用户兑换的优惠代码，比如 MyGame2022。这个更新对开发者来说极大节省了申请优惠代码的精力，在一些大型营销活动时就可以直接使用自定优惠代码设置一个和活动主题相关的优惠代码，这样用户就可以使用这个优惠代码来进行兑换，即宣传了活动主题又吸引了用户，可谓是一举两得。
+3. **TestFlight for Mac** ：TestFlight 是苹果旗下的应用测试平台，能帮助开发者邀请用户对 App 进行测试，方便开发者更好地改进和完善 App。之前 TF 只有 iPhone、iPad 以及 Apple TV 版，即开发者只能测设在这三个平台的 App 版本。而在本次更新后， Mac 平台下也可以进行下载和使用，这进一步拓宽了应用测试的渠道，对于多渠道的应用来说无疑大大提高了测试的便捷性和有效性。
 4. **TestFlight 组列**：此次针对 TestFlight 的更新，苹果还支持了对测试员进行分组的功能。对不同的组列可以添加不同的应用版本，这有利于我们去测试用户对 App 所提供的不同功能或特性的喜好，从而完善应用的设计和开发。
 5. **TestFlight 组内管理**：此次更新还支持了 TestFlight 的组内管理，开发者可以在测试员编辑界面对组内的人员进行快速添加或者移除。
 6. **应用内事件**：应用内事件也可以叫 App 内活动，是指在 App 和游戏中进行的、具有时效性的活动，例如游戏挑战、电影首映和直播活动等。用户可以在 iOS 和 iPadOS 的 App Store 上看到应用的 App 内活动，带来应用的更多曝光，从而达到吸引用户的效果。感兴趣的读者们可以查看对应的 [session](https://developer.apple.com/videos/play/wwdc2021/10171/) 来进一步了解。
@@ -60,7 +60,7 @@ App Store Connect 作为苹果提供给开发者用来管理 App 信息、提交
 
 需要注意的是，每个平台只能有一个在审的提交，需要等待上一个审核的提交完成了才可以提出新的提交。
 
-### pp Store Connect 中的 App Review 提交页面
+### App Store Connect 中的 App Review 提交页面
 
 在更新后的 App Store Connect 程序里，我们可以打开对应的 App Review 界面来进行审查的提交了。不仅如此，我们还可以查看审查的进度、编辑组提交里的项目、查看被拒绝的原因、回复 App Review ，如下图所示。这些功能可以在 iPadOS 和 iOS 平台上使用，因此这样的新功能使得我们可以在离开电脑时使用移动端快速进行审查的查看和响应，也算是一个较大地改进了。
 
@@ -122,7 +122,7 @@ App Store Connect 作为苹果提供给开发者用来管理 App 信息、提交
 
 对于 IAP 中销售的产品类型，苹果定义了以下三种核心产品状态：
 
-1. non-consumables 非消耗品，例如steam上面购买的游戏、游戏皮肤、某一刊的电子杂志等。这些产品在购买后通常永久有效。
+1. non-consumables 非消耗品，例如 steam 上面购买的游戏、游戏皮肤、某一刊的电子杂志等。这些产品在购买后通常永久有效。
 
 2. non-renewing subscriptions 非更新订阅，例如一个月的视频会员，一年的电子杂志订阅等。这些产品不会进行自动续费，到期了对应的权益就会消失，因此需要多次进行订阅。
 
@@ -202,7 +202,7 @@ if (subscriptionGroupStatus == .expired) {
 }
 ```
 
-这样我们就成功获取到用户的订阅状态和购买历史啦，StoreKit 2 是针对 IAP 场景下苹果的最新API支持，因此使用 StoreKit 2 来实现这段功能就会比较方便简单，而使用之前版本的 StoreKit 来实现就会比较繁杂一点了，我们接下来看看。
+这样我们就成功获取到用户的订阅状态和购买历史啦，StoreKit 2 是针对 IAP 场景下苹果的最新 API 支持，因此使用 StoreKit 2 来实现这段功能就会比较方便简单，而使用之前版本的 StoreKit 来实现就会比较繁杂一点了，我们接下来看看。
 
 ##### StoreKit 1
 
@@ -211,7 +211,7 @@ StoreKit 想要实现上面这些功能，首先需要使用 appStoreReceiptURL 
 ```swift
 // StoreKit
 if let appStoreReceiptURL = Bundle.main.appStoreReceiptURL,
-	FileManager.default.fileExists(atPath: appStoreReceiptURL.path) {
+    FileManager.default.fileExists(atPath: appStoreReceiptURL.path) {
     do {
         let receiptData = try Daya(sontentsOf: appStoreReceiptURL,
                                   options:.alwaysMapped)
