@@ -25,6 +25,7 @@ session_ids: [10075]
 ### 在 AppKit 中承载 SwiftUI View 的两种方式
 
 有两种方式来在 AppKit 中承载 SwiftUI View：
+
 1. 使用 [NSHostingView](https://developer.apple.com/documentation/swiftui/nshostingview)，将所要承载的 SwiftUI View 传递给构造函数参数 `rootView` 或者赋值给同名的实例属性 `rootView`。NSHostingView 实例是一个 NSView 对象，可以添加为其他 AppKit view 的子 view;
 2. 使用 [NSHostingController](https://developer.apple.com/documentation/swiftui/nshostingcontroller)，类似于 NSHostingView，通过构造函数参数 `rootView` 来传递所要承载的 SwiftUI View，或者创建之后通过同名的 `rootView` 属性来进行修改。NSHostingController 的使用方式也同其他 NSViewController 一样，通过 present 相关的方法显示出来或者添加为其他 NSViewController 对象的子 vc。
 
@@ -132,6 +133,7 @@ class ShortcutItemView: NSCollectionViewItem {
 ## 布局和尺寸
 
 SwiftUI 会自动地为 NSHostingController/NSHostingView 创建并更新 Auto Layout 约束，这些布局约束基于其所承载的 SwiftUI View，其中：
+
 - intrinsicContentSize 基于 View 的 idealWidth 和 idealHeight；
 - 根据 View 的 frame modifier 指定的参数信息，SwiftUI 会更新布局约束，如指定的 width/height、最大/最小尺寸等都会被翻译为等价的 Auto Layout 布局约束。
 
@@ -218,6 +220,7 @@ NSViewRepresentable 典型的声明周期如下图所示：
 ![Life cycle](images/hosting_lifecycle.png)
 
 主要分为三个阶段：
+
 - 初始化阶段：当该 view 首次展示时，系统会创建一个可选的 coordinator，然后创建所需的 NSView 实例。Coordinator 对象被创建之后，会在 view 的整个生命周期内都存在。在这个阶段，系统会调用 makeNSView 创建一个 NSView 实例，在该方法中执行 view 状态的初始化操作，如果提供了 coordinator 的话，也应该在该方法中实现 coordinator 和 view 的关系绑定；
 - 更新阶段：当应用状态/环境状态发生变化时，如果该 viewRepresentable 受到影响，会执行更新操作，在 updateNSView 的 context 参数中包含 coordinator、环境状态等信息。因为更新操作会比较频繁，所以 updateNSView 方法应该越小越好；
 - 结束阶段：当 view 不再显示的时候，承载的 NSView 实例和 coordinator 对象都会被释放，在这些对象释放之前，系统提供了 dismantleNSView 方法作为一个执行自定义清理工作的时机。
