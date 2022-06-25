@@ -45,9 +45,9 @@ session_ids: [10065]
 
 ## Apple 的 Unity 插件功能说明
 
-首先，我们先了解一下 Unity 插件的设计原则和理念。有 iOS 或是 Mac 开发经验的开发者一定知道，Apple Frameworks 通常是以模块化方式进行封装设计。这样设计的优势是使开发者可以为项目选择合适的技术，同时保持紧凑、高效的代码。对于 Unity 插件，也遵循了同样的模式。每个插件都映射到一个单一的底层 Framework ，开发者可以根据游戏的需要选择要使用的插件集。每个插件都公开了基于 C# 的 Unity 脚本，脚本尽可能直接映射到底层 Framework 。并且，底层 Framework 和 Unity 插件具有很多相似的 API 。这样设计的好处是，如果开发者对底层 Framework 非常熟悉的话，那你将能够快速上手 Unity 插件。反之，通过学习 Unity 插件，开发者将间接地熟悉了底层 Framework 。
+首先，我们先了解一下 Unity 插件的设计原则和理念。有 iOS 或是 Mac 开发经验的开发者一定知道，Apple Frameworks 通常是以模块化方式进行封装设计。这样设计的优势是使开发者可以为项目选择合适的技术，同时保持紧凑、高效的代码。对于 Unity 插件，也遵循了同样的模式。每个插件都映射到一个单一的底层 Framework ，开发者可以根据游戏的需要选择要使用的插件集。每个插件都公开了基于 C# 的 Unity 脚本，脚本尽可能直接映射到底层 Framework 。并且，底层 Framework 和 Unity 插件具有很多相似的 API 。这样设计的好处是，如果开发者对底层 Framework 非常熟悉的话，那你将能够快速上手 Unity 插件。反之，通过学习 Unity 插件，开发者将会间接熟悉底层 Framework 。
 
-另外不得不提的是，这些 Unity 插件是以 Apple 平台原生库基础上构建的。这些原生库充当 C# 脚本和底层 Framework API 之间的胶水层。 Apple Unity 插件适用于 Unity packages ，因此开发者可以通过 Unity Editor 内置的 Package Manager 管理项目里的插件。在一些场景中，这些插件具有定制的编辑器功能，这样可以大大提升开发者的接入效率。除此之外，每个插件都配有详细的自述文件、示例和相关的 Apple Developer 文档等。
+另外不得不提的是，这些 Unity 插件是在 Apple 平台原生库基础上构建的，充当 C# 脚本和底层 Framework API 之间的胶水层。 Apple Unity 插件适用于 Unity packages ，因此开发者可以通过 Unity Editor 内置的 Package Manager 管理项目里的插件。在一些场景中，这些插件具有定制的编辑器功能，这样可以大大提升开发者的接入效率。除此之外，每个插件都配有详细的说明文档、示例和相关的 Apple Developer 文档等。
 
 接下来我们分别介绍这六个插件：
 
@@ -57,7 +57,7 @@ session_ids: [10065]
 
 ![](./images/applecore-import.png)
 
-为了保证原生库被正确的引入、Info.plist 和权限描述被合理的设置， Apple.Core 定义了一个 Unity PostProcessBuild 来保证这些任务按步骤执行。 此外，Apple.Core 还定义了一个抽象类 AppleBuildStep ，以便为所有 Apple Unity 插件使用此功能。事实上，任何包含 Apple.Core 的项目也可以定义自定义构建步骤。
+为了保证原生库被正确的引入、合理设置 Info.plist 和权限描述， Apple.Core 定义了一个 Unity PostProcessBuild 来保证这些任务按步骤执行。此外，Apple.Core 还定义了一个抽象类 AppleBuildStep ，以便为所有 Apple Unity 插件使用此功能。事实上，任何包含 Apple.Core 的项目也可以定义自定义构建步骤。
 
 定义自定义构建步骤非常简单，开发者只需创建一个新脚本，并且定义的新对象需要继承自 AppleBuildStep 。另外，开发者可以选择覆盖 AppleBuildStep 中定义的任何方法，且任何公共字段都将自动显示为 Apple Build Settings UI 中的选项。以下是一个实现自定义构建步骤的简单示例：
 
