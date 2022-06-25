@@ -56,13 +56,11 @@ struct Poem: Codable, Hashable, Identifiable {
 
 *注：因为 macOS 13 还没有发布，图中 mac App 暂时使用 iPad App 代替，后期会替换。*
 
-本文所使用的代码开源在 [Github][poems-source-code] 上.
+本文所使用的代码已开源，链接在文章结尾。😄
 
 ## 现有导航方案回顾
 
 从 SwiftUI 诞生起，NavigationView 加 NavigationLink 的组合就是实现导航栏的标配，使用起来也是非常的简单。在你显示内容最外层加上 NavigationView，然后在需要导航的地方加上 NavigationLink 就好。NavigationLink 通过 `destination` 来指定点击后需要导航到的目标视图。在 iPadOS 和 macOS 上，目标视图的内容会出现在下一列。其它平台将目标视图放入视图栈中，并使用平台特定的控件，比如后退按钮或者滑动手势，从栈中删除目标视图。NavigationLink 可以出现在显示内容的任意层级中，或者出现在目标视图的子视图里，而 NavigationView 通常只需要一个。
-
-![NavigiationView][navigation-view]
 
 以下代码使用 `NavigationView + List + NavigationLink` 组合，创建了一个体裁的列表，点击不同的体裁类型后，导航到诗名列表中。
 
@@ -94,8 +92,16 @@ NavigationView {
   var body: some View {
     NavigationView {
       List {
-        NavigationLink("七言乐府", destination: PoemList(poems: dataModel.poemsWith(type: type)), isActive: $isSevenWordsActive)
-        NavigationLink("五言乐府", destination: PoemList(poems: dataModel.poemsWith(type: type)), isActive: $isFiveWordsActive)
+        NavigationLink(
+          "七言乐府",
+          destination: PoemList(poems: dataModel.poemsWith(type: type)),
+          isActive: $isSevenWordsActive
+        )
+        NavigationLink(
+          "五言乐府",
+          destination: PoemList(poems: dataModel.poemsWith(type: type)),
+          isActive: $isFiveWordsActive
+        )
       }
       .navigationTitle(Text("Types"))
     }
@@ -593,7 +599,6 @@ class PoemsDataModel: ObservableObject {
 [iOS-and-iPadOS-16-Beta-Release-Notes]: https://developer.apple.com/documentation/ios-ipados-release-notes/ios-ipados-16-release-notes
 [poems-app-screenshot]: ./images/poems-app-screenshot.png
 [poems-source-code]: https://github.com/zddhub/poems
-[navigation-view]: ./images/navigation-view.png
-[navigation-stack-diagram]: TODO
+[navigation-stack-diagram]: ./images/navigation-stack-diagram.gif
 [migrating-to-new-navigation-types]: https://developer.apple.com/documentation/swiftui/migrating-to-new-navigation-types
 [wwdc-110358]: https://developer.apple.com/videos/play/wwdc2022/110358/
