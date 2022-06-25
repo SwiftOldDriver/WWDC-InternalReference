@@ -14,4 +14,4 @@
 
 ## 公众号/小专栏图文头图
 
-![](./images/banner.png)
+![](images/banner.png)
