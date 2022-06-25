@@ -53,7 +53,7 @@ session_ids: [10065]
 
 ### 1. Apple.Core
 
-[Apple.Core](https://github.com/apple/unityplugins/blob/main/plug-ins/Apple.Core/Apple.Core_Unity/Assets/Apple.Core/Documentation~/Apple.Core.md) 将每个插件的 Build Settings 统一到单独的 Unity 项目设置窗口中。因为您需要编译每个插件的各个本地库，Apple.Core 还包含一个资源管理器，它确保导入的插件库可以针对所需要的平台进行配置。 Apple.Core 还包含构建后处理项目配置的脚本，在构建您的项目时，它确保编译后产生的 Xcode 工程能够正确引用原生库。有对接过 iOS 或 Mac 功能的 Unity 开发者，想必比较了解上述这个流程，因为 Unity 提供了 UnityEditor.PluginImporter 类、 IPreprocessBuildWithReport 接口以及 PostProcessBuild 方法等可以实现 Unity 导出 Xcode 工程后，根据需要引入对应平台的原生库并可以修改 Info.plist 。 Apple.Core 还定义了一些运行时交互类型，从而简化了 C# 脚本和原生代码层之间的数据传递。特别指出的是，Apple.Core 是所有其他 Apple Unity 插件的依赖项。所以，如果使用了其它插件，那您必须先导入 Apple.Core 到你的 Unity 工程里。
+[Apple.Core](https://github.com/apple/unityplugins/blob/main/plug-ins/Apple.Core/Apple.Core_Unity/Assets/Apple.Core/Documentation~/Apple.Core.md) 将每个插件的 Build Settings 统一到单独的 Unity 项目设置窗口中。因为您需要编译每个插件的各个本地库，Apple.Core 还包含一个资源管理器，它确保导入的插件库可以针对所需要的平台进行配置。 Apple.Core 还包含构建后处理项目配置的脚本，在构建您的项目时，它确保编译后产生的 Xcode 工程能够正确引用原生库。有对接过 iOS 或 Mac 功能的 Unity 开发者，想必比较了解上述这个流程，因为 Unity 提供了 UnityEditor.PluginImporter 类、 IPreprocessBuildWithReport 接口以及 PostProcessBuild 方法等可以实现 Unity 导出 Xcode 工程后，根据需要引入对应平台的原生库并可以修改 Info.plist 。 Apple.Core 还定义了一些运行时交互类型，从而简化了 C# 脚本和原生代码层之间的数据传递。特别指出的是，Apple.Core 是所有其他 Apple Unity 插件的依赖项。所以，如果使用了其它插件，那您必须先导入 Apple.Core 到 Unity 工程里。
 
 ![](./images/applecore-import.png)
 
@@ -147,7 +147,7 @@ public class AccessibilityTextSizeAdjustment : MonoBehaviour
 
 ```
 
-针对盲人的旁白功能以及色盲用户群体的颜色反转，以及针对有运动障碍的切换控制示例代码：
+以下示例代码，展示了针对盲人的旁白功能以及色盲用户群体的颜色反转，以及针对有运动障碍的切换控制功能：
 
 ```csharp
 internal class AccessibilitySettingsWatcher : MonoBehaviour
@@ -222,7 +222,7 @@ internal class AccessibilitySettingsWatcher : MonoBehaviour
 
 ### 3. Apple.CoreHaptics
 
-[Core Haptics](https://developer.apple.com/documentation/corehaptics) 可让开发者自定义的触觉和音频反馈添加到应用或是游戏中。通过使用触觉、音频与用户进行物理互动，可以吸引用户注意力并强化他们的行为。一些系统提供的界面元素（如 UISwitch、UISlider、UIPickerView ）会在用户与其交互时自动提供触觉反馈。 使用 Core Haptics，开发者还可以通过组合触觉模式来扩展此功能。
+[Core Haptics](https://developer.apple.com/documentation/corehaptics) 可让开发者添加自定义的触觉和音频反馈到应用或是游戏中。通过使用触觉、音频与用户进行物理互动，可以吸引用户注意力并强化他们的行为。一些系统提供的界面元素（如 UISwitch、UISlider、UIPickerView ）会在用户与其交互时自动提供触觉反馈。 使用 Core Haptics，开发者还可以通过组合触觉模式来扩展此功能。
 
  Core Haptics 里的触觉事件分为持续( Continuous )事件和瞬时( Transient )事件。前者可设置持续时间控制持续振动，后者类似轻敲或者撞击的短暂事件。另外，我们可以控制事件的锐度( sharpness )和强度( intensity )。游戏开发者在播放剧情动画、抽奖页面抽到 SSS 级道具、匹配到对手或是释放大招技能等场景加上触觉反馈，能够提升用户的体验以及趣味性。
 
@@ -366,7 +366,7 @@ Incorporating Controllers into Your Game](https://developer.apple.com/library/ar
 
 ### 5. Apple.GameKit
 
-[GameKit](https://developer.apple.com/documentation/gamekit?language=objc) 允许玩家能与朋友互动、提供排行榜排名、获得成就以及能够参与多人游戏。因此，开发者可以通过使用 GameKit 框架为游戏实现 Game Center 社交功能。补充说明， Game Center 是一项 Apple 服务，它提供了一个单一帐户，可以在所有游戏和设备上识别到这个玩家。玩家在他们的设备上登录 Game Center 后，他们可以访问他们的朋友以及其它 Game Center 功能。在今年的 [WWDC](https://developer.apple.com/videos/play/wwdc2022/10064) 中， Apple 给我们介绍了使用 Game Center 仪表板吸引新玩家。通过仪表盘可以更直观地让玩家看到成就、高分记录、排行榜的变化，激发玩家的游戏热情。
+[GameKit](https://developer.apple.com/documentation/gamekit?language=objc) 允许玩家能与朋友互动、提供排行榜排名、获得成就以及能够参与多人游戏。因此，开发者可以通过使用 GameKit 框架为游戏实现 Game Center 社交功能。补充说明， Game Center 是一项 Apple 服务，它提供了一个单一帐户，可以在所有游戏和设备上识别到这个玩家。玩家在他们的设备上登录 Game Center 后，他们可以访问他们的朋友以及其它 Game Center 功能。在今年的 [WWDC](https://developer.apple.com/videos/play/wwdc2022/10064) 中， Apple 给我们介绍了使用 Game Center 仪表盘吸引新玩家。通过仪表盘可以更直观地让玩家看到成就、高分记录、排行榜的变化，激发玩家的游戏热情。
 
 另外，玩家可以在 App Store 游戏详情页面可以看到正在玩此款游戏的好友。
 
@@ -513,7 +513,7 @@ catch(GameKitException exception)
 
 ```
 
-Apple 近几年持续为游戏社交带来了很多新特性，在这里不得不感叹一声：给力！但是，随着近几年游戏出海全球化战略、跨平台兴起，尤其是移动端游戏，考虑到安卓端的大量用户，目前市场上已经很难出现 iOS 独占游戏。安卓商店更是良莠不齐(还活着的非谷歌安卓商店至少有 50 家)，谷歌商店是有成就相关功能，但是不能跟 Apple GameKit 提供的其它功能一一对齐。再加上大陆是没有办法使用谷歌商店一些特性，对中国大陆发行的游戏来说，由于没有办法在 iOS 和 Android 双端保持一致的功能，那么游戏厂商会放弃苹果提供的某些功能，而是由游戏内直接实现。《原生》游戏的跨端成功，对于很多游戏公司来说也是一次学习和探索的机会，除了考虑移动端，还得兼顾 PC 、 Switch 端的发行可能。 GameKit 提供的独有功能优势将会变得更低。不过，对于一些轻度、休闲的游戏，且对双端功能不追求一致性，只是为了获得 iOS 侧更多用户的开发商来讲，还是非常有吸引力的。
+Apple 近几年持续为游戏社交带来了很多新特性，在这里不得不感叹一声：给力！但是，随着近几年游戏出海全球化战略、跨平台兴起，尤其是移动端游戏，考虑到安卓端的大量用户，目前市场上已经很难出现 iOS 独占游戏。安卓商店更是良莠不齐(还活着的非谷歌安卓商店至少有 50 家)，谷歌商店是有成就相关功能，但是不能跟 Apple GameKit 提供的其它功能一一对齐。再加上大陆是没有办法使用谷歌商店一些特性，对中国大陆发行的游戏来说，由于没有办法在 iOS 和 Android 双端保持一致的功能，那么游戏厂商会放弃苹果提供的某些功能，而是由游戏内直接实现。《原神》游戏的跨端成功，对于很多游戏公司来说也是一次学习和探索的机会，除了考虑移动端，还得兼顾 PC 、 Switch 端的发行可能。 GameKit 提供的独有功能优势将会变得更低。不过，对于一些轻度、休闲的游戏，且对双端功能不追求一致性，只是为了获得 iOS 侧更多用户的开发商来讲，还是非常有吸引力的。
 
    > 相关文章推荐
    >
