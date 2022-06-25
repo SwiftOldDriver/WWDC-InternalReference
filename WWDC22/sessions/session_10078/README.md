@@ -71,8 +71,12 @@ https://github.com/network-quality/server
 // networkQuality tool in macOS
 networkQuality -s -C https://myserver.example.com/config
 ```
+除了苹果提供的工具以外，还有很多类似的第三方/开源工具，一并介绍如下：
+![](./images/tools.png)
+它们都可以用来对网络质量进行检测和度量。
+
 ### 合理的缓冲配置
-在很多情况下，不合理或者说过大的缓冲配置会导致数据包在服务器侧形成巨大的缓冲队列，带来额外的延迟。苹果通过一个视频流媒体拖放的场景来对比了两种截然不同的配置下的表现：一种是相对过大的缓冲配置（TCP 4MB、TLS 256KB、HTTP 4MB），另外一种是苹果推荐的相对合理的经验配置（TCP 128KB、TLS 16KB、HTTP 256KB）。结合 macOS 中的网络质量检测工具的使用，我们可以很方便的定位到了该问题；所有最新发送的数据包都要等待缓冲的数据发送完毕，因此拖放的体验会非常差。相对应的，在 Apache Traffic Server （ATS）上的具体配置如下：
+在很多情况下，不合理或者说过大的缓冲配置会导致数据包在服务器侧形成巨大的缓冲队列，带来额外的延迟(这正是我们上面所说到的“缓冲膨胀”)。苹果通过一个视频流媒体拖放的场景来对比了两种截然不同的配置下的表现：一种是相对过大的缓冲配置（TCP 4MB、TLS 256KB、HTTP 4MB），另外一种是苹果推荐的相对合理的经验配置（TCP 128KB、TLS 16KB、HTTP 256KB）。在过大的缓冲配置下，视频流媒体拖动播放的体验很差，需要等待较长的时间，视频才可以被继续播放。通过结合 macOS 中的网络质量检测工具的使用，我们可以很方便的定位到该问题，我们能够发现数据包在服务器侧的积压；减小缓冲配置到合理的数值后，该问题得到了极大的改善。在 Apache Traffic Server （ATS）9.2 版本上改进后的具体配置如下：
 
 ```
 % cat /opt/ats/etc/trafficserver/records.config
@@ -96,15 +100,25 @@ CONFIG proxy.config.http2.default_buffer_water_mark INT  32768
 # http 256KB
 CONFIG proxy.config.http2.write_buffer_block_size   INT 262144
 ```
-在上面的配置中，我们启用了TCP_NODELAY / TCP_FASTOPEN / TCP_NOTSENT_LOWAT，并将TCP的缓存水位值设置在了128KB； 将动态 TLS 记录大小设置为启用；将HTTP2 的缓存大小设置为 256KB。 在其他的 web 服务器上也需要寻求等价的配置来进行设置即可。
-## L4S 最佳实践
+在上面的配置中，我们启用了TCPNODELAY / TCPFASTOPEN / TCPNOTSENTLOWAT，并将TCP的缓存水位值设置在了128KB； 将动态 TLS 记录大小设置为启用；将HTTP2 的缓存大小设置为 256KB。 在其他的 web 服务器上也需要寻求等价的配置来进行设置。值得一提的是，并非只有流媒体播放服务才会从该配置上获益；在其他类型的网络服务场景下我们依然可以进行尝试，并使用工具配合来做测试验证，以寻求一个相对最优的配置策略，为服务带来更好的体验。
 
+## 加速你的网络: L4S 最佳实践
+### L4S 介绍
+
+### 在屏幕共享应用中实践 L4S 
+
+### 启用 L4S, 测试应用兼容性
+![](./images/enablel4s.png)
 
 ## 总结
+回顾一下本文的内容，其实苹果最终是给了我们 3 个实用性极强的建议：  
+1. 尽可能使用现代网络协议，特别是 HTTP/3 和 QUIC；   
+2. 合理配置网络服务器上的缓存，消除服务器上不必要的排队；  
+3. 支持和测试 L4S 网络架构。
 
-这篇分享主要介绍了人像分割以及 Vision 框架在人物分析方面的新能力；其简单易用的 API、多框架支持的设计对开发者非常的友好。如果这篇文章给了你一些启发或是你脑子里有了一些新点子，那么还等什么？跟随毛子哥的脚步，赶紧去动手实践吧！
-
-
+![](./images/nextsteps.png)
+从现实角度而言，可能L4S离我们业务使用还有些遥远，但 HTTP 和 QUIC 协议的演进和发展已经是不争的事实，并且在很多头部互联网公司已经被广泛使用。仅仅需要更新和支持新的网络协议即可拿到相当大的业务收益，非常值得广大开发者们去探索和实践。  
+除了使用苹果的方案以外，基于 Cronet 来实现跨端的网络协议支持也成为一种技术选择，归根结底也是为了达到同样的目标-降低网络延迟，提升 App 的响应性。也希望广大的读者朋友就此方面的话题可以和我一起来进行交流和探讨，谢谢！
 ## 参考
 - [Apple - Reduce networking delays for a more responsive app](https://developer.apple.com/videos/play/wwdc2022/10078/)
 - [Apple - Reduce network delays for your app](https://developer.apple.com/videos/play/wwdc2021/10239/)
