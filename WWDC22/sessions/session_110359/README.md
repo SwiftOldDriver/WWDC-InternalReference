@@ -1,8 +1,12 @@
+---
+session_ids: [110359,110401]
+---
+
 # WWDC22 - Swift 包新特性之包插件初探
 
 ## 引言
 
-> 本文基于 WWDC22 [Session 10204](https://developer.apple.com/videos/play/wwdc2022/110359/) 梳理。  
+> 本文基于 WWDC22 [Session 10204](https://developer.apple.com/videos/play/wwdc2022/110359/) [Session 110401](https://developer.apple.com/videos/play/wwdc2022/110401/) 梳理。  
 
 ## Swift 包插件是什么？
 
