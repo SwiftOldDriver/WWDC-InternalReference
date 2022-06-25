@@ -44,7 +44,7 @@ Stage Manager 没有引入新的公开 API，开发者可以通过现有的 API 
 
 2. 打开一个新窗口时，如果被打开的窗口是浮动面板（floating panel)、或模态窗口（modal window）或其 `toolbarStyle` 的值为 `.preference`，Stage Manager 不会收起当前活跃的窗口。
 
-   > - 浮动特性由 `isFloatingPanel` 属性来控制。当面板（`NSPanel` 实例）`isFloatingPanel` 属性值为·`true` 时，会产生区别于普通面板的一系列的行为，具体细节可以查阅文档：[isFloatingPanel](https://developer.apple.com/documentation/appkit/nspanel/1531901-isfloatingpanel)。
+   > - 浮动特性由 `isFloatingPanel` 属性来控制。当面板（`NSPanel` 实例）`isFloatingPanel` 属性值为 `true` 时，会产生区别于普通面板的一系列的行为，具体细节可以查阅文档：[isFloatingPanel](https://developer.apple.com/documentation/appkit/nspanel/1531901-isfloatingpanel)。
    > - 对于面板（`NSPanel` 实例）和窗口（`NSWindow` 实例）的行为异同，可以查阅文档 [How Panels Work](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/WinPanel/Concepts/UsingPanels.html#//apple_ref/doc/uid/20000224)。
    > - `NSWindow.toolbarStyle` 在 macOS Big Sur 中被引入，用于适配新的 toolbar 样式，具体细节可参阅 [Session 10104 - Adopt the new look of macOS](https://developer.apple.com/videos/play/wwdc2020/10104)。
 
