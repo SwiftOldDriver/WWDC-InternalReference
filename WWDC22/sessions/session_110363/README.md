@@ -8,26 +8,24 @@ session_ids: [110363]
 
 <!--待插入思维导图-->
 
-
-
 ## 前言
 
 作为 `iOS` 开发者，我们每天都会与 `Swift` 或 `Objective-C` 打交道。在编写完代码之后，我们需要通过 `Xcode` 进行编译，然后运行在真机或者模拟器上面。这一看似习以为常的操作依赖于编译器和 `Swift` 或 `Objective-C` 的运行时。
 
-今年 `Apple` 在 `Swfit` 和 `Objective-C` 的编译器和运行时上面做了许多优化和调整，使得基于 `Xcode 14` 开发或者以 `iOS 16,tvOS 16,watchOS 9` 为最低支持版本的 `App` 可以获得包大小的优化和 `Runtime` 性能的提升。值得一提的是，本文不会有新的 `API`，也不会涉及语法变动和新的 `Xcode Build Setting`。 
+今年 `Apple` 在 `Swfit` 和 `Objective-C` 的编译器和运行时上面做了许多优化和调整，使得基于 `Xcode 14` 开发或者以 `iOS 16,tvOS 16,watchOS 9` 为最低支持版本的 `App` 可以获得包大小的优化和 `Runtime` 性能的提升。值得一提的是，本文不会有新的 `API`，也不会涉及语法变动和新的 `Xcode Build Setting`。
 
 > 注：对于 Runtime 感兴趣的读者可以查阅下方的文档。
-> 
+>
 > [Objective-C Runtime 官方文档](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Introduction/Introduction.html?language=objc#//apple_ref/doc/uid/TP40008048)
-> 
+>
 > [Swift Runtime 官方文档](https://github.com/apple/swift/blob/main/docs/Runtime.md)
 
 今年在编译器和运行时带来的优化包括以下四个方面
 
-* `Swift` 协议检查
-* `Objective-C` 消息发送
-* `Retain` 和 `Release` 调用
-* `Autorelease` 自动省略
+- `Swift` 协议检查
+- `Objective-C` 消息发送
+- `Retain` 和 `Release` 调用
+- `Autorelease` 自动省略
 
 这些优化不需要修改你的代码，因为 `Apple` 做出的改动对于开发者来说是不可见的，你几乎不需要付出任何成本就可以获得这些优化。
 
@@ -63,7 +61,7 @@ func log(value: Any) {
 struct Event: CustomLoggable {
     var name: String
     var date: Date
-    
+
     var customLogString: String {
         return "\(self.name), on \(self.date)"
     }
@@ -83,12 +81,25 @@ log(value: event)
 
 上面代码中对于 `CustomLoggable` 协议的检查，编译器会尽可能在编译时优化掉。但编译器并不总是有足够的上下文信息来完成这项优化。因此，借助于在编译时计算出的协议检查「元数据」，协议的遵循性检查常常发生在运行时。有了「元数据」之后，运行时就知道特定对象是否真正遵循了 `CustomLoggable` 协议。
 
-协议检查的「元数据」一部分是在编译时产生的，但是相当大的一部分只能在 `App` 启动时得到，特别是使用**泛型**的时候。
+![MetaData in Runtime](./images/pic1.png)
 
+协议检查的「元数据」一部分是在编译时产生的，但是相当大的一部分只能在 `App` 启动时得到，特别是使用**泛型**的时候。
 
 ### Swift 协议检查存在的问题
 
+由于需要在 `App` 启动时去产出协议检查所需的 「元数据」，当代码中大量使用了协议之后，对启动时间的影响将不再是微乎其微，而是客观的数百毫秒。在真实世界的 `App` 中，产出「元数据」的耗时甚至会占到启动时间的一半。
+
 ### Swift 协议检查优化方案
+
+那么问题来了，我们能不能提前计算好这些「元数据」呢？
+
+答案是可以的，基于 `Swift` 新的运行时，协议检查所需的「元数据」会在启动时用到的所有动态库加载之前，作为 `dyld` 启动闭包的一部分去提前计算出来。
+
+> 关于 `dyld` 和启动闭包，感兴趣的读者可以参考 [Staic linking vs dyld3](https://blog.allegro.tech/2018/05/Static-linking-vs-dyld3.html)
+>
+> 同时，`Apple` 也有关于启动优化的专题 `Session` - [WWDC17 - App Startup Time: Past, Present and Future](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwj3ro6fgsn4AhWESGwGHfQEBMEQtwJ6BAgGEAI&url=https%3A%2F%2Fdeveloper.apple.com%2Fvideos%2Fplay%2Fwwdc2017%2F413&usg=AOvVaw0Kw9oW-BQQbgrxhPswQhrJ) (如果链接失效，可以下载 [WWDC App for macOS](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiw-NmHg8n4AhWrS2wGHXS2DCsQFnoECAcQAQ&url=https%3A%2F%2Fgithub.com%2Finsidegui%2FWWDC&usg=AOvVaw0BMsc4CmRW7ZlIdreuaFRA) 后搜索关键字观看) 
+
+最重要的是，这项优化不需要升级工程的最低部署版本，只需要 `App` 运行在 `iOS 16`、`tvOS 16` 或者是 `watchOS 9` 上就可以享受到 `Swift` 协议检查的优化，进而提升你的 `App` 启动速度。
 
 ## Objective-C 消息发送
 
@@ -113,4 +124,3 @@ log(value: event)
 ### Autorelease 自动省略优化方案
 
 ## 总结
-
