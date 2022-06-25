@@ -6,7 +6,7 @@ session_ids: [110345]
 
 > 作者：抛瓦，坐标北京，iOS 挖掘机
 >
-> 审核：苹果 API 搬运工，爱写文章的 ARKit 开发者。专栏[《ARKit 与计算几何》](https://xiaozhuanlan.com/computationalgeometry)，[《Metal Shader 快速使用入门》](https://xiaozhuanlan.com/metalforbeginner)
+> 审核：Damien
 
 首先简单介绍下端点安全，端点安全是由 Apple 提供，可以让开发者为 Mac 搭建安全产品。端点安全使用 C 语言编写，为第三方杀毒软件，端点检测与响应以及防治数据泄漏提供了安全事件流。 Apple 首次在 macOS Catalina 中介绍了端点安全，替代了之前的 KAuth ，MACF 以及 OpenBSM 数据轨迹。
 
