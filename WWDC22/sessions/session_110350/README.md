@@ -366,7 +366,7 @@ actor ParallelCompressor {
         status.update(url: url, compressedSize: compressedSize)
       }
     }
-    // 对 log 需要访问需要 actor 保护 
+    // 对 log 的访问需要 actor 保护 
     log(update: "Ending for \(url)")
     return compressedData
   }
@@ -382,7 +382,11 @@ actor ParallelCompressor {
 ![](./images/actor_contention4.png)
 ![](./images/actor_contention_5.png)
 
-那么这在代码上该怎么实现呢？我们可以给 `CompressFile` 方法加上 `nonisolated` 的关键字，表示它虽然在 `Actor` 里，但它可以被并发地访问，同时这个方法里，我们原先对 `Actor` 的 `logs` 属性的同步访问，需要修改成异步访问 （加上 `await` 关键字），因为这期间需要切换隔离域。最后我们在创建异步任务的时候，把 `Task {}` 换成 `Task.detached{}`，这样做可以让创建出来的任务不继承创建它的那个 `Actor` 的上下文。
+那么这在代码上该怎么实现呢？我们可以给 `CompressFile` 方法加上 `nonisolated` 的关键字，表示它虽然在 `Actor` 里，但它可以被并发地访问.
+
+同时这个方法里，我们原先对 `Actor` 的 `logs` 属性的同步访问，需要修改成异步访问 （加上 `await` 关键字），因为这期间需要切换隔离域。
+
+最后我们在创建异步任务的时候，把 `Task {}` 换成 `Task.detached{}`，这样做可以让创建出来的任务不继承创建它的那个 `Actor` 的上下文。
 
 ```Swift
 // actor ParallelCompressor
@@ -457,7 +461,7 @@ func compressAllFiles() {
 
 - 值得注意的是，使用 `continuation` 回调时，有以下的要求：`continuation.resume()` 应该只被调用一次，不能多也不能少。其他形式的异步代码，比如 GCD 的回调`block`虽然通常也是只有一次，但是我们无法保证它一定会被回调，也无法保证它只被回调一次。然而在 Swift 并发中，这被强制地执行，如果`continuation`被`resume`两次，App 会直接 Crash，如果少于一次，则这个任务会永远被暂停在这，无法继续往下执行，会存在泄漏的问题。
 
-- Swift 提供了两种桥接 API，**`withCheckedContinuation`**和 **`withUnSafeContinuation`**，前者会帮你检查 continuation 误用的问题，所以除非为了性能考虑，尽可能地使用前者。
+- Swift 提供了两种桥接 API，**`withCheckedContinuation`** 和 **`withUnSafeContinuation`**，前者会帮你检查 continuation 误用的问题，所以除非为了性能考虑，尽可能地使用前者。
 
 ```Swift
 await withCheckedContinuation { continuation in
