@@ -103,6 +103,11 @@ Night Sky 是一款宇宙探索软件，它惊艳的 3D 效果获得了多次 We
 
 值得一提的是，现在 iPad 是直接支持用键鼠操作的，苹果更加建议你在 iPad 上实现对键鼠的支持，这样移植到 Mac 上的体验将是完美的。
 
+想要了解更多的话，可以观看往期的 Session：
+
+- [Support hardware keyboards in your app](https://developer.apple.com/videos/play/wwdc2020/10109/)
+- [Handle trackpad and mouse input](https://developer.apple.com/videos/play/wwdc2020/10094/)
+
 ### 使用 Mac Catalyst
 
 更进一步的迁移方式是本文的主角： Mac Catalyst
@@ -120,8 +125,8 @@ Mac Catalyst 分为两种适配模式：
 iPad idiom 下，需要你做的适配工作是很少的，甚至可以一行代码都不改。
 当然，这是有代价的：
 
-1. 视图和文字在 Mac 上会被缩放到 77%，因此导致了[像素不对齐](https://jplay.github.io/2022/05/26/%25E4%25B8%25AD%25E7%259A%2584%25E5%2583%258F%25E7%25B4%25A0%25E5%25AF%25B9%25E9%25BD%2590/)，所以变得模糊。
-2. 控件是直接从 iOS 搬到 macOS 上的，某些情况下显得体验不佳。比如，UINavigationbar 在 Mac 上显得格格不入。
+- 视图和文字在 Mac 上会被缩放到 77%，因此导致了[像素不对齐](https://jplay.github.io/2022/05/26/%25E4%25B8%25AD%25E7%259A%2584%25E5%2583%258F%25E7%25B4%25A0%25E5%25AF%25B9%25E9%25BD%2590/)，所以变得模糊。
+- 控件是直接从 iOS 搬到 macOS 上的，某些情况下显得体验不佳。比如，UINavigationbar 在 Mac 上显得格格不入。
 
 ![navigationbarFix](./images/navigationbarFix.png)
 
@@ -131,4 +136,98 @@ iPad idiom 下，需要你做的适配工作是很少的，甚至可以一行代
 
 ![macIdiom](./images/macIdiom.png)
 
-在 asda
+在 Mac idiom 下，你的应用将变得更加贴合 Mac 的交互体验：
+
+- 视图和文字不再被缩放，所有内容将 1:1 还原
+- 一些控件将自动被 "Mac 化"
+
+我们基于同一个应用在两种模式下的对比来说明：
+
+![idiomCompare](./images/idiomCompare.png)
+
+- iPad idiom 的文字明显小于 Mac idiom 的文字
+- iPad idiom 的 UINavigationBar 在 Mac idiom 下自动变成了 NSToolbar，这明显更贴合 Mac 的交互体验
+
+诸如此类的细节还有很多，详细信息可以查看[官方文档](https://developer.apple.com/design/human-interface-guidelines/technologies/mac-catalyst/introduction)。
+
+## 新增接口
+
+接下来，让我们看看在 iOS 16 & macOS Ventura 中新增了哪些属于 Mac Catalyst 的接口。
+
+### 窗口相关
+
+假设我们要实现一个小窗口，用来展示 markdown 的语法提示：
+
+![demo](./images/demo.png)
+
+我们需要窗口实现几个功能：
+
+1. 左上角的交通灯按钮只保留红色关闭按钮
+2. 指定窗口大小
+3. 窗口大小不可调整
+
+> 在 macOS 中，应用左上角的三个控制按钮被称为 "交通灯"，因为他们的颜色和现实中的交通信号灯一样：红色代表关闭，黄色代表最小化，绿色代表全屏最大化。
+
+我们来简单实现一下：
+
+~~~ Swift
+func scene(_ scene: UIScene,
+           willConnectTo session: UISceneSession,
+           options connectionOptions: UIScene.ConnectionOptions) {
+        
+    guard let windowScene = (scene as? UIWindowScene) else { return }
+        
+    #if targetEnvironment(macCatalyst)
+        
+    // 设置窗口大小
+    let currentFrame = windowScene.effectiveGeometry.systemFrame
+    let newFrame = CGRect(origin: currentFrame.origin, 
+                          size: CGSize(width: 320, height: 480))
+    let geometryRequest = UIWindowScene.MacGeometryPreferences(systemFrame:newFrame)
+    windowScene.requestGeometryUpdate(geometryRequest){ error in
+        // Handle error
+    }
+        
+    // 控制交通灯按钮
+    windowScene.windowingBehaviors?.isMiniaturizable = false
+    windowScene.sizeRestrictions?.allowsFullScreen = false
+        
+    #endif
+}
+~~~
+
+讲解一下代码：
+
+1. 首先从 `windowScene.effectiveGeometry.systemFrame` 获得窗口 frame 赋值给 currentFrame
+2. 根据 currentFrame.origin 和指定的大小 320 * 480，设置 newFrame
+3. 接着通过 `windowScene.requestGeometryUpdate` 提交尺寸更新
+4. 再通过设置 `windowScene.windowingBehaviors?.isMiniaturizable = false` 来禁用最小化按钮
+5. 最后通过 `windowScene.sizeRestrictions?.allowsFullScreen = false` 来禁用全屏按钮
+
+在我们实现这个小需求的时候，我们有两个值得注意的细节：
+
+1. 在我们指定尺寸的时候，单位是点。如果是 Mac idiom，那就是 AppKit 中一比一的 320 * 480 点；如果是 iPad idiom，那会在此基础上缩放至 77%
+2. 原点在主屏幕的左上角。如果你有多个屏幕，那么顶部菜单栏被激活的就是主屏幕。
+
+再来关注一下剩余的关于窗口的接口：
+
+~~~ Swift
+// 禁用红色按钮
+windowScene.windowingBehaviors?.isClosable = false
+        
+// 禁用黄色按钮
+windowScene.windowingBehaviors?.isMiniaturizable = false
+        
+// 禁用绿色按钮，方式一
+windowScene.sizeRestrictions?.allowsFullScreen = false
+        
+// 禁用绿色按钮，方式二
+let fixedSzie = CGSize(width: 100, height: 100)
+windowScene.sizeRestrictions?.minimumSize = fixedSzie
+windowScene.sizeRestrictions?.maximumSize = fixedSzie
+        
+// 判断是否处于全屏
+if windowScene.isFullScreen { /* ... */ }
+~~~
+
+以上代码所见即所得，唯一值得一提的是：把最大尺寸和最小尺寸设置为同一个值也能禁用绿色按钮（方式二）。
