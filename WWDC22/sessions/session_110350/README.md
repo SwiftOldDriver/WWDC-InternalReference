@@ -457,7 +457,7 @@ func compressAllFiles() {
 
 - 值得注意的是，使用 `continuation` 回调时，有以下的要求：`continuation.resume()` 应该只被调用一次，不能多也不能少。其他形式的异步代码，比如 GCD 的回调`block`虽然通常也是只有一次，但是我们无法保证它一定会被回调，也无法保证它只被回调一次。然而在 Swift 并发中，这被强制地执行，如果`continuation`被`resume`两次，App 会直接 Crash，如果少于一次，则这个任务会永远被暂停在这，无法继续往下执行，会存在泄漏的问题。
 
-- Swift 提供了两种桥接 API，**`withCheckedContinuation`**和 **`withUnSafeContinuation`**，前者会帮你检查 continuation 误用的问题，所以除非为了性能考虑，尽可能地使用前者。
+- Swift 提供了两种桥接 API，**`withCheckedContinuation`** 和 **`withUnSafeContinuation`**，前者会帮你检查 continuation 误用的问题，所以除非为了性能考虑，尽可能地使用前者。
 
 ```Swift
 await withCheckedContinuation { continuation in
