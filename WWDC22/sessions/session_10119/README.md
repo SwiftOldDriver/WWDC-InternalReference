@@ -4,9 +4,11 @@ session_ids: [10119]
 
 # WWDC22 - Optimize your use of Core Data and CloudKit / 优化 CoreData & CloudKit 实现
 
-> 作者：Ryukie，在广州搬砖，iOS 独立开发者，[GitHub](https://github.com/RyukieSama)。
+> 作者：Ryukie，在广州搬砖的 iOS 独立开发者，[GitHub](https://github.com/RyukieSama)，公众号/掘金等：LabLawliet。
 
 ## 前言
+
+![](images/overview.png)
 
 作为一名 iOS 独立开发者，开发了多个个人项目，`CloudKit` 是我构建项目体系的核心。本 Session 旨在通过单元测试、Instruments、日志收集三方面，覆盖开发流程的三个重要方面：`探索`、`分析`与`反馈`，帮助开发者优化 `CoreData & CloudKit` 方案实现，做出更好的产品。同时了解到 `CloudKit` 的同步流程与相关系统服务。
 
