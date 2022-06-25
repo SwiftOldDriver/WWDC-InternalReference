@@ -121,7 +121,7 @@ func endOfRound(players: [Player]) async throws {
 
 ### 其他优化
 
-苹果还把和 Swift 5.5 一起发布的用于处理 AsyncSequence 的开源算法打成包提供给开发者，使得跨平台部署更加灵活。如果想要了解更多可以参考 [Meet Swift Async Algorithms](https://developer.apple.com/videos/play/wwdc2022/110355/)。
+苹果还把和 Swift 5.5 一起发布的用于处理 AsyncSequence 的算法开源提供给开发者，使得跨平台部署更加灵活。如果想要了解更多可以参考 [Meet Swift Async Algorithms](https://developer.apple.com/videos/play/wwdc2022/110355/)。
 
 为了提高并发性能，苹果也对 actor 进行了优化，actor 首先会执行优先级最高的任务。同时并发模型内置了防止优先级反转的机制，来确保低优先级任务不会阻塞高优先级任务。
 
