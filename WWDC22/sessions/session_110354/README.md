@@ -243,7 +243,7 @@ func mergeMailmaps(_ a: any Mailmap, _ b: any Mailmap) -> any Mailmap {
 }
 ```
 
-在之前 copy.mergeEntries(from: b) 这行代码会报错，因为它试图将容器传递给接收参数为实例的方法，但是现在在这种场景 Swift 支持自动拆箱，所以不会再有报错。另外在以前，使用了 Self 或者有关联类型的协议只能作为泛型约束，比如 Equatable，现在在 Swift 5.7 也可以作为 any type 来使用了。
+在之前 `copy.mergeEntries(from: b)` 这行代码会报错，因为它试图将容器传递给接收参数为实例的方法，但是现在在这种场景 Swift 支持自动拆箱，所以不会再有报错。另外在以前，使用了 Self 或者有关联类型的协议只能作为泛型约束，比如 Equatable，现在在 Swift 5.7 也可以作为 any type 来使用了。
 
 关键字 any 也支持复杂协议，比如 Collection，作用和 AnyCollection 相同，但是 AnyCollection 有部分功能是 any 目前还不能支持的。
 
