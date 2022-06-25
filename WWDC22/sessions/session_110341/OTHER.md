@@ -12,4 +12,4 @@ Chensh , iOS 独立开发者。
 
 ## 公众号/小专栏图文头图
 
-![](./images/message_filter_phase.png)
+![](./images/session_110341_banner.png)
