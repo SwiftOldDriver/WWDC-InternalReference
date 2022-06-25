@@ -15,7 +15,9 @@ session_ids: [10043]
 
 ## App Store Connect 新特性
 
-App Store Connect 作为苹果提供给开发者用来管理 App 信息、提交审核、查看 App 数据等功能平台，一直都是应用开发最重要的交付流程。本次 WDCC22 中苹果对 App Store Connect 做了不少的完善改进，我们来看看吧。
+App Store Connect 作为苹果提供给开发者用来管理 App 信息、提交审核、查看 App 数据等功能平台，一直都是应用开发最重要的交付流程。本次 WDCC22 中苹果对 App Store Connect 做了不少的完善和改进，我们一起来看看吧。
+
+![36](images/36.jpg)
 
 本次 App Store Connect 的更新主要有以下几点：
 
@@ -62,7 +64,7 @@ App Store Connect 作为苹果提供给开发者用来管理 App 信息、提交
 
 ### App Store Connect 中的 App Review 提交页面
 
-在更新后的 App Store Connect 程序里，我们可以打开对应的 App Review 界面来进行审查的提交了。不仅如此，我们还可以查看审查的进度、编辑组提交里的项目、查看被拒绝的原因、回复 App Review ，如下图所示。这些功能可以在 iPadOS 和 iOS 平台上使用，因此这样的新功能使得我们可以在离开电脑时使用移动端快速进行审查的查看和响应，也算是一个较大地改进了。
+在本次更新里，苹果对 App Review 的移动端场景做了进一步的优化，我们可以在 App Store Connect 程序里打开对应的 App Review 界面来进行审查的提交了。不仅如此，我们还可以在界面里查看审查的进度、编辑组提交里的项目、查看被拒绝的原因、回复 App Review ，如下图所示。这些功能可以在 iPadOS 和 iOS 平台上使用，因此这样的新功能使得我们可以在离开电脑时使用移动端快速进行审查的查看和响应，也算是一个较大地改进了。
 
 ![31](images/31.jpg)
 
