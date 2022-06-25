@@ -1,8 +1,6 @@
-ps. 这里补充其他信息。请严格按照以下格式填写。
-
 ## 个人介绍
 
-zddhub(张东东)，iOS 开发，开源爱好者。
+zddhub(张东东)，iOS 开发，开源爱好者, 个人博客地址 [zddhub.com](https://zddhub.com/)。
 
 ## 审核介绍
 
