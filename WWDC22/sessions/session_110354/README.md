@@ -139,9 +139,7 @@ if let workingDirectoryMailmapURL = workingDirectoryMailmapURL {
 
 ```Swift
 if let workingDirectoryMailmapURL {
-  
     mailmapLines = try String(contentsOf: workingDirectoryMailmapURL).split(separator: "\n")
-
 }
 
 guard let workingDirectoryMailmapURL else { return }
