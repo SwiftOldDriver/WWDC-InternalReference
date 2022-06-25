@@ -135,9 +135,7 @@ func endOfRound(players: [Player]) async throws {
 
 ```Swift
 if let workingDirectoryMailmapURL = workingDirectoryMailmapURL {
-
     mailmapLines = try String(contentsOf: workingDirectoryMailmapURL).split(separator: "\n")
-    
 }
 ```
 
