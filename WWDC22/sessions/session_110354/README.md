@@ -159,9 +159,7 @@ mailmapLines = try String(contentsOf: workingDirectoryMailmapURL).split(separato
 
 ```Swift
 let entries = mailmapLines.compactMap { line in
-
     try? parseLine(line)
-
 }
 
 func parseLine(_ line: Substring) throws -> MailmapEntry { … }
