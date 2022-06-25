@@ -1,3 +1,6 @@
+---
+session_ids: [110429]
+---
 #WWDC22 - Discover advancements in iOS camera capture: Depth, focus, and multitasking
 
 > 摘要：本 session 主要是 iPhone 相机模块有关的新 feature 介绍，包括 AVFoundation 支持新的深度相机类型、更智能的人脸驱动 AF/AE、相机视频流的优化以及相机支持多任务处理等更新内容。
