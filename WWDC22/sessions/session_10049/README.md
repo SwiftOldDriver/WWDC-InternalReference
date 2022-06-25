@@ -34,7 +34,7 @@ session_ids: [10049]
 - [探索 WKWebView 新增功能](https://xiaozhuanlan.com/topic/1352486079)，介绍了 UIWebView、WKWebView、SFSafariViewController 的使用方式，以及 iOS 15 中新增的功能。
 
 综合往期 WKWebView 的更新，绘制了以下更新的图示（包含本文新增的功能）：
-![WKWebView发展历程图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.6/img/wwdc_session_10049/session_10049_27.png)
+![WKWebView发展历程图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.9/img/wwdc_session_10049/session_10049_27.png)
 
 ## WKWebView 的新功能
 
@@ -138,7 +138,7 @@ webView.loadHTMLString(htmlString, baseURL: Bundle.main.resourceURL)
 
 > **使用场景**
 > 1、应用于 App 中通过 H5 上传图片的功能，便于核对信息的准确性；
-> 2、Fullacreen 结合 canvas 应用到 H5 页面游戏中，提升用户游戏体验。
+> 2、Fullscreen 结合 canvas 应用到 H5 页面游戏中，提升用户游戏体验。
 
 ### 新增 CSS 视口单位（CSS viewport units）
 
