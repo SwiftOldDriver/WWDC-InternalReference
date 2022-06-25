@@ -62,39 +62,11 @@ App Store Connect 作为苹果提供给开发者用来管理 App 信息、提交
 
 ### pp Store Connect 中的 App Review 提交页面
 
-在更新后的 App Store Connect 程序里，我们可以打开对应的 App Review 界面来进行审查的提交了。不仅如此，我们还可以查看审查的进度、编辑组提交里的项目、查看被拒绝的原因、回复 App Review 。这些功能可以在 iPadOS 和 iOS 平台上使用，因此这样的新功能使得我们可以在离开电脑时使用移动端快速进行审查的查看和响应，也算是一个较大地改进了。
+在更新后的 App Store Connect 程序里，我们可以打开对应的 App Review 界面来进行审查的提交了。不仅如此，我们还可以查看审查的进度、编辑组提交里的项目、查看被拒绝的原因、回复 App Review ，如下图所示。这些功能可以在 iPadOS 和 iOS 平台上使用，因此这样的新功能使得我们可以在离开电脑时使用移动端快速进行审查的查看和响应，也算是一个较大地改进了。
 
- <center>
-    <img style="border-radius: 0.3125em;
-    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
-    src="https://cdn.jsdelivr.net/gh/chenjiamin1130/md_imgs/img/8.png" width = "70%" alt=""/>
-    <br>
-    <div style="color:orange; 
-    display: inline-block;
-    color: #999;
-    padding: 2px;">
-      审查提交页面
-  	</div>
-</center>
+![31](images/31.jpg)
 
- <center>
-    <img style="border-radius: 0.3125em;
-    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
-    src="https://cdn.jsdelivr.net/gh/chenjiamin1130/md_imgs/img/9.png" width = "20%" alt=""/>
-    <img style="border-radius: 0.3125em;
-    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
-    src="https://cdn.jsdelivr.net/gh/chenjiamin1130/md_imgs/img/10.png" width = "20%" alt=""/>
-    <img style="border-radius: 0.3125em;
-    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
-    src="https://cdn.jsdelivr.net/gh/chenjiamin1130/md_imgs/img/11.png" width = "20%" alt=""/>
-    <br>
-    <div style="color:orange; 
-    display: inline-block;
-    color: #999;
-    padding: 2px;">
-      提交详情页面及回复页面
-  	</div>
-</center>
+![32](images/32.jpg)
 
 ## App Store Connect API 更新
 
@@ -124,7 +96,7 @@ App Store Connect 作为苹果提供给开发者用来管理 App 信息、提交
 
 2. 盈利方式，如免费、免费增值、付费、订阅等，由于不同盈利方式的应用的质量和预期效果会有区别，因此盈利方式也被纳入了构建对比组的考虑中。
 
-其次，在隐私方面，苹果采用了一种叫做差异隐私的技术来进行信息的聚合，在每个对比组里会添加少量的噪音，并保证组内的应用程序个数足够多，在这样的操作下，数据集内的噪音就能掩盖对比组的确切组成，因此开发者就不能知道一个特定的应用到底在不在当前的对比组中，同时也不会破坏组内数据的相关性，提供对比信息。
+其次，在隐私方面，苹果采用了一种叫做差异隐私的技术来进行信息的聚合，在每个对比组里会添加少量的噪音，并保证组内的应用程序个数足够多，在这样的操作下，数据集内的噪音就能掩盖对比组的确切组成，因此开发者就不能知道一个特定的应用到底在不在当前的对比组中，同时也不会破坏组内数据的相关性，提供对比信息。感兴趣的同学们可以看看这篇苹果的论文，里面有对这个[差异隐私 Differential Privacy](https://machinelearning.apple.com/research/learning-with-privacy-at-scale) 技术的详细讲解，包括原理推导和应用例子。
 
 ![15](https://cdn.jsdelivr.net/gh/chenjiamin1130/md_imgs/img/15.png)
 
@@ -278,21 +250,7 @@ if let appStoreReceiptURL = Bundle.main.appStoreReceiptURL,
 
 ![23](https://cdn.jsdelivr.net/gh/chenjiamin1130/md_imgs/img/23.png)
 
-<center>
-    <img style="border-radius: 0.3125em;
-    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
-    src="https://cdn.jsdelivr.net/gh/chenjiamin1130/md_imgs/img/24.png" width = "30%" alt=""/>
-    <img style="border-radius: 0.3125em;
-    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
-    src="https://cdn.jsdelivr.net/gh/chenjiamin1130/md_imgs/img/25.png" width = "30%" alt=""/>
-    <br>
-    <div style="color:orange; 
-    display: inline-block;
-    color: #999;
-    padding: 2px;">
-      全新用户打开 App 后的欢迎页 以及 点击跳转商店后展示的购买页面
-  	</div>
-</center>
+![33](images/33.jpg)
 
 * 若检测到当前用户已有购买订单，那么用户打开应用后就能看到他们购买产品的信息，并用一个绿色的已勾选复选框来表明应用程序已确认这些购买成功，并已启用了它们。
 
@@ -302,21 +260,7 @@ if let appStoreReceiptURL = Bundle.main.appStoreReceiptURL,
 
 ![28](https://cdn.jsdelivr.net/gh/chenjiamin1130/md_imgs/img/28.png)
 
-<center>
-    <img style="border-radius: 0.3125em;
-    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
-    src="https://cdn.jsdelivr.net/gh/chenjiamin1130/md_imgs/img/29.png" width = "30%" alt=""/>
-    <img style="border-radius: 0.3125em;
-    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
-    src="https://cdn.jsdelivr.net/gh/chenjiamin1130/md_imgs/img/30.png" width = "30%" alt=""/>
-    <br>
-    <div style="color:orange; 
-    display: inline-block;
-    color: #999;
-    padding: 2px;">
-      已购买用户打开 App 后的欢迎页 以及 点击跳转商店后展示的购买页面
-  	</div>
-</center>
+![34](images/34.jpg)
 
 * 最后，对于已购买但当前订单已失效的用户，我们可以在启动页展示恢复购买的按钮，并展示对应的促销优惠信息，吸引用户进行点击购买。
 
