@@ -12,7 +12,7 @@ session_ids: [10049]
 
 针对 WKWebView 的介绍，这里就简单说明下，WKWebView 是 iOS 8 中新增的用于展示 H5 的 UI 控件，在 iOS 12 中全面推广用于替代 UIWebView。UIWebView 与 WKWebView 的架构上最大的区别是：UIWebView 的方法是`同步`的，而 WKWebView 的方法是`异步`的，所以相比而言 WKWebView 加载网页的性能是远优于 UIWebView 的。
 
-这里简单说下为什么是「同步」和「异步」的。首先需要了解什么是`跨进程通信`（Inter-Process Communication，IPC）。IPC 是多线程协作的基础，一般来说，IPC 至少需要 2 个进程参与，根据信息流动的方向，被称为`发送者`和`接受者`。在实际应用中，IPC 常被用于服务调用，而参与 IPC 的被称为调用者（客户端）和被调用者（服务端），如下所示
+这里简单说下为什么是「同步」和「异步」的。首先需要了解什么是`跨进程通信`（Inter-Process Communication，IPC）。IPC 是指两个进程的数据之间的交互，一般来说，IPC 至少需要 2 个进程参与，根据信息流动的方向，被称为`发送者`和`接受者`。在实际应用中，IPC 常被用于服务调用，而参与 IPC 的被称为调用者（客户端）和被调用者（服务端），如下所示
 ![简单的 IPC 图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.3/img/wwdc_session_10049/session_10049_25.jpg)
 
 多进程协作主要有以下优点：
