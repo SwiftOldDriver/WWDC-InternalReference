@@ -4,7 +4,7 @@
 
 ## 审核介绍
 
-// TODO: ...
+士土Edmond木, 对 CocoaPods 有一点了解，目前对 Bazel 和 Swift 比较感兴趣。[#Github Page](https://looseyi.github.io)
 
 ## 文章简介
 
