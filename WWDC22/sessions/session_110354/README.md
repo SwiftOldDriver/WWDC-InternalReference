@@ -80,7 +80,9 @@ let package = Package(
 
 苹果重构了泛型系统中根据 Protocol 和 where 分句推导方法签名的部分。在重构前，随着涉及 Protocol 数量的增加，编译期类型检查的时间会呈现指数级增长；重构后编译期类型检查时间大幅减少。
 
-Swift 5.7 之前，iOS App 启动时进行类型检查大概需要 4s 左右。每次 App 启动都要重新进行类型检查计算，这导致协议越多，耗时就越久。Swift 5.7 会对计算结果进行缓存，可以提高运行时类型检查的性能，缩短 App 启动时长。如果想要了解更多可以参考 [Improve app size and runtime performance](https://developer.apple.com/videos/play/wwdc2022/110363/)。
+### 协议一致性检查性能
+
+Swift 5.7 之前，iOS App 启动时进行协议一致性检查大概需要 4s 左右。每次 App 启动都要重新进行协议一致性检查，这导致协议越多，耗时就越久。Swift 5.7 会对计算结果进行缓存，可以提高运行时协议一致性检查的性能，缩短 App 启动时长。如果想要了解更多可以参考 [Improve app size and runtime performance](https://developer.apple.com/videos/play/wwdc2022/110363/)。
 
 ## Swift 并发模型
 
@@ -133,6 +135,8 @@ func endOfRound(players: [Player]) async throws {
 
 ```Swift
 if let workingDirectoryMailmapURL = workingDirectoryMailmapURL {
+
+    mailmapLines = try String(contentsOf: workingDirectoryMailmapURL).split(separator: "\n")
     
 }
 ```
@@ -141,21 +145,62 @@ if let workingDirectoryMailmapURL = workingDirectoryMailmapURL {
 
 ```Swift
 if let workingDirectoryMailmapURL {
-    
+  
+    mailmapLines = try String(contentsOf: workingDirectoryMailmapURL).split(separator: "\n")
+
 }
+
+guard let workingDirectoryMailmapURL else { return }
+
+mailmapLines = try String(contentsOf: workingDirectoryMailmapURL).split(separator: "\n")
 ```
 
 ### 返回类型推断
 
-之前当分句只有一行返回代码时，返回类型推断才可以成功；而现在即使分句有多行代码或者控制流，返回类型推断也可以成功，不用再手动声明返回类型。
+之前当分句只有一行返回代码时，返回类型推断才可以成功。
+
+```Swift
+let entries = mailmapLines.compactMap { line in
+
+    try? parseLine(line)
+
+}
+
+func parseLine(_ line: Substring) throws -> MailmapEntry { … }
+```
+
+而现在即使分句有多行代码或者控制流，返回类型推断也可以成功，不用再手动声明返回类型。
+
+```Swift
+let entries = mailmapLines.compactMap { line in
+    do {        
+        return try parseLine(line)
+    }
+    catch {
+        logger.warn("Mailmap error: \(error)")
+        return nil
+    }
+}
+
+
+func parseLine(_ line: Substring) throws -> MailmapEntry { … }
+```
 
 ### 允许指针类型转换
 
-Swift 注重类型和内存安全，不支持自动将不同类型的指针进行转换，和 C 语言十分不同，这导致在 Swift 代码中调用 C 语言 API 时，可能会产生一些问题。所以针对从外部引入的方法和函数，Swift 支持在 C 语言中合法的指针类型转换。
+Swift 注重类型和内存安全，不支持自动将不同类型的指针进行转换，和 C 语言十分不同，这导致在 Swift 代码中调用 C 语言 API 时，可能会产生一些问题。所以针对从外部引入的方法和函数，Swift 支持在 C 语言中合法的指针类型转换，以下情况将不会再有报错。
+
+![pointer](./images/pointer.jpg)
 
 ### Swift Regex
 
-Swift 5.7 支持了正则表达式。但是正则表达式的语法太过精简，即使经验丰富的开发者也可能需要一定时间才能理解一个复杂的正则表达式。所以 Swift 提供了 RegexBuilder 库，来支持编写可读性更强的正则表达式。Swift Regex 支持在 macOS 13、iOS 16、tvOS 16 和 watchOS 9 以上系统使用。如果想要了解更多可以参考 [Meet Swift Regex](https://developer.apple.com/videos/play/wwdc2022/110357/) 和 [Swift Regex: Beyond the basics](https://developer.apple.com/videos/play/wwdc2022/110358/)。
+Swift 5.7 支持了正则表达式。但是正则表达式的语法太过精简，即使经验丰富的开发者也可能需要一定时间才能理解一个复杂的正则表达式。
+
+```Swift
+let regex = /\h*([^<#]+?)??\h*<([^>#]+)>\h*(?:#|\Z)/
+```
+
+所以 Swift 提供了 RegexBuilder 库，来支持编写可读性更强的正则表达式。Swift Regex 支持在 macOS 13、iOS 16、tvOS 16 和 watchOS 9 以上系统使用。如果想要了解更多可以参考 [Meet Swift Regex](https://developer.apple.com/videos/play/wwdc2022/110357/) 和 [Swift Regex: Beyond the basics](https://developer.apple.com/videos/play/wwdc2022/110358/)。
 
 ```Swift
 import RegexBuilder
@@ -231,3 +276,7 @@ func addEntries1<Entries: Collection<MailmapEntry>>(_ entries: Entries, to mailm
     }
 }
 ```
+
+## 总结
+
+以上就是 Swift 5.7 新特性介绍的全部内容，除了本文提到的新特性以外，Swift 5.7 还有许多变更，如果想要了解更多可以查看 [Swift Forums 的 Evolution 板块](https://forums.swift.org/c/evolution/18)。
