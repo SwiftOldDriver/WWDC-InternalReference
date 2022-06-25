@@ -115,26 +115,26 @@ func fetchFromNetwork() async throws -> String {
 // 一个用于表示文件压缩的类
 @MainActor
 class CompressionState: ObservableObject {
-  // UI监听的属性
+  // UI 监听的属性
   @Published var files: [FileStatus] = []
   // 文件压缩日志
   var logs: [String] = []
   
-  // 更新文件压缩进度，作用是更新UI
+  // 更新文件压缩进度，作用是更新 UI
   func update(url: URL, progress: Double) {
     if let loc = files.firstIndex(where: {$0.url == url}) {
       files[loc].progress = progress
     }
   }
   
-  // 更新文件还未压缩完的尺寸，作用是更新UI
+  // 更新文件还未压缩完的尺寸，作用是更新 UI
   func update(url: URL, uncompressedSize: Int) {
     if let loc = files.firstIndex(where: {$0.url == url}) {
       files[loc].uncompressedSize = uncompressedSize
     }
   }
   
-  // 更新文件已经压缩完的尺寸，作用是更新UI
+  // 更新文件已经压缩完的尺寸，作用是更新 UI
   func update(url: URL, compressedSize: Int) {
     if let loc = files.firstIndex(where: {$0.url == url}) {
       files[loc].compressedSize = compressedSize
@@ -152,7 +152,7 @@ class CompressionState: ObservableObject {
     }
   }
   
-  // 压缩文件并在回调更新UI相关属性和记录日志
+  // 压缩文件并在回调更新 UI 相关属性和记录日志
   func compressFile(url: URL) -> Data {
     log(update: "Starting for \(url)")
     // 可以认为是一个耗时操作
@@ -212,7 +212,7 @@ class CompressionState: ObservableObject {
 ```Swift
 @MainActor
 class CompressionState: ObservableObject {
-  // UI监听的属性
+  // UI 监听的属性
   @Published var files: [FileStatus] = []
   // 文件压缩日志
   var logs: [String] = []
@@ -303,6 +303,7 @@ class CompressionState: ObservableObject {
 ```
 
 ### **Actor Contention**
+
 在我们这个场景下，理想情况下，多个压缩任务应该是并发进行的，然而以上的代码仍然会存在多个异步任务串行执行问题。原因在于我们所有的逻辑都写在 `Actor` 里了，而 `Actor` 虽然可以保证线程安全，但是这是通过让所有访问它的操作 **串行执行** 来实现的，每次只有一个任务能够访问它，其余的任务需要等待。因此这些任务在多线程的情况下串行执行了。这种情况我们称之为 **`Actor 竞争 （Actor Contention）`**。
 
 ![](./images/actor_contention_1.png)
@@ -311,7 +312,7 @@ class CompressionState: ObservableObject {
 
 ![](./images/actor_contention_2.png)
 
-然后通过 **`nonisolated`** 等方式让允许并发执行的代码块并发执行，让必须访问 `Actor` 的代码块串行执行，在保证线程安全的同时又能够提高CPU的利用率。
+然后通过 **`nonisolated`** 等方式让允许并发执行的代码块并发执行，让必须访问 `Actor` 的代码块串行执行，在保证线程安全的同时又能够提高 CPU 的利用率。
 
 ![](./images/actor_contention_3.png)
 
@@ -329,10 +330,10 @@ class CompressionState: ObservableObject {
 估计你已经猜到了，我们又可以右键选中这个 `Actor` 然后 Pin 到时间轴上。
 ![](./images/debug12.png)
 
-这里的 **`Actor Execution`** 显示了该 `Actor` 在这段时间内正在执行哪些任务，可以看到这些任务占用的时间已经过高了，这个占用了257ms。`Actor` 上执行的代码应该尽可能地减少执行时间，减少对 `Actor` 的占用，以免阻塞其他代码对 `Actor` 的访问。
+这里的 **`Actor Execution`** 显示了该 `Actor` 在这段时间内正在执行哪些任务，可以看到这些任务占用的时间已经过高了，这个占用了 257ms 。`Actor` 上执行的代码应该尽可能地减少执行时间，减少对 `Actor` 的占用，以免阻塞其他代码对 `Actor` 的访问。
 ![](./images/debug13.png)
 
-我们可以回到之前那个任务的 **`Narrative`** 视图，右键选中 `Actor` 上执行了257ms的那个方法，查看它的源码。
+我们可以回到之前那个任务的 **`Narrative`** 视图，右键选中 `Actor` 上执行了 257ms 的那个方法，查看它的源码。
 ![](./images/debug14.png)
 
 这时候问题就很清晰了，`compressFile` 这个方法在 `ParallelCompressor Actor` 里执行太耗时了，阻塞了其他方法对这个 `Actor` 的访问。
@@ -350,18 +351,18 @@ actor ParallelCompressor {
     // CompressDataInFile 无需保护
     let compressedData = CompressionUtils.compressDataInFile(at: url) { uncompressedSize in
       Task { @MainActor in
-        // UI更改需要 main actor 保护
+        // UI 更改需要 main actor 保护
         status.update(url: url, uncompressedSize: uncompressedSize)
       }
     } progressNotification: { progress in
       Task { @MainActor in
-        // UI更改需要 main actor 保护
+        // UI 更改需要 main actor 保护
         status.update(url: url, progress: progress)
         await log(update: "Progress for \(url): \(progress)")
       }
     } finalNotificaton: { compressedSize in
       Task { @MainActor in
-        // UI更改需要 main actor 保护
+        // UI 更改需要 main actor 保护
         status.update(url: url, compressedSize: compressedSize)
       }
     }
@@ -370,7 +371,8 @@ actor ParallelCompressor {
     return compressedData
   }
 ```
-我们思考一下不难发现，其实这个 `Actor` 里，真正有线程安全的问题的是 `logs` 这个属性可能被多线程读写，以及UI相关的属性更新需要在 `Main Actor` 执行，而`compressFile` 这个方法其余的部分其实是可以并发执行的，并不一定要在 `Actor` 中执行，我们完全可以把这个方法抽出来交给线程池派发到其他线程执行，当它需要读写 `logs` 属性的时候，再切换隔离域 **`跳跃 (actor hopping)`**  到原先的 `Actor` 上，需要读写UI相关的属性时， 再切换隔离域到 `Main Actor` 上，不需要访问这两者的时候，切换隔离域到其他的线程上，这样可以大大减少对 `Actor` 的访问时间。也允许多个 `compressFile` 方法同时执行，只是同时间内只有一个可以访问 `Main Actor` 或者 `ParallelCompresssor Actor`。
+
+我们思考一下不难发现，其实这个 `Actor` 里，真正有线程安全的问题的是 `logs` 这个属性可能被多线程读写，以及 UI 相关的属性更新需要在 `Main Actor` 执行，而`compressFile` 这个方法其余的部分其实是可以并发执行的，并不一定要在 `Actor` 中执行，我们完全可以把这个方法抽出来交给线程池派发到其他线程执行，当它需要读写 `logs` 属性的时候，再切换隔离域 **`跳跃 (actor hopping)`**  到原先的 `Actor` 上，需要读写 UI 相关的属性时， 再切换隔离域到 `Main Actor` 上，不需要访问这两者的时候，切换隔离域到其他的线程上，这样可以大大减少对 `Actor` 的访问时间。也允许多个 `compressFile` 方法同时执行，只是同时间内只有一个可以访问 `Main Actor` 或者 `ParallelCompresssor Actor`。
 
 ![](./images/actor_contention4.png)
 ![](./images/actor_contention_5.png)
@@ -424,32 +426,32 @@ func compressAllFiles() {
 
 ![](./images/after_optimize.png)
 
-## Swift并发常见的其他一些问题
+## Swift 并发常见的其他一些问题
 
-除了上述两个问题之外，还有其他一些Swift并发中常见的问题也值得大家注意。
+除了上述两个问题之外，还有其他一些 Swift 并发中常见的问题也值得大家注意。
 
 ### Thread Pool Exhaustion（线程池耗竭）
 
-- 我们知道Swift 并发中，任务在等待的时候，正常来说会通过`await` 标记暂停点，放弃线程，作为一个续体保存在堆上，线程会转而执行其他任务，等待结束后，会再调度其他线程池再堆上取出续体恢复刚才的任务继续往下执行，通过这种方式提高CPU的利用率，减少线程切换的开销，我们称之为协同式线程池。 
-- 然而在某些情况下，这种机制还是会失灵的，比如在任务中执行一些耗时的阻塞性操作（磁盘IO，网络请求，锁），导致任务无法被正常暂停，这种情况下，任务会持续地占用它所在的线程，执行它实际上并不需要用到CPU。
+- 我们知道 Swift 并发中，任务在等待的时候，正常来说会通过`await` 标记暂停点，放弃线程，作为一个续体保存在堆上，线程会转而执行其他任务，等待结束后，会再调度其他线程池再堆上取出续体恢复刚才的任务继续往下执行，通过这种方式提高 CPU 的利用率，减少线程切换的开销，我们称之为协同式线程池。
+- 然而在某些情况下，这种机制还是会失灵的，比如在任务中执行一些耗时的阻塞性操作（磁盘 IO，网络请求，锁），导致任务无法被正常暂停，这种情况下，任务会持续地占用它所在的线程，执行它实际上并不需要用到 CPU。
 - 而线程池中的线程是有限的，一旦有线程被阻塞，整个线程池调度的效率和性能就会下降，因为它无法完整地利用所有的 CPU 核，减少了同时能够并发执行的计算数量。
 - 在一些极端的情况下，当整个线程池的线程都被任务阻塞，而它们又都在等待一个新任务的执行结果，这时候没有线程能够给这个新任务执行，就会产生了死锁。
 
 苹果给出的建议是：
-- 一定要确保避免在任务中阻塞式的调用，文件IO和网络一定要通过异步API的方式来访问。
+- 一定要确保避免在任务中阻塞式的调用，文件 IO和网络一定要通过异步 API 的方式来访问。
 - 避免等待条件变量和信号量。小颗粒度和短暂的锁可以接受，但是要避免竞争量大或者是长时间的锁。
-- 如果实在有这个需要使用阻塞式调用，建议是把代码移到并发线程池外，可以把这部分代码派发到GCD的 `queue` 上执行，并通过 `continuation` 相关API桥接到其他Swift并发代码里。
+- 如果实在有这个需要使用阻塞式调用，建议是把代码移到并发线程池外，可以把这部分代码派发到 GCD 的 `queue` 上执行，并通过 `continuation` 相关 API 桥接到其他 Swift 并发代码里。
 
 ### Continuation Misuse 续体误用
 
-- `Continuations （续体）` 可以用于桥接Swift并发和其他形式的异步代码。一个续体在当前任务暂停的时候提供了回调的入口，当被调用的时候，它就会继续之前暂停的任务。
-- 这可以和其他异步回调的API一起使用。从Swift并发的角度来说，一个异步任务可以暂停，然后在它的续体被恢复时恢复这个任务；从异步回调的角度来说，一个异步任务开始后，完成任务会接到回调。
+- `Continuations （续体）` 可以用于桥接 Swift 并发和其他形式的异步代码。一个续体在当前任务暂停的时候提供了回调的入口，当被调用的时候，它就会继续之前暂停的任务。
+- 这可以和其他异步回调的 API 一起使用。从 Swift 并发的角度来说，一个异步任务可以暂停，然后在它的续体被恢复时恢复这个任务；从异步回调的角度来说，一个异步任务开始后，完成任务会接到回调。
 
 ![](./images/continuation.png)
 
-- 值得注意的是，使用 `continuation` 回调时，有以下的要求：`continuation.resume()` 应该只被调用一次，不能多也不能少。其他形式的异步代码，比如GCD的回调`block`虽然通常也是只有一次，但是我们无法保证它一定会被回调，也无法保证它只被回调一次。然而在Swift并发中，这被强制地执行，如果`continuation`被`resume`两次，App会直接Crash，如果少于一次，则这个任务会永远被暂停在这，无法继续往下执行，会存在泄漏的问题。
+- 值得注意的是，使用 `continuation` 回调时，有以下的要求：`continuation.resume()` 应该只被调用一次，不能多也不能少。其他形式的异步代码，比如 GCD 的回调`block`虽然通常也是只有一次，但是我们无法保证它一定会被回调，也无法保证它只被回调一次。然而在 Swift 并发中，这被强制地执行，如果`continuation`被`resume`两次，App 会直接 Crash，如果少于一次，则这个任务会永远被暂停在这，无法继续往下执行，会存在泄漏的问题。
 
-- Swift 提供了两种桥接API，**`withCheckedContinuation`**和 **`withUnSafeContinuation`**，前者会帮你检查continuation误用的问题，所以除非为了性能考虑，尽可能地使用前者。
+- Swift 提供了两种桥接 API，**`withCheckedContinuation`**和 **`withUnSafeContinuation`**，前者会帮你检查continuation误用的问题，所以除非为了性能考虑，尽可能地使用前者。
 
 ```Swift
 await withCheckedContinuation { continuation in
@@ -461,4 +463,5 @@ await withCheckedContinuation { continuation in
 ```
 
 ## 总结
+
 Swift并发强大的新特性帮助我们开发者更容易地写出可用的高性能的并发代码，然而还是有很多问题需要我们开发者仔细考虑的，包括 `Main Actor 阻塞`， `Actor 竞争`，`线程池枯竭`和`续体误用`，使用好 Intrument 14 新增加的 Swift Concurrency Template 会对解决这些问题大有帮助。
