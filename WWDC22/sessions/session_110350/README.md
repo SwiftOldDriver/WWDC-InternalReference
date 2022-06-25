@@ -378,7 +378,11 @@ actor ParallelCompressor {
 ![](./images/actor_contention4.png)
 ![](./images/actor_contention_5.png)
 
-那么这在代码上该怎么实现呢？我们可以给 `CompressFile` 方法加上 `nonisolated` 的关键字，表示它虽然在 `Actor` 里，但它可以被并发地访问，同时这个方法里，我们原先对 `Actor` 的 `logs` 属性的同步访问，需要修改成异步访问 （加上 `await` 关键字），因为这期间需要切换隔离域。最后我们在创建异步任务的时候，把 `Task {}` 换成 `Task.detached{}`，这样做可以让创建出来的任务不继承创建它的那个 `Actor` 的上下文。
+那么这在代码上该怎么实现呢？我们可以给 `CompressFile` 方法加上 `nonisolated` 的关键字，表示它虽然在 `Actor` 里，但它可以被并发地访问.
+
+同时这个方法里，我们原先对 `Actor` 的 `logs` 属性的同步访问，需要修改成异步访问 （加上 `await` 关键字），因为这期间需要切换隔离域。
+
+最后我们在创建异步任务的时候，把 `Task {}` 换成 `Task.detached{}`，这样做可以让创建出来的任务不继承创建它的那个 `Actor` 的上下文。
 
 ```Swift
 // actor ParallelCompressor
