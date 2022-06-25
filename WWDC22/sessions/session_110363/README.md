@@ -14,7 +14,7 @@ session_ids: [110363]
 
 今年 `Apple` 在 `Swfit` 和 `Objective-C` 的编译器和运行时上面做了许多优化和调整，使得基于 `Xcode 14` 开发或者以 `iOS 16,tvOS 16,watchOS 9` 为最低支持版本的 `App` 可以获得包大小的优化和 `Runtime` 性能的提升。值得一提的是，本文不会有新的 `API`，也不会涉及语法变动和新的 `Xcode Build Setting`。
 
-> 注：对于 Runtime 感兴趣的读者可以查阅下方的文档。
+> 对于 Runtime 感兴趣的读者可以查阅下方的文档。
 >
 > [Objective-C Runtime 官方文档](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Introduction/Introduction.html?language=objc#//apple_ref/doc/uid/TP40008048)
 >
@@ -97,13 +97,254 @@ log(value: event)
 
 > 关于 `dyld` 和启动闭包，感兴趣的读者可以参考 [Staic linking vs dyld3](https://blog.allegro.tech/2018/05/Static-linking-vs-dyld3.html)
 >
-> 同时，`Apple` 也有关于启动优化的专题 `Session` - [WWDC17 - App Startup Time: Past, Present and Future](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwj3ro6fgsn4AhWESGwGHfQEBMEQtwJ6BAgGEAI&url=https%3A%2F%2Fdeveloper.apple.com%2Fvideos%2Fplay%2Fwwdc2017%2F413&usg=AOvVaw0Kw9oW-BQQbgrxhPswQhrJ) (如果链接失效，可以下载 [WWDC App for macOS](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiw-NmHg8n4AhWrS2wGHXS2DCsQFnoECAcQAQ&url=https%3A%2F%2Fgithub.com%2Finsidegui%2FWWDC&usg=AOvVaw0BMsc4CmRW7ZlIdreuaFRA) 后搜索关键字观看) 
+> 同时，`Apple` 也有关于启动优化的专题 `Session` - [WWDC17 - App Startup Time: Past, Present and Future](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwj3ro6fgsn4AhWESGwGHfQEBMEQtwJ6BAgGEAI&url=https%3A%2F%2Fdeveloper.apple.com%2Fvideos%2Fplay%2Fwwdc2017%2F413&usg=AOvVaw0Kw9oW-BQQbgrxhPswQhrJ) (如果链接失效，可以下载 [WWDC App for macOS](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiw-NmHg8n4AhWrS2wGHXS2DCsQFnoECAcQAQ&url=https%3A%2F%2Fgithub.com%2Finsidegui%2FWWDC&usg=AOvVaw0BMsc4CmRW7ZlIdreuaFRA) 后搜索关键字观看)
 
 最重要的是，这项优化不需要升级工程的最低部署版本，只需要 `App` 运行在 `iOS 16`、`tvOS 16` 或者是 `watchOS 9` 上就可以享受到 `Swift` 协议检查的优化，进而提升你的 `App` 启动速度。
 
+> 相比于类型更加安全、语法更加现代的 `Swift` ，`Objective-C` 近些年来基本上是处于停滞的发展状态。但是今年 `Apple` 带来了 `Objective-C` 生态中可以说是近些年来最为令人振奋的改进和提升。包括消息发送的优化、`Retain & Release` 调用优化和 `AutoRelease` 自动省略优化。
+
 ## Objective-C 消息发送
 
-### Objective-C 消息发送的前世今生
+对于 `iOS` 老司机来说，`Objective-C` 的消息发送是一个老生常谈的话题。对于初学者来说，要理解一个简单的方法调用背后的底层实现细节，就必须对整个消息发送流程有着足够清晰和深入的认知。推荐感兴趣的读者阅读 [Objective-C 消息发送与转发机制原理](http://yulingtianxia.com/blog/2016/06/15/Objective-C-Message-Sending-and-Forwarding/) 一文。
+
+### objc_msgSend
+
+> `Objective-C` 的消息发送和转发流程可以概括为：消息发送（Messaging）是 Runtime 通过 selector 快速查找 IMP 的过程，有了函数指针就可以执行对应的方法实现；消息转发（Message Forwarding）是在查找 IMP 失败后执行一系列转发流程的慢速通道，如果不作转发处理，则会打日志和抛出异常。
+
+提到消息发送，就不得不提 `objc_msgSend` 函数。在 `Objective-C` 的世界里面，基本上所有的方法调用都会转化为消息发送，而消息发送的必经之路就是 `objc_msgSend` 。 相信有经验的开发者都知道 `objc_msgSend` 是基于汇编实现的，在 `M1/M2` 系列芯片统治 `ARM` 架构的当下，作为 `iOS` 开发者应该重点关注 `objc_msgSend` 在 `arm64` 上的底层实现即可。
+
+```assembly
+/********************************************************************
+ *
+ * id objc_msgSend(id self, SEL _cmd, ...);
+ * IMP objc_msgLookup(id self, SEL _cmd, ...);
+ * 
+ * objc_msgLookup ABI:
+ * IMP returned in x17
+ * x16 reserved for our use but not used
+ *
+ ********************************************************************/
+
+#if SUPPORT_TAGGED_POINTERS
+	.data
+	.align 3
+	.globl _objc_debug_taggedpointer_ext_classes
+_objc_debug_taggedpointer_ext_classes:
+	.fill 256, 8, 0
+
+// Dispatch for split tagged pointers take advantage of the fact that
+// the extended tag classes array immediately precedes the standard
+// tag array. The .alt_entry directive ensures that the two stay
+// together. This is harmless when using non-split tagged pointers.
+	.globl _objc_debug_taggedpointer_classes
+	.alt_entry _objc_debug_taggedpointer_classes
+_objc_debug_taggedpointer_classes:
+	.fill 16, 8, 0
+
+// Look up the class for a tagged pointer in x0, placing it in x16.
+.macro GetTaggedClass
+
+	and	x10, x0, #0x7		// x10 = small tag
+	asr	x11, x0, #55		// x11 = large tag with 1s filling the top (because bit 63 is 1 on a tagged pointer)
+	cmp	x10, #7		// tag == 7?
+	csel	x12, x11, x10, eq	// x12 = index in tagged pointer classes array, negative for extended tags.
+					// The extended tag array is placed immediately before the basic tag array
+					// so this looks into the right place either way. The sign extension done
+					// by the asr instruction produces the value extended_tag - 256, which produces
+					// the correct index in the extended tagged pointer classes array.
+
+	// x16 = _objc_debug_taggedpointer_classes[x12]
+	adrp	x10, _objc_debug_taggedpointer_classes@PAGE
+	add	x10, x10, _objc_debug_taggedpointer_classes@PAGEOFF
+	ldr	x16, [x10, x12, LSL #3]
+
+.endmacro
+#endif
+
+	ENTRY _objc_msgSend
+	UNWIND _objc_msgSend, NoFrame
+
+	cmp	p0, #0			// nil check and tagged pointer check
+#if SUPPORT_TAGGED_POINTERS
+	b.le	LNilOrTagged		//  (MSB tagged pointer looks negative)
+#else
+	b.eq	LReturnZero
+#endif
+	ldr	p13, [x0]		// p13 = isa
+	GetClassFromIsa_p16 p13, 1, x0	// p16 = class
+LGetIsaDone:
+	// calls imp or objc_msgSend_uncached
+	CacheLookup NORMAL, _objc_msgSend, __objc_msgSend_uncached
+
+#if SUPPORT_TAGGED_POINTERS
+LNilOrTagged:
+	b.eq	LReturnZero		// nil check
+	GetTaggedClass
+	b	LGetIsaDone
+// SUPPORT_TAGGED_POINTERS
+#endif
+
+LReturnZero:
+	// x0 is already zero
+	mov	x1, #0
+	movi	d0, #0
+	movi	d1, #0
+	movi	d2, #0
+	movi	d3, #0
+	ret
+
+	END_ENTRY _objc_msgSend
+
+
+	ENTRY _objc_msgLookup
+	UNWIND _objc_msgLookup, NoFrame
+	cmp	p0, #0			// nil check and tagged pointer check
+#if SUPPORT_TAGGED_POINTERS
+	b.le	LLookup_NilOrTagged	//  (MSB tagged pointer looks negative)
+#else
+	b.eq	LLookup_Nil
+#endif
+	ldr	p13, [x0]		// p13 = isa
+	GetClassFromIsa_p16 p13, 1, x0	// p16 = class
+LLookup_GetIsaDone:
+	// returns imp
+	CacheLookup LOOKUP, _objc_msgLookup, __objc_msgLookup_uncached
+
+#if SUPPORT_TAGGED_POINTERS
+LLookup_NilOrTagged:
+	b.eq	LLookup_Nil	// nil check
+	GetTaggedClass
+	b	LLookup_GetIsaDone
+// SUPPORT_TAGGED_POINTERS
+#endif
+
+LLookup_Nil:
+	adr	x17, __objc_msgNil
+	SignAsImp x17
+	ret
+
+	END_ENTRY _objc_msgLookup
+
+	
+	STATIC_ENTRY __objc_msgNil
+
+	// x0 is already zero
+	mov	x1, #0
+	movi	d0, #0
+	movi	d1, #0
+	movi	d2, #0
+	movi	d3, #0
+	ret
+	
+	END_ENTRY __objc_msgNil
+
+
+	ENTRY _objc_msgSendSuper
+	UNWIND _objc_msgSendSuper, NoFrame
+
+	ldp	p0, p16, [x0]		// p0 = real receiver, p16 = class
+	b L_objc_msgSendSuper2_body
+
+	END_ENTRY _objc_msgSendSuper
+
+	// no _objc_msgLookupSuper
+
+	ENTRY _objc_msgSendSuper2
+	UNWIND _objc_msgSendSuper2, NoFrame
+
+#if __has_feature(ptrauth_calls)
+	ldp	x0, x17, [x0]		// x0 = real receiver, x17 = class
+	add	x17, x17, #SUPERCLASS	// x17 = &class->superclass
+	ldr	x16, [x17]		// x16 = class->superclass
+	AuthISASuper x16, x17, ISA_SIGNING_DISCRIMINATOR_CLASS_SUPERCLASS
+LMsgSendSuperResume:
+#else
+	ldp	p0, p16, [x0]		// p0 = real receiver, p16 = class
+	ldr	p16, [x16, #SUPERCLASS]	// p16 = class->superclass
+#endif
+L_objc_msgSendSuper2_body:
+	CacheLookup NORMAL, _objc_msgSendSuper2, __objc_msgSend_uncached
+
+	END_ENTRY _objc_msgSendSuper2
+
+	
+	ENTRY _objc_msgLookupSuper2
+	UNWIND _objc_msgLookupSuper2, NoFrame
+
+#if __has_feature(ptrauth_calls)
+	ldp	x0, x17, [x0]		// x0 = real receiver, x17 = class
+	add	x17, x17, #SUPERCLASS	// x17 = &class->superclass
+	ldr	x16, [x17]		// x16 = class->superclass
+	AuthISASuper x16, x17, ISA_SIGNING_DISCRIMINATOR_CLASS_SUPERCLASS
+LMsgLookupSuperResume:
+#else
+	ldp	p0, p16, [x0]		// p0 = real receiver, p16 = class
+	ldr	p16, [x16, #SUPERCLASS]	// p16 = class->superclass
+#endif
+	CacheLookup LOOKUP, _objc_msgLookupSuper2, __objc_msgLookup_uncached
+
+	END_ENTRY _objc_msgLookupSuper2
+
+
+.macro MethodTableLookup
+	
+	SAVE_REGS MSGSEND
+
+	// lookUpImpOrForward(obj, sel, cls, LOOKUP_INITIALIZE | LOOKUP_RESOLVER)
+	// receiver and selector already in x0 and x1
+	mov	x2, x16
+	mov	x3, #3
+	bl	_lookUpImpOrForward
+
+	// IMP in x0
+	mov	x17, x0
+
+	RESTORE_REGS MSGSEND
+
+.endmacro
+
+	STATIC_ENTRY __objc_msgSend_uncached
+	UNWIND __objc_msgSend_uncached, FrameWithNoSaves
+
+	// THIS IS NOT A CALLABLE C FUNCTION
+	// Out-of-band p15 is the class to search
+	
+	MethodTableLookup
+	TailCallFunctionPointer x17
+
+	END_ENTRY __objc_msgSend_uncached
+
+
+	STATIC_ENTRY __objc_msgLookup_uncached
+	UNWIND __objc_msgLookup_uncached, FrameWithNoSaves
+
+	// THIS IS NOT A CALLABLE C FUNCTION
+	// Out-of-band p15 is the class to search
+	
+	MethodTableLookup
+	ret
+
+	END_ENTRY __objc_msgLookup_uncached
+
+
+	STATIC_ENTRY _cache_getImp
+
+	GetClassFromIsa_p16 p0, 0
+	CacheLookup GETIMP, _cache_getImp, LGetImpMissDynamic, LGetImpMissConstant
+
+LGetImpMissDynamic:
+	mov	p0, #0
+	ret
+
+LGetImpMissConstant:
+	mov	p0, p2
+	ret
+
+	END_ENTRY _cache_getImp
+
+```
+
+上面的代码是最新的 [objc4-818.2](https://opensource.apple.com/tarballs/objc4/objc4-818.2.tar.gz) 中的 `objc-msg-arm64.s` 汇编源文件中关于 `objc_msgSend` 的部分。
 
 ### Selector Stub 优化方案
 
