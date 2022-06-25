@@ -125,7 +125,7 @@ func endOfRound(players: [Player]) async throws {
 
 为了提高并发性能，苹果也对 actor 进行了优化，actor 首先会执行优先级最高的任务。同时并发模型内置了防止优先级反转的机制，来确保低优先级任务不会阻塞高优先级任务。
 
-苹果在 Instruments 工具里新增了 Swift Concurrency，可以帮助开发者排查性能问题。Swift Tasks 和 Swift Actors 提供了一系列可视化工具，帮助开发者优化并发代码。如果想要了解更多可以参考 [Visualize and optimize Swift concurrency](https://developer.apple.com/videos/play/wwdc2022/110350/)。
+苹果在 Instruments 工具里新增了 Swift Concurrency，可以帮助开发者排查性能问题。为 Task 和 Actor 提供了一系列可视化工具，帮助开发者优化并发代码。如果想要了解更多可以参考 [Visualize and optimize Swift concurrency](https://developer.apple.com/videos/play/wwdc2022/110350/)。
 
 ## Swift 语言优化
 
