@@ -4,7 +4,8 @@ session_ids: [10049]
 
 # Session 10049 - 探索 iOS 16 中 WKWebView 的新功能
 
-> 作者：Style 月月， iOS 程序媛，简书/掘金文章贡献者，目前任职于小米，侧重于海外相关业务
+> 作者：Style 月月， iOS 程序媛，简书/掘金文章贡献者，目前任职于小米，侧重于海外相关业务；
+> 审核：JonyFang，方春，老司机周报编辑，现于 BILIBILI 负责直播稳定性及性能优化相关工作；
 
 本文是根据 WWDC22 中的 [What's new in WKWebView](https://developer.apple.com/videos/play/wwdc2022/10049/) 撰写，主要是了解 WKWebView 在 iOS 16 中的新增功能。
 
@@ -12,7 +13,7 @@ session_ids: [10049]
 
 针对 WKWebView 的介绍，这里就简单说明下，WKWebView 是 iOS 8 中新增的用于展示 H5 的 UI 控件，在 iOS 12 中全面推广用于替代 UIWebView。UIWebView 与 WKWebView 的架构上最大的区别是：UIWebView 的方法是`同步`的，而 WKWebView 的方法是`异步`的，所以相比而言 WKWebView 加载网页的性能是远优于 UIWebView 的。
 
-这里简单说下为什么是「同步」和「异步」的。首先需要了解什么是`跨进程通信`（Inter-Process Communication，IPC）。IPC 是多线程协作的基础，一般来说，IPC 至少需要 2 个进程参与，根据信息流动的方向，被称为`发送者`和`接受者`。在实际应用中，IPC 常被用于服务调用，而参与 IPC 的被称为调用者（客户端）和被调用者（服务端），如下所示
+这里简单说下为什么是「同步」和「异步」的。首先需要了解什么是`跨进程通信`（Inter-Process Communication，IPC）。IPC 是指两个进程的数据之间的交互，一般来说，IPC 至少需要 2 个进程参与，根据信息流动的方向，被称为`发送者`和`接受者`。在实际应用中，IPC 常被用于服务调用，而参与 IPC 的被称为调用者（客户端）和被调用者（服务端），如下所示
 ![简单的 IPC 图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.3/img/wwdc_session_10049/session_10049_25.jpg)
 
 多进程协作主要有以下优点：
@@ -34,7 +35,7 @@ session_ids: [10049]
 - [探索 WKWebView 新增功能](https://xiaozhuanlan.com/topic/1352486079)，介绍了 UIWebView、WKWebView、SFSafariViewController 的使用方式，以及 iOS 15 中新增的功能。
 
 综合往期 WKWebView 的更新，绘制了以下更新的图示（包含本文新增的功能）：
-![WKWebView发展历程图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.6/img/wwdc_session_10049/session_10049_27.png)
+![WKWebView发展历程图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.9/img/wwdc_session_10049/session_10049_27.png)
 
 ## WKWebView 的新功能
 
@@ -138,7 +139,7 @@ webView.loadHTMLString(htmlString, baseURL: Bundle.main.resourceURL)
 
 > **使用场景**
 > 1、应用于 App 中通过 H5 上传图片的功能，便于核对信息的准确性；
-> 2、Fullacreen 结合 canvas 应用到 H5 页面游戏中，提升用户游戏体验。
+> 2、Fullscreen 结合 canvas 应用到 H5 页面游戏中，提升用户游戏体验。
 
 ### 新增 CSS 视口单位（CSS viewport units）
 
