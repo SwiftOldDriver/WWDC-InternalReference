@@ -10,19 +10,19 @@ session_ids: [10054]
 
 本文将通过一个真实的例子，聚焦 SwiftUI 导航 APIs 的设计和使用。全文分为五个部分：
 
-第一部分描述一个《唐诗三百首》的例子，全文将使用这个例子来展示 SwiftUI 导航的使用。
+**第一部分**描述一个《唐诗三百首》的例子，全文将使用这个例子来展示 SwiftUI 导航的使用。
 
-第二部分简单描述现有方案 NavigationView 的使用和不足。
+**第二部分**简单描述现有方案 NavigationView 的使用和不足。
 
-第三部分介绍新方案 NavigationStack 和 NavigationSplitView 的用法和能力，以及如何迁移到新方案。
+**第三部分**介绍新方案 NavigationStack 和 NavigationSplitView 的用法和能力，以及如何迁移到新方案。
 
-第四部分探索新 APIs 一些适用的场景。
+**第四部分**探索新 APIs 一些适用的场景。
 
-最后一部分列举出《唐诗三百首 App》一些重要的实现细节，帮助大家完成其功能。并给出一些 SwiftUI 导航的使用建议。
+**最后一部分**列举出《唐诗三百首 App》一些重要的实现细节，帮助大家完成其功能。并给出一些 SwiftUI 导航的使用建议。
 
 ## 唐诗三百首 App
 
-唐朝是中国诗歌发展的黄金时代，云蒸霞蔚，名家辈出，唐诗数量多达五万余首。其中广为流传的唐诗选集《唐诗三百首》，收录名诗三百一十余首。包含五言古诗、五言乐府、七言古诗、七言乐府、五言律诗、七言律诗、五言绝句和七言绝句共八种体裁，七十余位唐代名家作品。非常适合用来展示导航的使用。
+唐朝是中国诗歌发展的黄金时代，云蒸霞蔚，名家辈出，唐诗数量多达五万余首。其中广为流传的唐诗选集《唐诗三百首》，收录名诗三百一十余首。包含五言古诗、五言乐府、七言古诗、七言乐府、五言律诗、七言律诗、五言绝句和七言绝句共八种体裁，七十余位唐代名家作品。因其对复杂种类的划分以及相关诗歌详情的跳转都非常适合通过导航来展示。
 
 ![唐诗三百首 App 设计图][poems-app-design]
 
@@ -79,7 +79,7 @@ NavigationView {
 
 - 上述例子中的目标视图 `PoemList` 会被重复创建多次
 
-  以 iPhone 竖屏为例，虽然在显示体裁的时候，目标视图 `PoemList` 并不会呈现在屏幕上。但是 `PoemList` 对象却需要提前被创建，而且会被创建多次，数量和当前体裁个数相同。每个体裁都对应一个潜在的 `PoemList`, 哪怕用户不点击查看。当我们滑动体裁列表时，`PoemList` 对象还是会不断被创建。基于 SwiftUI 的绘制原理，当页面上的 State 变化时，又会引起目标视图的重新创建，这往往导致巨大的浪费。
+  以 iPhone 竖屏为例，虽然在显示体裁的时候，目标视图 `PoemList` 并不会呈现在屏幕上。但是 `PoemList` 对象却需要提前被创建，而且会被创建多次，数量和当前所显示的视图内容个数相同。每个体裁都对应一个潜在的 `PoemList`, 哪怕用户不点击查看。当我们滑动体裁列表时，`PoemList` 对象还是会不断被创建。基于 SwiftUI 的绘制原理，当页面上的 State 变化时，又会引起目标视图的重新创建，这往往导致巨大的浪费。
 
 - 状态难以管理
 
@@ -110,15 +110,15 @@ NavigationView {
 
   这种能力提供了极大的便利性，但是存在三个问题：
 
-  1. 需要为 List 中的每个 NavigationLink 提供一个 State 变量，比较繁琐。
-  2. NavigationLink 可以存在于任意层级的子 View 中，当层数变多变深时，即使借助于 EnvironmentObject，这种状态也难以管理。
-  3. 视图栈中的视图可能来自于编程（设置 `isActive = true`），也有可能来自点击或者手势。想要记录完整的导航路径时，就需要给路径上的所有 NavigationLink 加上 `isActive`，如果路径存在循环，那简直就是一种灾难。
+  1. 状态变量冗余。需要为 List 中的每个 NavigationLink 提供一个 State 变量，比较繁琐。
+  2. 状态变量管理复杂。NavigationLink 可以存在于任意层级的子 View 中，当层数变多变深时，即使借助于 EnvironmentObject，这种状态也难以管理。
+  3. 编程管理完整导航路径难度大。视图栈中的视图可能来自于编程（设置 `isActive = true`），也有可能来自点击或者手势。想要记录完整的导航路径时，就需要给路径上的所有 NavigationLink 加上 `isActive`，如果路径存在循环，那简直就是一种灾难。
 
   幸好，新版的 APIs 一举解决了上述所有问题。
 
 ## 新导航方案
 
-新方案废弃了 NavigationView, 引入了 NavigationStack 和 NavigationSplitView 来实现导航功能。
+新方案废弃了 NavigationView, 引入了 NavigationStack 和 NavigationSplitView 来实现导航功能。新方案直接采用导航路径数据驱动视图的方式，而不再需要我们手动逐个管理 NavigationLink 的状态，成功地解决了导航路径状态难以管理的难题。于此同时，新方案提出了 NavigationLink 和目标视图分离的方案，解决了目标视图会被重复创建的诟病。
 
 ### NavigationStack
 
@@ -142,16 +142,9 @@ NavigationStack {
 - `init<S, P>(S, value: P?)`
 - `init<P>(value: P?, label: () -> Label)`
 
-除了显示链接的文本信息外，最重要的参数是 `value`。当用户点击该 NavigationLink 时，SwiftUI 会存储这个值的一个备份，然后通过 `value` 的类型，匹配最近的目标视图, 并将目标视图推入视图栈顶，来显示目标视图。目标视图通过 View 上的修饰符 `navigationDestination(for:destination:)` 来定义。上述代码中，传给 `value` 的值是 Poem 类型的，所以找到最近为 `Poem.self` 定义的目标视图 `PoemDetail`。SwiftUI 确保将 `value` 的备份传递给目标视图，用于绘制。
+除了显示链接的文本信息外，最重要的参数是 `value`。当用户点击该 NavigationLink 时，SwiftUI 会通过 `value` 的类型，匹配最近的目标视图, 并将目标视图压入视图栈顶，来显示目标视图。目标视图通过 View 上的修饰符 `navigationDestination(for:destination:)` 来定义。上述代码中，传给 `value` 的值是 Poem 类型的，所以找到最近为 `Poem.self` 定义的目标视图 `PoemDetail`。SwiftUI 确保将 `value` 的备份传递给目标视图，用于绘制。
 
-SwiftUI 在通过 `value` 来匹配目标视图时，会经历以下几步：
-
-1. 如果匹配类型的修饰符在 NavigationStack 内定义，那么将对应的目标视图送入栈顶，并显示。
-2. 如果 SwiftUI 在 NavigationSplitView 的后一列的栈的视图层次结构中找到了一个匹配的修饰符，它会把修饰符的目标视图作为栈上的第一项和唯一项，同时保留根视图。
-3. 如果没有匹配的修饰符，但是 NavigationLink 出现在 NavigationSplitView 的前导列内的 List 中，那么 NavigationLink 会更新 selection，这可能会影响尾随视图的外观。
-4. 在其他情况下，NavigationLink 没有任何作用。
-
-利用类型匹配的方式，新 APIs 将目标视图的创建从 NavigationLink 中分离出来，放在了修饰符中。而修饰符中的 `PoemDetail`，只有在用户点击后才创建，解决了目标视图被重复创建的问题，节省了空间，提高了性能。
+利用类型匹配的方式，新 APIs 将目标视图的创建从 NavigationLink 中分离出来，放在了修饰符中。而修饰符中的 `PoemDetail` 视图，只有在用户点击后才创建，解决了目标视图被重复创建的问题，节省了空间，提高了性能。
 
 接下来再看看新 APIs 如何解决状态管理的问题。因为每个被激活的目标视图都会被压入栈中，栈的状态即为导航的状态，新 APIs 通过传递一个绑定栈状态的 path 变量来管理导航的状态。
 
@@ -188,7 +181,7 @@ func showPoems(author: String) {
 
 ### NavigationSplitView
 
-SwiftUI 为了方便在大屏上做分屏显示，提供了一个非常便利的分屏视图 NavigationSplitView, 它能根据不同平台屏幕的尺寸把视图分两列或者三列显示。不同于 NavigationStack，其中前一列的选择控制着后一列的显示。在小屏幕上显示时，自动折叠成单列。
+SwiftUI 为了方便在大屏上做分屏显示，提供了一个非常便利的分屏视图 NavigationSplitView, 它能根据不同平台屏幕的尺寸把视图分两列或者三列显示。在小屏幕上显示时，自动折叠成单列。而 NavigationStack 即使在大屏上，也只是单列显示。
 
 #### 两列视图
 
@@ -271,14 +264,21 @@ var body: some View {
 }
 ```
 
-从代码中也可以发现，NavigationSplitView 内也可以嵌入 NavigationStack，来实现更复杂的导航操作。
-
 > 注：目前 NavigationSplitView 三列视图存在一个已知的 issue (93673059)，在小屏幕上显示时，点击最外层点击事件不生效，期待正式版能予以解决。
 > Selection-driven, three-column NavigationSplitView sometimes fails to push when collapsed to a single column. (93673059)
 
-#### NavigationSplitViewVisibility
+从代码中也可以发现，NavigationSplitView 内也可以嵌入 NavigationStack，来实现更复杂的导航操作。
 
-NavigationSplitView 在构造函数中提供了 NavigationSplitViewVisibility 参数来设置需要显示的列，可用的值有：
+那么，当情况变得复杂时，如何通过 NavigationLink 定义的 `value` 来查找目标视图呢？实际上，SwiftUI 在通过 `value` 来匹配目标视图时，会经历以下几步：
+
+1. 如果匹配类型的修饰符在 NavigationStack 内定义，那么将对应的目标视图送入栈顶，并显示。
+2. 如果 SwiftUI 在 NavigationSplitView 的后一列的栈的视图层次结构中找到了一个匹配的修饰符，它会把修饰符的目标视图作为栈上的第一项和唯一项，同时保留根视图。
+3. 如果没有匹配的修饰符，但是 NavigationLink 出现在 NavigationSplitView 的前导列内的 List 中，那么 NavigationLink 会更新 selection，这可能会影响尾随视图的外观。
+4. 在其他情况下，NavigationLink 没有任何作用。
+
+#### NavigationSplitView 自定义分屏
+
+NavigationSplitView 能根据平台智能地分屏显示，达到最大限度使用屏幕的目的。但在某些场景下，会和我们的期望相左。NavigationSplitView 在构造函数中提供了 NavigationSplitViewVisibility 参数，使得我们能够自定义显示的策略，而不是平台的推荐方案。目前可用的值有：
 
 - `detailOnly`: 只显示详情页
 - `doubleColumn`: 三列视图只显示内容页和详情页，两列视图等价于 `all`
