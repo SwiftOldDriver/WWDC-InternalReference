@@ -4,14 +4,11 @@ session_ids: [110355]
 
 # WWDC22 110355 - Meet Swift Async Algorithms
 
-> 作者：Rec ，极客时间 App 开发人员
-> 审核：Kem
-
 ## 前言
 
 阅读本文需要一定的基础，包括：
 
-1. Async/Awit 对于异步方法的执行和实现，参考视频链接 [Meet async/await in Swift](https://developer.apple.com/videos/play/wwdc2021/10132) 
+1. Async/Await 对于异步方法的执行和实现，参考视频链接 [Meet async/await in Swift](https://developer.apple.com/videos/play/wwdc2021/10132) 
 2. 了解 AsyncSequence 协议，理解其实现的原理，参考视频链接 [Meet AsyncSequence](https://developer.apple.com/videos/play/wwdc2021/10058)
 
 不了解但有时间的同学可以先观看上面的视频。本文会对使用到的相关语法和结构做一些简单的解释，以保证不影响阅读。
@@ -19,6 +16,7 @@ session_ids: [110355]
 ## 正文
 
 本文基于 [Session 110355](https://developer.apple.com/videos/play/wwdc2022/110355/) 梳理，介绍的是苹果又一新开源包 Swift Async Algorithms ([Github 地址](https://github.com/apple/swift-async-algorithms)｜[Doc 地址](https://developer.apple.com/documentation/swift/asyncsequence))，主要用于实现 AsyncSequences 数据结构相关的算法。
+在开源包提议文件 ([Github 地址](https://github.com/apple/swift-evolution/blob/main/proposals/0298-asyncsequence.md)) 中，对这个开源包出发的动机和未来的发展有更加详细的介绍。
 
 ![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/async-algorithms.png)
 
@@ -28,43 +26,24 @@ session_ids: [110355]
 2. Instant： 时钟 Clock 的一个准确的瞬间（时间戳）
 3. Duration：两个 Instant 之间做差
 
-开源包提议文件 [Github](https://github.com/apple/swift-evolution/blob/main/proposals/0298-asyncsequence.md) 中，对这个开源包出发的动机和未来的发展有更加详细的介绍。
+在阅读本文之前，我先提出两个问题：
 
-本文介绍的顺序并不完全按照视频内讲述的方法的顺序。相对原视频更多的是补充和扩展，感兴趣的同学最多只要花花 `13 分 01 秒` 就能观看完视频。
+> 1. 如何在异步的场景下实现那些常见的集合算法
+> 2. AsyncSequence 是如何基于 Clock 进行实现的
 
-在阅读本文之前，我剧透的先提出几个问题：
+## 如何在异步的场景下实现那些常见的集合算法
 
-在视频的一开始就提到了下面这句话，**第一个问题**，也就是说 AsyncSequence 在使用上和 Sequence 保持了几乎一致的语法。为什么要这么去实现？
+在 2021 年的 WWDC 上已经提出了 [Swift Algorithms](https://github.com/apple/swift-algorithms) 和 [Swift Collections](https://github.com/apple/swift-collections) 来支持常见的算法和集合。
+同年也提出了 AsyncSequence 数据结构协议，而且在[提案](https://github.com/apple/swift-evolution/blob/main/proposals/0298-asyncsequence.md)里已经明确的表示，在语法上使用会和现有的 Sequence 保持一致。
 
->  In short, if you know how to use Sequence, you already know how to use AsyncSequence.
-
-在 2021 年的 WWDC 上已经提出了 Swift Algorithms 和 Swift Collections。
-那么 2022 进一步的提出 Async Algorithms ，配合上 2021 年的 AsyncSequence，**第二个问题**，在异步下的那些组合算法又是如何实现的。
-
-简介中是这么描述此 Session 的，视频中提到的 Clock 类型能够支持 AsyncSequence 在时间上实现一些算法。**第三个问题**，那具体的实现逻辑是怎么样的呢？
-
-> We'll also share best practices for combining multiple AsyncSequences and using the Swift Clock type to work with values over time.
-> The Swift Async Algorithms package is a set of algorithms specifically focused on processing values over time using AsyncSequence.
-
-其实如果了解 Rx 和 Combine 的话，可以近乎的理解 AsyncSequence 分别对应的是 Operators 和 Publisher。虽然在 Swift 中协议的名字里还是 Sequence ，其实更像是 Stream 的概念（正如官方自定义的结构体 AsyncStream）。这样更应该是为了和 Sequence 使用方式的统一，包括协议里的方法。
-
-## 多输入 AsyncSequence
-
-对应的在 [Swift Algorithms](https://github.com/apple/swift-algorithms) 有一系列的，针对多输入 Sequence 的算法。
-支持多输入 AsyncSequence 的 [Swift Async Algorithms](https://github.com/apple/swift-async-algorithms) 算法好像有着一些相同的方法：
-<!-- （注：需要修改） -->
-<!-- Combining 类型的 `zip/chain/join`。但是由于底层数据格式的不同，大部分算法都是没有重合的 -->
+2022 进一步的提出 Async Algorithms，就是在这样的基础上，实现了一些常见的集合算法（包括 `chain/merge/zip` 等等），同时针对异步场景下实现其他一些常见的算法。
+让我们深入了解一下这其中的不同。
 
 ### Zip
 
 ![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/zip-algorithms.png)
 
-在一般的 Zip 使用场景，我们是将两个需要匹配的序列，根据其中个数较少的，依次遍历然后进行处理。
-在视频的例子中，videos 和 previews 都是 AsyncSequence。如果要实现像一般 Zip 算法效果，我们需要实现
-
-1. 从两个 AsyncSequence 中取到值，并将取到的两个值组合成元组一起上传
-2. 取到的两个值保证顺序一致
-3. 错误处理
+阅读官方代码，除了 `try await` 部分，会发现语法上是和一般序列是一样的
 
 ```Swift
 for try await (vid, preview) in zip(videos, previews) {
@@ -72,40 +51,33 @@ for try await (vid, preview) in zip(videos, previews) {
 }
 ```
 
-#### 如何取值
+假设我们需要实现支持 AsyncSequence 为参数的 zip 方法，得到的结果应该和在一般 Sequence 一致。我们需要实现的功能有
 
-[AsyncSequence 视频](https://developer.apple.com/videos/play/wwdc2021/10058/) 第 4 分钟左右，从编译的角度来简单的阐述了 for-await-in 和一般 for-in 实现的区别。这里贴出代码方便阅读：
+1. 从两个 AsyncSequence 中都取到值
+2. 取到的两个值保证顺序一致
 
-Sequence for-in
+得到的流程图就会类似于：
 
-```Swift
-/* Iterating a Sequence */
-for quake in quakes {
-    if quake.magnitude > 3 {
-        displaySignificantEarthquake(quake)
-    }
-}
+```
+AsyncSequence1:   "a-------b----c--------|"
+AsyncSequence2:   "-1-----2---------3----|"
 
-/* How the compiler handles iteration */
-var iterator = quakes.makeIterator()
-while let quake = iterator.next() {
-    if quake.magnitude > 3 {
-        displaySignificantEarthquake(quake)
-    }
-}
+AsyncSequenceOut: "-(a,1)--(b,2)----(c,3)|"
 ```
 
-AsyncSequence for-await-in
+#### 如何取值
+
+[AsyncSequence 视频](https://developer.apple.com/videos/play/wwdc2021/10058/) 第 4 分钟左右，从编译的角度来简单的阐述了 for-await-in 和一般 for-in 实现的区别。这里贴出部分代码方便阅读：
 
 ```Swift
-/* Iterating an AsyncSequence */
+/* 异步迭代 */
 for await quake in quakes {
     if quake.magnitude > 3 {
         displaySignificantEarthquake(quake)
     }
 }
 
-/* How the compiler handles asynchronous iteration */
+/* 编译器处理异步迭代  */
 var iterator = quakes.makeAsyncIterator()
 while let quake = await iterator.next() {
     if quake.magnitude > 3 {
@@ -114,9 +86,10 @@ while let quake = await iterator.next() {
 }
 ```
 
-可以发现的是，两种类型的 Sequence 都有对应的生成迭代器的方法，同样的都是迭代器调用 `next()` 方法获取下一个值。
+在 AsyncSequence 的 for-await-in 语法中，通过在其关联的迭代器类型上定义一个异步 next() 函数，获取序列中的下一个元素。
+跟我们已经熟悉的 Sequence 基本一致，只是这里的 next 函数变成了 async 版本的。需要注意的是，在之前提到的 AsyncSequence [提案](https://github.com/apple/swift-evolution/blob/main/proposals/0298-asyncsequence.md) 里有指出，这里的 await 并不会等待整个结果，而是每一个元素。
 
-继续查看 [AsyncZip2Sequence](https://github.com/apple/swift-async-algorithms/blob/main/Sources/AsyncAlgorithms/AsyncZip2Sequence.swift) 源码就可以发现，zip 中也是每次都调用两个 AsyncSequence 的对应的 `next()` 方法。
+继续查看 [AsyncZip2Sequence](https://github.com/apple/swift-async-algorithms/blob/main/Sources/AsyncAlgorithms/AsyncZip2Sequence.swift) 源码就可以发现， `next()` 方法在 withTaskGroup 闭里初始化了两个 AsyncSequence 的迭代 Task。
 
 ```Swift
 public mutating func next() async rethrows -> (Base1.Element, Base2.Element)? {
@@ -145,82 +118,54 @@ public mutating func next() async rethrows -> (Base1.Element, Base2.Element)? {
   if let result = await iteration(&group, &res1, &res2, &iter1, &iter2) {
     return (result, nil, nil)
   }
-}
 
-```
-
-到这第一个问题就解决了。next 方法里会拿到两个序列返回的值。
-
-这里需要解释一下 iteration 方法：iter1 和 iter2 对应着两个迭代器，res1 和 res2 对应着两个迭代器返回的结果。当两个迭代器都返回结果之后，group.next() 方法才算结束。group 这里是要保证 add 的 task 都返回值之后才算完成一次 next 调用，所以第二个问题也解决了。
-
-> 保证的前提就是通过 TaskGroup 和 withTaskGroup
-
-得到的流程图就会类似于：
-
-```
-AsyncSequence1:   "a-------b----c--------|"
-AsyncSequence2:   "-1-----2---------3----|"
-
-AsyncSequenceOut: "-(a,1)--(b,2)----(c,3)|"
-```
-
-#### 错误处理
-
-在前面的关于方法实现的代码里，可以发现调用的几个方法里都有返回错误的情况，比如 next 方法有 rethrows 关键词。
-从对应代码的逻辑可以看出，是只要当其中一个 AsyncSequence 报错了，也就是返回了 nil，zip 方法就会停止。
-
-那么自定义实现的 AsyncSequence 要怎么处理错误的情况呢？关键词：[AsyncThrowingStream](https://github.com/apple/swift/blob/4b0824ce23c2576f15d85d2ddbb8ab14660b0d32/stdlib/public/Concurrency/AsyncThrowingStream.swift)
-
-这里贴出官方的代码举例：
-
-```Swift
-class QuakeMonitor {
-   var quakeHandler: ((Quake) -> Void)?
-   var errorHandler: ((Error) -> Void)?
-
-   func startMonitoring() {…}
-   func stopMonitoring() {…}
-}
-```
-
-Continuation 就是 AsyncStream 里用来处理值相关的结构体
-
-1. 传递值的方法： `yield` 方法
-2. 结束并抛出错误的方法： `finish(throwing: )`
-3. 当然也有直接结束的方法：`finish()`
-
-```Swift
-extension QuakeMonitor {
-  static var throwingQuakes: AsyncThrowingStream<Quake, Error> {
-      AsyncThrowingStream { continuation in
-           let monitor = QuakeMonitor()
-           monitor.quakeHandler = { quake in
-               continuation.yield(quake)
-           }
-           monitor.errorHandler = { error in
-               continuation.finish(throwing: error)
-           }
-           continuation.onTermination = { @Sendable _ in
-               monitor.stopMonitoring()
-           }
-           monitor.startMonitoring()
-       }
+  if let result = await iteration(&group, &res1, &res2, &iter1, &iter2) {
+    return (result, nil, nil)
   }
-}
+  
+  guard let res1 = res1, let res2 = res2 else {
+  return (.success(nil), nil, nil)
+  }
+
+  return (.success((res1, res2)), iter1, iter2)
+  ...
 ```
 
-这里就可以拿到 `finish(throwing:)` 抛出的错误
+后两个 return 的返回值比较好理解。对 res 返回值做了空判断并返回。那么这里 iteration 方法连续调用了两次为什么呢？让我们看看 iteration 实现的逻辑：
 
 ```Swift
-do {
-    for try await quake in throwingQuakes {
-        print ("Quake: \(quake.date)")
+...
+guard let partial = await group.next() else {
+  return .success(nil)
+}
+switch partial {
+case .first(let res, let iter):
+  switch res {
+  case .success(let value):
+    if let value = value {
+      value1 = value
+      iterator1 = iter
+      return nil
+    } else {
+      group.cancelAll()
+      return .success(nil)
     }
-    print ("Stream done.")
- } catch {
-    print ("Error: \(error)")
- }
-```    
+  case .failure(let error):
+    group.cancelAll()
+    return .failure(error)
+  }
+  // 和 .first 处理逻辑一致
+case .second(let res, let iter):
+...
+```
+
+查阅 withTaskGroup [文档](https://developer.apple.com/documentation/swift/withtaskgroup(of:returning:body:))，其含义是一定数量的 Task 合集，甚至可以用 for-in 语法来依次获取其中 Task 的返回值。 `group.next()` 更是手动控制版的 for-in 循环。所以连续调用两次 iteration 方法的目的就是手动的 next 两次，也就是分别执行了两个 Task 任务，到这取值功能就实现了。
+
+还有一点需要提醒的是，`group.next()` 的返回值并不是按照 `.addTask` 方法的顺序去返回的。`withTaskGroup` 内部的 TaskGroup 是符合 AsyncSequence 协议的，所以 Task 的任务完成之后会把结果先放到异步序列的缓冲区。而 next 的取值会先从这个缓冲区去取值。如果缓冲区为空，那么就会等待其中一个任务的完成。
+
+在 switch 代码里，只有当 res 是 `.sucess` 且 value 有值的时候，整个 `iteration` 的返回值才会是 `nil`，其他情况下的 `iteration` 都是有成功或失败的返回值。从结果上来看，除非两次 iteration 方法调用之后的 res 都有值，才会执行 return 两个 res 方法。
+
+那么到这就可以实现从两个 `AsyncSequence` 取值且保证取值顺序一致。两个 `AsyncSequence` 都只调用了一次自己的 `next` 迭代方法。
 
 #### 延伸
 
@@ -291,24 +236,87 @@ switch state {
 1. 比如 zip/merge 方法内部的 next 方法里对于有值和无值使用了枚举的方式来处理
 2. 内部使用 Task 来完成异步调用，包括 Task 相关的优先级参数，返回值，等等
 
+#### 错误捕获
+
+在前面的关于方法实现的代码里，可以发现调用的几个方法里都有返回错误的情况，比如 next 方法有 rethrows 关键词。
+从对应代码的逻辑可以看出，是只要当其中一个 AsyncSequence 报错了，也就是返回了 nil，zip 方法就会停止。
+
+那么自定义实现的 AsyncSequence 要怎么处理错误的情况呢？关键词：[AsyncThrowingStream](https://github.com/apple/swift/blob/4b0824ce23c2576f15d85d2ddbb8ab14660b0d32/stdlib/public/Concurrency/AsyncThrowingStream.swift)
+
+这里贴出官方的代码举例：
+
+```Swift
+class QuakeMonitor {
+   var quakeHandler: ((Quake) -> Void)?
+   var errorHandler: ((Error) -> Void)?
+
+   func startMonitoring() {…}
+   func stopMonitoring() {…}
+}
+```
+
+Continuation 就是 AsyncStream 里用来处理值相关的结构体
+
+1. 传递值的方法： `yield` 方法
+2. 结束并抛出错误的方法： `finish(throwing: )`
+3. 当然也有直接结束的方法：`finish()`
+
+```Swift
+extension QuakeMonitor {
+  static var throwingQuakes: AsyncThrowingStream<Quake, Error> {
+      AsyncThrowingStream { continuation in
+           let monitor = QuakeMonitor()
+           monitor.quakeHandler = { quake in
+               continuation.yield(quake)
+           }
+           monitor.errorHandler = { error in
+               continuation.finish(throwing: error)
+           }
+           continuation.onTermination = { @Sendable _ in
+               monitor.stopMonitoring()
+           }
+           monitor.startMonitoring()
+       }
+  }
+}
+```
+
+这里就可以拿到 `finish(throwing:)` 抛出的错误
+
+```Swift
+do {
+    for try await quake in throwingQuakes {
+        print ("Quake: \(quake.date)")
+    }
+    print ("Stream done.")
+ } catch {
+    print ("Error: \(error)")
+ }
+```   
+
 ## 时钟 Clock
 
 文档里对 Clock 协议是这么描述的：
 
-```
-A mechanism in which to measure time, and delay work until a given point in time.
-```
+> A mechanism in which to measure time, and delay work until a given point in time.
 
-字面意思的理解，就是将需要执行的任务延迟一定的时间执行了。仅仅如此的话，GCD 里的延迟函数也能实现，为什么还需要特意写了一个协议出来呢？
+视频里解释 Clock 想要解决的是一定时间之后唤醒任务。查看 [Clock 协议](https://developer.apple.com/documentation/swift/clock) 文档，现在内部定义了两种类型的时钟：[SuspendingClock](https://github.com/apple/swift/blob/2d2b6f26b597d20b58efc26165626c8d095cb07a/stdlib/public/Concurrency/SuspendingClock.swift) 和 [ContinuousClock](https://github.com/apple/swift/blob/2d2b6f26b5/stdlib/public/Concurrency/ContinuousClock.swift)。
+
+这两者的区别就在于，后者 incrementing while the system is asleep，而且前者 not。官方建议与机器相关的比如动画使用 SuspendingClock。而与人相关的任务，则更适合 ContinuousClock。
 
 ![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/clock-protocol.png)
 
-视频里解释 Clock 想要解决的是一定时间之后唤醒任务。查看 [Clock 协议](https://developer.apple.com/documentation/swift/clock) 文档，现在内部定义了两种类型的时钟：[SuspendingClock](https://github.com/apple/swift/blob/2d2b6f26b597d20b58efc26165626c8d095cb07a/stdlib/public/Concurrency/SuspendingClock.swift) 和 [ContinuousClock](https://github.com/apple/swift/blob/2d2b6f26b5/stdlib/public/Concurrency/ContinuousClock.swift)。
-这两者的区别就在于，后者 incrementing while the system is asleep，而且前者 not。与机器相关的比如动画使用 SuspendingClock。而与人相关的任务，则更适合 ContinuousClock。
-<!-- （注：需要补充） -->
+另外在 Clock 的[提案](https://github.com/apple/swift-evolution/blob/main/proposals/0329-clock-instant-duration.md)里会找到一些相关的信息。
+比如 GCD 里的也有 `DispatchWallTime/DispatchTime` 类型对应着 Clock 的 `SuspendingClock/ContinuousClock` 时钟类型。而 Clock 不仅是为 Swift Concurrency 功能提供这些时间的概念，同样也是作为一个 `uniform accessor` 统一入口。
+
+clock-evolution.png
+
+如果了解过 Combine/Rx 的 `Scheduler`，会发现它对“时间”有一层额外的抽象，要求 `Scheduler` 去实现这一层抽象，例如：
+[OperationQueue.SchedulerTimeType](https://developer.apple.com/documentation/foundation/operationqueue/schedulertimetype)
+[DispatchQueue.SchedulerTimeType](https://developer.apple.com/documentation/dispatch/dispatchqueue/schedulertimetype)
+[RunLoop.SchedulerTimeType](https://developer.apple.com/documentation/foundation/runloop/schedulertimetype)
 
 ### Debounce
-<!-- （注：需要补充） -->
 去抖动，以一定的间隔来响应任务。对应的算法，是在 Clock 的基础上实现
 
 ![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/debounce-algorithms.png)
@@ -339,16 +347,58 @@ let sleep: Task<Partial, Never> = Task { [tolerance, clock] in
 ```
 
 在 sleep 任务先在执行，直到 clock 到了指定的 deadline 之后才会有返回值 `.sleep`，再返回的就是 produce 任务。
-通过 Task.select 方法保证了 sleep 任务完成之后，然后接着执行 produce。
+通过 Task.select 方法保证了 sleep 任务完成之后，然后接着执行 produce。另外根据代码实现可以发现，debounce 算法的第一个有效返回值会在等待 300ms 之后返回。
 
-[TaskSelect](https://github.com/apple/swift-async-algorithms/blob/main/Sources/AsyncAlgorithms/TaskSelect.swift) 不展开解释源码，内部实现就是等到第一个任务有返回值的之后，并将这个任务返回。然后继续等待第二个任务有返回值
+[TaskSelect](https://github.com/apple/swift-async-algorithms/blob/main/Sources/AsyncAlgorithms/TaskSelect.swift) 内部实现就是等到第一个任务有返回值的之后，并将这个任务返回。然后继续等待第二个任务有返回值
+
+```Swift
+public static func select<Tasks: Sequence & Sendable>(
+    _ tasks: Tasks
+  ) async -> Task<Success, Failure>
+  where Tasks.Element == Task<Success, Failure> {
+    let state = ManagedCriticalState(TaskSelectState<Success, Failure>())
+    return await withTaskCancellationHandler {
+      let tasks = state.withCriticalRegion { state -> [Task<Success, Failure>] in
+        defer { state.tasks = nil }
+        return state.tasks ?? []
+      }
+      for task in tasks {
+        task.cancel()
+      }
+    } operation: {
+      await withUnsafeContinuation { continuation in
+        for task in tasks {
+          Task<Void, Never> {
+            _ = await task.result
+            let winner = state.withCriticalRegion { state -> Bool in
+              defer { state.complete = true }
+              return !state.complete
+            }
+            if winner {
+              continuation.resume(returning: task)
+            }
+          }
+          state.withCriticalRegion { state in
+            state.add(task)
+          }?.cancel()
+        }
+      }
+    }
+  }
+```
+
+1. withTaskCancellationHandler 闭包会在 Task.Select 的调用方取消任务之后，将 state.tasks 里的任务依次取消
+2. withUnsafeContinuation 用在处理原有闭包方式处理的方法，通过 resume 方法实现 async/await 的方式传递值。相同作用机制的还有 withCheckedContinuation 闭包，前者性能更好，而后者有运行时检查。另外这俩闭包里的 resume 方法有且仅有一次
+3. [ManagedCriticalState](https://github.com/apple/swift-async-algorithms/blob/db847ef41037d9b279cb51c6e167e5cb3f4abfdc/Sources/AsyncAlgorithms/Locking.swift) 用来处理临界变量的类，内部实现里用锁来保证状态的唯一
+4. 关于 withCriticalRegion 资料比较少。可以猜测的是在遍历 tasks 的时候会将其他任务挂起，保留第一个任务执行。任务执行完成之后，通过 resume 方法返回
 
 作者在 Swift 社区上关于 Task.Select 的 [讨论](https://forums.swift.org/t/pitch-promotion-of-task-select-from-swift-async-algorithms-to-swift-concurrency/56581)
-以及对应 Github 上的文档 [Guide](https://github.com/apple/swift-async-algorithms/blob/main/Sources/AsyncAlgorithms/AsyncAlgorithms.docc/Guides/Select.md)
+在 Github [Guide](https://github.com/apple/swift-async-algorithms/blob/main/Sources/AsyncAlgorithms/AsyncAlgorithms.docc/Guides/Select.md) 文档上发现作者将 `withTaskGroup` 和 `Task.select` 两个方法做了比较
 
-另外根据代码实现可以发现，debounce 算法的第一个有效返回值会在等待 300ms 之后返回。
-
-<!-- （注： debounce 里的 task.select 和 withTaskGroup 比较） -->
+1. withTaskGroup 创建高效的子任务。 Task.select 只能是已存在的任务
+2. withTaskGroup 在所有子任务完成之后返回。 Task.select 在第一个任务完成后返回
+3. withTaskGroup 在等待返回时可以取消所有未完成的子任务。 Task.select 未选择的任务会继续运行
+4. withTaskGroup 可以支持有 0 个子任务。 Task.select 至少需要 1 个任务
 
 ### ContinuousClock
 
@@ -387,8 +437,7 @@ enum _ClockID: Int32 {
 从 [Clock](https://github.com/apple/swift/blob/ff387aeebcbb416d2b87c769d200675ca59d9672/stdlib/public/Concurrency/Clock.swift) 源码里发现定这是一个枚举？！所以这个 ID 不是真的时钟 ID。
 
 提一句视频中使用到的 [AsyncChannel](https://github.com/apple/swift-async-algorithms/blob/a973b06d06f2be355c562ec3ce031373514b03f5/Sources/AsyncAlgorithms/AsyncChannel.swift) 结构体。
-
-<!-- （注：对于 AsyncChannel 在 rx 和 combine 应该都有。可以接受信息并传递信息） -->
+对于 AsyncChannel 在 rx 和 combine 就是对应的 `Subjects` 和 `Subject`，作为中间者接受信息并传递信息
 
 ### chunked(by:)
 根据一定时间分块的数据进行处理，同样是实现了 [AsyncChunksOfCountOrSignalSequence](https://github.com/apple/swift-async-algorithms/blob/434591a571/Sources/AsyncAlgorithms/AsyncChunksOfCountOrSignalSequence.swift) 结构
@@ -400,7 +449,7 @@ enum _ClockID: Int32 {
 这里列举一些例子，来说明 Clock 可以做到的事和实现的效果
 
 ```Swift
-// 可以阻塞当前线程，延迟执行下一步
+// Task 会被挂起，直到时间结束继续被执行
 try await Task.sleep(nanoseconds: 1 * 1_000_000_000) //nanoseconds 纳秒
 try await Task.sleep(until: .now + .seconds(3), clock: .continuous)
 
@@ -443,7 +492,7 @@ let elapsed = await clock.measure {
 
 从网上找了一些简单的代码做对比
 
-```
+``` Swift
 //rx
 let ob1 = PublishSubject<String>()
 let ob2 = PublishSubject<String>()
@@ -453,7 +502,7 @@ Observable.zip(ob1,ob2).subscribe { (event) in
 
 // combine
 let numbersPub = PassthroughSubject<Int, Never>()
- et lettersPub = PassthroughSubject<String, Never>()
+let lettersPub = PassthroughSubject<String, Never>()
 
  cancellable = numbersPub
      .zip(lettersPub)
