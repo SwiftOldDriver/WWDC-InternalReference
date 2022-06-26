@@ -3,7 +3,7 @@ session_ids: [10092]
 ---
 
 > 作者：Tamarous，就职于字节跳动，目前工作内容是负责某 App 的稳定性治理。
-> 
+>
 > 审核：Damien，就职于字节跳动，目前负责 TikTok 隐私和安全相关的工作。
 
 # WWDC22 10092 - 遇见 Passkey
