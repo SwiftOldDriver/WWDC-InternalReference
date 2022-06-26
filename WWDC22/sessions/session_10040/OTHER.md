@@ -6,9 +6,13 @@ iHTCboy，目前就职于三七互娱37手游，从事游戏 SDK 开发多年，
 
 黄骋志，目前就职于字节跳动西瓜视频，负责基础技术相关工作，协助复杂业务进行重构。曾参与长视频支付相关工作。
 
+SeaHub，目前任职于腾讯 TEG 计费平台部，负责搭建服务于腾讯系业务的支付组件 SDK，对 IAP 相关内容及 SDK 设计开发有一定的经验。
+
+Damonwong，老司机技术周报编辑，就职于淘系技术部。
+
 ## 不超过 120 个字的文章简介
 
-本文主要聚焦于 App Store Server API 和 App Store Server Notifications。从去年 WWDC21 苹果推出了 StoreKit v2、App Store Server API v1 和 App Store Server Notifications v2，今年 WWDC22 基于这些功能的基础上，增加了一些新的 API 和一些服务的优化。另外，针对大家对这些新特性有一些疑虑，如 JWT/JWS、兼容性、安全性、订阅通知、集成和迁移等等，苹果进行了详细的解答，还提供非常多的最佳实践的案例和优化建议。
+本文主要聚焦于 App Store Server API 和 App Store Server Notifications。苹果去年 WWDC21 推出了 StoreKit 2、App Store Server API 和 App Store Server Notifications V2，今年 WWDC22 基于这些功能的基础上，增加了一些新的 API 和一些服务的优化。另外，苹果针对这些新特性的疑虑进行了解答，例如 JWT/JWS、兼容性、安全性、订阅通知、服务端集成和迁移等等，最后提供了最佳实践的建议。
 
 ## 公众号/小专栏图文头图
 
