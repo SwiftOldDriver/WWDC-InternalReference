@@ -30,7 +30,7 @@ session_ids: [10065]
 >
 > 如果您以往有对接过 Game Center、Game Controller 等原生插件，可以直接跳到文章的第二部分开始阅读；
 >
-> 如果你想了解使用 Apple 的六个 Unity 插件使用的场景或是注意点，可以直接跳转到文章的第三部分。
+> 了解使用 Apple 的六个 Unity 插件的建议以及注意点，可以直接跳转到文章的第三部分。
   
 > 相关 Session ：
 >
@@ -53,7 +53,7 @@ session_ids: [10065]
 
 ### 1. Apple.Core
 
-[Apple.Core](https://github.com/apple/unityplugins/blob/main/plug-ins/Apple.Core/Apple.Core_Unity/Assets/Apple.Core/Documentation~/Apple.Core.md) 将每个插件的 Build Settings 统一到单独的 Unity 项目设置窗口中。因为您需要编译每个插件的各个本地库，Apple.Core 还包含一个资源管理器，它确保导入的插件库可以针对所需要的平台进行配置。 Apple.Core 还包含构建后处理项目配置的脚本，在构建您的项目时，它确保编译后产生的 Xcode 工程能够正确引用原生库。有对接过 iOS 或 Mac 功能的 Unity 开发者，想必比较了解上述这个流程，因为 Unity 提供了 UnityEditor.PluginImporter 类、 IPreprocessBuildWithReport 接口以及 PostProcessBuild 方法等可以实现 Unity 导出 Xcode 工程后，根据需要引入对应平台的原生库并可以修改 Info.plist 。 Apple.Core 还定义了一些运行时交互类型，从而简化了 C# 脚本和原生代码层之间的数据传递。特别指出的是，Apple.Core 是所有其他 Apple Unity 插件的依赖项。所以，如果使用了其它插件，那您必须先导入 Apple.Core 到 Unity 工程里。
+[Apple.Core](https://github.com/apple/unityplugins/blob/main/plug-ins/Apple.Core/Apple.Core_Unity/Assets/Apple.Core/Documentation~/Apple.Core.md) 将每个插件的 Build Settings 统一到单独的 Unity 项目设置窗口中。因为您需要编译每个插件的各个本地库，Apple.Core 还包含一个资源管理器，它确保导入的插件库可以针对所需要的平台进行配置。 Apple.Core 还包含构建后处理项目配置的脚本，在构建您的项目时，它确保编译后产生的 Xcode 工程能够正确引用原生库。对接过 iOS 或 Mac 功能的 Unity 开发者，相必会比较了解上述流程，因为 Unity 提供了 UnityEditor.PluginImporter 类、 IPreprocessBuildWithReport 接口以及 PostProcessBuild 方法等可以实现 Unity 导出 Xcode 工程后，根据需要引入对应平台的原生库并可以修改 Info.plist 。 Apple.Core 还定义了一些运行时交互类型，从而简化了 C# 脚本和原生代码层之间的数据传递。特别指出的是，Apple.Core 是所有其他 Apple Unity 插件的依赖项。所以，如果使用了其它插件，那您必须先导入 Apple.Core 到 Unity 工程里。
 
 ![](./images/applecore-import.png)
 
@@ -697,7 +697,7 @@ async void Start()
 
 ```
 
-## 使用 Apple 的六个 Unity 插件使用的场景或是注意点
+## 使用 Apple 的六个 Unity 插件的建议以及注意点
 
 首先，还是非常感谢 Apple 为我们提供的六个 Unity 插件，这让很多不熟悉 ObjC 或是 Swift 的 Unity 开发者减轻了学习新语言的成本，就可以直接通过 C# 完成 Apple 的这些插件功能调用。另外一方面，也方便了 Unity 开发者可以更容易的控制 Unity 项目编译前后的流程把控与参数配置。最近几年不断地为游戏提供新特性，也让我们看到了 Apple 对游戏开发者的重视。不过这些插件很多功能特性是 Apple 平台独有，所以开发者在调用这些功能时候，一定要注意当前平台是否可以使用。
 
