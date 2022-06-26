@@ -1,6 +1,6 @@
 ## 个人介绍
 
-魏王磊，iOS&Android 开发，就职于字节跳动 FunsionApp 团队。
+魏王磊，iOS&Android 开发，就职于字节跳动 FusionApp 团队。
 
 ## 审核介绍
 
