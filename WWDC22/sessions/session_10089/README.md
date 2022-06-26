@@ -107,18 +107,23 @@ WWDC17，苹果正式推出更加强大的PDF处理框架`PDFKit`。
 - `View`层
 
 `PDFView`：是`PDFKit`中的主要视图，主要用于显示以及管理PDF文档的内容。
+
 `PDFThumbnailView`：是一个包含PDF页面缩略图集合的自定义视图，用户可以通过滚动或者手势交互来控制`PDFView`视图中的页面变化，相当于页面的索引。
 
 - `Document`层
 
 `PDFDocument`：代表一个PDF文件，它是所有`PDFPage`的容器。它不仅为你提供了加载、修改和保存一组PDF页面的能力，而且还有解锁、搜索以及与文档结构交互的能力。
+
 `PDFPage`：代表`PDFDocument`中的某一页。
+
 `PDFAnnotation`：是PDF文档中所有标注类型的包装类。它是一个直接映射到PDF文件格式的键值对的容器，在Adobe PDF规范（1.7）中，你可以通过制定键值对来实现注释的属性。
 
 - `Support`层
 
 `PDFSelection`：代表一段被选择的内容的范围。我们可以提取该范围的字符串文本，也可以对该范围的字符串文本进行装饰。
+
 `PDFOutline`：代表大纲层次结构中的节点。
+
 `PDFAction`：是一个抽象类，用于表示用户可以触发的事件与所属注释的交互，这些事件可以是PDFActionGoTo、PDFActionNamed、PDFActionRemoveGoTo、PDFActionResetForm、PDFActionURL等，通常这些事件主要用于移动PDF视图的视口、打开网页浏览器、清除表单等。
 
 之后会详细讲解这些类的特性和使用方式。
