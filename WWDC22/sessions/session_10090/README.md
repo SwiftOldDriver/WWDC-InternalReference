@@ -28,6 +28,7 @@ session_ids: [10090]
 >
 > [Session 221 TextKit Best Practices](https://developer.apple.com/videos/play/wwdc2018/221/)
 >
+
 ## iOS 文本系统发展回顾
 
 在 iOS7 以前，iOS 系统中的文本组件底层基本都是使用 WebKit 进行布局和渲染，虽然在 iOS3 带来了 CoreText，但其应用并不广泛。在 iOS7，文本系统进行了一次大升级，带来了 TextKit，并且将 UIKit 中文本相关的组件底层都切换为 TextKit 实现，文本绘制性能得到了提升，TextKit 的出现，也提升了 iOS 系统外观设计里文本的重要程度。TextKit 是一个基于 CoreText 封装的高级框架，其使用 MVC 架构，将 CoreText 中的底层排版逻辑进行抽象，使得上层开发者也能够容易的自定义个性化文本样式，大大丰富了 iOS 系统中的文本生态。然而实际上， TextKit 并不是一个新框架，早在二十多年前，其就在出现在 OpenStep 系统上了，然而几十年前的设计对于现在追求高性能，丰富性可扩展性，和安全性的使用场景注定有些局限性，针对于此，Apple 推出了 TextKit2。并在 iOS15 上支持了 UITextField，在 iOS16 系统上，所有 UIKit 中，文本相关的组件默认都使用 TextKit2 进行绘制。
@@ -35,9 +36,11 @@ session_ids: [10090]
 TextKit2 的核心原则为 “准确性、高性能、安全性” 。针对于准确性，TextKit2 抽象了字形处理逻辑，直接从框架层面消除了字形 API，避免了不必要的复杂性，并且其完全支持 OpenType 和可变字体等现代字体技术；针对高性能，TextKit 默认就会使用基于 ViewPort 的布局和渲染，尤其对于内容较多的文档，性能得到明显提升；针对于安全性，TextKit2 更加关注值语义。TextKit2 专注于使用更高级的对象来控制文本布局，使您可以更轻松地自定义文本的布局，从而可以用更少的代码构建更酷的内容。TextKit2 引擎构成了所有 Apple 平台上文本布局和渲染的基础。未来 Apple 针对于文本的性能增强和改进都将着重与 TextKit2 之上。所以了解 TextKit2，以及清楚如何适配 TextKit2 对于开发者来说是必须要关注的事情。![](./images/IMG_01.PNG)
 
 如果想要更加深入了解 TextKit2 的设计原则，以及针对 TextKit1 具体有哪些优化，可以看去年的 WWDC Session 10061。本文将主要着重于 TextKit2 在 iOS16 上的新特性和如何适配。
+
 ## TextKit2 的新特性
 
 本部分将主要介绍 TextKit2 在 iOS 和 macOS 系统中的覆盖面，以及 TextKit2 的新特性。
+
 ### 发展历程
 针对 iOS，TextKit2 最早于 iOS15 中被引入 iOS 系统，并在 UITextField 中替换 TextKit1，成为其底层默认的渲染引擎。而在 iOS16 中，UIKit 中所有的文本相关控件，默认都由以前的 TextKit1 替换到 TextKit2。![](./images/IMG_02.PNG)
 
@@ -76,33 +79,42 @@ paragraphStyle.textLists = [textList]
 ```
 
 由于常见的列表可由嵌套项，所以在 TextKit2 中，增强了 NSTextElement，以支持将其构造为一个树结构。新版 TextKit 添加了一个新类 NSTextListElement，用以支持嵌套场景。![](./images/IMG_08.PNG)
+
 ### 文本附件
 
 在 TextKit1 中，我们可以通过 NSTextAttachment 为文本添加附件，用以支持复杂的富文本场景，但可惜的是，NSTextAttachment 仅支持图片，这也就对其使用场景进行了限制。而在 TextKit2 中，NSTextAttachment 支持将 view 作为文本附件进行展示，仅需要通过 NSTextAttachmentViewProvider 实例化即可，并且可以通过附件直接处理事件，这使得文本附件的使用场景可以更为丰富。
+
 ## 兼容模式
 
 接来下这部分将详细介绍 TextKit1 的兼容性模式，原因及排查方式。由于 TextKit2 与 TextKit1 设计方式的不同，对于某些在 TextKit1 体系中投入较大的 App，亦或是脱离 UIKit，直接使用 TextKit1 进行自定义渲染绘制操作的组件，全面采用 TextKit2 可能需要一些时间。所以针对于此，Apple 提供了兼容模式，以便其能够顺利完成过渡。
+
 ### 原因
 #### 构造函数兼容
 
 前面已经提到过，当初始化时，显示使用 TextKit1 进行渲染时，TextView 将使用 TextKit1 进行渲染。
+
 #### 显示调用 API
 
 而当显示的调用 NSLayoutManager 等 TextKit1 中的 API 时，文本组件也会在内部重新将 NSTextLayoutManager 替换为 NSLayoutManager，并将其自身重新配置为使用 TextKit1 进行渲染。
+
 #### 属性不支持兼容
 
 如果在 TextView 中使用了 TextKit2 中尚不支持，或是完全剔除的 API 时，也会发生这种情况。
+
 ### 排查方式
 如果我们发现在使用 UITextView 的过程中意外的回退到 TextKit1 进行渲染，可以通过在日志中开启该消息的警告。对于 UITextView，可以在 _UITextViewEnableingCompatibilityMode 开启符号断点，可以追溯调用栈，查看何处触发该异常；对于 NSTextView，可以通过监听 willSwitch 或是 didSwitchToNSLayoutManager 通知来获取意外回退 TextKit1 时的更多信息，以便进行针对性处理。
 ![](./images/IMG_09.PNG)
+
 ### 注意点
 
 如果我们必须要使用某些 TextKit 中专有属性，最好在初始化时就指定使用 TextKit1 进行渲染，以避免在渲染过程中切换渲染引擎，带来更大的性能损耗和状态丢失。
+
 ### 如何避免兼容模式
 
 一个最重要的概念：每个 TextView 只能有一个 LayoutManager，所以其不能同时拥有 NSTextLayoutManager 和 NSLayoutManager，并且 TextKit2 切换到 TextKit1 为单向操作。切换 LayoutManager 的过程非常昂贵，并会带来状态丢失，所以避免兼容模式非常重要。![](./images/IMG_10.PNG)
 
 TextView 使用兼容模式最常见的原因就是访问 TextView 的 layoutManager 属性，所以一个重要的策略就是避免该属性的访问。但通常我们的代码都需要兼容低版本，并没有 NSTextLayoutManager，也无法完全避免 NSLayoutManager 的访问，在这种情况下，最好先访问 NSTextLayoutManager，确认其不存在后，再访问 NSLayoutManager。这样的情况下，TextKit1 的代码仅会在 Textkit2 不可用时进行使用。![](./images/IMG_11.PNG)
+
 ## 部分 API 兼容方式
 
 这部分会主要介绍 TextKit2 相较于 TextKit1 与类型相关更新的代码，以便使用了这部分 API 的开发者能够更好的迁移到 TextKit2。
@@ -111,6 +123,7 @@ NSLayoutManager 与 NSTextLayoutManager 中等价的 API：![](./images/IMG_12.P
 可以看到，这些 LayoutManager 相关的 API 在 TextKit 两个版本间都有类似的名称，替换比较简单。
 
 但实际上，某些 TextKit1 中的 API 在 TextKit2 并没有直接与其等价的接口。因为，在卡纳达等印度文字中，许多单词并没有字符到字形正确的映射。在 TextKit2 中，glyph 可以被拆分重组甚至删除。NSLayoutManager 上基于 glyph 的 API 假设我们可以把连续的字符范围与连续的字形范围进行直接的关联，但并非所有语言都是如此，所以使用 glyph 相关的 API 可能会导致某些语言的文本布局和展示并不完整。![](./images/IMG_13.PNG)
+
 ### 字形相关 API
 这就是为什么 TextKit2 中没有 glyph 相关的 API。那么我们如何使用 TextKit2 来替换 TextKit1 中字形相关 API 的使用？
 
@@ -133,6 +146,7 @@ textLayoutManager.enumerateTextLayoutFragments(from:
         numberOfLines += layoutFragment.textLineFragments.count
 }
 ```
+
 ### NSRange 能力增强
 
 在 TextKit1 中，我们通常使用 NSRange 索引文本的内容，NSRange 是字符串的线性索引。这种线性模型定义简单，很容易理解，但一旦我们要描述具有稍微复杂一些的结构内容时，线性模型就会有较大弊端。比如在 HTML 中索引字符串 Hello TextKit2! ![](./images/IMG_15.PNG)
@@ -151,6 +165,7 @@ NSTextRange 类似 NSRange，表示文档中的内容的连续范围，其属性
 
 但是 TextView 是建立在没有这种结构的 NSAttributedString 上的，要改变这一点，需要改变很多基础的数据结构，所以在使用 selectedRange 或 scrollRangeToVisible 等 TextView 相关 API 时，底层仍将继续使用 NSRange，在于 TextKit2 的 layoutManager 进行通信时，需要在 NSRange 和 NSTextRange 之间进行相互转换。
 转换也比较简单，下面是将 NSRange 转换为 NSTextRange 的示例：
+
 ``` swift
 let textContentManager = textLayoutManager.textContentManager
 
@@ -191,6 +206,7 @@ let nsTextRange = NSTextRange(location: startLocation)
 另外，如果你实现了符合 UITextInput 协议的自定义对象，则可以直接获取 view 中的 UITextPosition 和 UITextRange 子类，
 我们可以使 UITextPosition 实现 NSTextLocation 协议所需方法，并可以使用子类直接创建 NSTextRange。
 即使两个视图相似，我们也需要避免在不同的视图中重用 UITextPosition 对象，因为 UITextPosition 仅对创建它的视图生效。
+
 ## 总结
 
 本文首先介绍了 iOS 平台上文本系统的发展历程，接着着重介绍了 TextKit2 相对于 TextKit1 的升级和具体适配流程。相对于去年的 session 《Meet TextKit2》，本文主要着重于在实践层面介绍 TextKit2 的适配策略及重大改进。
