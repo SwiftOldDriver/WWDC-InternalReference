@@ -8,9 +8,7 @@ session_ids: [10003]
 
 ## Apple 平台中的天气
 
-天气 app 随着 iPhone OS 1 一同面世，在 iOS 7 及之前使用 Yahoo! 作为数据来源，在 iOS 8 开始使用 The Weather Channel 作为数据来源，在 iOS 15 增加 Dark Sky（已收购）作为数据来源，同时亦使用各国官方气象局和第三方数据服务商（如 BreezoMeter、和风天气）作为数据来源。
-
-在 iOS 15 中，Apple 使用 SwiftUI 重写了天气 app。在 iPadOS 16 和 macOS Ventura 中，Apple 带来了独立的天气 app，而在此之前只能使用小组件来查看天气。在 WWDC22 中，Apple 整合已收购的 Dark Sky，推出了 `WeatherKit` 天气服务，包括 Swift 和 REST API 两个版本，后面我们会介绍如何进行接入。
+天气 app 随着 iPhone OS 1 一同面世，其数据来源发生了多次变更。在 iOS 7 及之前使用 Yahoo! 作为数据来源，从 iOS 8 开始使用 The Weather Channel 作为数据来源，在 iOS 15 增加 Dark Sky（已收购）作为数据来源，同时亦使用各国官方气象局和第三方数据服务商（如 BreezoMeter、和风天气）作为数据来源。除了数据来源，天气 app 在 Apple 各个平台中也有着不同的表现形式。在 iOS 15 之前，天气 app 使用 UIKit 进行编写，从 iOS 15 开始改为 SwiftUI。在 iPadOS 16 和 macOS Ventura 中则是推出了独立的天气 app，而在此之前只能使用小组件来查看天气。在今年的 WWDC22 中，Apple 整合已收购的 Dark Sky，推出了 `WeatherKit` 天气服务，支持查询当前天气、未来预报、极端天气警报等一系列天气数据，调用 API 包括 Swift 和 REST API 两个版本，下面将会介绍如何进行接入。
 
 ## WeatherKit 支持的功能
 
