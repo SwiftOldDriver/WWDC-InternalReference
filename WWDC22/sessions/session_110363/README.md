@@ -238,12 +238,92 @@ bl _objc_msgSend
 
 ## Autorelease 自动省略
 
+`Apple` 今年针对 `Autorelease` 自动省略的优化分为两个方面。
 
+- 受益于 `Runtime` 的更新，`Autorelease` 自动省略更高效。
+- 在此基础之上，受益于编译器的更新，最低发布版本为 `iOS 16`、`tvOS 16` 或者是 `watchOS 9` 的 `App` 会自动获得包大小减少 `2%` 的优化。
 
 ### 什么是 Autorelease 自动省略
 
-### Autorelease 自动省略存在的问题
+在充分理解 `Apple` 针对 `Autorelease` 自动省略做出的优化前，我们先简单温习一下什么是 `Autorelease` 自动省略。
+
+![Auto Release - Part 1](./images/pic13.png)
+
+还是基于之前的代码，如上图所示，`getWWDCDate` 方法返回了临时创建的 `theDate` 对象。然后 `event` 对象调用了 `getWWDCDate` 方法，并使用 `theWWDCDate` 对象指向了方法返回值 `theDate` 对象。
+
+![Auto Release - Part 2](./images/pic14.png)
+
+对于 `getWWDCDate` 方法的调用方，`ARC` 会插入 `retain` 语句。
+
+![Auto Release - Part 3](./images/pic15.png)
+
+而对于被调用方即 `getWWDCDate` 方会插入 `release` 语句，因为 `theDate` 对象离开了其作用域。但我们并不能真正马上就 `release` 掉 `theDate` 对象，因为该对象并没有其它的引用。
+
+![Auto Release - Part 4](./images/pic16.png)
+
+如果我们在此时 `release` 了它，在我们完成 `getWWDCDate` 方法的调用前 `theDate` 对象就会被销毁，这并不是我们所期望的结果。
+
+![Auto Release - Part 5](./images/pic17.png)
+
+所以一个特殊的约定就是插入 `autorelease` 语句，随后方法的调用方就可以对方法返回的对象进行 `retain` 操作。
+
+事实上 `Runtime` 并不会保证真正的 `release` 操作何时发生，但只要确保方法返回前临时对象不被销毁，对我们来说就是很方便的。
+
+`Autorelease` 操作并不是没有开销的，`Autorelease` 省略就是专门来进行优化这项开销的。要了解它是如何工作的，让我们基于上面示例代码中的 `return` 语句查看其汇编实现。
+
+![Auto Release - Part 6](./images/pic18.png)
+
+当我们调用 `autoreleease` 之后，我们视角就需要来到 `Objective-C` 运行时了，此时有意思的事情就会发生了。
+
+`Objective-C` 运行时需要知道我们正在返回一个「自动释放」的对象。而为了实现这一点，编译器会生成一个我们不会用到的特殊标记。通过这个特殊标记，运行时就知道当前是否符合「自动释放省略」的条件，随之而来的是我们稍后要执行的 `retain` 操作。
+
+![Auto Release - Part 7](./images/pic19.png)
+
+如上图所示，编译器生成了特殊的标记 `0xAA1D03FD`。
+
+![Auto Release - Part 8](./images/pic20.png)
+
+接着，运行时会以数据的形式加载这个特殊的标记指令，比较是不是所期望的特殊标记指令从而达到「自动释放省略」的效果。
+
+![Auto Release - Part 8](./images/pic21.png)
+
+经过比较之后，如果匹配成功，则表示编译器告诉运行时我们正在返回一个随后马上会被 `retain` 的临时变量。最后这就可以让我们达到省略或移除互相匹配的 `autorelease` 和 `retain` 代码。这就是「自动释放省略」。
 
 ### Autorelease 自动省略优化方案
 
+但是由于将代码作为数据加载并不是一个十分通用的场景，因此 `CPU` 并不会对此做出特殊优化。
+
+![Auto Release - Part 9](./images/pic22.png)
+
+让我们再次回到前面的例子上，我们还是从 `autorelease` 作为探索的起点。在这个时间点上，我们已经有了一个十分有价值的线索，那就是方法的「返回地址」。通过方法「返回地址」，我们就知道在方法执行完成之后需要执行到哪个地方。所以我们可以持续追踪这个返回地址。值得一提的是，获取返回地址的操作十分得轻量，因为返回地址只是一个指针，我们可以存在一边以备后续流程使用。
+
+![Auto Release - Part 10](./images/pic23.png)
+
+接着我们将目光离开 `autorelease` ，回到方法的调用方，当执行了 `retain` 操作之后，我们重新回到了运行时中。新的魔法开始了。
+
+如上图绿色箭头所示，在此时，我们可以获取指向当前返回地址的指针。
+
+![Auto Release - Part 11](./images/pic24.png)
+
+随后，我们只需要在运行时里面比较黄色箭头指针(之前执行 `autorelease` 操作时保存的函数地址)和绿色箭头的指针(执行 `retain` 操作时获得的函数返回地址)即可判断是否需要进行「自动释放省略」。因为我们这里进行的操作只是两个指针的比较，这是十分轻量的操作。我们不需要进行高昂的内存访问。
+
+![Auto Release - Part 11](./images/pic25.png)
+
+最重要的是，我们不再需要通过以数据的形式加载特殊的标记指令来进行比较，我们可以删除掉上图中 `mov x29, x29` 这条指令。这让我们在代码上节省了一定的大小开销。
+
 ## 总结
+
+在 `WWDC 22` 上，`Apple` 发布了很多新功能、新特性和新 `API`。而本文所涉及到的内容就相对来说更加底层，更加的无感知。
+
+基于新的 `Xcode 14` 进行编译并且 `App` 运行在最新的 `OS` 上，你可以得到：
+
+* `Swfit` 协议检查更加高效
+* `Autorelease` 自动省略速度更快
+* 基于最新的 `Xcode 14` 的编译器和链接器重新编译 `App` 之后，以及消息发送 `stub` 带来的底层优化，最多可以压缩 `2%` 的 `App` 大小
+
+如果基于最新的 `iOS 16`、`tvOS 16` 或者 `watchOS 9` ，你可以得到
+
+* 通过减少 `retain` 和 `release` 底层汇编代码指令的大小，你可以获得额外的 `2%` 包大小减少的优化。
+
+最后，阅读完本文之后，如果你对里面涉及到的链接器细节感兴趣的话可以观看 [WWDC22 - Link fast: Improve build and launch time](https://developer.apple.com/videos/play/wwdc2022/110362/) 。
+
