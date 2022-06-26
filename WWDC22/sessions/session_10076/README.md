@@ -10,7 +10,7 @@ session_ids: [10076]
 
 ## iPad 与 Mac 的融合之路
 
-![MAndMacCatalyst](./images/MAndMacCatalyst.png)
+![M芯片 & MacCatalyst](./images/MAndMacCatalyst.png)
 
 *苹果嘴上说不要，身体却很诚实。*
 
@@ -54,7 +54,7 @@ Night Sky 是一款宇宙探索软件，它惊艳的 3D 效果获得了多次 We
 
 当你新建一个项目的时候，系统会默认帮你添加 Mac(Designed for iPad)，这可以让你拥有苹果芯片（目前也就是 M 系列芯片）的 Mac，直接把此应用跑起来。
 
-![defaultForIPad](./images/defaultForIPad.png)
+![Designed for iPad](./images/defaultForIPad.png)
 
 如果你希望在此模式下进行一些简单的适配，也是可以的。
 
@@ -72,7 +72,7 @@ Night Sky 是一款宇宙探索软件，它惊艳的 3D 效果获得了多次 We
 
 在交互方面 Touch Alternatives 可以帮助你把 iPad 上的交互简单地映射到 Mac 上
 
-![addTouchAlternatives](./images/addTouchAlternatives.png)
+![添加 Touch Alternatives 文件](./images/addTouchAlternatives.png)
 
 如上图，添加 Touch Alternatives 的 plist 文件后，你就可以配置你想要的交互选项：
 
@@ -93,11 +93,11 @@ Night Sky 是一款宇宙探索软件，它惊艳的 3D 效果获得了多次 We
 
 在 requiredOnboarding 下的数组中添加的选项将自动映射到 Mac 上的替代交互方案，具体映射规则是：
 
-![touchInfo](./images/touchInfo.png)
+![映射规则](./images/touchInfo.png)
 
 设置完毕后，你就可以在 Mac 中使用这些交互了，并且在你首次打开应用时，还会给你一个友好提示：
 
-![touchNotice](./images/touchNotice.png)
+![提示面板](./images/touchNotice.png)
 
 你甚至可以在这个界面上做一些配置。比如，关闭 Touch Alternatives。
 
@@ -112,13 +112,13 @@ Night Sky 是一款宇宙探索软件，它惊艳的 3D 效果获得了多次 We
 
 更进一步的迁移方式是本文的主角： Mac Catalyst
 
-![addMC](./images/addMC.png)
+![添加 Mac Catalyst](./images/addMC.png)
 
 添加完 Mac(Mac Catalyst)，我们就开启了 Mac Catalyst，此时你的应用可以跑在所有 Mac 之上（囊括了带苹果芯片和英特尔芯片的 Mac）。
 
 Mac Catalyst 分为两种适配模式：
 
-![selectIdiom](./images/selectIdiom.png)
+![iPad idiom](./images/selectIdiom.png)
 
 其中 "Scaled to Match iPad" 对应的是 iPad idiom，他是系统的默认选项。
 
@@ -128,13 +128,13 @@ iPad idiom 下，需要你做的适配工作是很少的，甚至可以一行代
 - 视图和文字在 Mac 上会被缩放到 77%，所以会丢失一些细节，甚至会因为[像素不对齐](https://jplay.github.io/2022/05/26/%E4%B8%AD%E7%9A%84%E5%83%8F%E7%B4%A0%E5%AF%B9%E9%BD%90/)变得模糊。
 - 控件是直接从 iOS 搬到 macOS 上的，某些情况下显得体验不佳。比如，UINavigationBar 在 Mac 上显得格格不入。
 
-![navigationbarFix](./images/navigationbarFix.png)
+![UINavigationBar 显得格格不入](./images/navigationbarFix.png)
 
 ### Mac idiom
 
 想要进一步提升用户体验，你应该选择 Mac idiom，也就是下图中的 "Optimize for Mac"
 
-![macIdiom](./images/macIdiom.png)
+![选择 Mac idiom](./images/macIdiom.png)
 
 在 Mac idiom 下，你的应用将变得更加贴合 Mac 的交互体验：
 
@@ -143,7 +143,7 @@ iPad idiom 下，需要你做的适配工作是很少的，甚至可以一行代
 
 我们基于同一个应用在两种模式下的对比来说明：
 
-![idiomCompare](./images/idiomCompare.png)
+![idiom 对比](./images/idiomCompare.png)
 
 - iPad idiom 下的文字明显小于 Mac idiom 下的文字
 - iPad idiom 下的 UINavigationBar 在 Mac idiom 下自动变成了 NSToolbar，这明显更贴合 Mac 的交互体验
@@ -158,7 +158,7 @@ iPad idiom 下，需要你做的适配工作是很少的，甚至可以一行代
 
 我们基于一个例子来展示窗口相关的内容，假设我们要实现一个小窗口，用来展示 markdown 的语法提示：
 
-![demo](./images/demo.png)
+![语法提示面板展示](./images/demo.png)
 
 我们需要窗口实现几个功能：
 
@@ -247,7 +247,7 @@ if windowScene.isFullScreen { /* ... */ }
 1. 在 NSToolbar 中插入一个自定义的 UIView 作为 NSToolbarItem，用来展示字数并且支持点击
 2. 点击这个字数按钮，需要弹出一个自定义 UIView，用来展示更多信息
 
-![toolbar](./images/toolbar.png)
+![toolbar 需求展示](./images/toolbar.png)
 
 首先，我们在 NSToolbarDelegate 的代理方法里实现自定义字数按钮的逻辑：
 
