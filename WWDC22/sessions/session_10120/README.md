@@ -4,9 +4,9 @@ session_ids: [10120]
 
 # WWDC22 - 进化你的 Core Data Schema
 
-> 本文基于 WWDC22 [Evolve your Core Data schema](https://developer.apple.com/videos/play/wwdc2022/10120/) 创作。阅读本文需要对 Core Data 有基础的了解。如果你从未使用过 Core Data，[官方文档](https://developer.apple.com/documentation/coredata)是一个很好的起点。
+> 本文基于 WWDC22 [Evolve your Core Data Schema](https://developer.apple.com/videos/play/wwdc2022/10120/) 创作。阅读本文需要对 Core Data 有基础的了解。如果你从未使用过 Core Data，[官方文档](https://developer.apple.com/documentation/coredata)是很好的起点。
 
-在 App 开发中，我们经常因为各种各样的原因修改 Model。在 CoreData 中，Model 的改变意味着底层存储需要进行迁移以匹配新的 Model，这使得迁移成为了每一个 Core Data 使用者的必修课。本文将介绍如何高效地更新与迁移 Core Data Schema，我们会依次聊聊：
+在 App 开发中，我们经常因为各种各样的原因修改 Model。在 CoreData 中，Model 的改变意味着底层存储需要进行迁移以适配新的 Model，这让迁移成为了每一个 Core Data 使用者的必修课。本文将介绍如何高效地更新与迁移 Core Data Schema，我们会依次聊聊：
 
 - 什么是 Schema 迁移
 - Schema 迁移策略
@@ -14,9 +14,9 @@ session_ids: [10120]
 
 ## 什么是 Schema 迁移
 
-如果你曾经使用过 Core Data 且对实体做过修改，你可能会发现自己从来没有写过数据迁移相关的代码，App 也能正常运行！Core Data 神奇地适配了你的改动，但这背后发生了什么？接下来让我们一探究竟。
+如果你曾经使用过 Core Data 且对实体做过修改，你可能会发现自己从来没有写过数据迁移相关的代码，App 也能正常运行！Core Data 神奇地适配了你的改动，这背后发生了什么？接下来让我们一探究竟。
 
-在 Core Data 中，对 Model 的修改需要同步到底层存储 Schema 中。举个例子，假设我们有个 `Airplane` 实体，有两个属性，类型和引擎数量：
+在 Core Data 中，对 Model 的修改需要同步到底层存储 Schema 中。举个例子，假设我们有个 `Aircraft` 实体，有两个属性，类型和引擎数量：
 
 ```swift
 struct Aircraft {
@@ -25,7 +25,7 @@ struct Aircraft {
 }
 ```
 
-Model 的 Schema 决定了底层的存储结构，看起来像是这样：
+`Aircraft` 的 Schema 决定了底层的存储结构，看起来像是这样：
 
 | TYPE     | NUM_ENGINE |
 | -------- | ---------- |
@@ -44,6 +44,7 @@ struct Aircraft {
 ```
 
 在迁移之后，Model Schema 的变化完全反应到了底层的存储中：
+
 | TYPE     | NUM_ENGINE | NUM_PASSENGERS |
 | -------- | ---------- | -------------- |
 | C172     | 1          | 4              |
@@ -76,7 +77,7 @@ Model 的改变引发的迁移是如此常见，以至于 Core Data 内置了一
 
 - 新增／删除／重命名
 
-- 调整关系的基数（Cardinality）
+- 调整关联的基数（Cardinality）
   > 如从一到一迁移到一到多，或者从无序对多迁移到有序到多。
 
 对于实体（Entity），轻量迁移支持：
@@ -85,11 +86,13 @@ Model 的改变引发的迁移是如此常见，以至于 Core Data 内置了一
 
 - 创建一个新的父实体或子实体
 
-- 在实体的层级关系中移动属性
+- 在实体的层级关系中上下移动属性
 
-- 将实体移入或移出一个实体层级关系
+- 将实体移出一个实体层级关系
 
-轻量迁移**不支持**合并实体层级关系。如果两个实体在源 Model 中没有相同的父实体，那它们在目标 Model 中也不能有共享相同的父实体。
+轻量迁移**不支持**合并实体层级关系：如果两个实体在源 Model 中没有相同的父实体，那它们在目标 Model 中也不能有共享相同的父实体。
+
+![轻量迁移无法将 `Pilot` 改为 `AirUnit` 的子实体](./images/Merge_Hierarchy.png)
 
 ### 开启轻量迁移
 
@@ -97,7 +100,7 @@ CoreData 提供了两个选项可以配置轻量迁移的行为：[`NSMigratePer
 
 使用 `NSPersistentContainer` 或 `NSPersistentStoreDescription` 时，这两个选项会默认设置为 `true` 并启用轻量迁移。如果使用的是其他的 API，如 `NSPersistentStoreCoordinator.addPersistentStore(type:configuration:at:options:)`，可以通过字典启用轻量迁移功能，如下面的代码：
 
-```language-swift
+```
 // 1
 let storeURL = URL(filePath: "/path/to/store")
 let momURL = URL(filePath: "/path/to/model")
@@ -126,7 +129,7 @@ do {
 
 1. 从文件中加载 `NSManagedObjectModel`。`NSManagedObjectModel` 描述了 Model 的结构。
 
-2. 使用刚刚创建的 `mom`  初始化一个 `NSPersistentStoreCoordinator`。
+2. 使用刚刚创建的 `mom` 初始化一个 `NSPersistentStoreCoordinator`。
 
 3. 配置开启轻量迁移的选项。
 
@@ -136,7 +139,7 @@ do {
 
 无论是用上述哪个 API，我们都可以直接在 Xcode 的 Core Data 编辑器中对 Model 进行编辑，不需要新建一个 Model 版本。如果想事先取得源 Model 和目标 Model 之间的映射模型（Mapping Model），可以使用 `NSMappingModel.inferredMappingModel` 方法。
 
-```language-swift
+```swift
 let mappingModel = NSMappingModel.inferredMappingModel(forSourceModel: modelA, destinationModel: modelB)
 ```
 
@@ -186,33 +189,59 @@ Mapping Model 在轻量迁移中几乎用不到，在手动迁移中经常使用
 
 CloudKit 和 CoreData 有非常深度的集成，因此成为了很多开发者实现同步功能的选择。
 
+> 今年的 Session 10119 中有对 CloudKit 和 CoreData 使用的进阶讲解，感兴趣的同学可以点击查看。
+
 在为 CloudKit 设计 Model 时，有一些额外的限制。为了让记录（Record）能在 App 和 CloudKit 之间正常传递， Core Data 的存储需要和 CloudKit 数据库使用相同的 Model Schema。
 
 > Record 是 CloudKit 数据库中的一条记录，对应 CoreData 的 Entity 实例。记录中的字段被称为 Field，对应 Core Data 的 Attribute。
 
-我们可以在本地的 Core Data Model 编辑器中定义 Model，这个 Model 不只是本地 Entity，也定义了 CloudKit Schema。在开发中，我们一般会现在 Develement 环境中使用这个 Schema，然后部署到 Production 环境。如果你使用的是 `NSPersistentCloudKitContainer`，对应的 Schema 会自动的同步到 CloudKit Console 中。
+我们可以在本地的 Core Data Model 编辑器中定义 Model，这个 Model 不只是本地 Entity，也定义了 CloudKit Schema。在开发中，我们一般会现在 Development 环境中使用这个 Schema，然后部署到 Production 环境。如果你使用的是 `NSPersistentCloudKitContainer`，对应的 Schema 会自动同步到 CloudKit Console 中。
 
 ![Cloud Kit Console](images/Cloud_Kit_Console.png)
 
-**需要注意的是，CloudKit 并不支持 CoreData 实体的所有特性**。在为 CloudKit 设计数据 Model 时，需要特意关注这些限制：
+**需要注意的是，CloudKit 并不支持 CoreData 实体的所有特性**。在为 CloudKit 设计数据 Model 时，需要特意关注这些限制。下面是具体的限制以及实践中的解决方式：
 
 - 不支持唯一约束（Unique Constraints）
+    > 实际用到 Core Data 的唯一约束的场景并不多，后端生成的 Model 一般会有唯一的 ID，本地生成的 Model 也能使用 UUID 作为 ID，都从根源上保持了唯一。
+
 - 不支持 `Undefined` 类型的属性
-- 不支持使用 `objectID`  
-- 所有关系必须是可选的且双向的
+
+    > 无论使不使用 CloudKit，定义良好的 Schema 都应尽量避免 `Undefined` 类型。
+
+- 不支持使用 [objectID](https://developer.apple.com/documentation/coredata/nsmanagedobject/1506848-objectid)
+
+    > `objectID` 是本地 PersistentStore 存在的概念，同一个用户的同一个实体在不同设备的 `objectID` 也是不同的。如果有多设备同一实体保持统一 ID 的需求，建议使用自定义的 `ID`。
+
+- 所有关联必须是可选的且双向的
+
 - 不支持 [Deny 删除规则](https://developer.apple.com/documentation/coredata/modeling_data/configuring_relationships)
 
 开发环境可以自由修改 Schema，但一旦 Schema 被部署到生产环境，就不能继续改动了。CloudKit 的 Schema 迁移限制非常大，仅支持新增 Fields 与新增 Record 类型，不支持修改／删除 Record 和 Field。轻量迁移只会更新磁盘文件的 Schema，不会对修改 CloudKit 的 Schema。我们仍然需要在 Development 模式下，用 `NSPersistentCloudKitContainer` 初始化新的 Model，让新的 Schema 同步到 iCloud Console， 然后将改动部署到 Production 环境上。
 
-从上面可以看出，CloudKit Schema 本质上只支持"加法"类型的改动。与后端更新接口字段类系，迁移 CloudKit 的 Schema 需要考虑对老版本 App 的影响。一个常见的问题是新增了一个 Filed 给新版本使用，但忘了更新老版本正在更新的旧字段。
+从上面可以看出，CloudKit Schema 本质上只支持"加法"类型的改动。与后端更新接口字段类似，迁移 CloudKit 的 Schema 需要考虑对老版本 App 的影响。一个常见的问题是新增了一个 Filed 给新版本使用，但忘了更新老版本正在使用的旧字段。
 
-总结来说，有三种常见的迁移 CloudKit Schema 的策略：
+总结来说，有三种常见的迁移 CloudKit Schema 的策略，我会以新增飞行日志的排序功能为例介绍：
 
-1. 在 Record 中新增 Field。旧版本的 App 也能访问每一个 Record，但不会收到新增 Field 的影响。
+1. 在 Record 中新增 Field。旧版本的 App 也能访问每一个 Record，但不会受到新增 Field 的影响。
+
+   > 在 `LogEntry` 中新增一个 `timeStamp: Date` 属性，新版本的 App 可以正常访问并使用到 `timeStamp`。老用户虽然从数据层面还是获取了到 `timeStamp`，但无法识别，在功能上没有影响。
 
 2. 在实体中新增一个 `version` 属性，并让 App 只会获取与当前 App 版本兼容的实体。
 
+   > 在 `LogEntry` 中新增 `version` 属性，老 Model `version` 为 1.0，App 在同步数据时使用 Predicate 只获取兼容的（ `version` 低于 1.0）的版本。新增 `timeStamp` 后，`version` 更新为 `2.0` 。使用这种方式最好在最初就做好规划（有 `version`）字段，同时需要记住每个 `version` 改动了哪些字段。相较于第一种方式的优势在于老版本的 App 完全不会接触到新版本的数据。
+
 3. 新建一个容器，使用 `NSPersistentCloudKitContainerOptions` 配置到新的容器上，用这个容器加载用户的当前 Store。CloudKit 会重新上传 App 已有的数据到新的 Container 中。这个策略完全没有兼容性问题，但需要留意重新上传数据需要一定时间。
+
+   > 弃用老的 Container，用新的 ContainerID 初始化 Container。这个策略完全抛弃了 CloudKit 中的老数据。如果用户设备上恰好没有保留本地的数据，过往的数据就丢失了，不太推荐。
+   >
+   > ```swift
+   > let description = NSPersistentStoreDescription(url: storeURL)
+   > description.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(containerIdentifier: "newContainerID")
+   > container.persistentStoreDescriptions = [description]
+   > container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+   >     //...
+   > }
+   > ```
 
 无论是使用上诉的哪个策略，一定要考虑多版本兼容问题，用多个不同版本的 Model Schema 测试 App。
 
@@ -288,7 +317,18 @@ do {
    })
    ```
 
-3. 新建轻量迁移的选项，传递给 Cordinator。
+3. 新建轻量迁移的选项，传递给 PersistentCordinator。
+
+   ```swift
+   let options = [
+           NSMigratePersistentStoresAutomaticallyOption: true,
+           NSInferMappingModelAutomaticallyOption: true
+       ]
+   try coordinator.addPersistentStore(ofType: NSSQLiteStoreType,
+                                      configurationName: nil,
+                                      at: storeURL,
+                                      options: options)
+   ```
 
 Demo 中我们将选择方式一。将代码改写为用 `NSPersistentContainer`，重新运行 App，数据自动迁移完成！🍻
 
