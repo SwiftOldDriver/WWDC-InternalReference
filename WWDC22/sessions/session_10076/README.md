@@ -4,7 +4,7 @@ session_ids: [10076]
 
 # Session 10076 - 将你的 iOS 应用搬到 Mac 上
 
-> 作者：JPlay，iOS 开发者，Base 厦门，曾就职于美图，现就职于稿定科技
+> 作者：JPlay，iOS 开发者，Base 厦门，曾就职于美图，现就职于稿定科技，专注于视频/图片编辑类产品开发
 > 审核：待审核同学填充
 > 引申：本文基于 [WWDC2022 Session 10076](https://developer.apple.com/videos/play/wwdc2022/10076/%20) 梳理。
 
@@ -45,7 +45,7 @@ Night Sky 是一款宇宙探索软件，它惊艳的 3D 效果获得了多次 We
 
 ![Asphalt](./images/Asphalt9.png)Asphalt 9 - Legends 是唯一一款获得过苹果设计大奖的赛车游戏，它使用 Mac Catalyst 做到了 Mac 和 iPad 双端画面体验完全一致。
 
-## 使用方式
+## 迁移方式
 
 从文字、图片编辑类软件，到 3D 软件，甚至是游戏，都可以通过 Mac Catalyst 把 iPad 应用搬到 Mac 上，接下来我们看看迁移应用的几种方式。
 > PS：以下内容全部基于 Xcode 14.0 beta，会和市面上其他基于旧版本 Xcode 的文档略有不同。
@@ -95,7 +95,7 @@ Night Sky 是一款宇宙探索软件，它惊艳的 3D 效果获得了多次 We
 
 ![touchInfo](./images/touchInfo.png)
 
-设置完毕后，你就可以在 Mac 中使用这些交互了，并且在你打开应用时，还会给你一个友好提示：
+设置完毕后，你就可以在 Mac 中使用这些交互了，并且在你首次打开应用时，还会给你一个友好提示：
 
 ![touchNotice](./images/touchNotice.png)
 
@@ -120,12 +120,12 @@ Mac Catalyst 分为两种适配模式：
 
 ![selectIdiom](./images/selectIdiom.png)
 
-"Scaled to Match iPad" 对应的是 iPad idiom，他是系统的默认选项。
+其中 "Scaled to Match iPad" 对应的是 iPad idiom，他是系统的默认选项。
 
 iPad idiom 下，需要你做的适配工作是很少的，甚至可以一行代码都不改。
 当然，这是有代价的：
 
-- 视图和文字在 Mac 上会被缩放到 77%，因此导致了[像素不对齐](https://jplay.github.io/2022/05/26/%25E4%25B8%25AD%25E7%259A%2584%25E5%2583%258F%25E7%25B4%25A0%25E5%25AF%25B9%25E9%25BD%2590/)，所以变得模糊。
+- 视图和文字在 Mac 上会被缩放到 77%，所以会丢失一些细节，甚至会因为[像素不对齐](https://jplay.github.io/2022/05/26/%E4%B8%AD%E7%9A%84%E5%83%8F%E7%B4%A0%E5%AF%B9%E9%BD%90/)变得模糊。
 - 控件是直接从 iOS 搬到 macOS 上的，某些情况下显得体验不佳。比如，UINavigationBar 在 Mac 上显得格格不入。
 
 ![navigationbarFix](./images/navigationbarFix.png)
@@ -138,15 +138,15 @@ iPad idiom 下，需要你做的适配工作是很少的，甚至可以一行代
 
 在 Mac idiom 下，你的应用将变得更加贴合 Mac 的交互体验：
 
-- 视图和文字不再被缩放，所有内容将 1:1 还原
+- 视图和文字不再被缩放，所有内容将一比一还原
 - 一些控件将自动被 "Mac 化"
 
 我们基于同一个应用在两种模式下的对比来说明：
 
 ![idiomCompare](./images/idiomCompare.png)
 
-- iPad idiom 的文字明显小于 Mac idiom 的文字
-- iPad idiom 的 UINavigationBar 在 Mac idiom 下自动变成了 NSToolbar，这明显更贴合 Mac 的交互体验
+- iPad idiom 下的文字明显小于 Mac idiom 下的文字
+- iPad idiom 下的 UINavigationBar 在 Mac idiom 下自动变成了 NSToolbar，这明显更贴合 Mac 的交互体验
 
 诸如此类的细节还有很多，详细信息可以查看[官方文档](https://developer.apple.com/design/human-interface-guidelines/technologies/mac-catalyst/introduction)。
 
@@ -156,7 +156,7 @@ iPad idiom 下，需要你做的适配工作是很少的，甚至可以一行代
 
 ### 窗口相关
 
-假设我们要实现一个小窗口，用来展示 markdown 的语法提示：
+我们基于一个例子来展示窗口相关的内容，假设我们要实现一个小窗口，用来展示 markdown 的语法提示：
 
 ![demo](./images/demo.png)
 
@@ -166,7 +166,7 @@ iPad idiom 下，需要你做的适配工作是很少的，甚至可以一行代
 2. 指定窗口大小
 3. 窗口大小不可调整
 
-> 在 macOS 中，应用左上角的三个控制按钮被称为 "交通灯"，因为他们的颜色和现实中的交通信号灯一样：红色代表关闭，黄色代表最小化，绿色代表全屏最大化。
+> 在 macOS 中，应用左上角的三个控制按钮被称为 "交通灯"，因为它们的颜色和现实中的交通信号灯一样：红色代表关闭，黄色代表最小化，绿色代表全屏最大化。
 
 我们来简单实现一下：
 
@@ -200,7 +200,7 @@ func scene(_ scene: UIScene,
 
 1. 首先从 `windowScene.effectiveGeometry.systemFrame` 获得窗口 frame 赋值给 currentFrame
 2. 根据 currentFrame.origin 和指定的大小 320 * 480，设置 newFrame
-3. 接着通过 `windowScene.requestGeometryUpdate` 提交尺寸更新
+3. 接着通过 `windowScene.requestGeometryUpdate()` 提交 frame 更新
 4. 再通过设置 `windowScene.windowingBehaviors?.isMiniaturizable = false` 来禁用最小化按钮
 5. 最后通过 `windowScene.sizeRestrictions?.allowsFullScreen = false` 来禁用全屏按钮
 
@@ -249,7 +249,6 @@ if windowScene.isFullScreen { /* ... */ }
 
 ![toolbar](./images/toolbar.png)
 
-
 首先，我们在 NSToolbarDelegate 的代理方法里实现自定义字数按钮的逻辑：
 
 ~~~ Swift
@@ -269,7 +268,7 @@ NSUIViewToolbarItem 是 NSToolbarItem 的子类，通过它的构造方法，我
 使用 NSUIViewToolbarItem 时，有两点细节指的注意：
 
 1. 如果我们的 NSToolbar 是通过 UINavigationBar 自动转换而来，自定义的 UIView 将被系统自动拷贝
-2. 如果我们的 NSToolbar 是自己添加的，切记要使用唯一的 item，而不是重复使用同一个 item
+2. 如果我们的 NSToolbar 是自己添加的，切记要使用唯一的 item，而不要重复使用同一个 item
 
 接着我们来实现弹窗：
 
@@ -287,6 +286,8 @@ rootVC.present(wordCountDetailsVC, animated: true)
 
 ## 结束语
 
-自此，我们介绍了将你的 iOS 应用迁移到 Mac 上的所有方式，也用例子介绍了新版本下的新接口，相信你对迁移这件事情已经不再陌生。
+自此，我们介绍了将你的 iOS 应用迁移到 Mac 上的所有方式，也用例子介绍了新版本下的新接口，相信你对迁移这件事情已经不再陌生，想要了解更多细节推荐查看[官方教程](https://developer.apple.com/tutorials/mac-catalyst)。
+
+跨端方案有很多，SwiftUI 可以跨整个苹果生态，Flutter 能做的事情就更多了。但是，如果有一套已经基于 UIKit 实现的 iPad 代码想要迁移到 Mac 上的话，Mac Catalyst 是你的不二之选。
 
 Mac Catalyst 每年都在迭代，M 系列芯片也装进了越来越多的设备中，我很期待 iPad 与 Mac 的融合，希望有一天我们能看到 Xcode 可以跑在 iPad 上。
