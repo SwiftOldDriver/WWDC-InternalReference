@@ -110,10 +110,9 @@ func authorizationController(controller: ASAuthorizationController,
 * **fullName**：只有当 App 需要时才请求该字段，用户可以任意指定他们想要的名字返回给开发者。
 * **email**：当需要与用户联系时再请求该字段，用户可以选择返回真实 Apple ID 对应的邮箱，也可以选择返回隐藏的邮箱，所有发到该隐藏邮箱的邮件会自动路由到 Apple ID 对应的真实邮箱。此外，并非所有账户都有关联的 email，因此开发者需要准备好处理 email 值为空的情况。
 * **realUserStatus**：用户真实可能性指标，用于判断当前登录的苹果账号是否是一个真实用户。它使用设备端机器学习、账户历史记录和硬件认证进行计算，同时保护用户的隐私。取值有 3 个：
-
-    * `likelyReal` 表示基本可以确定用户是真实的人，app 可以为该用户提供最佳的体验，例如跳过额外的欺诈验证检查（如验证码）
-    * `unknown` 是指系统不能确定用户是否为真人，需要额外的验证步骤。用户可能仍然是真实的，所以不要阻止他们使用的 app
-    * `unsupported` 表示系统无法做出准确的判断，用户大概率可能是机器人
+  * `likelyReal` 表示基本可以确定用户是真实的人，app 可以为该用户提供最佳的体验，例如跳过额外的欺诈验证检查（如验证码）
+  * `unknown` 是指系统不能确定用户是否为真人，需要额外的验证步骤。用户可能仍然是真实的，所以不要阻止他们使用的 app
+  * `unsupported` 表示系统无法做出准确的判断，用户大概率可能是机器人
 
 此外，需要额外强调的是，由于 `fullName`、`email` 和 `realUserStatus` 仅会在第一次授权 App 时才会包含在结果凭据中，后续的重新授权都将不会再包含这 3 个信息，因此，必要时请缓存这些字段的值，以保证能在系统中正常创建账户。
 
@@ -122,6 +121,7 @@ func authorizationController(controller: ASAuthorizationController,
 ![](./images/json-web-token.png)
 
 在解码 JWT Payload 数据后（如下截图），我们需要做以下几点验证：
+
 1. 验证发件人 "iss" 字段是 `appleid.apple.com`；
 2. 验证 "aud" 字段为 App 的 bundle Id；
 3. 验证过期时间字段 "exp" 大于当前时间戳，确保数据有效；
@@ -321,7 +321,7 @@ document.addEventListener('AppleIDSignInOnFailure', (event) => {
 
 相关链接：
 
-*  [Sign in with Apple](https://developer.apple.com/documentation/sign_in_with_apple)
+* [Sign in with Apple](https://developer.apple.com/documentation/sign_in_with_apple)
 * [Sign in with Apple REST API](https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_rest_api)
 * [Sign in with Apple JS](https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_js)
 * [Sign in with Apple Button](https://appleid.apple.com/signinwithapple/button#left-align-button-section)
