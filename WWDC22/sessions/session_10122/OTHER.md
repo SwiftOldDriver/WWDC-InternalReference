@@ -1,6 +1,6 @@
 ## 个人介绍
 
-ZUBIN，iOS 开发者，就职于蚂蚁支付宝客户端团队，个人主页 https://kangzubin.com
+ZUBIN，iOS 开发者，就职于蚂蚁支付宝客户端团队，个人主页 <https://kangzubin.com>
 
 ## 审核介绍
 
