@@ -191,7 +191,7 @@ struct AppMenu: View {
 
 MenuBarExtra 支持两种展现样式：
 
- 1. 将其内容展现为下拉菜单（默认样式）；
+1. 将其内容展现为下拉菜单（默认样式）；
 
 ![](./images/session_10061_1_6.png)
 
@@ -308,7 +308,7 @@ WindowGroup("Book Details", for: Book.ID.self) { $bookId in
 
 ![](./images/session_10061_4_2.png)
 
-1. `.defaultPostition`
+2. `.defaultPostition`
 
 在之前介绍 Auxiliary scenes 时，我们使用 Window Scene 定义了 Activity 窗口，在打开展示这个窗口时，如果之前没有可用的 state， SwiftUI 默认将窗口放置在屏幕中间。如下图所示：  
 
