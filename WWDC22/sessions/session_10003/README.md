@@ -307,9 +307,13 @@ struct ContentView: View {
 
 如果考虑多平台或者低版本 iOS 使用 `WeatherKit` 提供的天气数据，我们可以使用 REST API 版本。
 
-想要使用 `WeatherKit` 的 REST API 版本，我们需要到 [Identifiers - Apple Developer](https://developer.apple.com/account/resources/identifiers/list) 创建一个 Services ID 并启用 `WeatherKit` Services，或者按照 Swift 版本的步骤创建 App ID 并开启对应功能。然后到 [Keys - Apple Developer](https://developer.apple.com/account/resources/authkeys/list) 创建一个 Key 并启用 `WeatherKit` Services，需要注意该私钥只会展示一次，关闭页面后无法再次下载。
+想要使用 `WeatherKit` 的 REST API 版本，~~我们需要到 [Identifiers - Apple Developer](https://developer.apple.com/account/resources/identifiers/list) 创建一个 Services ID 并启用 `WeatherKit` Services~~，或者按照 Swift 版本的步骤创建 App ID 并开启对应功能。然后到 [Keys - Apple Developer](https://developer.apple.com/account/resources/authkeys/list) 创建一个 Key 并启用 `WeatherKit` Services，需要注意该私钥只会展示一次，关闭页面后无法再次下载。
+
+![key-01](./images/key-01.png)
 
 > 同样地，需要等待 30 分钟以便 Apple 更新权限。
+>
+> 目前并不支持直接创建 Services ID，需要创建 App ID 并启用 `WeatherKit` App Services。
 
 这次我们使用 Python 3 来请求 `WeatherKit` 的 REST API，读者朋友们亦可使用其他语言。
 
