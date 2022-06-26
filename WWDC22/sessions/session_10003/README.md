@@ -52,6 +52,27 @@ session_ids: [10003]
 
 让我们来实现一个简单的 SwiftUI app，了解如何使用 `WeatherKit`。
 
+```mermaid
+classDiagram
+
+class LocationManager {
+  -locationManager
+  -coordinator
+  +location
+  +init()
+  +requestLocation()
+}
+
+class Coordinator {
+  -parent
+  -init()
+  -locationManager(_:didUpdateLocations:)
+  -locationManager(_:didFailWithError:)
+}
+
+LocationManager --> Coordinator
+```
+
 首先我们创建一个用于获取定位的管理器 `LocationManager`。`LocationManager` 提供三个公开的 API，分别是 `init()` 初始化方法、`requestLocation()` 请求定位方法、`location` 可被监听的位置变量，而 `CLLocationManager` 与其代理则作为私有变量。参考 `UIViewRepresentable` 的写法，用 `Coordinator` 实现 `CLLocationManager` 的代理，当获取到位置数据后，代理方法被执行，在主线程中异步对 `location` 进行赋值，从而触发监听。
 
 ```swift
@@ -102,6 +123,22 @@ extension LocationManager {
 ```
 
 > 运行时在非主线程对 `@Published` 包装的属性进行赋值并触发 SwiftUI 更新会收到 Xcode 警告。
+
+```mermaid
+classDiagram
+
+class WeatherManager {
+  -weatherService
+  +alerts
+  +current
+  +daily
+  +hourly
+  +minute
+  +availability
+  +init()
+  +weather(for:)
+}
+```
 
 然后我们创建一个获取天气的管理类 `WeatherManager`。`WeatherManager` 提供八个公开的 API，分别是 `init()` 初始化方法、`weather(for:)` 请求天气数据方法、`alerts` 等六个具体的可被监听的天气数据变量，而 `WeatherService` 则作为私有变量。`WeatherService` 使用 Concurrency 进行编写，不在需要代理，因此 `WeatherManager` 亦不需要 `Coordinator` 进行协调。同样地，在获取到天气数据后，在主线程中异步赋值，避免触发 SwiftUI 非主线程更新的警告。
 
@@ -168,6 +205,28 @@ public class WeatherManager: ObservableObject {
 > `WeatherService` 中的 `weather(for:)` 方法一经推出即被抛弃；而 `WeatherQuery` 中的 `weatherAvailability` 常量并不存在，实际为 `availability`；同样地 `Availability` 类型并不存在，实际为 `WeatherAvailability`。多处文档与实际代码不符，难以令人相信 Apple 今时今日的软件质量。
 >
 > `WeatherService` 的 `weather(for:)` 在 Xcode 14.0 beta 2 (14A5229c) 又回来了，这种反复横跳真是令人疑惑。
+
+```mermaid
+classDiagram
+
+class ContentView {
+  -locationManager
+  -weatherManager
+  +body
+}
+
+class LocationManager { }
+
+class WeatherManager { }
+
+ContentView --> LocationManager : ① requestLocation()
+LocationManager --> ContentView : ② update location
+ContentView --> ContentView : ③ update body
+
+ContentView --> WeatherManager : ④ weather(for)
+WeatherManager --> ContentView : ⑤ update weather
+ContentView --> ContentView : ⑥ update body
+```
 
 最后我们创建一个展示数据的简单列表 `ContentView`。`ContentView` 对 `LocationManager` 和 `WeatherManager` 进行监听，点击 `LocationButton` 后，触发 `LocationManager` 请求定位数据，成功取得定位数据后 `locationManager.location` 发生变更，`ContentView` 展示对应的信息并触发 `WeatherManager` 请求天气数据，成功取得天气数据后进行展示。需要注意的是，`WeatherKit` 中的类型大多为纯 Swift 类型，没有 `NSObject` 桥接版本，直接使用 `Text("Alerts: \(alerts)")` 会触发编译错误，因为 `Text.init` 被推断为 `LocalizedStringKey` 版本，其要求插值为 `NSObject` 子类或实现 `ReferenceConvertible` 协议。
 
