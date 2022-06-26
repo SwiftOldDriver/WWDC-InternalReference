@@ -104,6 +104,12 @@ static func fetchAvatar(userRecordName: CKRecord.ID? = nil, success: @escaping C
 
 我们通过为该例子建立`单元测试`的方式，更快捷的验证数据结构设计的是否合理高效。
 
+> [NSPersistentCloudKitContainer](https://developer.apple.com/documentation/coredata/nspersistentcloudkitcontainer)是数据同步的核心类，可以提前做一些了解。同步数据不是本 Session 的核心，就不做重点介绍了。
+>  
+> 这里 `Apple` 也贴心的提供了[SampleCode: Synchronizing a local store to the cloud](https://developer.apple.com/documentation/coredata/synchronizing_a_local_store_to_the_cloud)，本文提到的测试用例也包含在其中。
+>  
+> 对单元测试不熟悉的同学可以通过官方文档补充一些基础知识：[Defining Test Cases and Test Methods](https://developer.apple.com/documentation/xctest/defining_test_cases_and_test_methods)
+
 ![](images/exploration-data.png)
 
 ### 1.2 数据准备
@@ -521,17 +527,17 @@ log show --info --debug
 
 #### 设置私有共享空间
 
-1. 设置 `Zone` 为私有
+**设置 `Zone` 为私有**
 
 ![](images/zone_share_private.png)
 
-2. 获取 `ShortGUID`
+**获取 `ShortGUID`**
 
 ![](images/zone_share_private_shortGUID.png)
 
 通过将这个 ID 给到可以访问的人，就可以在控制台加入共享。
 
-3. 设置接受共享数据 `ShortGUID`
+**设置接受共享数据 `ShortGUID`**
 
 ![](images/zone_share_private_shortGUID2.png)
 
