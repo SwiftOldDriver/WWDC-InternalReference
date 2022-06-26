@@ -198,11 +198,10 @@ func scene(_ scene: UIScene,
 
 讲解一下代码：
 
-1. 首先从 `windowScene.effectiveGeometry.systemFrame` 获得窗口 frame 赋值给 currentFrame
-2. 根据 currentFrame.origin 和指定的大小 320 * 480，设置 newFrame
-3. 接着通过 `windowScene.requestGeometryUpdate()` 提交 frame 更新
-4. 再通过设置 `windowScene.windowingBehaviors?.isMiniaturizable = false` 来禁用最小化按钮
-5. 最后通过 `windowScene.sizeRestrictions?.allowsFullScreen = false` 来禁用全屏按钮
+1. 首先根据 `windowScene.effectiveGeometry.systemFrame` 和指定的大小 320 * 480 创建出 `newFrame`
+2. 接着通过 `windowScene.requestGeometryUpdate()` 提交更新
+3. 再通过设置 `windowScene.windowingBehaviors?.isMiniaturizable = false` 来禁用最小化按钮
+4. 最后通过 `windowScene.sizeRestrictions?.allowsFullScreen = false` 来禁用全屏按钮
 
 在我们实现这个小需求的时候，我们有两个值得注意的细节：
 
