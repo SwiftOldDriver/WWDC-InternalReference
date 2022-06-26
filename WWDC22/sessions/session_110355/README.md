@@ -309,7 +309,7 @@ do {
 另外在 Clock 的[提案](https://github.com/apple/swift-evolution/blob/main/proposals/0329-clock-instant-duration.md)里会找到一些相关的信息。
 比如 GCD 里的也有 `DispatchWallTime/DispatchTime` 类型对应着 Clock 的 `SuspendingClock/ContinuousClock` 时钟类型。而 Clock 不仅是为 Swift Concurrency 功能提供这些时间的概念，同样也是作为一个 `uniform accessor` 统一入口。
 
-clock-evolution.png
+![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/clock-evolution.png)
 
 如果了解过 Combine/Rx 的 `Scheduler`，会发现它对“时间”有一层额外的抽象，要求 `Scheduler` 去实现这一层抽象，例如：
 [OperationQueue.SchedulerTimeType](https://developer.apple.com/documentation/foundation/operationqueue/schedulertimetype)
