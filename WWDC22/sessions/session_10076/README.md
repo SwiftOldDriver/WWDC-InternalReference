@@ -91,7 +91,7 @@ Night Sky 是一款宇宙探索软件，它惊艳的 3D 效果获得了多次 We
 </dict>
 ~~~
 
-在 requiredOnboarding 下的数组中添加的选项将自动映射到 Mac 上的替代交互方案，具体映射规则是：
+在 `requiredOnboarding` 下的数组中添加的选项将自动映射到 Mac 上的替代交互方案，具体映射规则是：
 
 ![映射规则](./images/touchInfo.png)
 
@@ -110,7 +110,7 @@ Night Sky 是一款宇宙探索软件，它惊艳的 3D 效果获得了多次 We
 
 ### 使用 Mac Catalyst
 
-更进一步的迁移方式是本文的主角： Mac Catalyst。
+更进一步的迁移方式是本文的主角：Mac Catalyst。
 
 ![添加 Mac Catalyst](./images/addMC.png)
 
