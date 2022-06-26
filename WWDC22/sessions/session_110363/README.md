@@ -216,6 +216,8 @@ bl _objc_msgSend
 
 每当我们通过 `alloc` 、`new` 、`copy` 创建了一个对象后，该对象的引用计数就会加一，在底层是通过 `_objc_retain` 指令实现的。
 
+> 感兴趣的读者可以参考 [Advanced Memory Management Programming Guide](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/MemoryMgmt.html) 以及 [Automatic Reference Counting - Swift](https://docs.swift.org/swift-book/LanguageGuide/AutomaticReferenceCounting.html)
+
 ![Retain Release - Part 2](./images/pic9.png)
 
 而当对象离开了自己的作用域，需要被销毁的时候，引用计数就会减一，在底层是通过 `_objc_release` 指令实现的。
@@ -235,6 +237,8 @@ bl _objc_msgSend
 `Apple` 基于此进行了针对性的「自定义调用约定」优化。如上图所示，通过自定义专门的 `objc_retain` 和 `objc_release` 调用约定，我们可以根据对象指针的位置来使用正确的版本，这样我们就可以避免额外的 `mov` 指令所带来的开销。虽然这只是一个很细微的优化，但正如我们前面所讲的，对于整个 `App` 来说，这项优化伴随着无处不在的 `retain` 和 `release` 调用是有着量变引起质变的效果的。
 
 ## Autorelease 自动省略
+
+
 
 ### 什么是 Autorelease 自动省略
 
