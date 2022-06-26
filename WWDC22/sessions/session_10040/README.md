@@ -35,12 +35,10 @@ session_ids: [10040]
 |---|---|---|
 | `IAP` 或 `In-App Purchase` | App 内购买项目，在所有 Apple 平台上，可以利用 IAP 支付系统，直接在您的 App 内提供额外的内容和功能，包括数字商品、订阅和增值内容等。 | In-App Purchase 简写为 IAP 或者 `内购`，都是非苹果官方写法，但开发者普遍都接受，所以本文也将两者等同关系处理。 |
 | `App Store Server API` | WWDC21 推出的 REST API，它是一种强大、安全和高效的 Server to Server API，提供获取数据和执行操作的服务。 | 请求接口使用 JWT 验证，接口返回的信息使用 JSON Web Signature (JWS) 规范格式加密签名。 |
-| `App Store Server Notifications V1` 和 `App Store Server Notifications V2` | 目前有 V1 和 V2 版本。通过来自App Store的服务器通知实时监控 IAP 事件。 | V1 版本是 WWDC17 推出用于自动续期订阅的订阅状态变化通知，WWDC20 增加了退款通知，API 返回的内容是 JSON 格式。V2 版本是 WWDC 21 推出，API 返回的内容是 JSON Web Signature（JWS）规范格式加密签名，移除和新增部分通知类型，一些通知类型增加子类型（SubState）。|
+| `App Store Server Notifications V1` 和 `App Store Server Notifications V2` | 目前有 V1 和 V2 版本。通过来自 App Store 的服务器通知实时监控 IAP 事件。 | V1 版本是 WWDC17 推出用于自动续期订阅的订阅状态变化通知，WWDC20 增加了退款通知，API 返回的内容是 JSON 格式。V2 版本是 WWDC 21 推出，API 返回的内容是 JSON Web Signature（JWS）规范格式加密签名，移除和新增部分通知类型，一些通知类型增加子类型（SubState）。|
 | `Original API for In-App Purchase` 或 `Original StoreKit` | IAP 支付系统，原始的 StoreKit API，用于区分 StoreKit 2。| 获取的交易票据叫 `App receipt`，需要通过 VerifyReceipt API 来解析票据内容。 |
 | `StoreKit 2` | WWDC21 推出的全新的基于 Swift 的 API，仅在 iOS15+ 生效。使用 Swift 的并发特性简化接口，并且使用 JWS 格式的交易票据。| 获取的交易票据叫 `JWS transaction` 或 `Signed transaction`，开发者可独立进行验证，而无需通过苹果服务端 API 解码。另外需要注意，与 Original StoreKit 都是基于 StoreKit Framework 的 API，所以并不是叫 V2 版本。 |
 | `originalTransactionId` | IAP 交易成功时，App Store 生成的唯一交易标识符。此字段可通过 StoreKit API、App Store Server API 和 App Store Server Notifications 等方式获取。 | 自动续期订阅的项目使用此字段作为唯一标识，而续订成功的交易票据中 `transactionId` 会更新。另外部分的 App Store Server API 使用此字段作为请求参数。 |
-
-
 
 ## App Store Server API
 
@@ -128,6 +126,7 @@ JWT 是一个开放式标准（规范文件 [RFC 7519](https://datatracker.ietf.
 JWT 由三部分组成，通过点号 `.` 进行分割。每个部分都是经过 Base64Url 编码的字符串。第一部分 (Header) 和第二部分 (Payload) 在解码后应该是有效的 JSON，最后一部分 (签名) 是通过指定的算法得到在前两部分上所得到的签名数据。
 
 JWT 格式：
+
 ```
 base64(header) + '.' + base64(payload) + '.' + sign( Base64(header) + "." + Base64(payload) )
 ```
@@ -135,7 +134,8 @@ base64(header) + '.' + base64(payload) + '.' + sign( Base64(header) + "." + Base
 这样说可能比较抽象，我们举一个例子来说，假设我们需要创建一个身份认证的 JWT 字符串：
 
 header 内容：
-```
+
+```json
 {
   "alg": "HS256",
   "typ": "JWT"
@@ -143,6 +143,7 @@ header 内容：
 ```
 
 payload 内容：
+
 ```json
 {
   "姓名": "iHTCboy",
@@ -152,6 +153,7 @@ payload 内容：
 ```
 
 因为 header 算法是 `HS256`，所以假设 secret 设置为 123456，则可以得到最终的 JWT 编码后的字符串：
+
 ```
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyLlp5PlkI0iOiJpSFRDYm95Iiwi6KeS6ImyIjoi566h55CG5ZGYIiwi5Yiw5pyf5pe26Ze0IjoiMjAyMuW5tDbmnIgzMOaXpTDngrkw5YiGIn0.vZhFBP0EIP2pE29X_7G_1dM7JflIRFouJcXjjo_BAnM
 ```
@@ -164,7 +166,7 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyLlp5PlkI0iOiJpSFRDYm95Iiwi6KeS6ImyIjoi566
 
 JWT 的原理现在读者应该了解基本知识了，保证数据未被篡改，JWS 核心就是签名，而检查签名的过程就叫做验证。更通俗的理解，就是对应前面提到的 JWT 的第三部分 Signature，如何保证数据不被篡改，那么就需要使用数字签名，它保证只有信息的发送者才能产生的别人无法伪造的一段数字串，一般是非对称密钥加密技术与数字摘要技术的结合应用，目前在数字签名中使用的三种非对称算法有 `RSA`、`DSA` 和 `ECDSA`。
 
-> 严格来说，JWT 有两种实现，分别是 JWS (JSON Web Signature) 和 JWE (JSON Web Encryption)。由于 JWS 的应用更为广泛，所以一般说起 JWT 大家默认会认为是 JWS。JWS 的 Payload 是 Base64Url 的明文，而 JWE 的数据则是经过加密的。相对地，相比于 JWS 的三个部分，JWE 有五个部分组成。JWT 还有很多值得探讨的内容，本文只能简单介绍原理，读者可以参考阅读 [引用1](https://jishuin.proginn.com/p/763bfbd6c8bc)、[引用2](https://onevcat.com/2018/12/jose-1/)。
+> 严格来说，JWT 有两种实现，分别是 JWS (JSON Web Signature) 和 JWE (JSON Web Encryption)。由于 JWS 的应用更为广泛，所以一般说起 JWT 大家默认会认为是 JWS。JWS 的 Payload 是 Base64Url 的明文，而 JWE 的数据则是经过加密的。相对地，相比于 JWS 的三个部分，JWE 有五个部分组成。JWT 还有很多值得探讨的内容，本文只能简单介绍原理，读者可以参考阅读 [引用 1](https://jishuin.proginn.com/p/763bfbd6c8bc)、[引用 2](https://onevcat.com/2018/12/jose-1/)。
 
 #### App Store Server API 的 JWT 使用
 
@@ -259,7 +261,7 @@ WWDC21 推出的 StoreKit 2 的交易票据（receipt）是使用 JWS(JSON Web S
 | [Apple Root CA - G2 Root](https://www.apple.com/certificateauthority/AppleRootCA-G2.cer) | Apple Inc. | 带 RSA 加密的 SHA-384 |
 | [Apple Root CA - G3 Root](https://www.apple.com/certificateauthority/AppleRootCA-G3.cer) | Apple Inc. | 带 SHA-384 的 ECDSA 签名 |
 
-所以从表格可以看出，因为苹果 JWS 使用 `ES256` 算法，所以只能使用 AppleRootCA-G3 这个根证书。另外大家可能看到 ` Apple Computer, Inc.`，因为 2007 MacWorld 大会上，乔布斯亲自推出传闻已久的 iPhone 手机，为消除公司只生产电脑的形象，将 `苹果电脑公司` 改名为 `苹果公司`，所以这个根证书还保留着（目前这个证书有效期是 2005 年至 2025 年），不清楚过期后苹果还否会更新这个证书呢？
+所以从表格可以看出，因为苹果 JWS 使用 `ES256` 算法，所以只能使用 AppleRootCA-G3 这个根证书。另外大家可能看到 `Apple Computer, Inc.`，因为 2007 MacWorld 大会上，乔布斯亲自推出传闻已久的 iPhone 手机，为消除公司只生产电脑的形象，将 `苹果电脑公司` 改名为 `苹果公司`，所以这个根证书还保留着（目前这个证书有效期是 2005 年至 2025 年），不清楚过期后苹果还否会更新这个证书呢？
 
 验证了 x5c 证书链，还要用叶证书，验证一下 JWS 签名内容是否正确，到此签名成功后，就表示 JWS 内容可信。示例代码如下：
 ![WWDC22_session_10040_22](images/WWDC22_session_10040_22.png)
