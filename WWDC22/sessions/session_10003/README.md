@@ -42,6 +42,12 @@ session_ids: [10003]
 
 想要使用 `WeatherKit` 的 Swift 版本，我们需要到 [Identifiers - Apple Developer](https://developer.apple.com/account/resources/identifiers/list) 创建一个 App ID 并启用 `WeatherKit` Capabilities 与 `WeatherKit` App Services。
 
+![app-id-01](./images/app-id-01.png)
+
+![app-id-02](./images/app-id-02.png)
+
+![app-id-03](./images/app-id-03.png)
+
 > 创建完毕后，需要等待 30 分钟以便 Apple 更新权限。
 
 让我们来实现一个简单的 SwiftUI app，了解如何使用 `WeatherKit`。
