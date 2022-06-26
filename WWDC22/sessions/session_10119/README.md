@@ -525,13 +525,13 @@ log show --info --debug
 
 ![](images/zone_share_private.png)
 
-2. 获取 `ShortGUID` 
+2. 获取 `ShortGUID`
 
 ![](images/zone_share_private_shortGUID.png)
 
 通过将这个 ID 给到可以访问的人，就可以在控制台加入共享。
 
-3. 设置接受共享数据 `ShortGUID` 
+3. 设置接受共享数据 `ShortGUID`
 
 ![](images/zone_share_private_shortGUID2.png)
 
