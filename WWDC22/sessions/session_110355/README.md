@@ -174,7 +174,7 @@ case .second(let res, let iter):
 
 比如 [Do we want forEach?](https://forums.swift.org/t/do-we-want-foreach/56929) 讨论了 forEach 是否需要，以及和 for-in 用法的区别。
 
-### Merge 
+### Merge
 
 Zip 处理 AsyncSequence 成对的出现，那对应的不需要成对就加入到新 AsyncSequence 中去的方法也有，那就是 Merge
 
@@ -402,7 +402,7 @@ public static func select<Tasks: Sequence & Sendable>(
 
 ### ContinuousClock
 
-在 debounce 算法里，我们可以发现默认使用的就是 
+在 debounce 算法里，我们可以发现默认使用的就是
 
 ```Swift
 public func debounce(for interval: Duration, tolerance: Duration? = nil) -> AsyncDebounceSequence<Self, ContinuousClock> {
@@ -440,6 +440,7 @@ enum _ClockID: Int32 {
 对于 AsyncChannel 在 rx 和 combine 就是对应的 `Subjects` 和 `Subject`，作为中间者接受信息并传递信息
 
 ### chunked(by:)
+
 根据一定时间分块的数据进行处理，同样是实现了 [AsyncChunksOfCountOrSignalSequence](https://github.com/apple/swift-async-algorithms/blob/434591a571/Sources/AsyncAlgorithms/AsyncChunksOfCountOrSignalSequence.swift) 结构
 
 通过对应的测试代码 [TestChunk](https://github.com/apple/swift-async-algorithms/blob/434591a571/Tests/AsyncAlgorithmsTests/TestChunk.swift) 可以看到可以实现的算法结果。
