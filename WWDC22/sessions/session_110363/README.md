@@ -111,244 +111,98 @@ log(value: event)
 
 > `Objective-C` 的消息发送和转发流程可以概括为：消息发送（Messaging）是 Runtime 通过 selector 快速查找 IMP 的过程，有了函数指针就可以执行对应的方法实现；消息转发（Message Forwarding）是在查找 IMP 失败后执行一系列转发流程的慢速通道，如果不作转发处理，则会打日志和抛出异常。
 
-提到消息发送，就不得不提 `objc_msgSend` 函数。在 `Objective-C` 的世界里面，基本上所有的方法调用都会转化为消息发送，而消息发送的必经之路就是 `objc_msgSend` 。 相信有经验的开发者都知道 `objc_msgSend` 是基于汇编实现的，在 `M1/M2` 系列芯片统治 `ARM` 架构的当下，作为 `iOS` 开发者应该重点关注 `objc_msgSend` 在 `arm64` 上的底层实现即可。
+提到消息发送，就不得不提 `objc_msgSend` 函数。在 `Objective-C` 的世界里面，基本上所有的方法调用都会转化为消息发送，而消息发送的必经之路就是 `objc_msgSend` 。 相信有经验的开发者都知道 `objc_msgSend` 是基于汇编实现的，在 `M1/M2` 系列芯片统治 `ARM` 架构的当下，我们重点关注 `objc_msgSend` 在 `arm64` 上的实现。
 
 ```assembly
 /********************************************************************
  *
  * id objc_msgSend(id self, SEL _cmd, ...);
  * IMP objc_msgLookup(id self, SEL _cmd, ...);
- * 
+ *
  * objc_msgLookup ABI:
  * IMP returned in x17
  * x16 reserved for our use but not used
  *
  ********************************************************************/
 
-#if SUPPORT_TAGGED_POINTERS
-	.data
-	.align 3
-	.globl _objc_debug_taggedpointer_ext_classes
-_objc_debug_taggedpointer_ext_classes:
-	.fill 256, 8, 0
+```
 
-// Dispatch for split tagged pointers take advantage of the fact that
-// the extended tag classes array immediately precedes the standard
-// tag array. The .alt_entry directive ensures that the two stay
-// together. This is harmless when using non-split tagged pointers.
-	.globl _objc_debug_taggedpointer_classes
-	.alt_entry _objc_debug_taggedpointer_classes
-_objc_debug_taggedpointer_classes:
-	.fill 16, 8, 0
+上面的注释来自于最新的 [objc4-818.2](https://opensource.apple.com/tarballs/objc4/objc4-818.2.tar.gz) 中的 `objc-msg-arm64.s` 汇编源文件。
 
-// Look up the class for a tagged pointer in x0, placing it in x16.
-.macro GetTaggedClass
+众所周知，每个 `Objective-C` 对象都有自己所属的类，而每个 `Objective-C` 的类都有一系列的方法。而每个方法都会有一个 `selector` 、一个指向方法实现的函数指针以及一些元数据。而 `objc_msgSend` 的任务就是接收一个对象和 `selector` ，查找对应方法的函数指针，然后跳转过去进而调用方法的具体实现。
 
-	and	x10, x0, #0x7		// x10 = small tag
-	asr	x11, x0, #55		// x11 = large tag with 1s filling the top (because bit 63 is 1 on a tagged pointer)
-	cmp	x10, #7		// tag == 7?
-	csel	x12, x11, x10, eq	// x12 = index in tagged pointer classes array, negative for extended tags.
-					// The extended tag array is placed immediately before the basic tag array
-					// so this looks into the right place either way. The sign extension done
-					// by the asr instruction produces the value extended_tag - 256, which produces
-					// the correct index in the extended tagged pointer classes array.
+下面我们以一个实际的例子来窥探 `objc_msgSend` 现阶段存在的问题。
 
-	// x16 = _objc_debug_taggedpointer_classes[x12]
-	adrp	x10, _objc_debug_taggedpointer_classes@PAGE
-	add	x10, x10, _objc_debug_taggedpointer_classes@PAGEOFF
-	ldr	x16, [x10, x12, LSL #3]
+```objective-c
+// Method calls using objc_msgSend
 
-.endmacro
-#endif
+NSCalendar *cal = [self makeCalendar];
 
-	ENTRY _objc_msgSend
-	UNWIND _objc_msgSend, NoFrame
+NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
+dateComponents.year = 2022;
+dateComponents.month = 6;
+dateComponents.day = 6;
 
-	cmp	p0, #0			// nil check and tagged pointer check
-#if SUPPORT_TAGGED_POINTERS
-	b.le	LNilOrTagged		//  (MSB tagged pointer looks negative)
-#else
-	b.eq	LReturnZero
-#endif
-	ldr	p13, [x0]		// p13 = isa
-	GetClassFromIsa_p16 p13, 1, x0	// p16 = class
-LGetIsaDone:
-	// calls imp or objc_msgSend_uncached
-	CacheLookup NORMAL, _objc_msgSend, __objc_msgSend_uncached
+NSDate *theDate = [cal dateFromComponents:dateComponents];
 
-#if SUPPORT_TAGGED_POINTERS
-LNilOrTagged:
-	b.eq	LReturnZero		// nil check
-	GetTaggedClass
-	b	LGetIsaDone
-// SUPPORT_TAGGED_POINTERS
-#endif
-
-LReturnZero:
-	// x0 is already zero
-	mov	x1, #0
-	movi	d0, #0
-	movi	d1, #0
-	movi	d2, #0
-	movi	d3, #0
-	ret
-
-	END_ENTRY _objc_msgSend
-
-
-	ENTRY _objc_msgLookup
-	UNWIND _objc_msgLookup, NoFrame
-	cmp	p0, #0			// nil check and tagged pointer check
-#if SUPPORT_TAGGED_POINTERS
-	b.le	LLookup_NilOrTagged	//  (MSB tagged pointer looks negative)
-#else
-	b.eq	LLookup_Nil
-#endif
-	ldr	p13, [x0]		// p13 = isa
-	GetClassFromIsa_p16 p13, 1, x0	// p16 = class
-LLookup_GetIsaDone:
-	// returns imp
-	CacheLookup LOOKUP, _objc_msgLookup, __objc_msgLookup_uncached
-
-#if SUPPORT_TAGGED_POINTERS
-LLookup_NilOrTagged:
-	b.eq	LLookup_Nil	// nil check
-	GetTaggedClass
-	b	LLookup_GetIsaDone
-// SUPPORT_TAGGED_POINTERS
-#endif
-
-LLookup_Nil:
-	adr	x17, __objc_msgNil
-	SignAsImp x17
-	ret
-
-	END_ENTRY _objc_msgLookup
-
-	
-	STATIC_ENTRY __objc_msgNil
-
-	// x0 is already zero
-	mov	x1, #0
-	movi	d0, #0
-	movi	d1, #0
-	movi	d2, #0
-	movi	d3, #0
-	ret
-	
-	END_ENTRY __objc_msgNil
-
-
-	ENTRY _objc_msgSendSuper
-	UNWIND _objc_msgSendSuper, NoFrame
-
-	ldp	p0, p16, [x0]		// p0 = real receiver, p16 = class
-	b L_objc_msgSendSuper2_body
-
-	END_ENTRY _objc_msgSendSuper
-
-	// no _objc_msgLookupSuper
-
-	ENTRY _objc_msgSendSuper2
-	UNWIND _objc_msgSendSuper2, NoFrame
-
-#if __has_feature(ptrauth_calls)
-	ldp	x0, x17, [x0]		// x0 = real receiver, x17 = class
-	add	x17, x17, #SUPERCLASS	// x17 = &class->superclass
-	ldr	x16, [x17]		// x16 = class->superclass
-	AuthISASuper x16, x17, ISA_SIGNING_DISCRIMINATOR_CLASS_SUPERCLASS
-LMsgSendSuperResume:
-#else
-	ldp	p0, p16, [x0]		// p0 = real receiver, p16 = class
-	ldr	p16, [x16, #SUPERCLASS]	// p16 = class->superclass
-#endif
-L_objc_msgSendSuper2_body:
-	CacheLookup NORMAL, _objc_msgSendSuper2, __objc_msgSend_uncached
-
-	END_ENTRY _objc_msgSendSuper2
-
-	
-	ENTRY _objc_msgLookupSuper2
-	UNWIND _objc_msgLookupSuper2, NoFrame
-
-#if __has_feature(ptrauth_calls)
-	ldp	x0, x17, [x0]		// x0 = real receiver, x17 = class
-	add	x17, x17, #SUPERCLASS	// x17 = &class->superclass
-	ldr	x16, [x17]		// x16 = class->superclass
-	AuthISASuper x16, x17, ISA_SIGNING_DISCRIMINATOR_CLASS_SUPERCLASS
-LMsgLookupSuperResume:
-#else
-	ldp	p0, p16, [x0]		// p0 = real receiver, p16 = class
-	ldr	p16, [x16, #SUPERCLASS]	// p16 = class->superclass
-#endif
-	CacheLookup LOOKUP, _objc_msgLookupSuper2, __objc_msgLookup_uncached
-
-	END_ENTRY _objc_msgLookupSuper2
-
-
-.macro MethodTableLookup
-	
-	SAVE_REGS MSGSEND
-
-	// lookUpImpOrForward(obj, sel, cls, LOOKUP_INITIALIZE | LOOKUP_RESOLVER)
-	// receiver and selector already in x0 and x1
-	mov	x2, x16
-	mov	x3, #3
-	bl	_lookUpImpOrForward
-
-	// IMP in x0
-	mov	x17, x0
-
-	RESTORE_REGS MSGSEND
-
-.endmacro
-
-	STATIC_ENTRY __objc_msgSend_uncached
-	UNWIND __objc_msgSend_uncached, FrameWithNoSaves
-
-	// THIS IS NOT A CALLABLE C FUNCTION
-	// Out-of-band p15 is the class to search
-	
-	MethodTableLookup
-	TailCallFunctionPointer x17
-
-	END_ENTRY __objc_msgSend_uncached
-
-
-	STATIC_ENTRY __objc_msgLookup_uncached
-	UNWIND __objc_msgLookup_uncached, FrameWithNoSaves
-
-	// THIS IS NOT A CALLABLE C FUNCTION
-	// Out-of-band p15 is the class to search
-	
-	MethodTableLookup
-	ret
-
-	END_ENTRY __objc_msgLookup_uncached
-
-
-	STATIC_ENTRY _cache_getImp
-
-	GetClassFromIsa_p16 p0, 0
-	CacheLookup GETIMP, _cache_getImp, LGetImpMissDynamic, LGetImpMissConstant
-
-LGetImpMissDynamic:
-	mov	p0, #0
-	ret
-
-LGetImpMissConstant:
-	mov	p0, p2
-	ret
-
-	END_ENTRY _cache_getImp
+return theDate;
 
 ```
 
-上面的代码是最新的 [objc4-818.2](https://opensource.apple.com/tarballs/objc4/objc4-818.2.tar.gz) 中的 `objc-msg-arm64.s` 汇编源文件中关于 `objc_msgSend` 的部分。
+上面的代码首先创建了一个 `NSCalendar` 对象 `cal` ，然后创建了一个 `NSDateComponents` 对象，并声明了 `2022-6-6` 作为日期值。最后通过调用 `cal` 对象的实例方法 `dateFromComponents` 得到一个 `NSDate` 对象并返回。
+
+![Assembly Code - Part 1](./images/pic2.png)
+
+我们将目光放到编译器生成的汇编代码部分上。我们可以看到，左侧每一行方法的执行几乎都会对应到右侧汇编代码中对 `_objc_msgSend` 的调用，即使像我们通过点语法去设置 `dateComponents` 对象的属性这样的场景。这是因为 `Objective-C` 是一门动态语言，在代码编译时我们并不知道需要调用哪个方法，所以只能在运行时通过 `objc_msgSend` 来做这件事情。
+
+> 对于 `ARM 64` 汇编感兴趣的读者可以参考 [iOS 开发同学的 arm64 汇编入门](https://blog.cnbluebox.com/blog/2017/07/24/arm64-start/)
+
+![Assembly Code - Part 2](./images/pic3.png)
+
+对于 `objc_msgSend` 来说，我们需要告诉它 `selector` 是什么，以及是在什么对象身上去调用 `selector`，所以如上图所示，在真正执行 `bl _objc_msgSend` 之前，还需要做一些准备工作。
+
+```assembly
+adrp x1, [selector "dateFromComponents"]
+ldr x1, [x1, selector "dateFromComponents"]
+bl _objc_msgSend
+```
+
+上面的三条汇编指令体现在应用程序最终生成的二进制中，会占用一定的空间。在 `ARM64` 架构上，每条指令占用 `4` 个字节。因此，每一条 `objc_msgSend` 的调用都会有 `12` 个字节的空间开销。从单条指令来看这不是什么大问题，但是从更宏观的角度来分析，每一个方法调用，每一个属性的设置背后都伴随了一个 `12` 字节的 `objc_msgSend` 的指令调用，对于整个 `App` 的包大小是有着不不小的影响的。
+
+![Assembly Code - Part 3](./images/pic4.png)
 
 ### Selector Stub 优化方案
 
+我们在上一小节中可以看到，在真正执行每条 `_objc_msgSend` 汇编指令之前，都需要两条汇编指令共计 `8` 个字节来专门为 `selector` 做准备工作。有趣的是，对于任何的 `selector` 来说，这两条汇编指令是一模一样的。所以基于这一点，`Apple` 带来了 `Selector Stub` 优化方案。
+
+![Assembly Code - Part 4](./images/pic5.png)
+
+因为 \_`objc_msgSend` 指令前两条的准备指令对于不同的 `selector` 都是一样的操作，我们可以对于每个 `selector` 只执行一条指令，从而达到优化 `objc_msgSend` 指令调用的大小开销。
+
+![Assembly Code - Part 5](./images/pic6.png)
+
+如上图所示，我们将
+
+`adrp x1, [selector "dateFromComponents"] `
+
+`ldr x1, [x1, selector "dateFromComponents"]`
+
+这两条指令提取后重构到 `_objc_msgSend$dateFromComponents` 指令中，然后原来的对 `bl _objc_msgSend` 的调用变成了对 `_objc_msgSend$dateFromComponents` 指令的调用。这个新的 `_objc_msgSend$dateFromComponents` 就是 `selector stub` 。但在 `selector stub` 内部，我们仍然需要调用 `_objc_msgSend` 指令，而在 `_objc_msgSend` 内部，又需要额外的几个字节来执行命令，这就是 `Call stub` 。
+
 ### 选择合适的优化策略
+
+上一小节中的优化方案是尽可能的共享最多的代码，使得这些方法尽可能达到一个比较小的规模。但这会带来另外一个问题，那就是原本的一次 `objc_msgSend` 调用会变成了两次背靠背调用，这反过来又会对程序整体的性能造成影响。因此，我们基于上面的方案迭代出另一个版本来改进这一点。
+
+![Assembly Code - Part 5](./images/pic7.png)
+
+如上图右侧汇编伪代码所示，我们将我们之前创建两个 `stub` 方法合并为一个，通过这样的重构，我们的代码更加紧凑，同时也避免了过多的指令跳转。
+
+`Apple` 为我们提供了两个优化策略：
+
+* 专注于针对 `App` 包大小进行优化，需要通过设置 `-objc_stubs_small` 链接器 `lag` 获得最极致的包大小优化效果。
+* 兼顾包大小优化的同时保证最佳的性能，这是默认的策略，无需手动开启。
+
+`Apple` 给我们的建议是除非受到了非常严重的 `App` 包大小限制问题，尽量使用策略二来保证性能不受影响，所以这也就是为什么默认是包大小和性能的平衡策略。
 
 ## Retain & Release 调用
 
