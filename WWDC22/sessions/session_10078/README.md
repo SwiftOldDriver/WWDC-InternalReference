@@ -61,7 +61,7 @@ let parameters = NWParameters.quic(alpn: ["myproto"])
 parameters.multipathServiceType = .handover
 ```
 
-启用 handover 并且确保它正常工作，我们就可以获得无缝切换的效果。
+MultipathServiceType 是一个枚举类型，它实际上是定义了一系列 Multipath 场景下使用网络的配置。所谓 Multipath 指的是用户同时有多条网络通道 （一般来说是移动网络和 WIFI 共存）的情况下，APP 可以采用不同的策略来利用这些网络通道。 handover 枚举配置的含义是启用 Multipath, 但当且仅当主通道无法使用时，才会使用其他的通道。启用 handover 并且确保它正常工作，可以使我们的应用获得无缝切换的效果。
 ![](images/http_compare.png)
 
 ### 启用 QUIC 数据报
