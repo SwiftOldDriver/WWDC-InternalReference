@@ -23,7 +23,6 @@ session_ids: [110370]
 最后一部分是 整合上文提到的知识点，告诉大家如何正确的为打包 Framework 设置参数，从而确保 LLDB 的正常运行。
 
 > 阅读建议 - 本文可以为以下人群提供一些帮助
-> 
 >
 > - 如果你对 LLDB 相关技术很感兴趣
 >
@@ -98,9 +97,7 @@ ui.print(ui.bold(">>" ))
 
 经过上述的分析和设置，我们回到最初的疑问，现在 LLDB 已经可以找到第三方 UI 库的源代码，那么是否可以通过 ```po``` 输出变量 "words" 的属性呢。从下图可以看出，仍然失败了，甚至使用 ```p``` 指令来评估 "words" 这个表达式也行不通。需要补充一点，我们在变量视图中能够看到变量是因为 Xcode 变量视图和 ```frame``` 或 ```v``` 命令是等效的。显然 ```v``` 和 ```po``` 命令的原理并不相同，因为使用 ```frame``` 命令是可以输出 "words" 的信息。
 
-> 如果想进一步了解这些命令之间的细微差别，可以参考
-> 
-> [LLDB: Beyond "po". WWDC19](https://developer.apple.com/videos/play/wwdc2019/429/)。
+> 如果想进一步了解这些命令之间的细微差别，可以参考 [LLDB: Beyond "po". WWDC19](https://developer.apple.com/videos/play/wwdc2019/429/) 。
 
 ![](./images/pic11.png)
 
@@ -114,9 +111,7 @@ ui.print(ui.bold(">>" ))
 
 这些编译器支持 LLDB 的表达式求值器，我们常用的 ```po``` 和 ```p``` 就用到了表达式求值功能。最初接触 LLDB 的时候，大家应该都惊奇地发现，使用 ```po``` ，我们不仅可以查看变量，还可以执行计算、调用函数，甚至更改程序的状态。
 
-> 如果想进一步了解 LLDB 的高级调试技巧，可以参考
-> 
-> [Advanced Debugging with Xcode and LLDB. WWDC18](https://developer.apple.com/videos/play/wwdc2018/412/)。
+> 如果想进一步了解 LLDB 的高级调试技巧，可以参考 [Advanced Debugging with Xcode and LLDB. WWDC18](https://developer.apple.com/videos/play/wwdc2018/412/) 。
 
 那么 LLDB 是如何格式化局部变量的，即如何认识某个对象的内存结构？编译器提供的调试信息告诉调试器变量存储在内存中的什么位置，但仅找到变量的存储位置，LLDB 只能向我们展示原始字节。只有知道变量类型， LLDB 才能了解变量的结构和内存布局，通过类型信息，LLDB 知道聚合类型具有哪些字段，并且类型允许 LLDB 使用适当的数据格式化程序来漂亮地打印它们。
 
@@ -146,15 +141,13 @@ ui.print(ui.bold(">>" ))
 
 以我们的 Demo （GameEngine） 为例，如下图所示：它首先有自己的 Swift 模块，它可能导入了一个系统框架，例如 Foundation 。系统框架是位于系统 SDK 中的文本稳定的 Swift 接口文件（.swiftinterface）。任何 Swift 模块都可能导入一个 Clang 模块（一个或多个头文件的统称），这些头文件在模块映射文件（.modulemap）的帮助下组合在一起， Clang 模块可以依赖于其他 Clang 模块。另外，我的应用程序还可能导入属于本地构建框架的 Swift 模块，该模块可能导入了其它不在系统 SDK 中的 .swiftinterface 文件。
 
-> 如果想了解更多关于 .swiftinterface 的内容，可以参考
-> 
-> [Binary frameworks. WWDC19](https://developer.apple.com/videos/play/wwdc2019/416/)。
+> 如果想了解更多关于 .swiftinterface 的内容，可以参考 [Binary frameworks. WWDC19](https://developer.apple.com/videos/play/wwdc2019/416/) 。
 
 ![](./images/pic19.png)
 
 应用程序还可能源码依赖了一个 Swift 静态库，然后它也带有一个 Swift 模块。另外，bridging-header.h 也可以导入 Clang 模块。最后，作为 LLDB 的一个特殊功能，一些模块内容只能从 debug info 中重建。
 
-#### LLDB 如何找到 Swift 模块
+#### LLDB 读取 Swift 模块信息
 
 模块的打包是由构建系统完成的，为了让 LLDB 顺利找到模块，构建系统在打包过程中肯定提供了一些信息。
 
@@ -167,9 +160,9 @@ ui.print(ui.bold(">>" ))
 
 通常情况下， Xcode 的构建系统会帮我们完整这些工作，无需我们主动介入。但是，如果我们使用的是自定义的构建规则，则需要特别注意这一点：
 
-    使用 Apple 链接器时，需要使用 -add-ast-path 选项注册 Swift 模块。
+> 使用 Apple 链接器时，需要使用 -add-ast-path 选项注册 Swift 模块。
 
--  Apple 平台：为了验证是否存在 Swift 模块的链接问题，可以查看构建日志，也可以使用 ```dsymutil``` 结合 ```grep``` 查找 ".swiftmodule" 以验证 Swift 模块被链接。
+- 在 Apple 平台上，为了验证是否存在 Swift 模块的链接问题，可以查看构建日志，也可以使用 ```dsymutil``` 结合 ```grep``` 查找 .swiftmodule 以验证 Swift 模块被链接。
 
     ![](./images/pic21.png)
 
@@ -183,8 +176,8 @@ ui.print(ui.bold(">>" ))
 
 最终，我们可以正常使用 p 和 po 指令输出 "words" 的内容了。
 
-    注意点：Swift 编译器会将 Clang header search path 和其他相关选项序列化到 .swiftmodule 文件中。这使得导入 Clang 模块依赖项的工作只需要在构建期间进行一次就可以了。 但是当在不同的机器上构建时，这些本地路径会导致构建好的模块无法移植到其他机器调试。 因此，在将二进制 .swiftmodule 传送到另一台机器之前，我们需要进行构建设置，下图的几种方案可以任选一个：
-    
+> 注意点：Swift 编译器会将 Clang header search path 和其他相关选项序列化到 .swiftmodule 文件中。这使得导入 Clang 模块依赖项的工作只需要在构建期间进行一次就可以了。 但是当在不同的机器上构建时，这些本地路径会导致构建好的模块无法移植到其他机器调试。 因此，在将二进制 .swiftmodule 传送到另一台机器之前，我们需要进行构建设置，下图的几种方案可以任选一个。
+
 ![](./images/pic24.png)
 
 ## 回顾总结
@@ -199,7 +192,7 @@ ui.print(ui.bold(">>" ))
 
 基于上述对 LLDB 的理解，我们如何才能为他人提供一个 LLDB 友好的 Swift 模块呢？
 
--  如果你想将代码从一台机器传送到另一台机器，通常是为他人提供 Framework ，你得问问自己想提供何种级别的调试。例如，如果将自己的二进制框架交付给另一个开发人员，且不希望他在调试器中单步执行自己的代码，那么最好将 Swift 模块作为 .swiftinterface 文件交付。
+- 如果你想将代码从一台机器传送到另一台机器，通常是为他人提供 Framework ，你得问问自己想提供何种级别的调试。例如，如果将自己的二进制框架交付给另一个开发人员，且不希望他在调试器中单步执行自己的代码，那么最好将 Swift 模块作为 .swiftinterface 文件交付。
 
 - 但是，如果你正在设置构建服务器或持续集成系统，开发人员需要调试下载的构建包，那么你需要确保构建二进制 Swift 模块并考虑关闭搜索路径序列化。还可以使用 -debug-prefix-map 选项在调试信息中规范化服务器上​​的源路径。从而保证使用者不会遇到文章开头的问题。
 
