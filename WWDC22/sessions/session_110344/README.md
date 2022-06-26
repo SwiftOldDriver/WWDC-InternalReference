@@ -2,7 +2,7 @@
 session_ids: [110344]
 ---
 
-# WWDC2022 110344/10109 - Developer Mode 与Notarization
+# WWDC2022 110344/10109 - Developer Mode 与 Notarization
 
 本文基于[Session 110344](https://developer.apple.com/videos/play/wwdc2022/110344)和[Session_10109](https://developer.apple.com/videos/play/wwdc2022/10109/)梳理。
 
