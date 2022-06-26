@@ -25,6 +25,7 @@ session_ids: [10122]
 如图 1.1 所示，在 “Juice” 登录页面上，用户可以使用邮箱和密码来登录，或者 “通过 Apple 登录”。如果一个用户同时拥有了这两种登录方式，app 应该在处理登录流程时帮助用户登录正确的账户。
 
 首先，app 需要实现密码自动填充，以便现有密码凭据显示在登录页的键盘上，如图 1.2，这样用户只需轻点一下即可自动填充密码凭证，该功能实现详见以下 Sessions:
+
 * [WWDC17: Introducing Password Autofill for Apps](https://developer.apple.com/videos/play/wwdc2017/206/)
 * [WWDC18: Automatic Strong Passwords and Security Code Autofill](https://developer.apple.com/videos/play/wwdc2018/204)
 
@@ -109,6 +110,7 @@ func authorizationController(controller: ASAuthorizationController,
 * **fullName**：只有当 App 需要时才请求该字段，用户可以任意指定他们想要的名字返回给开发者。
 * **email**：当需要与用户联系时再请求该字段，用户可以选择返回真实 Apple ID 对应的邮箱，也可以选择返回隐藏的邮箱，所有发到该隐藏邮箱的邮件会自动路由到 Apple ID 对应的真实邮箱。此外，并非所有账户都有关联的 email，因此开发者需要准备好处理 email 值为空的情况。
 * **realUserStatus**：用户真实可能性指标，用于判断当前登录的苹果账号是否是一个真实用户。它使用设备端机器学习、账户历史记录和硬件认证进行计算，同时保护用户的隐私。取值有 3 个：
+
     * `likelyReal` 表示基本可以确定用户是真实的人，app 可以为该用户提供最佳的体验，例如跳过额外的欺诈验证检查（如验证码）
     * `unknown` 是指系统不能确定用户是否为真人，需要额外的验证步骤。用户可能仍然是真实的，所以不要阻止他们使用的 app
     * `unsupported` 表示系统无法做出准确的判断，用户大概率可能是机器人
@@ -186,6 +188,7 @@ NotificationCenter.default.addObserver(self,
 上述两点相关 API 在之前的 Session 中已介绍，这里不再赘述。
 
 此外，Server to server notifications 服务端订阅通知也是非常重要的一项用于处理用户信息变化，比如：
+
 * 当用户禁用或启用邮件转发首选项时；
 * 当用户停止将 Apple ID 与 App 一起使用时；
 * 或者当用户永久删除其 Apple ID 时；
@@ -244,6 +247,7 @@ JSON 的内容包含了一些重要的信息，包括消息的颁发者（issuer
 ![](./images/register-service-ids-3.png)
 
 通过这 3 步操作，我们就可以获得一个 Services ID 用于在 Web 上使用 “通过 Apple 登录”。接下来就可以引用 [Sign in with Apple JS](https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_js)，在 Web 网页中添加 “通过 Apple 登录” 按钮：
+
 1. 引用 `appleid.auth.js`；
 2. 通过 div 添加登录按钮，并配置按钮的样式，详见 [Sign in with Apple Button](https://appleid.apple.com/signinwithapple/button)；
 3. 通过按钮点击调用 AppleID.auth.init 接口发起授权；
@@ -269,6 +273,7 @@ JSON 的内容包含了一些重要的信息，包括消息的颁发者（issuer
 ```
 
 其中，授权接口的参数字段赋值说明：
+
 * clientId: 即为前面在 Apple Developer 后台申请的 Service ID；
 * scope: 为请求授权的范围，如 name，email 等，多个用空格隔开；
 * redirectURI: 在注册申请 Service ID 时填写，用于 Apple 在授权成功后重定向跳转回开发者的网站；
