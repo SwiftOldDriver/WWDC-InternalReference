@@ -492,7 +492,7 @@ log show --info --debug
 
 #### 注意
 
-- 用 `Act as iCloud Account` 方式登录只有当前用户创建的数据可以背解析展示，其他用户的数据依旧是加密的无法访问的，这也是 `iCloud` 保证数据安全的核心。
+- 用 `Act as iCloud Account` 方式登录只有当前用户创建的数据可以被解析展示，其他用户的数据依旧是加密的无法访问的，这也是 `iCloud` 保证数据安全的核心。
 - 我的扫雷游戏的排行榜由于设置的是 `PublicDataBase` 类型，每个用户创建自己的数据，且对所有用户可见，这是 `CloudKit` 的一种特殊场景。
 
 ### 4.2 隐藏 Container
