@@ -126,7 +126,7 @@ iPad idiom 下，需要你做的适配工作是很少的，甚至可以一行代
 当然，这是有代价的：
 
 - 视图和文字在 Mac 上会被缩放到 77%，因此导致了[像素不对齐](https://jplay.github.io/2022/05/26/%25E4%25B8%25AD%25E7%259A%2584%25E5%2583%258F%25E7%25B4%25A0%25E5%25AF%25B9%25E9%25BD%2590/)，所以变得模糊。
-- 控件是直接从 iOS 搬到 macOS 上的，某些情况下显得体验不佳。比如，UINavigationbar 在 Mac 上显得格格不入。
+- 控件是直接从 iOS 搬到 macOS 上的，某些情况下显得体验不佳。比如，UINavigationBar 在 Mac 上显得格格不入。
 
 ![navigationbarFix](./images/navigationbarFix.png)
 
@@ -185,7 +185,7 @@ func scene(_ scene: UIScene,
                           size: CGSize(width: 320, height: 480))
     let geometryRequest = UIWindowScene.MacGeometryPreferences(systemFrame:newFrame)
     windowScene.requestGeometryUpdate(geometryRequest){ error in
-        // Handle error
+        // 处理异常情况
     }
         
     // 控制交通灯按钮
@@ -206,10 +206,10 @@ func scene(_ scene: UIScene,
 
 在我们实现这个小需求的时候，我们有两个值得注意的细节：
 
-1. 在我们指定尺寸的时候，单位是点。如果是 Mac idiom，那就是 AppKit 中一比一的 320 * 480 点；如果是 iPad idiom，那会在此基础上缩放至 77%
+1. 在指定尺寸的时候，单位是点。如果是 Mac idiom，那就是 AppKit 中一比一的 320 * 480 点；如果是 iPad idiom，那会在此基础上缩放至 77%
 2. 原点在主屏幕的左上角。如果你有多个屏幕，那么顶部菜单栏被激活的就是主屏幕。
 
-再来关注一下剩余的关于窗口的接口：
+再来看看关于窗口的新接口还有哪些：
 
 ~~~ Swift
 // 禁用红色按钮
@@ -231,3 +231,62 @@ if windowScene.isFullScreen { /* ... */ }
 ~~~
 
 以上代码所见即所得，唯一值得一提的是：把最大尺寸和最小尺寸设置为同一个值也能禁用绿色按钮（方式二）。
+
+### Toolbar 相关
+
+我们前面提到：如果你处于 Mac idiom 下，UINavigationBar 会自动转换成 NSToolbar。我们也可以设置 `navigationBar.preferredBehavioralStyle`来手动控制映射样式：
+
+- `.automatic` - 默认值，交给系统决定映射样式
+- `.pad` - 保持 iPad 上的样式不变，也就是 UINavigationBar
+- `.mac` - 告知系统需要映射成 mac 上的样式，也就是 NSToolbar
+
+假设我们已经成功将 UINavigationBar 转换成了 NSToolbar，那么进一步的定制化需求应该怎么实现呢？让我们基于一个小例子来看看。
+
+这次我们要实现一个字数统计功能：
+
+1. 在 NSToolbar 中插入一个自定义的 UIView 作为 NSToolbarItem，用来展示字数并且支持点击
+2. 点击这个字数按钮，需要弹出一个自定义 UIView，用来展示更多信息
+
+![toolbar](./images/toolbar.png)
+
+
+首先，我们在 NSToolbarDelegate 的代理方法里实现自定义字数按钮的逻辑：
+
+~~~ Swift
+func toolbar(_ toolbar: NSToolbar,
+            itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier,
+            willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
+    if let itemIdentifier == "wordCountIdentifier" {
+        let wordCountView = WordCountView()
+        return NSUIViewToolbarItem(itemIdentifier: itemIdentifier,
+                                   uiView: wordCountView)
+    }
+}
+~~~
+
+NSUIViewToolbarItem 是 NSToolbarItem 的子类，通过它的构造方法，我们可以包裹一个 UIView，并插入到 NSToolbar 中。
+
+使用 NSUIViewToolbarItem 时，有两点细节指的注意：
+
+1. 如果我们的 NSToolbar 是通过 UINavigationBar 自动转换而来，自定义的 UIView 将被系统自动拷贝
+2. 如果我们的 NSToolbar 是自己添加的，切记要使用唯一的 item，而不是重复使用同一个 item
+
+接着我们来实现弹窗：
+
+~~~ Swift
+let wordCountDetailsVC = WordCountDetailsViewController()
+wordCountDetailsVC.modalPresentationStyle = .popover
+wordCountDetailsVC.popoverPresentationController?.sourceItem = wordCountView
+rootVC.present(wordCountDetailsVC, animated: true)
+~~~
+
+讲解一下代码：
+
+1. 我们创建了一个自定义 UIViewController：`wordCountDetailsVC`
+2. 将 `wordCountDetailsVC.popoverPresentationController?.sourceItem` 设置为我们之前自定义的 UIView：`wordCountView`，这样按钮和弹窗就关联起来了，点击字数按钮就会展示弹窗
+
+## 结束语
+
+自此，我们介绍了将你的 iOS 应用迁移到 Mac 上的所有方式，也用例子介绍了新版本下的新接口，相信你对迁移这件事情已经不再陌生。
+
+Mac Catalyst 每年都在迭代，M 系列芯片也装进了越来越多的设备中，我很期待 iPad 与 Mac 的融合，希望有一天我们能看到 Xcode 可以跑在 iPad 上。
