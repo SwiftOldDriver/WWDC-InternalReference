@@ -184,7 +184,7 @@ func scene(_ scene: UIScene,
     let newFrame = CGRect(origin: currentFrame.origin, 
                           size: CGSize(width: 320, height: 480))
     let geometryRequest = UIWindowScene.MacGeometryPreferences(systemFrame:newFrame)
-    windowScene.requestGeometryUpdate(geometryRequest){ error in
+    windowScene.requestGeometryUpdate(geometryRequest) { error in
         // 处理异常情况
     }
         
