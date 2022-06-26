@@ -50,7 +50,7 @@ WWDC 2019，SwiftUI 横空出世，作为新时代声明式布局引擎，兼具
 
 ### 创建项目与项目设计
 
-让我们从创建一个新 Watch App 开始。在“watchOS”选项卡中，选择“App”，然后单击“Next”。填入“Product Name”后，我们还需要进行几个选择。最重要的选择是创建一个「独立的 Watch App」项目还是创建一个「Watch App 与配套的 iOS App」项目。 
+让我们从创建一个新 Watch App 开始。在“watchOS”选项卡中，选择“App”，然后单击“Next”。填入“Product Name”后，我们还需要进行几个选择。最重要的选择是创建一个「独立的 Watch App」项目还是创建一个「Watch App 与配套的 iOS App」项目。
 
 ![](./images/create_watchos_app_product.png)
 
@@ -167,7 +167,7 @@ struct ContentView: View {
 
 ## 列表更新
 
-### 探索 TextFieldLink 
+### 探索 TextFieldLink
 
 我们需要给用户提供将项目添加到列表中的方法。我们将展示一个按钮，用户点击该按钮将新项目添加到列表中。
 
@@ -288,7 +288,7 @@ struct ContentView: View {
 | Option | Use For | Use |
 |---|---|---|
 | Heirarchical | Views with list-detail relationship | NavigationStack |
-| Page-based | Flat collection | TabView | 
+| Page-based | Flat collection | TabView |
 | Full Screen | Any full-screen content | ignoresSafeArea and toolbar modifiers |
 | Modal sheet | Important tasks | sheet modifier |
 
@@ -337,7 +337,6 @@ struct ItemRow: View {
 ```
 
 要将自定义的 `toolbar` 项添加到模态视图，我们可以做以下改动。我们的 `toolbar` 应提供 `placement` 参数，如使用 `confirmationAction`、`cancellationAction` 或 `destructiveAction`。
-
 
 ```swift
 struct ItemRow: View {
@@ -479,7 +478,7 @@ ShareLink(item: item.description,
 )
 ```
 
-> 欢迎查看“[Meet Transferable](https://developer.apple.com/videos/play/wwdc2022/10062/)”以了解有关 `ShareLink` 的更多信息。 
+> 欢迎查看“[Meet Transferable](https://developer.apple.com/videos/play/wwdc2022/10062/)”以了解有关 `ShareLink` 的更多信息。
 
 ## 添加图表
 
@@ -621,6 +620,7 @@ struct ProductivityChart: View {
 ```
 
 为了在 Watch 上显示我们想要的样式，我们使用 Chart 的 `chartXAxis` 修饰符自定义 x 轴。我们也不需要垂直网格线，所以我们省略了 `AxisGridLine` 标记。
+
 ```swift
 // Customize the x-axis appearance
 .chartXAxis {
