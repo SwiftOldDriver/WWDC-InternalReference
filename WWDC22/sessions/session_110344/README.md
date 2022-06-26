@@ -2,7 +2,7 @@
 session_ids: [110344]
 ---
 
-# WWDC2022 110344/10109 - 苹果对 iOS/macOS app 的保护
+# WWDC2022 110344/10109 - Developer Mode 与Notarization
 
 本文基于[Session 110344](https://developer.apple.com/videos/play/wwdc2022/110344)和[Session_10109](https://developer.apple.com/videos/play/wwdc2022/10109/)梳理。
 
