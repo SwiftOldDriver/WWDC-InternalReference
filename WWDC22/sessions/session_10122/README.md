@@ -4,7 +4,7 @@ session_ids: [10122]
 
 # Session 10122 - 提升 “通过 Apple 登录” 的体验
 
-> 作者：ZUBIN，iOS 开发者，就职于蚂蚁支付宝客户端团队，个人主页 https://kangzubin.com
+> 作者：ZUBIN，iOS 开发者，就职于蚂蚁支付宝客户端团队，个人主页 <https://kangzubin.com>
 > 审核：Damien
 
 [Sign in with Apple](https://developer.apple.com/sign-in-with-apple/)（“通过 Apple 登录”）在 WWDC 2019 随着 iOS 13 和 macOS 10.15 以及 Xcode 11 一起推出，在前几年的小专栏 [WWDC19 内参](https://xiaozhuanlan.com/wwdc19) 和 [WWDC20 内参](https://xiaozhuanlan.com/wwdc20)，我也分享了两篇文章，详细介绍了 app 如何接入 Sign in with Apple 能力：
