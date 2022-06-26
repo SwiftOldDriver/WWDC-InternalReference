@@ -44,8 +44,13 @@ session_ids: [10078]
 
 ### 使用现代网络协议
 
-我们通过使用现代网络协议即可显著的降低应用的网络延迟，主要包括 IPv6、TLS 1.3 和 HTTP/3 等。只要服务端支持这些协议，在 App 侧，你只需要使用 URLSession 和 Network.framework 框架的 API 即可自动使用以上的协议。目前，通过 Safari 浏览器的流量有 20% 是基于 HTTP/3 来承载的；统计数据显示，HTTP/3 可以显著的提升请求完成的时间，仅约为 HTTP/1.1 的一半（如下图所示）。
+我们通过使用现代网络协议即可显著的降低应用的网络延迟，主要包括 IPv6、TLS 1.3 和 HTTP/3 等。只要服务端支持这些协议，在 App 侧，你只需要使用 URLSession 和 Network.framework 框架的 API 即可自动使用以上的协议。IPv6 在很早的版本苹果就已经支持了；从 iOS 12.2 开始 TLS 1.3 默认被支持（值得注意的是，你需要使用上面提到的 API, 比如 GCDAsyncSocket 是无法支持 TLS 1.3 的）；而从 iOS 15 开始，苹果系统提供了 HTTP/3 协议的支持。目前，通过 Safari 浏览器的流量有 20% 是基于 HTTP/3 来承载的。
+
 ![](images/safari_http3.png)
+
+统计数据显示，HTTP/3 可以显著的提升请求完成的时间，仅约为 HTTP/1.1 的一半（如下图所示）。TLS 1.3 可以减少 1 次 握手过程中的 RTT 从而减少网络延迟；HTTP/3 基于 QUIC 实现，它的底层协议是 UDP。HTTP/3 通过真正的多路复用、0-RTT 支持等特性，大大提升了性能。
+
+![](images/http_compare.png)
 
 ### 启用 handover 处理网络切换
 
@@ -61,8 +66,8 @@ let parameters = NWParameters.quic(alpn: ["myproto"])
 parameters.multipathServiceType = .handover
 ```
 
-MultipathServiceType 是一个枚举类型，它实际上是定义了一系列 Multipath 场景下使用网络的配置。所谓 Multipath 指的是用户同时有多条网络通道 （一般来说是移动网络和 WIFI 共存）的情况下，APP 可以采用不同的策略来利用这些网络通道。 handover 枚举配置的含义是启用 Multipath, 但当且仅当主通道无法使用时，才会使用其他的通道。启用 handover 并且确保它正常工作，可以使我们的应用获得无缝切换的效果。
-![](images/http_compare.png)
+MultipathServiceType 是一个枚举类型，它实际上是定义了一系列 Multipath 场景下使用网络的配置。所谓 Multipath 指的是用户同时有多条网络通道 （一般来说是移动网络和 WIFI 共存）的情况下，App 可以采用不同的策略来利用这些网络通道。 handover 枚举配置的含义是启用 Multipath, 但当且仅当主通道无法使用时，才会使用其他的通道。启用 handover 并且确保它正常工作，可以使我们的应用获得无缝切换的效果。
+
 
 ### 启用 QUIC 数据报
 
