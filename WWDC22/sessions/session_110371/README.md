@@ -17,19 +17,27 @@ session_ids: [110371]
 - 支持移动平台：Android iOS
 - 支持苹果生态：iOS iPadOS macOS watchOS
 
-为了提高生产力，许多公司/开发会使用跨平台技术进行开发，针对移动平台：有 Flutter 和 React Native 跨平台技术。针对苹果生态：早些年，开发 iOS iPadOS 应用需要 UIKit ，开发 macOS 应用需要 AppKit，二者差异大，维护两端成本高。而在 Xcode 14 以后，使用 SwiftUI 技术，只需一个项目一个 Target 便可以支持多平台，这对于专注于苹果生态的开发团队或者独立开发者而言无疑是雪中送炭。本文将结合 [WWDC 110371 session](https://developer.apple.com/wwdc22/110371) 和 [Food Truck Demo](https://developer.apple.com/documentation/swiftui/food_truck_building_a_swiftui_multiplatform_app/)  谈谈如何开发多平台应用。
+为了提高生产力，许多公司/开发会使用跨平台技术进行开发，针对移动平台：有 Flutter 和 React Native 跨平台技术。针对苹果生态：早些年，开发 iOS iPadOS 应用需要 UIKit ，开发 macOS 应用需要 AppKit，二者差异大，维护两端成本高。而在 Xcode 14 以后，使用 SwiftUI 技术，只需一个项目一个 Target 便可以支持多平台，这对于专注于苹果生态的开发团队或者独立开发者而言无疑是雪中送炭。本文将结合 [WWDC 110371 session](https://developer.apple.com/wwdc22/110371) 从以下几个方面谈谈如何开发多平台应用。
+
+- Xcode 13 创建多平台项目与局限性
+- Xcode 14 创建多平台项目
+- 多平台项目配置
+- 旧项目支持多平台
+- 多平台项目下的开发问题
+- 多平台项目下应用的发布
 
 > 注：文章撰写时 Xcode 14， macOS 13，iOS 16 均属于 beta 版本，和最终正式版可能会存在一些差异。
 
-## Xcode 13 创建多平台与局限性
+## Xcode 13 创建多平台项目与局限性
 
 熟悉 Xcode 13 的同学会发现，在 Xcode 13 就可以创建多平台应用，但是 Xcode 13 创建的多平台项目各个平台并没有很好的融合在一起。有着许多的局限性。
+
 - 不同平台之间区分不同的 Target，项目配置无法共享，代码共享复杂
 - 不同使用不同的 Bundle Identifier，这意味着应用原生不支持通用购买
 
 ![3](./images/3.png)
 
-## 使用 Xcode 14 创建多平台应用
+## Xcode 14 创建多平台项目
 
 打开 Xcode 14，使用 CMD+Shift+N 快捷键，快速打开新建窗口，选择 Multiplatform - App，新建名称为 Xcode 14 的项目，这时候创建的应用即为多平台应用。
 > 注：使用 Xcode 14 创建的多平台应用无法使用低版本 Xcode 打开。
@@ -97,7 +105,7 @@ session_ids: [110371]
 看到`#if os` ，聪明的同学应该已经想到了，这里的 os 还支持 iOS、iPadOS、watchOS、tvOS，除了 API 外，一些平台的其他差异内容，比如 UI 尺寸，也可以用该宏进行定制。
 > 注：使用多平台开发的时候，编译和测试代码应该在多平台进行，避免写了太多的内容后才发现某个平台出现问题，浪费太多精力。
 
-## 多平台应用的发布
+## 多平台项目下应用的发布
 
 终于等到了这一里程碑时刻，应用创建和开发完成，进入发布阶段。发布应用需要选好要发布的平台，如下图 "My Mac"。然后选择 Product - Archive。这个操作并不方便。
 > 希望后续可以优化成可以选择打包多平台，例如点击 Archive 后有一弹窗，可以让你选择打包的平台，那么对于没有不打算使用自动构建的用户来说就会方便许多
