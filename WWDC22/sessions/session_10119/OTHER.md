@@ -1,6 +1,6 @@
 ## 个人介绍
 
-作者：Ryukie，在广州搬砖的 iOS 独立开发者，[GitHub](https://github.com/RyukieSama)，公众号/掘金等：LabLawliet。
+作者：Ryukie，在广州搬砖的 iOS 独立开发者，Swift 爱好者，[GitHub](https://github.com/RyukieSama)，公众号/掘金等：LabLawliet。
 
 ## 审核介绍
 

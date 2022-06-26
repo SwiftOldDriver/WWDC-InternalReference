@@ -4,7 +4,7 @@ session_ids: [10119]
 
 # WWDC22 - Optimize your use of Core Data and CloudKit / 优化 CoreData & CloudKit 实现
 
-> 作者：Ryukie，在广州搬砖的 iOS 独立开发者，[GitHub](https://github.com/RyukieSama)，公众号/掘金等：LabLawliet。
+> 作者：Ryukie，在广州搬砖的 iOS 独立开发者，Swift 爱好者，[GitHub](https://github.com/RyukieSama)，公众号/掘金等：LabLawliet。
 
 ## 前言
 
@@ -18,7 +18,7 @@ session_ids: [10119]
 >  
 > 本 Session 侧重点为优化实现方案，更适用于对 `CoreData & CloudKit` 以及数据库知识有一定理解的开发者，如果想要了解更多实际使用的知识，推荐阅读文末的相关 Session。
 >  
-> 同时 [WWDC22: 10115 - What’s new in CloudKit Console](https://developer.apple.com/videos/play/wwdc2022/10115/) 也介绍了 CloudKit 控制台的一些有用更新，本文也会进行一些介绍。
+> 同时 [WWDC22: 10115 - What’s new in CloudKit Console](https://developer.apple.com/videos/play/wwdc2022/10115/) 也介绍了 `CloudKit` 控制台的一些有用更新，本文也会进行介绍。
 
 ## 一、 探索
 
@@ -82,6 +82,7 @@ static func fetchAvatar(userRecordName: CKRecord.ID? = nil, success: @escaping C
     }
     
     let ref = CKRecord.Reference(recordID: CKRecord.ID(recordName: recordName), action: .none)
+    // 拼接筛选条件
     let predicate = NSPredicate(format: "creatorUserRecordID == %@", ref)
     
     CloudCenter.publicDataBase.query(type: .AvatarSpace, predicate: predicate) { (records, cursor, error) in
@@ -555,7 +556,7 @@ log show --info --debug
   - 隐藏 `Container` 的功能使得控制台更加整洁清晰
   - 共享空间在控制台上的支持，也极大的提升了在开发调试时进行共享数据调试的效率
 
-总体来讲此次和 `CloudKit` 相关的更新的重心在于提高开发者的使用效率，没有一些惊艳的。作为独立开发者很开心看到 `Apple` 还持续的在为开发者持续提供免费安全的云存储服务，并不断提升便捷性与效率。期待后续能带来更多相关新的功能，造福广大充满创造性的独立开发者们，创造更多有趣的产品。
+总体来讲此次和 `CloudKit` 相关的更新的重心在于提高开发者的使用效率，缺少一些惊艳的能够激发创造性的点。同时作为独立开发者也很开心看到 `Apple` 还持续的在为开发者持续提供免费安全的云存储服务，并不断提升便捷性与效率。期待后续能带来更多相关新的功能，造福广大充满创造性的独立开发者们，创造出更多有趣的产品。
 
 ## 推荐阅读
 
