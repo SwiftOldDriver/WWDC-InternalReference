@@ -148,7 +148,44 @@ iPad idiom 下，需要你做的适配工作是很少的，甚至可以一行代
 - iPad idiom 下的文字明显小于 Mac idiom 下的文字
 - iPad idiom 下的 UINavigationBar 在 Mac idiom 下自动变成了 NSToolbar，这明显更贴合 Mac 的交互体验
 
-诸如此类的细节还有很多，详细信息可以查看[官方文档](https://developer.apple.com/design/human-interface-guidelines/technologies/mac-catalyst/introduction)。
+我们来探究一下 UINavigationBar 自动转换为 NSToolbar 的细节:
+
+![toolbar 转换细节](./images/toolbarTranslate.png)
+
+- 返回按钮直接被迁移到了 NSToolbar
+- 如果是基于文档的应用，文档名也会迁移过去。如果你打开了「辅助功能 - 显示 - 显示窗口标题图标」，那么窗口标题图标也会出现
+- UINavigationBar 中间的控件转化为了 NSToolbar 右边的一排 NSToolbarItem
+
+> PS：窗口标题图标长这样：
+> ![Finder 中的窗口标题图标](./images/titleIcon.png)
+
+不仅仅是自动转换，你还会在文件菜单中自动获得四个新的菜单项：复制、移动、重命名、导出：
+
+![四个新的菜单项](./images/fourItems.png)
+
+记得在响应链中实现这四个对应的方法：
+
+![四个新的菜单项](./images/fourFunctions.png)
+
+如果你的应用不需要的话，可以在 AppDelegate 里重写 `buildMenu` 来删除：
+
+~~~ Swift
+override func buildMenu(with builder: UIMenuBuilder) {
+    if builder.system == .main {
+        builder.remove(menu: .document)
+    }
+}
+~~~
+
+假如你的应用中有一个搜索栏，那么它也将自动转换到 NSToolbar 上。它会先展示为一个搜索按钮，点击之后会展开变成一个搜索栏：
+
+![searchbar](./images/searchbar.png)
+
+诸如此类的细节还有很多，更多信息推荐参考：
+
+- [Meet desktop-class iPad](https://developer.apple.com/videos/play/wwdc2022/10069/)
+- [Build a desktop-class iPad app](https://developer.apple.com/videos/play/wwdc2022/10070/)
+- [human-interface-guidelines](https://developer.apple.com/design/human-interface-guidelines/technologies/mac-catalyst/introduction)
 
 ## 新增接口
 
