@@ -191,11 +191,11 @@ struct AppMenu: View {
 
 MenuBarExtra 支持两种展现样式：
 
-1. 将其内容展现为下拉菜单（默认样式）；
+*  将其内容展现为下拉菜单（默认样式）；
 
 ![](./images/session_10061_1_6.png)
 
-2. 将内容展示在无边框的窗口中；
+* 将内容展示在无边框的窗口中；
 
 ![](./images/session_10061_1_7.png)
 
@@ -288,7 +288,7 @@ Presented value 也将由 SwiftUI 自动持久化以便 state restoration。view
 
 这一部分介绍一些在应用中自定义 scene 的方法。
 
-1. `.commandsRemoved`
+*  `.commandsRemoved`
 
 在前部分中我们已经定义了两个 WindowGroup scenes，(一个是 app 的主视图窗口，另一个是详情页的窗口)，同时 SwfitUI 会默认为这两个 Group 在 "File"菜单添加各自的菜单项。如下图所示：
 
@@ -308,7 +308,7 @@ WindowGroup("Book Details", for: Book.ID.self) { $bookId in
 
 ![](./images/session_10061_4_2.png)
 
-2. `.defaultPostition`
+*  `.defaultPostition`
 
 在之前介绍 Auxiliary scenes 时，我们使用 Window Scene 定义了 Activity 窗口，在打开展示这个窗口时，如果之前没有可用的 state， SwiftUI 默认将窗口放置在屏幕中间。如下图所示：  
 
@@ -335,13 +335,13 @@ struct ReadingActivityScene: Scene {
 
 ![](./images/session_10061_4_4.png)
 
-3. `.defaultSize`  
+*  `.defaultSize`  
 
 可以通过添加 defaultSize modifier 的方式可以设置 Window 的默认尺寸。如下图所示：
 
 ![](./images/session_10061_4_5.png)
 
-4. `.keyboardShortcut`  
+*  `.keyboardShortcut`  
 
 使用`keyboardShortcut` modifier 可以设置 behavior 的快捷键。下图使用这个 modifier 来给 Activity Window 设置一个打开的快捷键 `Option-Command-0` 。  
 
