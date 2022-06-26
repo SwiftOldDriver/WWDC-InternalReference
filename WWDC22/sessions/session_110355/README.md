@@ -8,7 +8,7 @@ session_ids: [110355]
 
 阅读本文需要一定的基础，包括：
 
-1. Async/Await 对于异步方法的执行和实现，参考视频链接 [Meet async/await in Swift](https://developer.apple.com/videos/play/wwdc2021/10132) 
+1. Async/Await 对于异步方法的执行和实现，参考视频链接 [Meet async/await in Swift](https://developer.apple.com/videos/play/wwdc2021/10132)
 2. 了解 AsyncSequence 协议，理解其实现的原理，参考视频链接 [Meet AsyncSequence](https://developer.apple.com/videos/play/wwdc2021/10058)
 
 不了解但有时间的同学可以先观看上面的视频。本文会对使用到的相关语法和结构做一些简单的解释，以保证不影响阅读。
@@ -292,7 +292,7 @@ do {
  } catch {
     print ("Error: \(error)")
  }
-```   
+```
 
 ## 时钟 Clock
 
@@ -317,6 +317,7 @@ do {
 [RunLoop.SchedulerTimeType](https://developer.apple.com/documentation/foundation/runloop/schedulertimetype)
 
 ### Debounce
+
 去抖动，以一定的间隔来响应任务。对应的算法，是在 Clock 的基础上实现
 
 ![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/debounce-algorithms.png)
