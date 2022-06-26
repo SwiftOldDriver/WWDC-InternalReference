@@ -50,9 +50,9 @@ Night Sky 是一款宇宙探索软件，它惊艳的 3D 效果获得了多次 We
 从文字、图片编辑类软件，到 3D 软件，甚至是游戏，都可以通过 Mac Catalyst 把 iPad 应用搬到 Mac 上，接下来我们看看迁移应用的几种方式。
 > PS：以下内容全部基于 Xcode 14.0 beta，会和市面上其他基于旧版本 Xcode 的文档略有不同。
 
-### 默认迁移(Designed for iPad)
+### 默认迁移 (Designed for iPad)
 
-当你新建一个项目的时候，系统会默认帮你添加 Mac(Designed for iPad)，这可以让你拥有苹果芯片（目前也就是 M 系列芯片）的 Mac，直接把此应用跑起来。
+当你新建一个项目的时候，系统会默认帮你添加 Mac (Designed for iPad)，这可以让你拥有苹果芯片（目前也就是 M 系列芯片）的 Mac，直接把此应用跑起来。
 
 ![Designed for iPad](./images/defaultForIPad.png)
 
@@ -70,7 +70,7 @@ Night Sky 是一款宇宙探索软件，它惊艳的 3D 效果获得了多次 We
 `UILaunchToFullScreenByDefaultOnMac` 可以让你的应用在开启时直接进入全屏，这个选项特别适合游戏。
 `UISupportsTrueScreenSizeOnMac` 可以让你的应用支持任意屏幕尺寸和分辨率，具体说明可以查看[官方文档](https://developer.apple.com/documentation/bundleresources/information_property_list/uisupportstruescreensizeonmac?changes=late_3__8)。
 
-在交互方面 Touch Alternatives 可以帮助你把 iPad 上的交互简单地映射到 Mac 上
+在交互方面 Touch Alternatives 可以帮助你把 iPad 上的交互简单地映射到 Mac 上。
 
 ![添加 Touch Alternatives 文件](./images/addTouchAlternatives.png)
 
@@ -110,11 +110,11 @@ Night Sky 是一款宇宙探索软件，它惊艳的 3D 效果获得了多次 We
 
 ### 使用 Mac Catalyst
 
-更进一步的迁移方式是本文的主角： Mac Catalyst
+更进一步的迁移方式是本文的主角： Mac Catalyst。
 
 ![添加 Mac Catalyst](./images/addMC.png)
 
-添加完 Mac(Mac Catalyst)，我们就开启了 Mac Catalyst，此时你的应用可以跑在所有 Mac 之上（囊括了带苹果芯片和英特尔芯片的 Mac）。
+添加完 Mac (Mac Catalyst)，我们就开启了 Mac Catalyst，此时你的应用可以跑在所有 Mac 之上（囊括了带苹果芯片和英特尔芯片的 Mac）。
 
 Mac Catalyst 分为两种适配模式：
 
@@ -207,7 +207,7 @@ func scene(_ scene: UIScene,
 在我们实现这个小需求的时候，我们有两个值得注意的细节：
 
 1. 在指定尺寸的时候，单位是点。如果是 Mac idiom，那就是 AppKit 中一比一的 320 * 480 点；如果是 iPad idiom，那会在此基础上缩放至 77%
-2. 原点在主屏幕的左上角。如果你有多个屏幕，那么顶部菜单栏被激活的就是主屏幕。
+2. 原点在主屏幕的左上角。如果你有多个屏幕，那么顶部菜单栏被激活的就是主屏幕
 
 再来看看关于窗口的新接口还有哪些：
 
