@@ -24,6 +24,7 @@ struct Aircraft {
     let numEngine: Int
 }
 ```
+
 Model 的 Schema 决定了底层的存储结构，看起来像是这样：
 
 | TYPE     | NUM_ENGINE |
