@@ -6,7 +6,7 @@ session_ids: [110344]
 
 本文基于[Session 110344](https://developer.apple.com/videos/play/wwdc2022/110344)和[Session_10109](https://developer.apple.com/videos/play/wwdc2022/10109/)梳理。
 
-> 作者：郑一一，现供职于 TikTok iOS 开发团队。
+> 作者：郑一一，就职于字节跳动，目前负责 TikTok 隐私和安全相关的工作。
 >
 > 审核：Damien，就职于字节跳动，目前负责 TikTok 隐私和安全相关的工作。
 
@@ -14,7 +14,7 @@ session_ids: [110344]
 
 苹果作为隐私安全方面的先行者，一直致力于让用户能够下载到可靠和安全的应用，并确保用户和开发者的使用体验，试图在安全性和易用性上达到一个良好的平衡。
 
-iOS 方向的 Developer mode 和 macOS 方向的 notarization 都是苹果对于这些原则的最新实践。
+iOS 方向的 Developer Mode 和 macOS 方向的 Notarization 都是苹果对于这些原则的最新实践。
 
 ![](images/mind.jpg)
 
@@ -22,11 +22,11 @@ iOS 方向的 Developer mode 和 macOS 方向的 notarization 都是苹果对于
 
 通过本节，你可以了解到：
 
-1. 什么是 Developer mode
-2. Developer mode 解决了什么问题
-3. 如何打开 Developer mode
+1. 什么是 Developer Mode
+2. Developer Mode 解决了什么问题
+3. 如何打开 Developer Mode
 
-### 什么是 Developer mode
+### 什么是 Developer Mode
 
 在 iOS 16 之前，只要设备连接 Xcode，便能拥有调试功能：
 
@@ -36,21 +36,21 @@ iOS 方向的 Developer mode 和 macOS 方向的 notarization 都是苹果对于
 
 ![](images/developer_feature.jpg)
 
-今年 iOS 在引入 Developer mode 的概念后，如果不打开 Developer mode 开关，不但不允许使用这些调试功能，甚至无法运行和安装。
+今年 iOS 在引入 Developer Mode 的概念后，如果不打开 Developer Mode 开关，不但不允许使用这些调试功能，甚至无法运行和安装。
 
 **值得注意的是，这个限制仅仅在开发签名 App 生效，并不包括企业签名、TestFlight、App Store 等。**
 
 >笔者：可以预想到，在 iOS 发布后，在国内，通过开发签名分发 App 来提供服务的公司会受到比较大的冲击。
 
-### Developer mode 解决了什么问题
+### Developer Mode 解决了什么问题
 
 苹果提到上面介绍的调试功能经常被用于攻击用户，而绝大多数普通用户一般是不需要使用到这些调试功能的。引入 Developer mode，可以保护用户免于不经意安装那些有潜在危害的 App。
 
 > 笔者：这里还有一个推测的原因是，苹果历来为人诟病其生态的封闭性，普通用户只能通过 App Store 下载 App。欧盟研究已久的数字市场法案（[DMA](https://zh.m.wikipedia.org/zh-hans/%E6%95%B8%E4%BD%8D%E5%B8%82%E5%A0%B4%E6%B3%95%E6%A1%88)，旨在通过过防止大公司滥用其市场力量，并允许让新参与者进入市场以确保欧洲数字市场的竞争程度更高）预计今年即将公布，法案会强制要求苹果允许用户从互联网和第三方应用商店直接下载 App。一旦放开，用户从第三方应用商店下载 App 的安全性则得不到保证。苹果引入开发者模式这一动作，被认为是准备开放分发限制的前奏。
 
-### 如何打开 Developer mode
+### 如何打开 Developer Mode
 
-苹果提供两种打开 Developer mode 的方法：
+苹果提供两种打开 Developer Mode 的方法：
 
 1. 手动方式：通过 GUI 操作，打开开关
 2. 自动化：通过终端命令完成操作
@@ -61,19 +61,19 @@ iOS 方向的 Developer mode 和 macOS 方向的 notarization 都是苹果对于
 
 ![](images/developer_demo1.jpeg)
 
-接下来就需要经过繁琐流程才能把 Developer mode 打开：
+接下来就需要经过繁琐流程才能把 Developer Mode 打开：
 
-1. 前往设置-隐私与安全性-开发者模式，打开开关后，会提醒用户，打开 Developer mode 后，设备的安全性可能受到影响，以警示用户打开开关后的风险。用户确认后，设备将会重启
+1. 前往设置-隐私与安全性-开发者模式，打开开关后，会提醒用户，打开 Developer Mode 后，设备的安全性可能受到影响，以警示用户打开开关后的风险。用户确认后，设备将会重启
 2. 重启完成后，再次出现弹窗，提示用户其中可能存在的风险
 3. 确认后，需要用户输入密码，完成最后一次的确认
 
 ![](images/developer_demo.jpg)
 
-> 笔者：从上述一整套流程中，苹果在每一步都煞费苦心来提醒用户，开启 Developer mode 带来的潜在安全问题。
+> 笔者：从上述一整套流程中，苹果在每一步都煞费苦心来提醒用户，开启 Developer Mode 带来的潜在安全问题。
 
 #### 自动化版
 
-那如果开发者需要打开多台设备的 Developer mode，会耗费大量的时间。针对这个问题，苹果很贴心地提供自动化打开 Developer mode 的方法，以节省时间。
+那如果开发者需要打开多台设备的 Developer Mode，会耗费大量的时间。针对这个问题，苹果很贴心地提供自动化打开 Developer Mode 的方法，以节省时间。
 
 怎么做呢？非常简单，只要三步：
 
@@ -134,7 +134,7 @@ iOS 方向的 Developer mode 和 macOS 方向的 notarization 都是苹果对于
 
 ### REST API
 
-今年苹果提供了一项新服务，notarization 的 REST API。作为基于 JSON 的 Web 服务，可以非常轻松地在大多数开发语言中集成。
+今年苹果提供了一项新服务，Notarization 的 REST API。作为基于 JSON 的 Web 服务，可以非常轻松地在大多数开发语言中集成。
 
 #### REST API 解决了什么问题
 
@@ -173,7 +173,7 @@ iOS 方向的 Developer mode 和 macOS 方向的 notarization 都是苹果对于
 
 通过上述介绍，我们可以看到苹果在隐私安全方面做出的巨大努力：
 
-1. iOS 上的 Developer mode 以及 macOS 上的 notarization 都可以保护用户免于安装存在风险的 App
+1. iOS 上的 Developer Mode 以及 macOS 上的 Notarization 都可以保护用户免于安装存在风险的 App
 2. 在确保安全性的前提下，不忘持续优化开发者的使用体验，提升开发者的开发效率
 
 这些实践的原则与思想都非常值得我们国内公司借鉴与学习。
