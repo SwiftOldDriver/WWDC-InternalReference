@@ -181,7 +181,7 @@ bl _objc_msgSend
 
 如上图所示，我们将
 
-`adrp x1, [selector "dateFromComponents"] `
+`adrp x1, [selector "dateFromComponents"]`
 
 `ldr x1, [x1, selector "dateFromComponents"]`
 
@@ -317,13 +317,12 @@ bl _objc_msgSend
 
 基于新的 `Xcode 14` 进行编译并且 `App` 运行在最新的 `OS` 上，你可以得到：
 
-* `Swfit` 协议检查更加高效
-* `Autorelease` 自动省略速度更快
-* 基于最新的 `Xcode 14` 的编译器和链接器重新编译 `App` 之后，以及消息发送 `stub` 带来的底层优化，最多可以压缩 `2%` 的 `App` 大小
+- `Swfit` 协议检查更加高效
+- `Autorelease` 自动省略速度更快
+- 基于最新的 `Xcode 14` 的编译器和链接器重新编译 `App` 之后，以及消息发送 `stub` 带来的底层优化，最多可以压缩 `2%` 的 `App` 大小
 
 如果基于最新的 `iOS 16`、`tvOS 16` 或者 `watchOS 9` ，你可以得到
 
-* 通过减少 `retain` 和 `release` 底层汇编代码指令的大小，你可以获得额外的 `2%` 包大小减少的优化。
+- 通过减少 `retain` 和 `release` 底层汇编代码指令的大小，你可以获得额外的 `2%` 包大小减少的优化。
 
 最后，阅读完本文之后，如果你对里面涉及到的链接器细节感兴趣的话可以观看 [WWDC22 - Link fast: Improve build and launch time](https://developer.apple.com/videos/play/wwdc2022/110362/) 。
-
