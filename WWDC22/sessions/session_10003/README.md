@@ -4,7 +4,7 @@ session_ids: [10003]
 
 # WWDC22 10003 - 初见 WeatherKit
 
-本文基于 Session [10003](https://developer.apple.com/videos/play/wwdc2022/10003/)、Xcode 14.0 beta (14A5228q) 撰写，介绍 Apple 推出的 `WeatherKit` 天气服务，后续版本可能存在 API 变更，请读者朋友们留意。
+本文基于 Session [10003](https://developer.apple.com/videos/play/wwdc2022/10003/)、Xcode 14.0 beta (14A5228q) 撰写，介绍 Apple 推出的 `WeatherKit` 天气服务，后续版本可能存在 API 变更，请读者朋友们留意。可在 [nuomi1/TestWeatherKit](https://github.com/nuomi1/TestWeatherKit) 仓库中获取本文的全部代码。
 
 ## Apple 平台中的天气
 
