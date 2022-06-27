@@ -16,7 +16,7 @@ session_ids: [110355]
 ## 正文
 
 本文基于 [Session 110355](https://developer.apple.com/videos/play/wwdc2022/110355/) 梳理，介绍的是苹果又一新开源包 Swift Async Algorithms ([Github 地址](https://github.com/apple/swift-async-algorithms)｜[Doc 地址](https://developer.apple.com/documentation/swift/asyncsequence))，主要用于实现 AsyncSequences 数据结构相关的算法。
-在开源包提议文件 ([Github 地址](https://github.com/apple/swift-evolution/blob/main/proposals/0298-asyncsequence.md)) 中，对这个开源包出发的动机和未来的发展有更加详细的介绍。
+在开源包提议文件 ([Github 地址](https://github.com/apple/swift-async-algorithms)) 中，对这个开源包出发的动机和未来的发展有更加详细的介绍。
 
 ![image](./images/async-algorithms.png)
 
@@ -408,7 +408,7 @@ public static func select<Tasks: Sequence & Sendable>(
 ```Swift
 public func debounce(for interval: Duration, tolerance: Duration? = nil) -> AsyncDebounceSequence<Self, ContinuousClock> {
     debounce(for: interval, tolerance: tolerance, clock: .continuous)
-  }
+}
 ```
 
 查阅 [ContinuousClock](https://github.com/apple/swift/blob/2d2b6f26b5/stdlib/public/Concurrency/ContinuousClock.swift) 源码会发现 clock.sleep 内部其实就是个 Task.sleep，也就是会阻塞当前代码的继续执行。另外关于 now 的实现也贴到此：
@@ -463,7 +463,6 @@ let clock = SuspendingClock()
 let elapsed = await clock.measure {
   await someLongRunningWork()
 }
-
 ```
 
 ### other
@@ -472,13 +471,17 @@ let elapsed = await clock.measure {
 
 ![image](./images/algorithms-list.png)
 
-在 [Github README](https://github.com/apple/swift-async-algorithms) 里可以看到关于这些方法的对应的系列和分类，这个和接下来的比较部分内容有关。
+在 [Github README](https://github.com/apple/swift-async-algorithms) 里可以看到关于这些方法的对应的系列和分类。
 
-## 比较
+## 总结
 
-文章的前面部分，主要阅读了一些算法和新增协议的源码。重点在于算法的实现，一些新东西的用法
+文章的主要内容介绍了部分算法和新增的 Clock 协议，深入阅读和理解其实现的源码。Async Algorithms 在 Swift Concurrency 方向上提供了更多更全的算法和支持，包括通用算法，时间概念下的算法
 
-仔细观察 AsyncSequence 这些方法，包括方法名，会发现这和面向过程框架里的 Rx 和 Combine 非常的相似
+在部分章节里中还延伸了一些框架的提案，引用了论坛中比较精彩的讨论。在这些延伸内容，会发现不仅仅在讨论功能的实现的同时，也在和其他语言或者框架在做比对
+
+### 比较
+
+仔细观察 Async Algorithms 这些方法，包括在文章中提到的，会发现这和面向过程框架里的 Rx 和 Combine 有很多相近的地方
 
 以 zip 方法举例：
 
