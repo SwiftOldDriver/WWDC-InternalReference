@@ -6,18 +6,14 @@ session_ids: [10075]
 
 本文基于 [Session 10075](https://developer.apple.com/videos/play/wwdc2022/10075/) 梳理。
 
-> 作者：瓮杰，就职于 TikTok 研发国际音乐团队。
->
-> 审核：。
-
 随着 Apple 的不断迭代，SwiftUI 的功能也年臻完善，但我们仍未达到彻底抛弃 AppKit/UIKit 完全使用 SwiftUI 开发 app 的阶段。一方面对于既有代码而言，渐进地使用 SwiftUI 重构是一种低成本的手段；另一方面，SwiftUI 的能力目前还无法很好地支持一些功能场景，比如富文本编辑等。因此，SwiftUI 和 AppKit/UIKit 共存的局面依然要持续一段时间。
 
 本文以 macOS 版本的快捷指令应用（Shortcuts）为例，介绍把 SwiftUI 和 AppKit 结合使用的一些方式，主要包括下列内容：
 
 - 如何在 AppKit 中使用 SwiftUI，并在二者之间传递数据；
-- 如何在 Collection cell 和 table cell 中使用 SwiftUI；
+- 如何在 Collection cell 和 Table cell 中使用 SwiftUI；
 - 如何处理嵌入 AppKit 中的 SwiftUI View 的布局和尺寸；
-- 如何管理响应链和焦点；
+- 如何管理事件响应链和焦点；
 - 最后介绍如何在 SwiftUI 中使用 AppKit。
 
 ## 在 AppKit 中使用 SwiftUI
@@ -27,15 +23,15 @@ session_ids: [10075]
 有两种方式来在 AppKit 中承载 SwiftUI View：
 
 1. 使用 [NSHostingView](https://developer.apple.com/documentation/swiftui/nshostingview)，将所要承载的 SwiftUI View 传递给构造函数参数 `rootView` 或者赋值给同名的实例属性 `rootView`。NSHostingView 实例是一个 NSView 对象，可以添加为其他 AppKit view 的子 view;
-2. 使用 [NSHostingController](https://developer.apple.com/documentation/swiftui/nshostingcontroller)，类似于 NSHostingView，通过构造函数参数 `rootView` 来传递所要承载的 SwiftUI View，或者创建之后通过同名的 `rootView` 属性来进行修改。NSHostingController 的使用方式也同其他 NSViewController 一样，通过 present 相关的方法显示出来或者添加为其他 NSViewController 对象的子 vc。
+2. 使用 [NSHostingController](https://developer.apple.com/documentation/swiftui/nshostingcontroller)，类似于 NSHostingView，通过构造函数参数 `rootView` 来传递所要承载的 SwiftUI View，或者创建之后通过同名的 `rootView` 属性来进行修改。NSHostingController 的使用方式也同其他 NSViewController 一样，通过 present 相关的方法显示出来或者添加为其他 NSViewController 对象的子 VC。
 
-### 使用 UIHostingController
+### 使用 NSHostingController
 
 本文将以快捷指令应用为例来介绍相关内容，下图是快捷指令的主界面结构图：
 
 ![Shortcuts](images/shortcuts.png)
 
-快捷指令应用的 UI 是一个典型的两栏结构，由 NSSplitViewController 来进行管理，而左边的侧边栏则是由 SwiftUI List 来实现，示意代码如下，其中侧边栏的每一行由枚举值来表示，并用一个 State 变量 `selectedItem` 来记录当前选中的行：
+快捷指令应用的 UI 使用了典型的两栏结构，并通过 NSSplitViewController 来管理布局。左边的侧边栏则是由 SwiftUI List 来实现，示意代码如下。其中侧边栏的每一行由枚举值来表示，并用一个 State 变量 `selectedItem` 来记录当前选中的行：
 
 ```Swift
 struct SidebarView: View {
@@ -58,7 +54,7 @@ enum SidebarItem: Hashable {
 }
 ```
 
-本节开头介绍了两种承载 SwiftUI 的方式，在这里因为外层是一个 NSSplitViewController，该 vc 通过 NSSplitViewItem 来管理各个部分，每个 splitViewItem 容纳一个 NSViewController，因此使用 NSHostingController 来承载 SidebarView：
+本节开头介绍了两种承载 SwiftUI 的方式，在这里因为外层是一个 NSSplitViewController，该 VC 通过 NSSplitViewItem 来管理各个部分，每个 splitViewItem 容纳一个 NSViewController，因此使用 NSHostingController 来承载 SidebarView：
 
 ```Swift
 let splitViewController = NSSplitViewController()
@@ -70,11 +66,11 @@ splitViewController.addSplitViewItem(splitViewItem)
 
 ### 在 AppKit 和 SwiftUI 之间传递数据
 
-当用户选择不同的侧边栏行时，右边的区域要随之变化，但是保存选中状态的 `selectedItem` 是 `SidebarView` 的 State 变量，而 NSHostingController/NSHostingView 都没有提供访问其承载的 SwiftUI View 的相关 API，因此在 AppKit 层面是无法感知到状态变化的。
+当用户在侧边栏行选择不同的选项时，右边的区域也要随之改变。但是保存选中状态的 `selectedItem` 是 `SidebarView` 的 State 变量，而 NSHostingController/NSHostingView 都没有提供访问其承载的 SwiftUI View 的相关 API，因此在 AppKit 层面是无法感知到状态变化的。
 
-解决这个问题的方式也很简单：将 `selectedItem` 上移至 SwiftUI 和 AppKit 都能访问到的层级即可。比较好的方式是定义一个 [ObservableObject](https://developer.apple.com/documentation/combine/observableobject) 类来作为 model 层，然后将需要共享的可变状态定义为 ObservableObject 类的属性，并由 `@Published` 来进行修饰。ObservableObject 会为每个 @Published 属性合成一个 `objectWillChange` publisher，在这些属性的值将要发生变化时触发。
+解决这个问题的方式也很简单：将 `selectedItem` 上移至 SwiftUI 和 AppKit 都能访问到的层级即可。比较好的方式是定义一个 [ObservableObject](https://developer.apple.com/documentation/combine/observableobject) 类来作为 model 层，然后将需要共享的可变状态定义为 ObservableObject 类的属性，并由 `@Published` 来进行修饰。ObservableObject 会为每个 @Published 属性合成一个 `objectWillChange` publisher，当这些属性的值将要发生变化时，会触发广播。
 
-在构造 UIHostingController/UIHostingView 时将 ObservableObject 实例对象注入到 SwiftUI View 中，当 @Published 属性变化时，SwiftUI 会更新所有使用到该属性的 view 元素。在 AppKit 层，可以使用 Combine 框架来监听 ObservableObject 对象的 @Published 属性，从而在发生变化时做相应的处理。
+在构造 NSHostingController/NSHostingView 时将 ObservableObject 实例对象注入到 SwiftUI View 中，当 @Published 属性变化时，SwiftUI 会更新所有使用到该属性的 view 元素。在 AppKit 层，可以使用 Combine 框架来监听 ObservableObject 对象的 @Published 属性，从而在发生变化时做相应的处理。
 
 ![Selection Model](images/selection_model.png)
 
@@ -91,9 +87,9 @@ cancellable = selectionModel.$selectedItem.sink { newItem in
 }
 ```
 
-### 使用 UIHostingView
+### 使用 NSHostingView
 
-接下来我们介绍另一种承载方式，通过 UIHostingView 在 NSCollectionView/NSTableView 的 cell 中使用 SwiftUI。如下图所示，快捷指令应用的 collection cell 便是用 SwiftUI 实现，而且实际上是复用了主界面小组件的 view：
+接下来我们介绍另一种承载方式，通过 NSHostingView 在 NSCollectionView/NSTableView 的 cell 中使用 SwiftUI。如下图所示，快捷指令应用的 Collection cell 便是用 SwiftUI 实现，而且实际上是复用了主界面小组件的 view：
 
 ![Shortcuts cell](images/shortcuts_cell.png)
 
@@ -120,7 +116,7 @@ class ShortcutItemView: NSCollectionViewItem {
 }
 ```
 
-在 cell 中使用 SwiftUI 时，复用 NSHostingView 实例，并避免添加或移除 subview 是一种良好的实践方式。在用户滑动过程中 NSCollectionView 和 NSTableView 会不断地重用已经创建好了的 cell，这个重用过程必须足够高效，以提供流畅的滑动体验。为了确保性能，在 cell 的重用逻辑中，要避免添加或移除 subview，因此 ShortcutItemView 只创建并添加了一个 NSHostingView 实例，当呈现不同的 shortcut 时只需要重新创建一个 ShortcutView 并更新现有 hostingView 的 rootView。
+在 cell 中使用 SwiftUI 时，最佳实践是尽量地复用 NSHostingView 实例，并避免重复添加或移除 subview。在用户滑动过程中，NSCollectionView 和 NSTableView 会不断地重用已经创建好了的 cell，这个重用过程必须足够高效，以提供流畅的滑动体验。为了确保性能，在 cell 的重用逻辑中，要避免添加或移除 subview，因此 ShortcutItemView 只创建并添加了一个 NSHostingView 实例，当呈现不同的 shortcut 时只需要重新创建一个 ShortcutView 并更新现有 hostingView 的 rootView。
 
 相比于 NSView，SwiftUI 的 View 是一个值类型，在设计的时候就考虑了状态变化的场景，创建和更新过程是足够高效的。当呈现一个新的 cell 的时候，displayShortcut 方法被调用，创建了一个新的 ShortcutView，结构如下图所示：
 
@@ -135,7 +131,7 @@ class ShortcutItemView: NSCollectionViewItem {
 SwiftUI 会自动地为 NSHostingController/NSHostingView 创建并更新 Auto Layout 约束，这些布局约束基于其所承载的 SwiftUI View，其中：
 
 - intrinsicContentSize 基于 View 的 idealWidth 和 idealHeight；
-- 根据 View 的 frame modifier 指定的参数信息，SwiftUI 会更新布局约束，如指定的 width/height、最大/最小尺寸等都会被翻译为等价的 Auto Layout 布局约束。
+- 根据 View 的 frame modifier 指定的参数信息，SwiftUI 会更新布局约束，如指定的 width/height、最大/最小尺寸等都会被转换为等价的 Auto Layout 布局约束。
 
 此外，也可以为其在 AppKit view 层级中的父 view 或者相邻 view 添加布局约束来调整承载 View 的布局。
 
@@ -151,7 +147,7 @@ var sizingOptions: NSHostingSizingOptions
 
 ## 响应链和焦点管理
 
-在结合使用 AppKit 和 SwiftUI 时，响应链和焦点管理也是很重要的一部分。响应链是 macOS 应用中的事件消息派发机制，当一个消息触发时，会在一系列的相应者之中寻找一个可以处理该消息的对象，AppKit 中一条典型的响应链如下图所示：
+在结合使用 AppKit 和 SwiftUI 时，响应链和焦点管理也是很重要的一部分。响应链是 macOS 应用中的事件消息派发机制，当一个消息触发时，会在一系列的响应者之中寻找一个可以处理该消息的对象，AppKit 中一条典型的响应链如下图所示：
 
 ![Responder Chain](images/responder_chain.png)
 
@@ -225,7 +221,7 @@ NSViewRepresentable 典型的声明周期如下图所示：
 - 更新阶段：当应用状态/环境状态发生变化时，如果该 viewRepresentable 受到影响，会执行更新操作，在 updateNSView 的 context 参数中包含 coordinator、环境状态等信息。因为更新操作会比较频繁，所以 updateNSView 方法应该越小越好；
 - 结束阶段：当 view 不再显示的时候，承载的 NSView 实例和 coordinator 对象都会被释放，在这些对象释放之前，系统提供了 dismantleNSView 方法作为一个执行自定义清理工作的时机。
 
-介绍了这么多，别的都相对比较直观，可 Coordinator 到底是做什么的呢？答案就是，它做什么由你来决定。SwiftUI 只是保证会在初始化阶段调用 makeCoordinator 来创建一个你提供的 Coordinator 实例对象，它的类型也是由你来指定的（associatedtype），之后在 makeNSView、updateNSView 等方法中会讲该对象放到 context 参数中供你来使用。常见的用法有作为自定义 NSView 中的代理对象，监听 KVO，监听 Notification 等等。
+介绍了这么多，别的都相对比较直观，可 Coordinator 到底是做什么的呢？答案就是，它做什么由你来决定。SwiftUI 只是保证会在初始化阶段调用 makeCoordinator 来创建一个你提供的 Coordinator 实例对象，它的类型也是由你来指定的（associatedtype），之后在 makeNSView、updateNSView 等方法中会将该对象放到 context 参数中供你来使用。常见的用法有作为自定义 NSView 中的代理对象，监听 KVO，监听 Notification 等等。
 
 我们以快捷指令中的脚本编辑器为例，来介绍一下在 SwiftUI 中嵌入 NSView 的整个流程。
 
@@ -297,8 +293,8 @@ class Coordinator: NSObject, ScriptEditorViewDelegate {
 }
 ```
 
-其中我们重点关注一下 corrdinator 的用法。Coordinator 作为 ScriptEditorView 的代理，实现了所需的代理方法，此外还持有了一个 ScriptEditorRepresentable 实例。上文也介绍了，Coordinator 对 NSViewRepresentable 而言是一个透明对象，所以 NSViewPresentable 仅仅是创建了一个 coordinator 实例，而实例和 view、和 representable 本身之间的关系是需要我们开发者自己定义并维护的。这里在 makeCoordinator 方法中，通过将 representable 作为 Coordinator 的构造函数参数完成了绑定。对于其他场景可能也需要在 Coordinator 对象中持有 NSView 实例对象，此时可以在 makeNSView 方法中完成绑定。
+其中我们重点关注一下 corrdinator 的用法。Coordinator 作为 ScriptEditorView 的代理（Delegate），并实现了所需的代理方法，此外还持有了一个 ScriptEditorRepresentable 实例。上文也介绍了，Coordinator 对 NSViewRepresentable 而言是一个透明对象，所以 NSViewPresentable 仅仅是创建了一个 coordinator 实例，而实例和 view、和 representable 本身之间的关系是需要我们开发者自己定义并维护的。这里在 makeCoordinator 方法中，通过将 representable 作为 Coordinator 的构造函数参数完成了绑定。对于其他场景可能也需要在 Coordinator 对象中持有 NSView 实例对象，此时可以在 makeNSView 方法中完成绑定。
 
 ## 小结
 
-本文主要介绍了如何在 AppKit 中使用 SwiftUI 和如何在 SwiftUI 中使用 AppKit。SwiftUI 可以方便快捷地搭建 UI，如果你目前无法完全使用 SwiftUI 来重构应用，可以考虑渐进地在现有 AppKit 项目中使用 SwiftUI，比如侧边栏、table cell 或者 collection cell 等。此外，如果你在使用 SwiftUI 开发 app 的时候遇到了一些瓶颈、而 AppKit 的解决方案更加适合，或者想复用现有的 AppKit 组件，不妨使用 NSView(Controller)Representable 来将它们嵌入到 SwiftUI 中。
+本文主要介绍了如何在 AppKit 中使用 SwiftUI 和如何在 SwiftUI 中使用 AppKit。SwiftUI 可以方便快捷地搭建 UI，如果你目前无法完全使用 SwiftUI 来重写整个应用，可以考虑循序渐进地在现有 AppKit 项目中应用 SwiftUI，比如侧边栏、Table cell 或者 Collection cell 等。此外，如果你在使用 SwiftUI 开发 app 的时候遇到了一些瓶颈、而 AppKit 的解决方案更加适合，或者想复用现有的 AppKit 组件，不妨使用 NSView(Controller)Representable 来将它们嵌入到 SwiftUI 中。
