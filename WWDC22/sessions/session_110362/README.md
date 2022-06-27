@@ -26,7 +26,6 @@ session_ids: [110362]
   - dyld_usage
   - dyld_info
 
-
 ## 静态链接
 
 ### 什么是静态链接
@@ -70,7 +69,7 @@ session_ids: [110362]
 
 注意「baz.o」 虽然在静态库中，但因为链接器是从静态库选择性地加载 .o 文件，所以它并没有被加载到程序中，这是静态链接中一个不明显但很关键的点。
 
-以上就是静态链接中文件加载的大概流程，更多关于 ld64 静态链接器内部工作原理解析可以参考这篇文章：《深入 iOS 静态链接器》 ](https://mp.weixin.qq.com/s/tSj6JVEg7plJQm7aDHLyMw)。
+以上就是静态链接中文件加载的大概流程，更多关于 ld64 静态链接器内部工作原理解析可以参考这篇文章：[《深入 iOS 静态链接器》 ](https://mp.weixin.qq.com/s/tSj6JVEg7plJQm7aDHLyMw)。
 
 ## ld64 的近期优化
 
