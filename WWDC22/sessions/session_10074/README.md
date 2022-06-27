@@ -314,7 +314,7 @@ SwiftUI 通过声明式和响应式设计大大降低了图形界面代码的开
 1. 对于已有 iOS 应用，希望将应用适配到 Mac 的开发者，可以优先选择 Mac Catalyst。
 2. 不建议全新开发的 Mac 应用使用 Mac Catalyst，原因如下：
    - Mac Catalyst 无法渐进式地在 AppKit 应用中使用。
-   - Mac Catalyst 应用中的 SwiftUI 通过 UIKit 实现，性能 AppKit 应用的 SwiftUI 实现。
+   - Mac Catalyst 应用中的 SwiftUI 通过 UIKit 实现，性能相比 AppKit 应用的 SwiftUI 实现有一定差距。
 3. 对于全新开发的 Mac 应用，可以优先选择 SwiftUI，通过 AppKit 进行开发 SwiftUI 无法妥善处理的部分。
 4. 对于已有的 AppKit 应用，在没有兼容性顾虑的前提下，可以渐进式地使用 SwiftUI 对现有场景逐步进行重构。
 
