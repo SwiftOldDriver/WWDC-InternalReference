@@ -706,4 +706,3 @@ func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthoriz
 ## 总结
 
 相比去年更新 WWDC22 支付模块新增了很多内容，从视频时长就可以看出，今年视频时长是去年的两倍。更新的内容更贴合用户使用场景，同时跟进 API 更新使开发者用更短的时间完成这些功能。
-
