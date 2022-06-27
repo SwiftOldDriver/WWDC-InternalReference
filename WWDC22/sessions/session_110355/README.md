@@ -18,7 +18,7 @@ session_ids: [110355]
 本文基于 [Session 110355](https://developer.apple.com/videos/play/wwdc2022/110355/) 梳理，介绍的是苹果又一新开源包 Swift Async Algorithms ([Github 地址](https://github.com/apple/swift-async-algorithms)｜[Doc 地址](https://developer.apple.com/documentation/swift/asyncsequence))，主要用于实现 AsyncSequences 数据结构相关的算法。
 在开源包提议文件 ([Github 地址](https://github.com/apple/swift-evolution/blob/main/proposals/0298-asyncsequence.md)) 中，对这个开源包出发的动机和未来的发展有更加详细的介绍。
 
-![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/async-algorithms.png)
+![image](./images/async-algorithms.png)
 
 除此之外，视频内还介绍了一个新的时钟 [Clock](https://developer.apple.com/documentation/swift/time-and-duration?changes=latest_major&language=o_8) 协议，将会在 Swift 5.7 新增，现在还处在 Beta 阶段。协议的内容主要可以分为三个部分：
 
@@ -41,7 +41,7 @@ session_ids: [110355]
 
 ### Zip
 
-![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/zip-algorithms.png)
+![image](./images/zip-algorithms.png)
 
 阅读官方代码，除了 `try await` 部分，会发现语法上是和一般序列是一样的
 
@@ -178,7 +178,7 @@ case .second(let res, let iter):
 
 Zip 处理 AsyncSequence 成对的出现，那对应的不需要成对就加入到新 AsyncSequence 中去的方法也有，那就是 Merge
 
-![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/merge-algorithms.png)
+![image](./images/merge-algorithms.png)
 
 [AsyncMerge2Sequence](https://github.com/apple/swift-async-algorithms/blob/main/Sources/AsyncAlgorithms/AsyncMerge2Sequence.swift) 和 zip 方法不一样的是，merge 方法里其中一个 AsyncSequence 返回了 nil 并不会导致方法结束。只有当所有的 AsyncSequence 都结束之后 merge 方法才会结束
 Merge 方法中设置了 state 来记录两个 AsyncSequence 的状态
@@ -304,12 +304,12 @@ do {
 
 这两者的区别就在于，后者 incrementing while the system is asleep，而且前者 not。官方建议与机器相关的比如动画使用 SuspendingClock。而与人相关的任务，则更适合 ContinuousClock。
 
-![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/clock-protocol.png)
+![image](./images/clock-protocol.png)
 
 另外在 Clock 的[提案](https://github.com/apple/swift-evolution/blob/main/proposals/0329-clock-instant-duration.md)里会找到一些相关的信息。
 比如 GCD 里的也有 `DispatchWallTime/DispatchTime` 类型对应着 Clock 的 `SuspendingClock/ContinuousClock` 时钟类型。而 Clock 不仅是为 Swift Concurrency 功能提供这些时间的概念，同样也是作为一个 `uniform accessor` 统一入口。
 
-![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/clock-evolution.png)
+![image](./images/clock-evolution.png)
 
 如果了解过 Combine/Rx 的 `Scheduler`，会发现它对“时间”有一层额外的抽象，要求 `Scheduler` 去实现这一层抽象，例如：
 [OperationQueue.SchedulerTimeType](https://developer.apple.com/documentation/foundation/operationqueue/schedulertimetype)
@@ -320,7 +320,7 @@ do {
 
 去抖动，以一定的间隔来响应任务。对应的算法，是在 Clock 的基础上实现
 
-![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/debounce-algorithms.png)
+![image](./images/debounce-algorithms.png)
 
 查看 [Debounce](https://github.com/apple/swift-async-algorithms/blob/434591a571a8c4fe073500926414356d3b40f460/Sources/AsyncAlgorithms/AsyncDebounceSequence.swift) 算法源码，内部实现了一个 AsyncDebounceSequence 结构体。
 
@@ -469,7 +469,8 @@ let elapsed = await clock.measure {
 ### other
 
 贴出几乎所有方法的截图
-![image](https://github.com/SwiftOldDriver/WWDC22/blob/session_110355/sessions/session_110355/images/algorithms-list.png)
+
+![image](./images/algorithms-list.png)
 
 在 [Github README](https://github.com/apple/swift-async-algorithms) 里可以看到关于这些方法的对应的系列和分类，这个和接下来的比较部分内容有关。
 
