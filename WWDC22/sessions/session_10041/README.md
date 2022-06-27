@@ -685,9 +685,8 @@ func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationView
     NSLog(@"验证通过后, 需要开发者继续完成交易");
     // 需要你连接服务器并上传支付令牌和其他信息，以完成整个支付流程。
     completion(PKPaymentAuthorizationResult.init(status: .success, errors: nil))
-    
 }
-``` 
+```
 
 一般在此处，拿到支付信息，发送给服务器处理，处理完毕之后，服务器会返回一个状态，告诉客户端，是否支付成功,，然后由客户端进行处理。
 
@@ -707,5 +706,4 @@ func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthoriz
 ## 总结
 
 相比去年更新 WWDC22 支付模块新增了很多内容，从视频时长就可以看出，今年视频时长是去年的两倍。更新的内容更贴合用户使用场景，同时跟进 API 更新使开发者用更短的时间完成这些功能。
-
 
