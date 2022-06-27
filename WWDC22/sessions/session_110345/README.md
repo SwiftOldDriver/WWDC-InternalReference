@@ -24,8 +24,7 @@ Mac 系统提供了 XProtect、 Gatekeeper 等恶意软件检测工具。但 Mac
 > 
 > OpenBSM 是 Sun 公司为 Mac 与 OpenBSD 提供的开源安全框架，基于 Sun 公司的基础安全组件（BSM）安全轨迹 API。其轨迹记录分为两类，一类是内核事件，例如系统方法调用。另一种是应用事件，例如登录登出、修改密码等。OpenBSM 最后一个 Release 版本发布时间是 2009 年，后续只有 Develop 版本还在更新，但不能保证版本稳定性。
 >
-> 相关介绍：
-> [OpenBSM](http://www.trustedbsd.org/openbsm.html)
+> 相关介绍：[OpenBSM](http://www.trustedbsd.org/openbsm.html)
 
 ## Endpoint Security 能做什么
 
