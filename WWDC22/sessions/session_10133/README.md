@@ -34,43 +34,47 @@ WWDC 2019，SwiftUI 横空出世，作为新时代声明式布局引擎，兼具
 
 > 文章涉及一些设计思路和规范，欢迎了解更多详细信息：
 >
-> [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/guidelines/overview/);
+> [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/guidelines/overview/)；
 >
-> [Designing for watchOS](https://developer.apple.com/design/human-interface-guidelines/platforms/designing-for-watchos)。
+> [Designing for watchOS](https://developer.apple.com/design/human-interface-guidelines/platforms/designing-for-watchos)；
+>
+> [Apple Design Resources](https://developer.apple.com/design/resources/#watchos-apps)。
 
 ## 项目概览
 
 我们将共同创建一个 Watch App，主要流程如下：
 
-- 构建可供用户添加并显示的简单的项目列表，并且用户可以编辑这些项目；
+1. 构建可供用户添加并显示的简单的项目列表，同时用户可以编辑这些项目；
 
-- 将讨论 Watch App 中常见的导航策略及如何选择正确的导航策略；
+2. 将讨论 Watch App 中常见的导航策略及如何选择正确的导航策略；
 
-- 构建分享功能，用户可以与朋友们分享项目，并且在他们的设备上加载这些项目；
+3. 构建分享功能，用户可以与朋友们分享项目；
 
-- 构建一个图表，帮助用户了解自身的效率趋势；
+4. 构建一个图表，帮助用户了解自身的效率趋势；
 
-- 使用表冠让图表滚动，从而显示更大的范围和展示每项的细节。
+5. 使用数码表冠让图表滚动，显示图表更大的范围和展示每项的细节。
 
 ## 创建 Watch App
 
 ### 创建项目与项目设计
 
-让我们从创建一个新 Watch App 开始。在“watchOS”选项卡中，选择“App”，然后单击“Next”。填入“Product Name”后，我们还需要进行几个选择。最重要的选择是创建一个「独立的 Watch App」项目还是创建一个「Watch App 与配套的 iOS App」项目。
+让我们从创建一个新 Watch App 开始。
+
+在“watchOS”选项卡中，选择“App”，然后单击“Next”。填入“Product Name”后，我们还需要进行几个选择。最重要的选择是创建一个「独立的 Watch App」项目还是创建一个「Watch App 与配套的 iOS App」项目。
 
 ![](./images/create_watchos_app_product.png)
 
-首先，让我们简单谈谈如何创造出色的 Watch App：
+磨刀不误砍柴功。在正式开始之前，让我们简单了了如何创造出色的 Watch App：
 
-- 快速交互，用户可以快速访问重要的信息或功能。例如 Workout 中的界面可让用户快速开始自己最喜爱的锻炼。没有人愿意准备锻炼时候，先得站着举起手臂翻找项目。
+- 快速交互，用户可以快速访问重要的信息或功能。例如 Workout 中的界面可让用户快速开始自己最喜爱的锻炼。没有人愿意自己准备锻炼时候，先得站着并举着自己手臂，在那里先翻找项目。
 
-- 专注于应用程序的基本目的，用户可以轻松找到所需的信息或操作。例如天气应用程序显示当天的天气预报、空气情况，以及简单的近 10 天天气简报。
+- 专注于应用程序的基本目的，用户可以轻松找到所需的信息或操作。例如天气应用程序显示当天的天气预报、空气情况，以及简单的近 10 天天气简报。不做画蛇添足的事情。
 
 ![](./images/workout_weather.png)
 
 - 在独立于 iPhone 时也有完善的功能体验。例如联系人应用程序会在闲时与 iPhone 进行同步，但不需要 iPhone 在附近即可访问 Apple Watch 上的联系人信息。
 
-- 某些情况喜爱 Watch App 应有一个配套的 iOS App，例如在 iPhone 上，健身 App 的历史记录或趋势的详细分析中，也包含 Apple Watch 捕获的数据。
+- 某些情况下， Watch App 应有一个配套的 iOS App，例如在 iPhone 上，健身 App 的历史记录或趋势的详细分析中，也包含 Apple Watch 捕获的数据。
 
 ![](./images/contacts_fitness.png)
 
@@ -84,7 +88,7 @@ WWDC 2019，SwiftUI 横空出世，作为新时代声明式布局引擎，兼具
 
 - 「WatchKit Extension」Target，其中包含 Watch App 本身的所有代码。
 
-这两个 Target 是 watchOS 早期的产物，开发一款 Watch App ，开发者很少与「WatchKit App」Target 进行互动，刚接触 watchOS 开发的同学可能也难以理解这些 Target 间的差异，Apple 有充分的理由对 Target 进行调整。现在，Apple 解决了这一问题。从 Xcode 14 开始，新的 Watch App Project 只有有一个 Watch App Target。与 Watch App 相关的所有代码、assets、本地化文件以及 Siri Intent 和 Widget 扩展等都属于此 Target。
+这两个 Target 是 watchOS 早期的产物，如今开发一款 Watch App，开发者很少与「WatchKit App」Target 进行互动，刚接触 watchOS 开发的同学可能也难以理解这些 Target 间的差异，Apple 有充分的理由对 Target 进行调整。现在，喜大普奔，Apple 终于解决了这一问题。从 Xcode 14 开始，新的 Watch App Project 只有有一个 「Watch App」 Target。与 Watch App 相关的所有代码、assets、本地化文件以及 Siri Intent 和 Widget 扩展等都属于此 Target。
 
 ![](./images/target_change.png)
 
@@ -98,7 +102,7 @@ WWDC 2019，SwiftUI 横空出世，作为新时代声明式布局引擎，兼具
 
 ### 图标的简化
 
-Target 并不是 Apple 在 Xcode 14 中唯一简化的东西，还简化了为 App 添加图标的过程。现在，只需一张 1024x1024 像素的图片即可。
+Target 并不是 Apple 在 Xcode 14 中唯一简化的东西，还简化了为 App 添加图标的过程。现在只需一张 1024x1024 像素的图片即可。
 
 ![](./images/icon.png)
 
@@ -237,7 +241,7 @@ struct ContentView: View {
 
 ![](./images/view_modifiers.png)
 
-我们可以创建一个 `AddItemLink` 来封装刚刚提到的 `TextFieldLink` 的样式和行为。当用户输入文本后，我们生成新项目。并将新项目添加到 model 的 `items` 中从而展示在列表里。
+我们可以创建一个 `AddItemLink` 来封装刚刚提到的 `TextFieldLink` 的样式和行为。当用户输入文本后，会生成新 `ListItem`。并将新生成项目添加到 model 的 `items` 中从而展示在列表里。
 
 ```swift
 struct AddItemLink: View {
@@ -256,9 +260,9 @@ struct AddItemLink: View {
 
 ### 交互位置的思考
 
-现在我们已经决定使用 `TextFieldLink` 来添加新的列表项，现在，我们还需要思考将 `TextFieldLink` 放在哪里。在 Watch App 中向列表添加操作时，我们有几个选项。
+现在我们已经决定使用 `TextFieldLink` 来添加新的列表项，但我们还需要思考将 `TextFieldLink` 放在哪里。在 Watch App 中向列表添加操作时，我们有几个选择。
 
-使用列表末尾的 `Button`、`NavigationLink` 或 `TextFieldLink`，是执行**短列表**操作的主要形式。例如 World Clock 中城市列表的添加形式。但是，如果我们的 App 有很长的列表，那么用户每次想要执行操作时，都必须滚动到列表的末尾，这是非常糟糕的体验。
+使用列表末尾的 `Button`、`NavigationLink` 或 `TextFieldLink`，是执行**短列表**操作的主要形式。例如 World Clock 中城市列表的添加形式。但是，如果我们的 App 有很长的列表，那么用户每次想要执行操作时，都必须滚动到列表的末尾，这是非常糟糕的设计体验。
 
 ![](./images/list_end.png)
 
@@ -291,9 +295,9 @@ struct ContentView: View {
 
 ![](./images/list.png)
 
-创建一个只有描述的 model 很简单，但对于用户来说这不是很实用。我们需要将项目标记为是否完成，并且我们可能需要设置项目优先级或添加对项目工作时长的估计。
+创建一个只有描述信息的 model 很简单，但对于用户来说这并不很实用。我们需要将项目标记为是否完成，并且我们可能需要设置项目优先级或添加对项目工作时长的估计。
 
-因此，我们下面将添加一个项目的详情视图。在这之前，我们回顾一下 SwiftUI 在 Watch App 中的导航方案。
+因此，我们下面将添加一个项目的详情视图。在这之前，我们整理一下 SwiftUI 在 Watch App 中的导航方案。
 
 ## 应用导航方案
 
@@ -301,7 +305,7 @@ struct ContentView: View {
 
 | 结构类型 | 使用场景 | 方案选择 |
 |---|---|---|
-| 分层结构（Heirarchical） | 视图具有「列表-详情」结构 | NavigationStack |
+| 分层结构（Heirarchical） | 视图具有「列表-详情信息」结构 | NavigationStack |
 | 基于页面的结构（Page-based） | 视图具有平面结构 | TabView |
 | 全屏结构（Full Screen） | 任何全屏内容 | ignoresSafeArea 和 toolbar modifier |
 | 模态结构（Modal sheet） | 重要的任务 | sheet modifier |
@@ -381,7 +385,7 @@ struct ItemRow: View {
 
 ### 更新列表
 
-现在我们已经完成 `List` 导航到 `ItemDetail` 的代码，接着我们将更新我们的 `ListItem` 结构。我们增加新的属性来存储估计的工作、创建日期和完成日期，以及一个计算属性标记该项目是否完成。
+现在我们已经完成 `List` 导航到 `ItemDetail` 的代码，接着我们将更新我们的 `ListItem` 结构。我们增加新的属性来存储估计的工作、创建日期和完成日期，以及一个计算属性 `isComplete` 标记该项目是否完成。
 
 ```swift
 struct ListItem: Identifiable, Hashable {
@@ -472,7 +476,7 @@ struct StressStepper: View {
 
 ### 共享项目
 
-假如这篇文章很有趣，你想与朋友进行分享。或者当我的项目列表上有很多让我压力山大的项目时，我想与朋友分享清单中的一个项目来寻求帮助。
+假如这篇文章很有趣嘿嘿～你想分享给你的朋友。或者当我们的项目列表上有很多让我们压力山大的项目时，我们想与朋友分享其中的一个项目来寻求帮助或者贴贴。
 
 我们将在详细视图中添加一个按钮，允许用户共享项目。我希望能够点击详细视图上的按钮来分享项目、从好友列表中选择朋友以寻求帮助、编辑消息并发送。
 
@@ -557,7 +561,7 @@ struct ContentView: View {
 
 ![](./images/chart_placeholder.png)
 
-我们已经建立了我们的导航结构，让我们来谈谈如何构建这个图表。之前，我们可以使用 SwiftUI Canvas 来绘制图表，但从 watchOS 9 开始，我们有一个更简单的答案：Swift Charts。 Swift Charts 也可在 iOS、macOS 和 tvOS 上使用，因此我们可以在任何使用 SwiftUI 的地方复用我们的代码。
+我们已经建立了我们的导航结构，下面来谈谈如何构建这个图表。之前，我们可以使用 SwiftUI Canvas 来绘制图表，但从 watchOS 9 开始，我们有一个更简单的答案：Swift Charts。 Swift Charts 也可在 iOS、macOS 和 tvOS 上使用，可以在任何使用 SwiftUI 的地方复用我们的代码。
 
 我们将聚合需要绘制图表的数据，然后交给 Swift Charts 来显示它。我们希望显示按日期来展示完成的项目数。
 
@@ -852,13 +856,13 @@ private var chartData: [ChartData.DataElement] {
 }
 ```
 
-现在，当用户使用表冠在图表上滚动时，图表将更新数据源来显示可用数据。至此，我们完成了我们计划的所有功能。
+现在，当用户使用表冠在图表上滚动时，图表将更新数据源来显示可用数据。至此，我们完成了 Watch App 最初计划的所有功能。
 
 ## 总结
 
-今年，WWDC 带来了全新的 SwiftUI 导航设计、带来了更便捷更通用的分享能力，以及开箱即用的图表帮助我们精美的实现数据的可视化。SwiftUI 的完善程度进一步提高，我们的开发将更乐趣。
+今年，WWDC 带来了全新的 SwiftUI 导航设计、带来了更便捷更通用的分享能力，以及开箱即用的图表帮助我们精美的实现数据的可视化。SwiftUI 的完善程度进一步提高，我们的开发也更有乐趣～
 
-作为开发者，我们也要具有“产品思维”，在设计 Watch App 时，选择合适的导航策略等交互方式，以确保我们的应用程序更出色。使用 SwiftUI 开发 Apple Watch App 也早已成为更合适、更简单、更丰富的选择。因为有我们，才有出色的应用程序！
+作为开发者，我们也要具有“产品思维”、“设计思维”，在设计 Watch App 时，选择合适的导航策略等交互方式，以确保我们的应用程序更出色、更具有吸用力。使用 SwiftUI 开发 Apple Watch App 也早已成为更合适、更简单、更丰富的选择。因为有我们，才有优质的 App！
 
 > Apple 提供的项目源码请参考“[Building a productivity app for Apple Watch](https://developer.apple.com/documentation/watchos-apps/building_a_productivity_app_for_apple_watch)”.
 >
