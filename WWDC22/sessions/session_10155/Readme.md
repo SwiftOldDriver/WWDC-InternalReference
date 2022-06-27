@@ -1,7 +1,7 @@
 ---
 session_ids: [10155]
 ---
-# WWDC22 10155 - CaptureScreenKit：MacOS 上的高性能屏幕录制框架
+# WWDC22 10155 - ScreenCaptureKit：MacOS 上的高性能屏幕录制框架
 
 ## 导言
 
@@ -13,33 +13,33 @@ session_ids: [10155]
 >
 > - Session 10156 [Meet ScreenCaptureKit](https://developer.apple.com/videos/play/wwdc2022/10156)
 
-## CaptureScreenKit 前时代
+## ScreenCaptureKit 前时代
 
-在介绍 CaptureScreenKit 之前，我们先看看苹果在推出 CaputureScreenKit 前，MacOS 下有哪些主要的方法可以进行屏幕录制。
+在介绍 ScreenCaptureKit 之前，我们先看看苹果在推出 ScreenCaptureKit 前，MacOS 下有哪些主要的方法可以进行屏幕录制。
 
 ### [AVCaptureScreenInput](https://developer.apple.com/documentation/avfoundation/avcapturescreeninput?language=objc)
 
 与正常采集摄像头视频流数据一样，将 AVCaptureScreenInput 作为 AVCaptureSession 的输入源，就能的到当前的屏幕图像数据。 这种方式的优点是：
 
 - 可以通过调整`scaleFactor`来指定分辨率。
-- 可以配置是否包含 cursor
+- 可以配置是否包含鼠标光标。
 - 性能很好，可以达到 60fps，CPU 占用不显著。
 
 不过也有显著的缺点，可定制性较差：
 
-- 只能抓取整个屏幕，不能忽略窗口抓屏，不能只抓取某个窗口
+- 只能捕获整个屏幕，不能忽略窗口抓屏，不能只捕获某个窗口
 
 ### [CGDisplayStreamCreate](https://developer.apple.com/documentation/coregraphics/1455170-cgdisplaystreamcreate?language=objc)
 
 使用[CGDisplayStreamCreate](https://developer.apple.com/documentation/coregraphics/1455170-cgdisplaystreamcreate?language=objc) API 可以不通过 AVCaptureSession 直接创建一个屏幕图像数据流。 与 AVCaptureSession + AVCaptureScreenInput 的方式类似。优势：
 
 - 可以通过来参数指定分辨率。
-- 可以配置是否包含 cursor
+- 可以配置是否包含鼠标光标。
 - 实时屏幕流，可以增量，性能很好，CPU 占用不显著。
 
 也有同样的缺点，可定制性较差：
 
-- 只能抓取整个屏幕，不能忽略窗口抓屏，不能只抓取某个窗口
+- 只能捕获整个屏幕，不能忽略窗口抓屏，不能只捕获某个窗口
 
 ### [CGDisplayCreateImage](https://developer.apple.com/documentation/coregraphics/1455691-cgdisplaycreateimage?language=objc)
 
@@ -51,55 +51,62 @@ session_ids: [10155]
 
 - 无法指定分辨率， 只能是显示到屏幕的物理分辨率。
 - 不能只抓去特定的窗口。
-- 抓屏时会同时包含 cursor，无法去除。
+- 抓屏时会同时包含鼠标光标，无法去除。
 - 调用开销比较大，CPU 占用显著提高，帧率不可控。
 - 输出数据类型是 CGImageRef，需要应用层转换成原始数据
 
 ### [CGWindowListCreateImageFromArray](https://developer.apple.com/documentation/coregraphics/1455730-cgwindowlistcreateimagefromarray?language=objc)
 
-[CGWindowListCreateImageFromArray](https://developer.apple.com/documentation/coregraphics/1455730-cgwindowlistcreateimagefromarray?language=objc) 以及 [CGWindowListCreateImage](https://developer.apple.com/documentation/coregraphics/1454852-cgwindowlistcreateimage?language=objc) 系统 API 可以获得对应窗口的图像。虽然不可以指定任意分辨率抓屏，但是可以通过 CGWindowImageOption 参数选择按照原始物理分辨率抓屏（kCGWindowImageBestResolution），还是坐标分辨率抓屏（kCGWindowImageNominalResolution）。 同时也可以灵活控制抓取或者忽略特定窗口。
+[CGWindowListCreateImageFromArray](https://developer.apple.com/documentation/coregraphics/1455730-cgwindowlistcreateimagefromarray?language=objc) 以及 [CGWindowListCreateImage](https://developer.apple.com/documentation/coregraphics/1454852-cgwindowlistcreateimage?language=objc) 系统 API 可以获得对应窗口的图像。虽然不可以指定任意分辨率抓屏，但是可以通过 CGWindowImageOption 参数选择按照原始物理分辨率抓屏（kCGWindowImageBestResolution），还是坐标分辨率抓屏（kCGWindowImageNominalResolution）。 同时也可以灵活控制捕获或者忽略特定窗口。
 
 相对缺点是：
 
-- 最小化或者被隐藏的窗口无法抓取图像
-- 无法抓取到 cursor 图像，需要额外处理
+- 最小化或者被隐藏的窗口无法捕获图像
+- 无法捕获到鼠标光标的图像，需要额外处理
 - 和 CGDisplayCreateImage 类似，调用开销比较大，CPU 占用显著提高。
 - 输出数据类型是 CGImageRef，需要应用层转换成原始数据
 
 ### ReplayKit
 
-还有一个取巧的方法，我们都知道在 iOS 平台有一个 ReplayKit 的框架，支持在 iOS 设备上抓屏。 近年来苹果在推动各个平台融合，ReplayKit 也被移植到 Mac 平台上了。 因此也可以通过 ReplayKit 在 Mac 上实现抓屏，只有有一些限制。参考 WWDC 2020 ReplayKit 相关 session， ReplayKit 在 Mac 上仅可以实现 In-App 的屏幕录制。
-
+还有一个取巧的方法，我们都知道在 iOS 平台有一个 ReplayKit 的框架，支持在 iOS 设备上抓屏。 近年来苹果在推动各个平台融合，ReplayKit 也被移植到 Mac 平台上了。 因此也可以通过 ReplayKit 在 Mac 上实现抓屏。参考 WWDC 2020 ReplayKit 相关 session。
 [Capture and stream apps on the Mac with ReplayKit - WWDC 2020 - Videos - Apple Developer](https://developer.apple.com/wwdc20/10633)
 
 ![img](images/01.png)
 
-通过 ReplayKit 可以获得当前应用输出的音频。 而其他方式只能获得图像，要想获得音频只能通过获取系统音频输出来实现。
+相对于其他方案 ReplayKit 的优点是：
+
+- 能够捕获当前应用输出的音频
+- 性能相对较好
+
+但是 ReplayKit 也有很大的限制：
+
+- ReplayKit 在Mac 上仅可以实现当前应用的屏幕录制，因此也限制了应用场景
+- 捕获图像不会包含鼠标光标
 
 ### 总结
 
-在 CaputureScreenKit 之前， macOS 上抓取屏幕往往控制抓取特定窗口图像和抓取性能不可兼得。相关 API 使用起来也相对复杂，可配置性也不高。这些都促使了 CaputureScreenKit 的推出。
+在 ScreenCaptureKit 之前， macOS 上捕获特定窗口图像和捕获性能不可兼得。相关 API 使用起来也相对复杂，可配置性也不高。这些都促使了 ScreenCaptureKit 的推出。
 
-## CaputreScreenKit
+## ScreenCaptureKit
 
-CaptureScreenKit 集合了以前所有抓屏方法的优点，提供
+ScreenCaptureKit 集合了以前所有抓屏方法的优点，提供
 
-- 提供整个屏幕、应用、窗口等不同级别的图像抓取能力
-- 支持配置是否包含 cursor，输出的像素格式、色彩空间，帧率以及分辨率。 帧率和分辨率最高可与实际显示器显示的帧率分辨率一致。
+- 提供整个屏幕、应用、窗口等不同级别的捕获能力
+- 支持配置是否包含鼠标光标图像，输出的像素格式、色彩空间，帧率以及分辨率。 帧率和分辨率最高可与实际显示器显示的帧率分辨率一致。
 - 支持以应用级别的声音采集，配置音频采集通道数量和采样率， 最高可达双通道 48khz 采样率
-- 支持动态的选择抓取图像内容，以及动态的配置抓取参数
+- 支持动态的选择捕获图像内容，以及动态的配置捕获参数
 - 高性能： 充分利用 GPU 能力，低 CPU 消耗
 - 隐私体验：苹果生态的隐私权限控制
 
 ### 总体架构
 
-CpatureScreenKit 提供了一套易于理解的 Swift 风格的 API 。结构如下：
+ScreenCaptureKit 提供了一套易于理解的 Swift 风格的 API 。结构如下：
 
 ![img](images/02.png)
 
-应用层使用 CaputreScreenKit 的核心对象是 `SCStream` ，`SCStream` 可以创建多个实例，每个实例相互独立，可以同时进行多路的屏幕抓取。
+应用层使用 ScreenCaptureKit 的核心对象是 `SCStream` ，`SCStream` 可以创建多个实例，每个实例相互独立，可以同时进行多路屏幕图像的捕获。
 
-创建一个`SCStream` 对象，需要提供内容过滤器（`SCContentFilter`）和配置参数（`SCStreamConfiguration`）来控制屏幕抓取的内容。 通过配置 SCStream delegate 来处理屏幕抓取过程中的错误，通过配置 `SCStreamOutput` 对象来获得抓取到的数据。
+创建一个`SCStream` 对象，需要提供内容过滤器（`SCContentFilter`）和配置参数（`SCStreamConfiguration`）来控制捕获屏幕图像的内容。 通过配置 SCStream delegate 来处理屏幕捕获过程中的错误，通过配置 `SCStreamOutput` 对象来获得捕获到的数据。
 
 ```Swift
 // 使用过滤器和流配置创建捕获流
@@ -136,7 +143,7 @@ func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuff
 try await stream?.stopCapture()    
 ```
 
-这样看起来是不是很简单？ 虽然使用起来很简单，但是 CaptureScreenKit 提供的定制化能力却是强大的，接下来我们再详细看一看各个部分是怎么配置的。
+这样看起来是不是很简单？ 虽然使用起来很简单，但是 ScreenCaptureKit 提供的定制化能力却是强大的，接下来我们再详细看一看各个部分是怎么配置的。
 
 ### ShareableContent
 
@@ -222,15 +229,15 @@ exceptingWindows 这个参数有点特殊。里面所列的窗口，如果在前
 
 #### 捕获音频内容
 
-目前 CaptureScreenKit 捕获音频内容是以一个应用为基础单位的。 因此即便是只排除应用的一个窗口，应用的整个声音也不会被捕获。
+目前 ScreenCaptureKit 捕获音频内容是以一个应用为基础单位的。 因此即便是只排除应用的一个窗口，应用的整个声音也不会被捕获。
 
 #### 源窗口变化
 
-当源窗口大小被用户改变是，频繁更改流输出维度可能会导致额外的内存分配，因此不推荐。流输出维度大多是固定的。并且它不会随源窗口调整大小。我们可以通过输出流附加数据来识别这个变化。 输出流附加数据相关概念会在捕获流输出部分详细介绍。
+当源窗口大小被用户改变是，频繁更改流输出分辨率可能会导致额外的内存分配，因此不推荐。流输出分辨率大多是固定的，并且它不会随源窗口调整大小。我们可以通过输出流附加数据来识别这个变化，以便在展示时进行正确的调整处理。 输出流附加数据相关概念会在捕获流输出部分详细介绍。
 
 当源窗口被遮挡或部分遮挡时，捕获流输出总是包含窗口的全部内容。适用于窗口完全离开屏幕或移动到其他显示器的情况。对于最小化窗口，当源窗口最小化时，捕获流输出将暂停。当源窗口不再最小化时，它会恢复。
 
-#### 动态更新
+#### 动态更新捕获内容
 
 除了在创建 SCStream 对象时必须指定内容过滤器 SCContentFilter 外， SCStream 也支持动态更新内容，通过下面的代码随时改变要捕获的内容。
 
@@ -240,7 +247,7 @@ try await stream?.updateContentFilter(filter)
 
 ### 如何控制捕获行为
 
-`SCStreamConfiguration` 配置了一系列捕获参数。 例如输出分辨率、帧率、是否包含 cursor、是否捕获应用音频等。为开发者提供了强大的定制能力。 下面是一份基础的配置：
+`SCStreamConfiguration` 配置了一系列捕获参数。 例如输出分辨率、帧率、是否包含鼠标光标、是否捕获应用音频等。为开发者提供了强大的定制能力。 下面是一份基础的配置：
 
 ```Swift
 // 创建 SCStreamConfiguration 对象
@@ -266,7 +273,7 @@ streamConfig.channelCount = 2
 
 更多配置信息可以参考苹果官方文档：[SCStreamConfiguration](https://developer.apple.com/documentation/screencapturekit/scstreamconfiguration)
 
-#### 动态更新
+#### 动态更新配置
 
 除了在创建 SCStream 对象时必须指定`SCStreamConfiguration`外， SCStream 也支持动态更新输出配置，通过下面的代码可以在捕获过程中，随时改变输出配置。
 
@@ -276,7 +283,7 @@ try await stream?.updateConfiguration(streamConfig)
 
 > 动态更新配置的一个典型的场景是动态的更新分辨率和帧率。 在视频会议的屏幕共享场景下，会期望在静态内容分享时使用较低的帧率和较高的分辨率。 而分享如视频等动态内容时采用较高的帧率但是较低的分辨率。
 
-### 如何得到捕获数据
+### 如何得到捕获的数据
 
 要想得到捕获的数据，需要实现 `SCStreamOutput` 协议。 并将处理数据的对象在开始捕获前配置到 SCStream 中。屏幕捕获流和音频捕获流需要分开配置。同时可以指定接收数据的调度队列。
 
@@ -326,29 +333,29 @@ guard let attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffe
 
 ##### contentRect 和 contentScale
 
-前文提到过一般情况下，不会根据源窗口的大小变化而改变输出的分辨率。 那么怎么识别源窗口的大小变化呢？ 就是通过 contentRect 和 contentScale。 CaptureScreenKit 会保证输出缓存包含完整的源窗口。contentScale 记录对源窗口大小的缩放比例。如果源窗口的长宽比和输出缓存的长宽比不同，则输出缓存会有一部分没有内容填充。 contentRect 记录着实际有内容填充的区域。
+前文提到过一般情况下，不会根据源窗口的大小变化而改变输出的分辨率。 那么怎么识别源窗口的大小变化呢？ 就是通过 contentRect 和 contentScale。 ScreenCaptureKit 会保证输出缓存包含完整的源窗口。contentScale 记录对源窗口大小的缩放比例。如果源窗口的长宽比和输出缓存的长宽比不同，则输出缓存会有一部分没有内容填充。 contentRect 记录着实际有内容填充的区域。
 
 ##### scaleFactor
 
-对于一些视网膜屏幕，会使用 4 个物理像素点来表示一个逻辑像素点，以达到更好的视觉体验。 CaptureScreenKit 会以物理像素点来采集数据。因此从视网膜屏幕捕获的数据会从普通屏幕捕获的数据大 4 倍。如果在普通屏幕上显示大小就和直观体验不一致了。 scaleFactor 信息记录了这个比例，应用层可以据此调整显示大小。
+对于一些视网膜屏幕，会使用 4 个物理像素点来表示一个逻辑像素点，以达到更好的视觉体验。 ScreenCaptureKit 会以物理像素点来采集数据。因此从视网膜屏幕捕获的数据会从普通屏幕捕获的数据大 4 倍。如果在普通屏幕上显示大小就和直观体验不一致了。 scaleFactor 信息记录了这个比例，应用层可以据此调整显示大小。
 
 ### 错误处理
 
 在创建 SCStream 时可以传递一个 SCStreamDelegate 对象来处理运行时错误。 在调用开启捕获、更新内容或参数等 API 时，也可能会返回错误。错误类型为 SCStreamError，其具体含义及处理方式可以参考文档 [Error Constants](https://developer.apple.com/documentation/screencapturekit/scstreamerror/error_constants)。
 
-## CaputureScreenKit 的优势和限制
+## ScreenCaptureKit 的优势和限制
 
-对比以前的屏幕捕获 API，CaptureScreenKit 提供了方便灵活的控制抓取内容的能力，使用方法和概念也和 CGDisplayStream 系列 API 类似，十分方便迁移。同时性能也大大提升了。
+对比以前的屏幕捕获 API，ScreenCaptureKit 提供了方便灵活的控制抓取内容的能力，使用方法和概念也和 CGDisplayStream 系列 API 类似，十分方便迁移。同时性能也大大提升了。
 
-根据苹果 OBS studio 工程师的对 CaputureScreenKit 性能的评估。在同一个复杂场景下，CGWindowListCreateImage API 会有严重的卡顿，只能做到每秒 7 帧， 而使用 CaputureScreenKit 则可以达到 60 帧，画面平滑流畅。内存使用降低了 15%， CPU 占用率降低了一半。可以说性能十分优异。
+根据苹果 OBS studio 工程师的对 ScreenCaptureKit 性能的评估。在同一个复杂场景下，CGWindowListCreateImage API 会有严重的卡顿，只能做到每秒 7 帧， 而使用 ScreenCaptureKit 则可以达到 60 帧，画面平滑流畅。内存使用降低了 15%， CPU 占用率降低了一半。可以说性能十分优异。
 
-CaptureScreenKit 还支持同时多路窗口捕获，得益于其高超的性能，通过合理的配置能够提供优秀的体验。例如苹果在介绍 CaptureScreenKit 时展示的窗口选择器。
+ScreenCaptureKit 还支持同时多路窗口捕获，得益于其高超的性能，通过合理的配置能够提供优秀的体验。例如苹果在介绍 ScreenCaptureKit 时展示的窗口选择器。
 
-不过目前 CaptureScreenKit 只支持 MacOS 12.3+，Mac Catalyst 15.4+ ，是比较新的操作系统。 这意味着如果应用需要支持更老的操作系统，兼容性还是需要考虑的。此外 CaptureScreenKit 音频采集还是应用级别的， API 文档中很多音频相关的 API 还被标注为 Beta，这意味着以后还有变化的可能。
+不过目前 ScreenCaptureKit 只支持 MacOS 12.3+，Mac Catalyst 15.4+ ，是比较新的操作系统。 这意味着如果应用需要支持更老的操作系统，兼容性还是需要考虑的。此外 ScreenCaptureKit 音频采集还是应用级别的， API 文档中很多音频相关的 API 还被标注为 Beta，这意味着以后还有变化的可能。
 
 ## 应用场景展望
 
-通过苹果公布的 wwdc session 视频已经可以看出 CaptureScreenKit 在 facetime shareplay 中共享屏幕，游戏直播 OBS 推流领域已经开始应用了。 其具有高性能、可定制、易使用等特点。相信很快就会在 Mac 上的视频会议中的桌面共享、电脑游戏直播、远程桌面控制等场景中广泛普及开来。不过由于其需要的 MacOS 版本较高，完全替代其他技术还需要一段时间。 另外音频的捕获是对之前的屏幕捕获的新增能力，也还需要一段时间来进一步完善。
+通过苹果公布的 wwdc session 视频已经可以看出 ScreenCaptureKit 在 facetime shareplay 中共享屏幕，游戏直播 OBS 推流领域已经开始应用了。 其具有高性能、可定制、易使用等特点。相信很快就会在 Mac 上的视频会议中的桌面共享、电脑游戏直播、远程桌面控制等场景中广泛普及开来。不过由于其需要的 MacOS 版本较高，完全替代其他技术还需要一段时间。 另外音频的捕获是对之前的屏幕捕获的新增能力，也还需要一段时间来进一步完善。
 
 ## 参考资料
 
