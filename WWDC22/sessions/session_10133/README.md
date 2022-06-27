@@ -16,11 +16,11 @@ WWDC 2019，SwiftUI 横空出世，作为新时代声明式布局引擎，兼具
 
 每年，watchOS 中的 SwiftUI 都会带来很多新功能。今年的 WWDC 也不负众望。
 
-“你的手腕从未像现在这样如此高效。”我们将展示如何将获取文本输入、与朋友共享内容以及显示基本图表，以及将这些功能结合起来，使用 SwiftUI 为 Apple Watch 构建一个独立的、跟踪「项目完成」的效率 App，这将是一个全新的、并且有更多的功能 Watch App。
+“你的手腕从未像现在这样如此高效。”我们将展示如何将获取文本输入、与朋友共享内容以及显示基本图表，以及将这些功能结合起来，使用 SwiftUI 为 Apple Watch 构建一个独立的、跟踪「项目完成」的效率 App，这将是一个全新的、并且有很多的功能 Watch App。
 
 本文是篇实践项目，将实践其他 Session 提到的新功能。欢迎读者跟随文章流程，一起来完成我们的 Apple Watch App。
 
-> 相关内容的更多信息请参考：
+> 文章将会使用到的相关内容的更多信息请参考：
 >
 > - WWDC 2022 [What's New in SwiftUI](https://developer.apple.com/videos/play/wwdc2022/10052/)；
 >
@@ -29,8 +29,14 @@ WWDC 2019，SwiftUI 横空出世，作为新时代声明式布局引擎，兼具
 > - WWDC 2022 [Meet Transferable](https://developer.apple.com/videos/play/wwdc2022/10062/)；
 >
 > - WWDC 2022 [Hello Swift Charts](https://developer.apple.com/videos/play/wwdc2022/10136/)；
-
+>
 > - WWDC 2022 [Swift Charts: Raise the bar](https://developer.apple.com/videos/play/wwdc2022/10137/)。
+
+> 文章涉及一些设计思路和规范，欢迎了解更多详细信息：
+>
+> [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/guidelines/overview/);
+>
+> [Designing for watchOS](https://developer.apple.com/design/human-interface-guidelines/platforms/designing-for-watchos)。
 
 ## 项目概览
 
@@ -54,17 +60,17 @@ WWDC 2019，SwiftUI 横空出世，作为新时代声明式布局引擎，兼具
 
 ![](./images/create_watchos_app_product.png)
 
-首先，让我们简单谈谈如何创造出色的 Watch App。
+首先，让我们简单谈谈如何创造出色的 Watch App：
 
-出色的 Watch App 可以快速交互，用户可以快速访问重要的信息或功能，例如 Workout 中的界面可让用户快速开始自己最喜爱的锻炼。 没有人愿意准备锻炼时候，先得站着举起手臂翻找项目。
+- 快速交互，用户可以快速访问重要的信息或功能。例如 Workout 中的界面可让用户快速开始自己最喜爱的锻炼。没有人愿意准备锻炼时候，先得站着举起手臂翻找项目。
 
-出色的 Watch App 专注于应用程序的基本目的和基本要素，用户可以轻松找到所需的信息或操作。例如天气应用程序显示当天的天气预报、空气情况，以及简单的近 10 天天气简报。
+- 专注于应用程序的基本目的，用户可以轻松找到所需的信息或操作。例如天气应用程序显示当天的天气预报、空气情况，以及简单的近 10 天天气简报。
 
 ![](./images/workout_weather.png)
 
-出色的 Watch App 应该在独立于 iPhone 时也有完善的功能体验。例如联系人应用程序会在闲时与 iPhone 进行同步，但不需要 iPhone 在附近即可访问 Apple Watch 上的联系人信息。
+- 在独立于 iPhone 时也有完善的功能体验。例如联系人应用程序会在闲时与 iPhone 进行同步，但不需要 iPhone 在附近即可访问 Apple Watch 上的联系人信息。
 
-出于许多原因，我们可能还希望 Watch App 有一个配套的 iOS App，例如在 iPhone 上，健身 App 的历史记录或趋势的详细分析中，也包含 Apple Watch 捕获的数据。
+- 某些情况喜爱 Watch App 应有一个配套的 iOS App，例如在 iPhone 上，健身 App 的历史记录或趋势的详细分析中，也包含 Apple Watch 捕获的数据。
 
 ![](./images/contacts_fitness.png)
 
@@ -118,6 +124,8 @@ struct ListItem: Identifiable, Hashable {
 }
 ```
 
+> `Identifiable` 指[一类类型，其实例持有具有稳定标识的实体的值](https://developer.apple.com/documentation/swift/identifiable)。主要作用就是作为一个对象的唯一标识。符合 `Identifiable` 协议的类型需要指定关联类型 `associatedtype ID : Hashable` 和指定识别项 `var id: Self.ID`。
+
 然后，创建一个简单的 `ItemListModel` 来存储我们的 `ListItem` Model，`ItemListModel` 遵循 `ObservableObject` 协议，用 `@Published` 包装 `items`。
 
 ```swift
@@ -125,6 +133,8 @@ class ItemListModel: NSObject, ObservableObject {
     @Published var items = [ListItem]()
 }
 ```
+
+> `ObservableObject` 是[一种具有 `objectWillChange` 的发布者的对象，在对象更改之前发出事件](https://developer.apple.com/documentation/combine/observableobject)。同时，要在数据更改时触发 `objectWillChange` 事件，需要使用 [`@Published`](https://developer.apple.com/documentation/combine/published) 属性包装器包装对应属性。
 
 最后，将 `itemListModel` 添加为 `environmentObject`，以便我们的视图可以访问该 model。
 
@@ -142,6 +152,8 @@ struct WatchTaskLiskSample_Watch_AppApp: App {
     }
 }
 ```
+
+> `@StateObject` 是[实例化「可观察对象」的属性包装器类型](https://developer.apple.com/documentation/swiftui/stateobject)。与 `@State` 相比，`@State` 适用于值类型，而 `@StateObject` 适用于引用类型。
 
 现在让我们使用 model 在 `ContentView` 的 `body` 中创建一个 `List`。由于还没有 `items`，所以当我们预览它时，我们会看到一个空 `List`。
 
@@ -162,6 +174,8 @@ struct ContentView: View {
     }
 }
 ```
+
+> `@EnvironmentObject` 是[获取由父视图或祖先视图提供的可观察对象的属性包装器类型]((https://developer.apple.com/documentation/swiftui/environmentobject))。
 
 ![](./images/empty_list.png)
 
@@ -285,12 +299,12 @@ struct ContentView: View {
 
 ### 应用导航结构类型
 
-| Option | Use For | Use |
+| 结构类型 | 使用场景 | 方案选择 |
 |---|---|---|
-| Heirarchical | Views with list-detail relationship | NavigationStack |
-| Page-based | Flat collection | TabView |
-| Full Screen | Any full-screen content | ignoresSafeArea and toolbar modifiers |
-| Modal sheet | Important tasks | sheet modifier |
+| 分层结构（Heirarchical） | 视图具有「列表-详情」结构 | NavigationStack |
+| 基于页面的结构（Page-based） | 视图具有平面结构 | TabView |
+| 全屏结构（Full Screen） | 任何全屏内容 | ignoresSafeArea 和 toolbar modifier |
+| 模态结构（Modal sheet） | 重要的任务 | sheet modifier |
 
 ![](./images/navigation.png)
 
@@ -300,7 +314,7 @@ struct ContentView: View {
 
 ![](./images/workout.png)
 
-全屏应用程序具有使用整个屏幕显示的单个视图。通常用于具有单一主视图的游戏等应用程序。对于全屏视图，可以使用 `ignoresSafeArea` 修饰显示边缘，或者使用 `hiden` 的 `toolbar` 来隐藏 `navigationBar`。
+全屏应用程序具有使用整个屏幕显示的单个视图。通常用于具有单一主视图的游戏等应用程序。对于全屏视图，可以使用 `ignoresSafeArea` 修饰显示边缘，或者使用 `hidden` 的 `toolbar` 来隐藏 `navigationBar`。
 
 模态是在当前视图上滑动的全屏视图，它一般应用于展示当前工作流程中必须完成的重要部分。
 
@@ -458,7 +472,7 @@ struct StressStepper: View {
 
 ### 共享项目
 
-准备 WWDC Session 很有趣，我们与大家分享精彩的 Watch 应用程序开发。或者当我的项目列表上有很多让我感到压力的项目时，我想与朋友分享清单中的一个项目来寻求帮助。
+假如这篇文章很有趣，你想与朋友进行分享。或者当我的项目列表上有很多让我压力山大的项目时，我想与朋友分享清单中的一个项目来寻求帮助。
 
 我们将在详细视图中添加一个按钮，允许用户共享项目。我希望能够点击详细视图上的按钮来分享项目、从好友列表中选择朋友以寻求帮助、编辑消息并发送。
 
@@ -656,7 +670,7 @@ struct ProductivityChart: View {
 
 我们的图表现在看起来很不错，但我们想显示更多数据，并且仍保持出色的 Watch App 体验，因此我们将使表格可滚动。
 
-为此，我们将使用一个新的 `digitalCrownRotation`，它允许我们为数字皇冠事件设置回调，我们将为图表实现自定义滚动行为。
+为此，我们将使用一个新的 `digitalCrownRotation`，它允许我们为数码表冠事件设置回调，我们将为图表实现自定义滚动行为。
 
 ![](./images/chart_crown.gif)
 
