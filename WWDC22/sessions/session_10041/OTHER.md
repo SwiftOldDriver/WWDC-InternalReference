@@ -6,6 +6,8 @@
 
 士土Edmond木, 对 CocoaPods 有一点了解，目前对 Bazel 和 Swift 比较感兴趣。[#Github Page](https://looseyi.github.io)
 
+小姜，现就职于 Booking.com 本地支付团队，在努力研究 SwiftUI 相关内容。
+
 ## 文章简介
 
 本文通过回顾 `WWDC 2022` 了解 `Wallet` 和 `Apple Pay` 常规更新和新增的功能。其中常规更新包含：**无接触支付**、**Mac 同步 Apple Pay 功能**、**SwiftUI 新增 API**等功能，新增功能包含：**多商户支付**、**自动支付**、**订单跟踪**、**身份验证**等功能。最后更新了交通卡支持 `Apple Pay` 的城市和地区以及目前支持的设备，并提供相关 `Demo` 以供大家测试。
