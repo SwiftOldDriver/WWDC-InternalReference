@@ -157,7 +157,7 @@ class ReadingListStore: ObservableObject {
 }
 ```
 
-因此，当你的 scene contents 在 iPadOS 和 macOS 上表示某些全局 app state 而不适合用 WIndowGroup 的多窗口样式时，可以用 Windows Scene 来展示。例如，一个游戏 app 可能希望只允许单主窗口去呈现它的 contents。游戏 app 界面如下图所示：
+因此，当你的 scene contents 在 iPadOS 和 macOS 上表示某些全局 app state 而不适合用 WIndowGroup 的多窗口样式时，可以用 Window Scene 来展示。例如，一个游戏 app 可能希望只允许单主窗口去呈现它的 contents。游戏 app 界面如下图所示：
 
 ![](./images/session_10061_1_4.png)
 
