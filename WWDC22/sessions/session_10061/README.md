@@ -163,7 +163,7 @@ class ReadingListStore: ObservableObject {
 
 * **MenuBarExtra**
 
-MenuBarExtra 是一个只适用 macOS 平台的 scene， 其行为与其他 scenes 稍有不同，它不会将内容渲染在窗口中，而是将其标签放在菜单栏中， 当 anchored 这个标签时，在菜单或者窗口中显示其内容。此外， 只要关联的 app 正在运行， 无论该 app 是否在前台， 它都可以使用。
+MenuBarExtra 是一个只适用 macOS 平台的 scene type， 其行为与其他 scenes 稍有不同，它不会将内容渲染在窗口中，而是将其标签放在菜单栏中， 当 anchored 这个标签时，在菜单或者窗口中显示其内容。此外， 只要关联的 app 正在运行， 无论该 app 是否在前台， 它都可以使用。
 这个 scene 非常适合创建可轻松访问其功能的 standalone utility apps； 或者当跟其他 scene 组合时， 提供了另外一种访问 app 功能的方式。如下图所示：
 
 ![](./images/session_10061_1_5.png)
