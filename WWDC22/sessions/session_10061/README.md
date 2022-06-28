@@ -119,7 +119,7 @@ struct MultiSceneApp: App {
 
 ![](./images/session_10061_1_3.png)
 
-下面让我们重点介绍一下 Window 和 MenuBarExtra 这两个 Scene；
+下面让我们重点介绍一下 Window 和 MenuBarExtra 这两个 Scene types；
 与其他的 scene types 一样， 你可以将 Window 和 MenuBarExtra 作为独立 scene 使用，或者与其他 scene 组合使用。
 
 * **Window**
