@@ -210,7 +210,7 @@ MenuBarExtra 支持两种展现样式：
 
 ![](./images/session_10061_2_1.png)
 
-这是一个 macOS apps 如何很好地利用该平台上利用额外屏幕空间和灵活窗口排布的例子。
+这个例子演示了 macOS apps 如何很好地利用利用额外屏幕空间以及灵活地排布窗口。
 接下来我们通过 auxiliary scene 的方式来重新实现一下这个界面。Activity 窗口的数据被 app 的 state 所驱动， 因此 Window scene 是理想选择(注释：在这里打开通过相同 State 控制的多窗口显然不合适)。实现代码如下图所示：
 
 ![](./images/session_10061_2_2.png)
