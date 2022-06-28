@@ -17,7 +17,9 @@ session_ids: [110371]
 - 支持移动平台：Android iOS
 - 支持苹果生态：iOS iPadOS macOS watchOS
 
-为了提高生产力，许多公司/开发会使用跨平台技术进行开发，针对移动平台：有 Flutter 和 React Native 跨平台技术。针对苹果生态：早些年，开发 iOS iPadOS 应用需要 UIKit ，开发 macOS 应用需要 AppKit，二者差异大，维护两端成本高。而在 Xcode 14 以后，使用 SwiftUI 技术，只需一个项目一个 Target 便可以支持多平台，这对于专注于苹果生态的开发团队或者独立开发者而言无疑是雪中送炭。本文将结合 [WWDC 110371 session](https://developer.apple.com/wwdc22/110371) 从以下几个方面谈谈如何开发多平台应用。
+为了提高生产力，许多公司/开发会使用跨平台技术进行开发，针对移动平台：有 Flutter 和 React Native 跨平台技术。针对苹果生态：早些年，开发 iOS iPadOS 应用需要 UIKit ，开发 macOS 应用需要 AppKit，二者差异大，维护两端成本高。而在 Xcode 14 以后，使用 SwiftUI 技术，只需一个项目一个 Target 便可以支持多平台，这对于专注于苹果生态的开发团队或者独立开发者而言无疑是雪中送炭。
+
+本文将结合 [WWDC 110371 session](https://developer.apple.com/wwdc22/110371) 从以下几个方面谈谈如何开发多平台应用：
 
 - Xcode 13 创建多平台项目与局限性
 - Xcode 14 创建多平台项目
