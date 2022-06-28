@@ -16,7 +16,7 @@ session_ids: [10061]
 
 * **Scene basics** - SwiftUI 生命周期中的各种 scene types，包括几个新引入的 types；
 * **Auxiliary scenes** - 如何通过添加 auxiliary scenes 的方式将这些 scene types 组合在一起；
-* **Scene navigation** - 介绍一些为特定 scenes 打开窗口的新 api；
+* **Scene navigation** - 介绍一些为特定 scenes 打开窗口的新 API；
 * **Scene customizations** - 分享一些在 app 中自定义 scene 的方法；
 
 ## Scene basics
