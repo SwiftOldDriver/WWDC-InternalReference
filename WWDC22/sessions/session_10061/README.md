@@ -351,6 +351,6 @@ struct ReadingActivityScene: Scene {
 
 ![](./images/session_10061_4_7.png)
 
-给常用场景设置快捷方式提升自定义 app 的一种好方式，还可以重置默认的快捷方式 `Command-N` (默认添加在主 WindowGroup 中)。  
+给常用场景设置快捷方式能使得 app 更加的个性化，我们甚至可以重置 `Command-N` 的默认快捷方式 ，该快捷方式默认添加到主 WindowGroup 中。  
 
 以上就是本次介绍的新的 API， 如果想要了解更多怎样向 iPadOS 和 macOS app 中添加功能的信息， 请查看 [SwiftUI on iPad: Organize your interface](https://developer.apple.com/videos/play/wwdc2022/10058/) 和 [SwiftUI on iPad: Add toolbars, titles, and more.](https://developer-rno.apple.com/videos/play/wwdc2022/110343/)  
