@@ -5,7 +5,7 @@ require './scripts/helper.rb'
 
 target_ref = ENV['TARGET_REF']
 
-files = Helper.added_files('origin/main', target_ref)
+files = Helper.added_markdown_files('origin/main', target_ref)
 files_as_shell_arguments = Helper.files_as_shell_arguments(files)
 
 puts `yarn markdownlint -f -q -c scripts/markdownlint.json #{files_as_shell_arguments}`
