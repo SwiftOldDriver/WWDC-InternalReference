@@ -7,11 +7,6 @@ session_ids: [10061]
 
 本文基于 WWDC22 Session 10061 - [Bring multiple windows to your SwiftUI app](https://developer.apple.com/videos/play/wwdc2022/10061/) 整理
 
-> 作者：魏王磊，iOS&Android 开发，就职于字节跳动 FusionApp 团队。
->
-> 审核：
->
-
 本 Session 主要探讨了如何使用 scene types 轻松构建更丰富的 app, 分为以下四个部分:
 
 * **Scene basics** - SwiftUI 生命周期中的各种 scene types，包括几个新引入的 types；
@@ -21,10 +16,9 @@ session_ids: [10061]
 
 ## Scene basics
 
-介绍 Scene types 之前我们先回顾一下基础知识，SwiftUI app 是由 App， Scene  和 View 所组成的树状结构； 显示在屏幕上的 Window 表示了 Scenes 的内容。本文依然以 BookClub 为例，这个 app 的 Scene 只有一个 WindowGroup，并运行在多个平台上。如下图所示:
-> Tips: 更多基础知识请参考：[App essentials in SwiftUI](https://developer.apple.com/videos/play/wwdc2020/10037/)
+介绍 Scene types 之前我们先回顾一下基础知识，SwiftUI app 是由 App， Scene 和 View 所组成的树状结构； 显示在屏幕上的 Window 表示了 Scenes 的内容。本文依然以 BookClub 为例，这个 app 的 Scene 只有一个 WindowGroup，并运行在多个平台上。如下图所示:
 
-> BookClub 是一个用来跟踪图书阅读进度的 app, 在 WWDC20 中多次出现，更多资料请参考：<https://developer.apple.com/documentation/swiftui/fruta_building_a_feature-rich_app_with_swiftui>
+> Tips: BookClub 是一个用来跟踪图书阅读进度的 app，在 WWDC20 介绍 [App essentials in SwiftUI](https://developer.apple.com/videos/play/wwdc2020/10037/) 时，以该 app 为例演示了如何利用 App, Scene 和 View 构建多平台 app，其中也包含了下文提起的 WindowGroup 和 DocumentGroup。
 
 ![](./images/session_10061_1_1.png)
 
@@ -64,48 +58,8 @@ struct MultiSceneApp: App {
             SettingsView()
         }
         #endif
-        }
     }
-    struct ContentView: View {
-        var body: some View {
-            Text("Content")
-        }
-    }
-
-    struct ImageViewer: View {
-        var document: CustomImageDocument
-
-        init(_ document: CustomImageDocument) {
-            self.document = document
-        }
-
-        var body: some View {
-            Text("Image")
-        }
-    }
-
-    struct SettingsView: View {
-        var body: some View {
-        Text("Settings")
-        }
-    }
-    struct CustomImageDocument: FileDocument {
-        var data: Data
-
-    static var readableContentTypes: [UTType] { [UTType.image] }
-
-    init(configuration: ReadConfiguration) throws {
-        guard let data = configuration.file.regularFileContents
-        else {
-            throw CocoaError(.fileReadCorruptFile)
-        }
-        self.data = data
-    }
-
-    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper{
-        FileWrapper(regularFileWithContents: data)
-    }
-}
+}  
 ```
 
 今年苹果新增了两个新的 Scene types:
@@ -157,7 +111,7 @@ class ReadingListStore: ObservableObject {
 }
 ```
 
-因此，当你的 scene contents 在 iPadOS 和 macOS 上表示某些全局 app state 而不适合用 WIndowGroup 的多窗口样式时，可以用 Window Scene 来展示。例如，一个游戏 app 可能希望只允许单主窗口去呈现它的 contents。游戏 app 界面如下图所示：
+因此，当你的 scene contents 在 iPadOS 和 macOS 上表示某些全局 app state 而不适合用 WindowGroup 的多窗口样式时，可以用 Window Scene 来展示。例如，一个游戏 app 可能希望只允许单主窗口去呈现它的 contents。游戏 app 界面如下图所示：
 
 ![](./images/session_10061_1_4.png)
 
@@ -315,19 +269,6 @@ WindowGroup("Book Details", for: Book.ID.self) { $bookId in
 ![](./images/session_10061_4_3.png)
 
 如果想修改默认位置，可以通过 modifier `.defaultPostition` 将窗口放置指定位置，除非从之前状态中恢复。  
-
-```swift
-struct ReadingActivityScene: Scene {
-    @ObservedObject var store: ReadingListStore
-
-    var body: some Scene {
-        Window("Activity", id: "activity") {
-            ReadingActivity(store: store)
-        }
-        .defaultPosition(.topTrailing)
-    }
-}
-```
 
 这里设置的是相对屏幕位置(例如 .topTrailing )，同时会在考虑当前语言环境的情况下将窗口放在适当的位置。设置完成后 Activity 窗口就会和屏幕中其他窗口的位置区分开，以便阅读。
 
