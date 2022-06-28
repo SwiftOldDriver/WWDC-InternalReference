@@ -2,7 +2,7 @@
 session_ids: [10026]
 ---
 
-# Session 10026 - 给应用添加实况文本交互 
+# Session 10026 - 给应用添加实况文本交互
 
 本文基于[Session 10026](https://developer.apple.com/videos/play/wwdc2022/10026/)梳理。
 
@@ -11,14 +11,17 @@ session_ids: [10026]
 > 审核：anotheren（刘栋），老司机周报编辑，就职于丁香园 iOS 团队，Swift 老司机。
 
 ## 背景介绍
+
 实况文本（`Live Text`）是 `Apple` 为 `iOS 15` 和 `iPadOS 15` 新增的实用功能之一，简单来说，实况文本是一个系统级的 `OCR` 工具，它能够帮助我们把照片、相机界面当中的文字转化为可交互的文本。在 `iOS 16` 系统中开放了一系列封装好的实况文本 `API`，让我们可以方便地在应用中集成实况文本功能。集成这个功能后，用户可以对图片里的文本进行操作。例如对文本进行选中和复制，对内容快速查看和翻译，还有提供文本处理的工作流，像是由内容查询对应地址、拨打文本中的电话号码或者跳转到文本里的 `URL`，等等。
 
 ## 序言
+
 在这篇文章中，开始时会对实况文本的 `API` 做一个使用概述。接着会通过一个实例，讲解在静态图片上添加实况文本功能时要怎么使用这些 `API`。之后，会深入介绍一些实况文本 `API` 的相关使用技巧，最后会对比下其他系统组件在集成实况文本功能的方式差异，希望能够对你有所帮助。
 
 > 目前实况文本 `API` 只有 `Swift` 版本。
 
 目前常用的场景有两种：
+
 - 静态图片
 - 暂停时的视频帧处理
 
@@ -30,14 +33,16 @@ session_ids: [10026]
 实况文本 `API` 从 `iOS 16` 开始，可以在配有苹果神经网络引擎（`Apple Neural Engine`）的设备上使用。Mac 上的版本要求是 `macOS 13` 系统及以后。
 
 ## API 初识
+
 实况文本的 `API` 构成主要有以下几个类：`ImageAnalyzer`、`ImageAnalysis`、`ImageAnalysisInteraction或ImageAnalysisOverlayView`。
 
 ![image][live-text-data-flow]
 
-开局我们得有一张图。内容全靠编...“码”。然后把这张图传给一个 `ImageAnalyzer`。让它帮我们做异步的分析处理。 
+开局我们得有一张图。内容全靠编...“码”。然后把这张图传给一个 `ImageAnalyzer`。让它帮我们做异步的分析处理。
 当 `ImageAnalyzer` 处理好后，结果会封装到一个叫 `ImageAnalysis` 的对象给我们。我们再将这个 `ImageAnalysis` 对象传给 `ImageAnalysisInteraction`（`Mac` 上是 `ImageAnalysisOverlayView`），这样就完成了，是不是很简单？
 
 ## 示例导读
+
 接下来我们会通过具体示例来讲解 `API` 的具体使用方法。我们准备的是一个简单的图片查看工具。里面是一个内嵌了 `ImageView` 的 `ScrollView`。里面的图片内容是可以缩放跟滑动的，但图片里的内容还无法选中或者响应快捷操作。
 ![demo-app][demo-app]
 
@@ -91,7 +96,7 @@ class LiveTextViewController: BaseViewController, ImageAnalysisInteractionDelega
                     interaction.preferredInteractionTypes = .automatic
                     interaction.allowLongPressForDataDetectorsInTextMode = false
                 } catch {
-                	// 处理异常
+                 // 处理异常
                 }
             }
         }
@@ -119,6 +124,7 @@ class LiveTextViewController: BaseViewController, ImageAnalysisInteractionDelega
 现在我们已经看到如何应用实况文本了，接下来会讲一些使用技巧，可能对你在使用它的时候会有所帮助。
 
 ## API 中的注意点
+
 ### 交互方式枚举
 
 ```swift
@@ -162,12 +168,12 @@ interaction.isSupplementaryInterfaceHidden = true
 
 ![supplementary-element-hidden][supplementary-element-hidden]
 
-
 我们还可以设置内容的边距。如果我们有需要在控件上叠加其他的交互控件，那可能需要调整控件的边距，让实况文本按钮和快捷操作控件可以适配显示，避免被遮挡到。
 
 ```
 interaction.supplementaryInterfaceContentInsets = UIEdgeInsets(top: 0, left: 12, bottom: 18, right: 12)
 ```
+
 ![supplementary-element-inset][supplementary-element-inset]
 
 如果我们应用用的是自定义的字体。要想让这些扩展控件也能显示成对应的字体，那就设置 `interaction` 对象的 `supplementaryInterfaceFont`。这会让实况文本按钮和快捷操作控件都设置成自定义的字体和指定图形的文本权重值大小。
@@ -175,11 +181,13 @@ interaction.supplementaryInterfaceContentInsets = UIEdgeInsets(top: 0, left: 12,
 ```
 interaction.supplementaryInterfaceFont = UIFont.init(name: "Copperplate", size: 0)
 ```
+
 ![supplemetary-element-font][supplemetary-element-font]
 
 > 这时按钮在做自适应大小计算时，实况文本计算时会忽略设置的样式大小值，而是用原生默认字体大小进行计算。
 
 ##### 高亮区域匹配
+
 注意下，有当前操作的不是 `UIImageview` 对象，而是其 `image` 属性对象，所以我们会发现高亮的区域跟 `image` 对象不是那么匹配。这是因为 `UIImageView` 的原因，`VisionKit` 是根据它的 `ContentMode` 属性来自动计算 `contentsRect` 大小。生成的交互视图是矩形的样式，而这个区域会比图片中的内容大许多。
 
 ![highlight-rect][highlight-rect]
@@ -258,9 +266,10 @@ override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 直接通过重写 `UIView` 的 `hitTest:WithEvent` 方法。我们再像上一个方案一样做一下相同类型检查就行，不过我们在这里返回的是合适的视图。
 
 #### 性能优化小技巧
+
 虽然苹果的神经网络引擎性能已经十分高效，但本文还是有一些 `ImageAnalyzer` 的相关技巧要给大家分享。
 
-![performance][performance] 
+![performance][performance]
 
 1. 理想情况下，我们的应用中应该只有一个 `ImageAnalyzer` 对象。
 2. `ImageAnalyzer` 同时支持好几种不同类型的图片（`UIImage`、`CGImage`、`CIImage`、`CVPixelBuffer`）。我们也需要尽量最小化图片在类型转换时带来的性能损耗，这里推荐 `CVPixelBuffer` 的图片对象，这种类型处理起来最为高效。
@@ -272,7 +281,7 @@ override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 - [wwdc2021-10276: Use the camera for keyboard input in your app][use-the-camera-for-keyboard-input-in-your-app]
 - [wwdc2018-237: Quick Look Previews from the Ground Up][quick-look-previews-from-the-ground-up]
 
-> 笔者在上面两个 `session` 中都没有讲到 `Webkit`、`QuickLook` 中跟实况文本 `API` 有关的事项。怀疑原意想表达的不是这两个组件有实况文本相关 `API` 支持，而是这两个组件中的图片（一个是快速预览的图片、另一个是网页中的图片）可以支持实况文本处理。 
+> 笔者在上面两个 `session` 中都没有讲到 `Webkit`、`QuickLook` 中跟实况文本 `API` 有关的事项。怀疑原意想表达的不是这两个组件有实况文本相关 `API` 支持，而是这两个组件中的图片（一个是快速预览的图片、另一个是网页中的图片）可以支持实况文本处理。
 
 > 网页视图中的输入框也可以通过长按或者双击唤出实况文本输入
 
@@ -291,6 +300,7 @@ address.textContentType = .fullStreetAddress
 ```
 
 ## AVKit
+
 新一年的 `iOS 16` 中， `AVKit` 也加了实况文本支持。`AVPlayerView` 和 `AVPlayerViewController` 可以通过设置 `allowsVideoFrameAnalysis` 属性，在暂停的视频帧里自动进行实况文本处理，该功能是默认设置为 `true` 的。注意这个功能只能用在合法播放资源上。
 
 ```
@@ -302,6 +312,7 @@ let frame = currentlyDisplayedPixelBuffer() // 新 API
 > 重要的事情提醒一下，这个功能只能用在合法播放资源上。
 
 ## 结语
+
 到这里本文就到尾声了，新的 `API` 已经准备好了，要怎么玩，请尽情探索吧！
 
 [live-text-data-flow]: ./images/live-text-flow.png
@@ -322,4 +333,3 @@ let frame = currentlyDisplayedPixelBuffer() // 新 API
 [use-the-camera-for-keyboard-input-in-your-app]: https://developer.apple.com/videos/play/wwdc2021/10276/
 [quick-look-previews-from-the-ground-up]: https://developer.apple.com/videos/play/wwdc2018/237/
 [text-content-type]: ./images/text-content-type.png
-
