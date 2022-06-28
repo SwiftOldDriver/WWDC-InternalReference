@@ -1,10 +1,10 @@
 ## 个人介绍
 
-ericchuhong(马楚鸿)，iOS 开发，坐标厦门，近期负责远程视频会议应用开发。
+Eric(马楚鸿)，iOS 开发，坐标厦门，Swift 爱好者，目前在做远程视频会议开发。
 
 ## 审核介绍
 
-
+anotheren（刘栋），老司机周报编辑，就职于丁香园 iOS 团队，Swift 老司机。
 
 ## 不超过 120 个字的文章简介
 
@@ -12,3 +12,4 @@ ericchuhong(马楚鸿)，iOS 开发，坐标厦门，近期负责远程视频会
 
 ## 公众号/小专栏图文头图
 
+![live-text-banner][./images/live-text-banner.png]
