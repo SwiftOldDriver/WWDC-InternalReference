@@ -124,7 +124,7 @@ struct MultiSceneApp: App {
 
 * **Window**
 
-不同于 WindowGroup 的多窗口， Window scene 只会在一个唯一的 window 实例中表示其 contents。
+不同于 WindowGroup 的多窗口， Window scene 只会在一个唯一的 window 实例中显示其 contents。
 使用代码如下所示：
 
 ```swift
