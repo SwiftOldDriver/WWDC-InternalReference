@@ -21,7 +21,7 @@ session_ids: [10061]
 
 ## Scene basics
 
-介绍 Scene types 之前我们先回顾一下基础知识，SwiftUI app 是由 App Scene View 组成的树状结构； 显示在屏幕上的 Window 表示了 Scenes 的内容。本文依然以 BookClub 为例，这个 app 的 Scene 只有一个 WindowGroup，并运行在多个平台上。如下图所示:
+介绍 Scene types 之前我们先回顾一下基础知识，SwiftUI app 是由 App， Scene  和 View 所组成的树状结构； 显示在屏幕上的 Window 表示了 Scenes 的内容。本文依然以 BookClub 为例，这个 app 的 Scene 只有一个 WindowGroup，并运行在多个平台上。如下图所示:
 > Tips: 更多基础知识请参考：[App essentials in SwiftUI](https://developer.apple.com/videos/play/wwdc2020/10037/)
 
 > BookClub 是一个用来跟踪图书阅读进度的 app, 在 WWDC20 中多次出现，更多资料请参考：<https://developer.apple.com/documentation/swiftui/fruta_building_a_feature-rich_app_with_swiftui>
