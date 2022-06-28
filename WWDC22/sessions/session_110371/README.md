@@ -46,7 +46,7 @@ session_ids: [110371]
 
 ![1](./images/1.png)
 
-打开打开通用设置页面，可以发现顶部多了支持多平台 (Supported Destinations) 的选项，可以添加、删除项目所支持的平台。而且 Target 不再区分系统，macOS 与 iOS 共用一个 Target。如果不同平台的应用不需要共享配置，或者不同平台内容差异大需要共享的代码少，或者不同平台所依赖的底层技术只适用特有的平台，那么也可以方便地使用 Xcode 14 创建新 Target 供特定平台使用。
+打开通用设置页面，可以发现顶部多了支持多平台 (Supported Destinations) 的选项，可以添加、删除项目所支持的平台。而且 Target 不再区分系统，macOS 与 iOS 共用一个 Target。如果不同平台的应用不需要共享配置，或者不同平台内容差异大需要共享的代码少，或者不同平台所依赖的底层技术只适用特有的平台，那么也可以方便地使用 Xcode 14 创建新 Target 供特定平台使用。
 > 注：虽然新建的项目默认使用的框架为 SwiftUI，无法更改，但是在 Mac 平台，SwiftUI 可以与 Appkit 混编，在 iOS 平台，SwiftUI 可 以和 UIKit 混编。
 
 ![2](./images/2.png)
