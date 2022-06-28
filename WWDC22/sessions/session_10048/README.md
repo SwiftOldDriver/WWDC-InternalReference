@@ -90,7 +90,7 @@ session_ids: [10048]
 
 ```
 
-你可以通过查看 [<dialog>](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/dialog) 来获取更多用法。
+你可以通过查看 [`<dialog>`](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/dialog) 来获取更多用法。
 
 #### `<img>`
 
