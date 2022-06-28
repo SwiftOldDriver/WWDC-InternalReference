@@ -12,7 +12,7 @@ session_ids: [10061]
 > 审核：
 >
 
-本 Session 主要探讨了如何使用 scene types 轻松构建更丰富的 app, 分为一下四个部分:
+本 Session 主要探讨了如何使用 scene types 轻松构建更丰富的 app, 分为以下四个部分:
 
 * **Scene basics** - SwiftUI 生命周期中的各种 scene types，包括几个新引入的 types；
 * **Auxiliary scenes** - 如何通过添加 auxiliary scenes 的方式将这些 scene types 组合在一起；
