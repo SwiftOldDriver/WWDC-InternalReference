@@ -40,7 +40,7 @@ Scene 的 behaviors 和 representation 会因使用的 Scene types 而异。 例
 * **DocumentGroup** - 可以在 iOS 和 macOS 上构建 document-based apps;
 * **Settings** - 可以定义一个在 macOS 中进行应用设置的 Window;  
 
-这些 Scene types 组合起来可以使 app 的功能更丰富。如下代码所示，App 中包含了 WindowGroup， DocumentGroup 和 Settings 三个 Scene。
+这些 Scene types 组合起来可以丰富 app 的功能。如下代码所示，App 中包含了 WindowGroup， DocumentGroup 和 Settings 三个 Scene。
 
 ```swift
 import SwiftUI
