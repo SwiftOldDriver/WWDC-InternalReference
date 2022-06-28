@@ -55,7 +55,7 @@ session_ids: [10040]
 
 #### 回顾 App Store Server API
  
-苹果去年 WWDC21 推出了 App Store Server API，**这套接口兼容 Original StoreKit 和 StoreKit 2，开发者服务端可以直接使用且迁移和兼容问题。** 其中有 5 个 API 是通过 `originalTransactionId` 作为查询的参数，这个参数可以通过 receipts（票据）、signed transactions（签名的交易）、signed renewals（签名的续订信息）和 notifications（通知）等获取。
+苹果去年 WWDC21 推出了 App Store Server API，**这套接口兼容 Original StoreKit 和 StoreKit 2，开发者服务端可以直接使用，因为是新接口，所以无迁移或兼容的问题。** 其中有 5 个 API 是通过 `originalTransactionId` 作为查询的参数，这个参数可以通过 receipts（票据）、signed transactions（签名的交易）、signed renewals（签名的续订信息）和 notifications（通知）等获取。
 
 ![WWDC22_session_10040_3](images/WWDC22_session_10040_3.png)
 
