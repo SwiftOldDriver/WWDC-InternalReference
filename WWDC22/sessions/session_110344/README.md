@@ -85,7 +85,7 @@ iOS 方向的 Developer Mode 和 macOS 方向的 Notarization 都是苹果对于
 
 上一章节主要介绍了苹果在 iOS 方向做的安全优化，本章节再来看一下苹果在 macOS 方向做出的努力。
 
-在 2021 年，苹果推出了一种更快、更简单的方法，通过 notarytool 提交 Mac apps 进行公证。2022 年，苹果专注于做出更多优化，以提升开发者的用户体验。
+在 2021 年，苹果推出了一种更快、更简单的方法，通过 notarytool 提交 Mac App 进行公证。2022 年，苹果专注于做出更多优化，以提升开发者的用户体验。
 
 通过本节，你可以了解到：
 
@@ -97,9 +97,22 @@ iOS 方向的 Developer Mode 和 macOS 方向的 Notarization 都是苹果对于
 
 ### 什么是公证
 
-自从 macOS 10.14，苹果一直致力于通过公证的方式来帮助用户使用安全的 App，以防止用户下载到来源不明的 App，并遭受到攻击。
+用户一般有两种途径安装 Mac App：
 
-![](images/notarization_flow.png)
+1. App Store
+2. 各大软件网站
+
+App Store 安装的 App 因为经过苹果审核，安全性是有保证的。而如果是从网站上下载，安全性则会打一个折扣。公证就是为了解决这个问题。
+
+公证指的是开发者将没有经过 App Store 的 App 递交给苹果完成扫描，确保 App 没有任何可能危害到用户的恶意内容。这里要注意，公证不同于苹果审核，是一个完全自动化检验过程，结果返回非常快。
+
+当用户首次安装或运行 App 时，如果 App 已经通过公证，苹果会弹出弹窗，提醒用户已经通过公证，如下图：
+
+![](images/notarization_alert@2x.png)
+
+如果用户下载的是未经公证的 App，在首次安装或运行时则无法打开。在设置-安全与隐私中，可以看到被苹果拦截了。通过该方式，可以避免用户不经意间下载到恶意 App，如下图：
+
+![](images/privacy_security.png)
 
 >公证的工作流程如下：
 >
@@ -111,12 +124,16 @@ iOS 方向的 Developer Mode 和 macOS 方向的 Notarization 都是苹果对于
 >4. 验证完成后，苹果将验证结果返回给我们的开发人员
 >5. 我们这时可以提供应用程序的网站供用户下载，用户下载软件后，macOS 会在软件运行之前使用公证票据对其进行检查是否合法
 
+![](images/notarization_flow.png)
+
 ### 什么是 notarytool
 
-2021 年，苹果推出了全新的公证命令工具 notarytool，用于替代原有的 altool。其优势包括：
+苹果还为开发者提供了公证终端命令工具，方便通过命令完成公证流程。
 
-1. 速度快，是 altool 速度的 4 倍
-2. 需要编写的终端命令更加简洁，比较如下图
+2021 年之前，苹果为开发者提供 altool。2021 年，苹果推出了全新的 notarytool，其优势包括：
+
+1. 速度更快，是 altool 速度的 4 倍
+2. 编写的终端命令更加简洁，实现相同功能，notarytool 需要一行，altool 则需要九行，如下图
 
 ![altool 与 notarytool 编写命令比对](images/notarization_simple.png)
 
