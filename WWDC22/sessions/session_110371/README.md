@@ -91,11 +91,17 @@ session_ids: [110371]
 
 如果使用了某个只支持单平台的框架，那么默认会造成 issue，下面以 ARKit 为例，演示下如何解决该类问题。
 `import ARKit` 这行代码在编译 Mac 环境下默认是报错的。
+
 使用`#if canImport *** #endif`来自动判断是否可以导入，如果支持目前的平台，则会导入。
+
 ![8](./images/8.png)
+
 添加宏之后，可以看到`import ARKit`已经不报错了，然而出现了更多的错误。源文件由于失去了 ARKit 的 import，所有使用 ARKit 框架的属性和方法都报错了。
+
 ![9](./images/9.png)
+
 在 Target - Build Phases - Compile Sources 下取消 "macOS" 选项的选中。操作之后该 swift 源文件便不在 Mac 环境下参与编译了。报错的地方也就解决了。
+
 ![10](./images/10.png)
 
 ### API 只支持单平台
