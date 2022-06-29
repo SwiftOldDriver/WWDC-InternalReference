@@ -4,9 +4,8 @@ session_ids: [10016]
 
 # WWDC22 10016 - 使用 CarPlay 扩展你的 App
 
->  作者：kk, 全栈开发者，就职于字节跳动公司，侧重隐私安全领域。
->
-> 审核：
+>作者：kk, 全栈开发者，就职于字节跳动公司，侧重隐私安全领域。
+>审核：
 
 本文是根据 WWDC22 中的 [Get more milleage out of your app with CarPlay](https://developer.apple.com/wwdc22/10016) 撰写，主要是了解 CarPlay 在 iOS 16 中的新增功能。
 
@@ -42,13 +41,13 @@ session_ids: [10016]
 
 上面两幅图是苹果现在提供的几种模板类型，以及对应的模板适合哪种场景使用。看起来是覆盖了比较多的交互场景。
 
-通过这种方式，一是方便了开发者来开发对应的 UI，另一个苹果也能更好的让你的 CarPlay 应用工作在各种不同形状的屏幕上。而缺点则是对应的 APP 视图类型会比较死板，被苹果限制的比较死。我认为这也是苹果想要的，CarPlay是在驾驶过程中使用的，崇尚的是简洁、安全不干扰驾驶。通过模板可以很大程度上限制开发添加干扰驾驶者的功能操作。
+通过这种方式，一是方便了开发者来开发对应的 UI，另一个苹果也能更好的让你的 CarPlay 应用工作在各种不同形状的屏幕上。而缺点则是对应的 APP 视图类型会比较死板，被苹果限制的比较死。我认为这也是苹果想要的，CarPlay 是在驾驶过程中使用的，崇尚的是简洁、安全不干扰驾驶。通过模板可以很大程度上限制开发添加干扰驾驶者的功能操作。
 
 ## 新的应用类型
 
 ![image-20220628204635307](/Users/lucca/WWDC22/sessions/session_10016/images/image-20220628204635307.png)
 
-上架 CarPlay 应用的审核非常严格，你的应用必须符合苹果对于 CarPlay 的应用定义才能通过审核，同时只能支持一种应用类型。这也是为了驾驶安全着想，例如上架一些游戏应用，就会非常影响驾驶安全。目前 iOS 支持了六种应用类型(图中左边3列)，并在 iOS 16 中提供了两种新的应用类型，加油和驾驶任务类型(最右边一列)。
+上架 CarPlay 应用的审核非常严格，你的应用必须符合苹果对于 CarPlay 的应用定义才能通过审核，同时只能支持一种应用类型。这也是为了驾驶安全着想，例如上架一些游戏应用，就会非常影响驾驶安全。目前 iOS 支持了六种应用类型(图中左边三列)，并在 iOS 16 中提供了两种新的应用类型，加油和驾驶任务类型(最右边一列)。
 
 ### 加油应用
 
@@ -71,7 +70,7 @@ session_ids: [10016]
 
 ![image-20220628204805866](/Users/lucca/WWDC22/sessions/session_10016/images/image-20220628204805866.png)
 
-基于 `CPPointOfInterestTemplate `构建，提供一些附近的路况信息，比如附近在下雪之类的，我认为好像没啥用，百度地图都有了(狗头)。
+基于 `CPPointOfInterestTemplate`构建，提供一些附近的路况信息，比如附近在下雪之类的，我认为好像没啥用，百度地图都有了(狗头)。
 
 ![image-20220628204839438](/Users/lucca/WWDC22/sessions/session_10016/images/image-20220628204839438.png)
 
@@ -90,7 +89,7 @@ session_ids: [10016]
 通过上述几个驾驶任务 APP 的描述，苹果引出了对于驾驶任务 App 的设计原则：
 
 1. 单屏类简单任务，能够几秒内完成。
-2. 不要用于和驾驶无关的任务。(文中还用这不是The kitchen sink来说明这个原则，大家有兴趣可以了解下这个梗😊)
+2. 不要用于和驾驶无关的任务。(文中还用这不是 The kitchen sink 来说明这个原则，大家有兴趣可以了解下这个梗😊)
 
 ## 如何测试 CarPlay 应用
 
@@ -104,7 +103,7 @@ session_ids: [10016]
 
 ![image-20220628205049488](/Users/lucca/WWDC22/sessions/session_10016/images/image-20220628205049488.png)
 
-下载方式不细节介绍了，大家可以去[CarPlay专栏](https://developer.apple.com/carplay/)下载使用。我们来看看为什么已经有 Xcode 模拟器和一辆车(假装你有）后，苹果还推出了这个 CarPlay 模拟器，它相对于前两种有什么优势。
+下载方式不细节介绍了，大家可以去 [CarPlay 专栏](https://developer.apple.com/carplay/)下载使用。我们来看看为什么已经有 Xcode 模拟器和一辆车(假装你有）后，苹果还推出了这个 CarPlay 模拟器，它相对于前两种有什么优势。
 
 可以看到他是连接你的 iPhone 使用的，使用的是真实的 iPhone 环境，这可以测试很多真实场景，例如 App 声音和收音机声音的混合效果，这就是模拟器无法做到的。其次你可以不离开你的桌面就能进行测试，总不能发现个问题就去停车场连接测试。
 
@@ -132,7 +131,7 @@ session_ids: [10016]
 
 ![image-20220628205517942](/Users/lucca/WWDC22/sessions/session_10016/images/image-20220628205517942.png)
 
-汽车仪表盘的使用方式和 CarPlay 仪表盘的使用方式其实很像，都需要在 Plist 里面声明 key 以及在SceneDelegate 中绘制视图。
+汽车仪表盘的使用方式和 CarPlay 仪表盘的使用方式其实很像，都需要在 Plist 里面声明 key 以及在 SceneDelegate 中绘制视图。
 
 ```swift
 <dict>
@@ -149,7 +148,7 @@ session_ids: [10016]
 <dict/>
 ```
 
-在 Info.plist 中声明最新的 `UIApplicationSupportsMultipleScenes` 和 `CPSupportsInstrumentClusterNavigationScene` 值为 True。
+在 Info.plist 中声明最新的  `UIApplicationSupportsMultipleScenes`  和 `CPSupportsInstrumentClusterNavigationScene` 值为 True。
 
 ```swift
 extension TemplateApplicationSceneDelegate: CPTemplateApplicationInstrumentClusterSceneDelegate {
@@ -169,11 +168,11 @@ extension TemplateApplicationSceneDelegate: CPTemplateApplicationInstrumentClust
     }
 ```
 
-实现 `CPTemplateApplicationInstrumentCluster Scene Delegate`，这会提供给你一个窗口让你绘制你的视图，并告诉你什么时候仪表盘出现和消失。
+实现  `CPTemplateApplicationInstrumentCluster Scene Delegate`，这会提供给你一个窗口让你绘制你的视图，并告诉你什么时候仪表盘出现和消失。
 
 ![image-20220628205613204](/Users/lucca/WWDC22/sessions/session_10016/images/image-20220628205613204.png)
 
-另外有些仪表盘还有放大缩小、显示速度的功能，你可以通过实现`CPInstrumentClusterControllerDelegate` 代理来收到这些动作的通知，并及时做出应对。
+另外有些仪表盘还有放大缩小、显示速度的功能，你可以通过实现  `CPInstrumentClusterControllerDelegate`  代理来收到这些动作的通知，并及时做出应对。
 
 ![image-20220628205752640](/Users/lucca/WWDC22/sessions/session_10016/images/image-20220628205752640.png)
 
@@ -181,4 +180,4 @@ extension TemplateApplicationSceneDelegate: CPTemplateApplicationInstrumentClust
 
 ## 总结
 
-本文除了 CarPlay 模拟器是有助我们开发应用的。剩下都是 CarPlay 的新能力介绍，对我个人来说，新的应用看起来是用途优先，但是从仪表盘展示功能可以看出苹果在这次更新中体现出了深度控制现有车机功能的野心，以后我们说不定不管什么车型(支持 CarPlay)都可以通过一块屏幕控制车机的所有功能。
+本文除了 CarPlay 模拟器是有助我们开发应用的。剩下都是 CarPlay 的新能力介绍，对我个人来说，新的应用看起来是用途优先，但是从仪表盘展示功能可以看出苹果在这次更新中体现出了深度控制现有车机功能的野心，以后我们说不定不管什么车型(支持 CarPlay )都可以通过一块屏幕控制车机的所有功能。
