@@ -14,9 +14,8 @@ SZ, iOS 开发者，就职于 LinkedIn，喜欢研究编程语言和操作系统
 
 ## 公众号/小专栏图文头图
 
-备选1
+备选 1
 ![](images/icon1.png)
 
-备选2
+备选 2
 ![备选2](images/icon2.png)
-
