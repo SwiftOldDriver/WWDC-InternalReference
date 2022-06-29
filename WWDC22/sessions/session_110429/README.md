@@ -39,7 +39,7 @@ session_ids: [110429]
 
 ### 深度数据
 
-通过 LiDAR Scanner 我们可以得到空间物体的深度数据，并在相关功能中得以应用。但其实在目前 iPhone 的相机组件中，我们可以通过多种方式来获取深度信息。除了 LiDAR Scanner 和 TrueDepth Camera，常见的还有利用后置相机双目视差、单目+CoreML 的方式来得到深度数据。
+通过 LiDAR Scanner 我们可以得到空间物体的深度数据，并在相关功能中得以应用。但其实在目前 iPhone 的相机组件中，我们可以通过多种方式来获取深度信息。除了 LiDAR Scanner 和 TrueDepth Camera，常见的还有利用后置相机多目视差、单目+CoreML 的方式来得到深度数据。
 
 深度数据主要应用于 AVFoundation 的拍摄功能以及 ARKit 的场景中。不同的深度数据获得方式在应用的适用层面也会有些区别。
 
@@ -47,9 +47,9 @@ session_ids: [110429]
 
 单目+CoreML 的方式意思就是单个摄像头就可以搞定，通过机器学习对相机图像进行分割，并同时拿到深度信息。但机器学习的方式获取到的深度数据只是深度估计的数据，并不准确。比如 ARKit 中 ARFrame 的 estimatedDepthData，就是通过这种方式拿到的。在这里不做过多赘述，需要的朋友可以阅读 WWDC19 有关 ARKit 中人像识别相关的 session： [Bringing People into AR](https://developer.apple.com/videos/play/wwdc2019/607/)
 
-#### 双目视差
+#### 多目视差
 
-只要你的 iPhone 有两个及以上的后置摄像头，就可以利用双目视差(多角立体成像)的原理，使用多摄像头同时采集图像，通过对比这些不同摄像头在同一时刻获得的图像的差别，计算并获取深度信息。
+只要你的 iPhone 有两个及以上的后置摄像头，就可以利用多目视差(多角立体成像)的原理，使用多摄像头同时采集图像，通过对比这些不同摄像头在同一时刻获得的图像的差别，计算并获取深度信息。
 
 ![dualCamera.PNG](./images/dualCamera.PNG)
 
@@ -65,15 +65,15 @@ let captureProcessor = PhotoCaptureProcessor()
 photoOutput.capturePhoto(with: photoSettings, delegate: captureProcessor)
 ```
 
-通过双目视差的方式获取的深度信息只是相对的深度，因为不够精确，并不能够直接应用到 ARKit 的场景中。但如果是用于拍照/摄像中的 AR 效果，确实已经足够用了。
+通过多目视差的方式获取的深度信息只是相对的深度，因为不够精确，并不能够直接应用到 ARKit 的场景中。但如果是用于拍照/摄像中的 AR 效果，确实已经足够用了。
 
 对深度相机的详细使用可以参考苹果官方文档：[Capture Photos with Depth](https://developer.apple.com/documentation/avfoundation/additional_data_capture/capturing_photos_with_depth?language=objc)
 
 #### 前置深感摄像头 TrueDepthCamera
 
-在 iPhoneX 发布时，苹果宣布了 iPhone 的人脸解锁方案，也就是 FaceID。该技术就是基于深感相机（TrueDepthCamera）来实现。TrueDepthCamera 包括了红外镜头+点阵投射器+RGB摄像头的组合，是一种基于红外结构光的深度相机。
+在 iPhone X 发布时，苹果宣布了 iPhone 的人脸解锁方案，也就是 Face ID。该技术就是基于深感相机（TrueDepthCamera）来实现。TrueDepthCamera 包括了红外镜头+点阵投射器+RGB摄像头的组合，是一种基于红外结构光的深度相机。
 
-相比于双目视差的深度计算方式，结构光法不依赖于物体本身的颜色和纹理，并且采用主动投影已知光图案的方法来实现快速鲁棒的匹配特征点。复杂度更低，精度更高且更快速。
+相比于多目视差的深度计算方式，结构光法不依赖于物体本身的颜色和纹理，并且采用主动投影已知光图案的方法来实现快速鲁棒的匹配特征点。复杂度更低，精度更高且更快速。
 
 通过 TrueDepthCamera 来获取深度信息，区别其实主要只是在于 DeviceType 不同而已。前置深感摄像头关联的是 ```.builtInTrueDepthCamera```  类型，后续的配置没有什么太大差异，最终返回的深度数据也同样是在 depthData 中。
 
@@ -81,7 +81,7 @@ TrueDepthCamera 在 ARKit 以及 AVFoundation 中都有相关 API，主要用于
 
 #### LiDAR Camera
 
-在后置双目视差相机准确度不足以提供到 ARKit 场景的情况下，LiDAR Camera 就很好的填补了这个空缺。其实 LiDAR Scanner 并不是新鲜的事物，与其相关的 API 最早在 iPad 13.4 的 ARKit 中就已经有过介绍了。但后续几个版本中，LiDAR 也只是应用于 ARKit 中。
+在后置多目视差相机准确度不足以提供到 ARKit 场景的情况下，LiDAR Camera 就很好的填补了这个空缺。其实 LiDAR Scanner 并不是新鲜的事物，与其相关的 API 最早在 iPad 13.4 的 ARKit 中就已经有过介绍了。但后续几个版本中，LiDAR 也只是应用于 ARKit 中。
 
 但从 iOS 15.4 开始，也就是这次 session 中提到的更新，AVFoundation 支持使用 LiDAR camera，从而在拍照/摄像的场景中也可以得到更准确的深度信息。
 
@@ -116,7 +116,7 @@ AF/AE 是 iPhone 相机支持的自动对焦和自动曝光功能，它们能使
 我们可以通过以下开启人脸驱动和关闭人脸驱动的自动对焦和曝光对比图来感受一下效果的差异。
 
 ![af_contrast](./images/af_contrast.png)
-![af_contrast](./images/af_contrast.png)
+![ae_contrast](./images/ae_contrast.png)
 
 FaceDriven AF/AE 相关 API 仅两个属性，如下图所示：
 ![af_api](./images/af_api.png)
