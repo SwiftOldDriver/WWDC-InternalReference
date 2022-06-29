@@ -1,13 +1,16 @@
 
 ## 封面
 
-![cover](/Users/lvdaqian/Documents/session_10155/images/cover.jpg)
+![cover](images/cover.jpg)
 
 ## 作者介绍
 
 吕大千，目前就职于字节跳动飞书视频会议团队，担任会议室解决方案业务架构师。
 
 ## 审核介绍
+
+- Vong， iOS 开发者，擅长 App 性能调优，目前从事直播领域研发
+- 曾铭，老司机技术社区成员，就职于字节音乐团队
 
 ## 文章简介
 
