@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/kemchenj/danger.git
-  revision: 885ba4811c3757cabaf26d914900081e36ac0afe
-  ref: 885ba4811c3757cabaf26d914900081e36ac0afe
+  revision: ff8daae04bb69688356e653cac9bfadb704befec
+  ref: ff8daae04bb69688356e653cac9bfadb704befec
   specs:
     danger (8.6.1)
       claide (~> 1.0)
