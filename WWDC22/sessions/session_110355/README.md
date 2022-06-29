@@ -163,14 +163,14 @@ case .second(let res, let iter):
 
 还有一点需要提醒的是，`group.next()` 的返回值并不是按照 `.addTask` 方法的顺序去返回的。`withTaskGroup` 内部的 TaskGroup 是符合 AsyncSequence 协议的，所以 Task 的任务完成之后会把结果先放到异步序列的缓冲区。而 next 的取值会先从这个缓冲区去取值。如果缓冲区为空，那么就会等待其中一个任务的完成。
 
-在 switch 代码里，只有当 res 是 `.sucess` 且 value 有值的时候，整个 `iteration` 的返回值才会是 `nil`，其他情况下的 `iteration` 都是有成功或失败的返回值。从结果上来看，除非两次 iteration 方法调用之后的 res 都有值，才会执行 return 两个 res 方法。
+在 switch 代码里，只有当 res 是 `.success` 且 value 有值的时候，整个 `iteration` 的返回值才会是 `nil`，其他情况下的 `iteration` 都是有成功或失败的返回值。从结果上来看，除非两次 iteration 方法调用之后的 res 都有值，才会执行 return 两个 res 方法。
 
 那么到这就可以实现从两个 `AsyncSequence` 取值且保证取值顺序一致。两个 `AsyncSequence` 都只调用了一次自己的 `next` 迭代方法。
 
 #### 延伸
 
 在 Swift 的论坛中，继续讨论了 zip 的实现方向。
-比如 [withLatestFrom](https://forums.swift.org/t/pitch-withlatestfrom/56487) 方法,对应的 [pull request](https://github.com/apple/swift-async-algorithms/pull/147) 。这个方法处理的就是两个 AsyncSequence 已不同速率更新值的时候，使用的都是最新的值。
+比如 [withLatestFrom](https://forums.swift.org/t/pitch-withlatestfrom/56487) 方法，对应的 [pull request](https://github.com/apple/swift-async-algorithms/pull/147) 。这个方法处理的就是两个 AsyncSequence 已不同速率更新值的时候，使用的都是最新的值。
 
 比如 [Do we want forEach?](https://forums.swift.org/t/do-we-want-foreach/56929) 讨论了 forEach 是否需要，以及和 for-in 用法的区别。
 
@@ -473,13 +473,9 @@ let elapsed = await clock.measure {
 
 在 [Github README](https://github.com/apple/swift-async-algorithms) 里可以看到关于这些方法的对应的系列和分类。
 
-## 总结
+## 比较
 
-文章的主要内容介绍了部分算法和新增的 Clock 协议，深入阅读和理解其实现的源码。Async Algorithms 在 Swift Concurrency 方向上提供了更多更全的算法和支持，包括通用算法，时间概念下的算法
-
-在部分章节里中还延伸了一些框架的提案，引用了论坛中比较精彩的讨论。在这些延伸内容，会发现不仅仅在讨论功能的实现的同时，也在和其他语言或者框架在做比对
-
-### 比较
+在部分章节里中延伸了一些框架的提案，引用了论坛中比较精彩的讨论。在这些延伸内容，会发现不仅仅在讨论功能的实现的同时，也在和其他语言或者框架在做比对
 
 仔细观察 Async Algorithms 这些方法，包括在文章中提到的，会发现这和面向过程框架里的 Rx 和 Combine 有很多相近的地方
 
@@ -522,9 +518,17 @@ for try await (vid, preview) in zip(videos, previews) {
 
 包括 merge/combineLatest/debounce 方法等等，这些都能够在这俩框架里找到相近的方法。
 
-所以可以从另外一个角度来看这个 Session 的内容：
+## 总结
+
+文章的主要内容介绍了新增的部分算法和 Clock 协议，并且深入阅读其实现的源码。在一步步探索的过程中，逐渐理解方法的实现和学习官方的示例代码，顺便查阅到一些类似方法之间的区别，甚至还能看到跨平台源码的实现。
+
+Async Algorithms 开源包在 Swift Concurrency 方向上提供了更多更全的算法和支持，包括通用算法，时间概念相关的算法。从现在已有的能力来看，已经覆盖了比较常见的部分。而且苹果继续保持了 Swift 概念和语法的一致性，这也为我们更容易的使用提供了帮助。
+
+在阅读相关提案和讨论的时候，大家的讨论也能帮助我们更好的理解框架和其用途。这些内容里包括了方法实现的方案和目的，以及和其他框架实现相比较。
+
+所以我们可以跳出 Swift Concurrency 这个框架来看这个 Session 的内容：
 
 1. 在面向过程开发的框架里，视频里提到的这些方法几乎都已经有了，包括以时间为参数的算法
 2. AsyncSequence 更像是面向过程中的发送事件的角色（AsyncStream，AsyncChannel）。而异步体现在了 async/await 的使用上
-3. 实现了面向过程的结构和常见算法，然后新增 Clock 来支持基于时间上的面向过程处理。
-4. 以面向对象的方式来实现了其他框架面向过程的开发。
+3. 实现了面向过程的结构和常见算法，然后新增 Clock 来支持基于时间上的面向过程处理
+4. 以面向对象的方式来实现了其他框架面向过程的开发
