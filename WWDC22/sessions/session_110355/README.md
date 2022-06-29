@@ -236,64 +236,6 @@ switch state {
 1. 比如 zip/merge 方法内部的 next 方法里对于有值和无值使用了枚举的方式来处理
 2. 内部使用 Task 来完成异步调用，包括 Task 相关的优先级参数，返回值，等等
 
-#### 错误捕获
-
-在前面的关于方法实现的代码里，可以发现调用的几个方法里都有返回错误的情况，比如 next 方法有 rethrows 关键词。
-从对应代码的逻辑可以看出，是只要当其中一个 AsyncSequence 报错了，也就是返回了 nil，zip 方法就会停止。
-
-那么自定义实现的 AsyncSequence 要怎么处理错误的情况呢？关键词：[AsyncThrowingStream](https://github.com/apple/swift/blob/4b0824ce23c2576f15d85d2ddbb8ab14660b0d32/stdlib/public/Concurrency/AsyncThrowingStream.swift)
-
-这里贴出官方的代码举例：
-
-```Swift
-class QuakeMonitor {
-   var quakeHandler: ((Quake) -> Void)?
-   var errorHandler: ((Error) -> Void)?
-
-   func startMonitoring() {…}
-   func stopMonitoring() {…}
-}
-```
-
-Continuation 就是 AsyncStream 里用来处理值相关的结构体
-
-1. 传递值的方法： `yield` 方法
-2. 结束并抛出错误的方法： `finish(throwing: )`
-3. 当然也有直接结束的方法：`finish()`
-
-```Swift
-extension QuakeMonitor {
-  static var throwingQuakes: AsyncThrowingStream<Quake, Error> {
-      AsyncThrowingStream { continuation in
-           let monitor = QuakeMonitor()
-           monitor.quakeHandler = { quake in
-               continuation.yield(quake)
-           }
-           monitor.errorHandler = { error in
-               continuation.finish(throwing: error)
-           }
-           continuation.onTermination = { @Sendable _ in
-               monitor.stopMonitoring()
-           }
-           monitor.startMonitoring()
-       }
-  }
-}
-```
-
-这里就可以拿到 `finish(throwing:)` 抛出的错误
-
-```Swift
-do {
-    for try await quake in throwingQuakes {
-        print ("Quake: \(quake.date)")
-    }
-    print ("Stream done.")
- } catch {
-    print ("Error: \(error)")
- }
-```
-
 ## 时钟 Clock
 
 文档里对 Clock 协议是这么描述的：
