@@ -354,38 +354,38 @@ let sleep: Task<Partial, Never> = Task { [tolerance, clock] in
 
 ```Swift
 public static func select<Tasks: Sequence & Sendable>(
-    _ tasks: Tasks
-  ) async -> Task<Success, Failure>
-  where Tasks.Element == Task<Success, Failure> {
-    let state = ManagedCriticalState(TaskSelectState<Success, Failure>())
-    return await withTaskCancellationHandler {
-      let tasks = state.withCriticalRegion { state -> [Task<Success, Failure>] in
-        defer { state.tasks = nil }
-        return state.tasks ?? []
-      }
+  _ tasks: Tasks
+) async -> Task<Success, Failure>
+where Tasks.Element == Task<Success, Failure> {
+  let state = ManagedCriticalState(TaskSelectState<Success, Failure>())
+  return await withTaskCancellationHandler {
+    let tasks = state.withCriticalRegion { state -> [Task<Success, Failure>] in
+      defer { state.tasks = nil }
+      return state.tasks ?? []
+    }
+    for task in tasks {
+      task.cancel()
+    }
+  } operation: {
+    await withUnsafeContinuation { continuation in
       for task in tasks {
-        task.cancel()
-      }
-    } operation: {
-      await withUnsafeContinuation { continuation in
-        for task in tasks {
-          Task<Void, Never> {
-            _ = await task.result
-            let winner = state.withCriticalRegion { state -> Bool in
-              defer { state.complete = true }
-              return !state.complete
-            }
-            if winner {
-              continuation.resume(returning: task)
-            }
+        Task<Void, Never> {
+          _ = await task.result
+          let winner = state.withCriticalRegion { state -> Bool in
+            defer { state.complete = true }
+            return !state.complete
           }
-          state.withCriticalRegion { state in
-            state.add(task)
-          }?.cancel()
+          if winner {
+            continuation.resume(returning: task)
+          }
         }
+        state.withCriticalRegion { state in
+          state.add(task)
+        }?.cancel()
       }
     }
   }
+}
 ```
 
 1. withTaskCancellationHandler 闭包会在 Task.Select 的调用方取消任务之后，将 state.tasks 里的任务依次取消
