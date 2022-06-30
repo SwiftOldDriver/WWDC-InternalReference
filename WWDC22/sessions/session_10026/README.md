@@ -28,8 +28,9 @@ session_ids: [10026]
 本文主要是介绍静态图片内容相关的场景。 如果你是要分析的是摄像头实时采集画面，比如在画面中搜索像二维码之类的内容，`VisionKit` 也提供了一个内容扫描类，可以帮你处理该场景。
 
 相关的内容，可以在以下链接获取更多信息。
- - [wwdc2022-10025：Capture machine-readable codes and text with VisionKit][wwdc2022-10025]
- - [WWDC2022 内参：VisionKit 的机器视觉方案，更智能的捕获文本与条码][wwcdc-xiaozhuanlan]
+
+- [wwdc2022-10025：Capture machine-readable codes and text with VisionKit][wwdc2022-10025]
+- [WWDC2022 内参：VisionKit 的机器视觉方案，更智能的捕获文本与条码][wwcdc-xiaozhuanlan]
 
 实况文本 **API** 从 **iOS 16** 开始，可以在配有 A12 仿生或后续芯片的 **iPhone** 的设备上使用。**Mac** 上的版本要求是 `macOS 13` 系统及以后。
 
