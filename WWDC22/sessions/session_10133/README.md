@@ -6,9 +6,9 @@ session_ids: [10133]
 
 本文基于 [Session 10133](https://developer.apple.com/videos/play/wwdc2022/10133/) 梳理。
 
-> 作者：Layer（杨杰），就职于抖音 iOS 即时通讯团队。
+> 作者：Layer（杨杰），就职于抖音即时通讯团队。
 >
-> 审核：
+> 审核：Cyandev，目前就职于抖音基础技术团队，研发流程方向全栈工程师，在 Swift、大前端领域有比较丰富的经验。
 
 ## 回顾与概述
 
@@ -157,7 +157,7 @@ struct WatchTaskLiskSample_Watch_AppApp: App {
 }
 ```
 
-> `@StateObject` 是[实例化「可观察对象」的属性包装器类型](https://developer.apple.com/documentation/swiftui/stateobject)。与 `@State` 相比，`@State` 适用于值类型，而 `@StateObject` 适用于引用类型。
+> `@StateObject` 是[实例化「可观察对象」的属性包装器类型](https://developer.apple.com/documentation/swiftui/stateobject)。`@State` 和 `@StateObject` 的区别在对属性的观察粒度，`@State` 是以整个属性为单位进行观察，而 `@StateObject` 观察属性的内部属性。因此，`@State` 多用于值类型，`@StateObject` 多用于引用类型，因而 `@StateObject` 需要配合 `ObservableObject` 和 `@Published` 使用。
 
 现在让我们使用 model 在 `ContentView` 的 `body` 中创建一个 `List`。由于还没有 `items`，所以当我们预览它时，我们会看到一个空 `List`。
 
@@ -542,7 +542,7 @@ struct ProductivityChart: View {
 }
 ```
 
-现在我们将设置一个带有页面样式选项卡视图的 `ContentView`，该视图具有 2 个选项卡：项目列表和图表。我们之前在 `WatchTaskLiskSample_Watch_AppApp` 新增了 `NavigationStack` 代码，现在可以删除该结构。
+现在我们将设置一个带有页面样式选项卡视图的 `ContentView`，该视图具有 2 个选项卡：项目列表和图表。
 
 ```swift
 struct ContentView: View {
@@ -558,6 +558,8 @@ struct ContentView: View {
     }
 }
 ```
+
+> 在“添加列表”部分，我们在 `struct WatchTaskLiskSample_Watch_AppApp` 里写了 `NavigationStack { ContentView().environmentObject(itemListModel) }` 这几行代码，现在可以删除这部分的 `NavigationStack` 结构。
 
 ![](./images/chart_placeholder.png)
 
@@ -640,7 +642,6 @@ struct ProductivityChart: View {
 为了在 Watch 上显示我们想要的样式，我们使用 Chart 的 `chartXAxis` 修饰符自定义 x 轴。我们也不需要垂直网格线，所以我们省略了 `AxisGridLine` 标记。
 
 ```swift
-// Customize the x-axis appearance
 .chartXAxis {
     AxisMarks { _ in
         AxisValueLabel(format: shortDateFormatStyle)
@@ -719,7 +720,11 @@ chart
     .navigationBarTitleDisplayMode(.inline)
 ```
 
-我们将 `detent` 值绑定到 `highlightDateIndex` 属性。在机械相关术语中，`detent` 是一种将某物保持在某个位置的设备，直到施加足够的力来移动它。例如，当我们打开车门时，车门会出现一个“停止”位置。我可以再用力一点，把门打开得更宽，然后车门再“停下”，这个例子有助于我们理解这个 API。`detent` 在物理上，是我们视野中表冠静止时的槽口位置。
+`detent` 是 [watchOS 9.0+ Bata](https://developer.apple.com/documentation/swiftui/form/digitalcrownrotation(detent:from:through:by:sensitivity:iscontinuous:ishapticfeedbackenabled:onchange:onidle:)-7a14) 的新 modifier。我们将 `detent` 值绑定到 `highlightDateIndex` 属性。
+
+在机械相关术语中，`detent` 指棘爪，是一种将物体保持在某个位置的设备，除非我们施加足够的力来移动它。例如下面这张示意图，如果我们没把棘爪移动到下一个棘轮的槽口来卡住棘轮，那么棘轮将回弹到上一个槽口。`detent` 在这里是数码表冠的槽口位置。
+
+![](./images/detent.png)
 
 在 `onChange` 回调中，因为我们知道表冠此时正在滚动，所以将 `isCrownIdle` 的值设置为 `false`，同时将 `crownOffset` 值设置为表冠滚动事件的位移值 `crownEvent.offset` ，以便在在滚动期间显示当前位置。
 
@@ -805,7 +810,7 @@ BarMark(
 }
 ```
 
-![](./images/chart_position.gif)
+![](./images/chart_position.png)
 
 以上，我们仅使用 `digitalCrownRotation` 修饰符、Swift Charts 中的 `RuleMark` 和一个简单的 SwiftUI 动画完成了项目。
 
