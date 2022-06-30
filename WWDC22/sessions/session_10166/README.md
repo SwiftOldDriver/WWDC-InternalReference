@@ -2,7 +2,7 @@
 session_ids: [10166]
 ---
 
-# WWDC22 10166 - 探索应用追踪透明化 App Tracking Transparency
+# WWDC22 10166/10167 - 探索应用追踪透明化 App Tracking Transparency 与隐私标签
 
 > 作者：小铁匠 Linus，iOS 开发者，微信公众号《WLB 工作生活两不误》号主。
 >
@@ -13,11 +13,12 @@ session_ids: [10166]
 
 当用户了解了自己的数据将如何被共享时，他们才更有可能信任并使用 App。这就是为什么从 iOS 14 开始，苹果官方要求所有的 App 在追踪用户之前必须获得用户授权的原因。
 
-本文主要从以下三个方面探讨 App Tracking Transparency：
+本文主要从以下四个方面探讨 App Tracking Transparency：
 
 1. 如何定义用户追踪
 2. 在明确需要用户追踪的情况下，如何获得用户的许可
-3. 注意事项
+3. 隐私标签的使用
+4. 注意事项
 
 > 相关 Session ：
 >
@@ -115,6 +116,22 @@ if (@available(iOS 14, *)) {
 }
 ```
 
+### 隐私标签（Privacy Nutrition Label）
+
+从 WWDC 2020 开始，开发者在提交 App 时，还需要声明 App 将使用什么数据来追踪，而这些描述会显示在 App 的隐私营养标签（Privacy Nutrition Label）上。隐私营养标签（下称：隐私标签），类似于食物上的营养标签，展示的是 App 在用户追踪时所需信息的描述。
+
+![](./images/label.png)
+
+#### 如何创建隐私标签
+
+为了创建隐私标签，开发者可以在 App Store Connect 中就 App 收集的数据、数据类型的场景，以及这些数据如何存储进行说明。作为开发者，你可能没法完整列举 App 中的所有数据类别，除了可以从列出 App 所有功能开始以外，也请确保与 App 的各类干系人取得联系。比如，了解营销团队使用了哪些数据，与法务一起梳理 App 隐私政策中记录的所有数据等等。
+
+#### 隐私标签的更新策略
+
+开发者可以在任何时候更新隐私标签，并且不需要 App 发布新版本。苹果官方的建议是在改变 App 中数据使用的方式时，需要确保隐私标签是最新的。常见的场景有，在 App 中添加了新功能、接入了新的第三方 SDK，或收集了新的数据等等。比如，IP 地址可以用于多种目的，包括作为标识符或用来推断用户的大致位置。如果需要使用 IP 地址来进行位置分析，那么就需要在隐私标签中声明位置这一项。
+
+![](./images/data_collection.png)
+
 ## 注意事项
 
 首先，根据 App Store 审查指南，不能因为用户不同意授权 App 的追踪权限而限制功能。
@@ -122,8 +139,6 @@ if (@available(iOS 14, *)) {
 其次，如果用户要求你的 App 不要追踪，IDFA API 将返回全零。那么，此时 App 只能使用不带有追踪的广告进行替代。
 
 而对于广告效果测量方面，苹果也在持续建立和改进广告网络的相关技术。有关 SKAdNetwork 和广告点击转化计算等方面的更多信息，请参阅 [Session 10033 Meet privacy preserving ad attribution](https://developer.apple.com/videos/play/wwdc2021/10033/) 和 [Session 10038 What's new with SKAdNetwork](https://developer.apple.com/videos/play/wwdc2022/10038)。
-
-在提交 App 时，还需要声明 App 将使用什么数据来追踪，而这些描述会显示在 App 的隐私营养标签（Privacy Nutrition Label）上。隐私营养标签，类似于食物上的营养标签，展示的是 App 在用户追踪时所需信息的描述。有关隐私营养标签以及如何在 App 中填写营养标签，请参阅 [Session 10167 Create your Privacy Nutrition Label](https://developer.apple.com/videos/play/wwdc2022/10167)。
 
 最后，苹果官方对指纹（Fingerprinting）的态度非常坚决：无论用户是否授予 App 追踪的权限，利用指纹或其它来自设备的信息尝试识别设备或用户，都是不允许的。其中，尝试识别的内容包括但不限于用户的 Web 浏览器及其配置、用户的设备及其配置、用户的地理位置或用户的网络连接等。
 
