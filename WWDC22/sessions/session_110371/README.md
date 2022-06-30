@@ -18,6 +18,7 @@ session_ids: [110371]
 - 支持苹果生态：iOS iPadOS macOS watchOS
 
 为了提高生产力，许多公司/开发会使用跨平台技术进行开发：
+
 - 针对移动平台：有 Flutter 和 React Native 跨平台技术。
 - 针对苹果生态：早些年，开发 iOS iPadOS 应用需要 UIKit ，开发 macOS 应用需要 AppKit，需要创建两个项目，二者差异大，维护两端成本高。
 
@@ -34,7 +35,7 @@ session_ids: [110371]
 - 多平台项目下应用的发布
 
 > 注：文章撰写时 Xcode 14， macOS 13，iOS 16 均属于 beta 版本，和最终正式版可能会存在一些差异。
-> 
+>
 
 ## Xcode 14 创建多平台项目
 
@@ -68,6 +69,7 @@ session_ids: [110371]
 这里的三个选项分别是：Mac、Mac Catalyst、Mac (Designed for iPad)
 
 可以根据以下方法选择适合自己项目的：
+
 1. 如果项目使用 SwiftUI，需要使用 SwiftUI 创造 Mac 原生体验，那么选择 Mac，可以使用 AppKit 实现 SwiftUI 无法完成的需求；
 2. 如果项目已有 iOS 应用，使用 UIKit/Storyboard/Xib 开发，那么优先选择 Catalyst，可以把 iOS 应用转换为兼容 Mac 的应用；
 3. 如果选择 Mac (Designed for iPad) 则可以让 使用苹果芯片的 Mac 运行 iOS 的应用。
@@ -92,6 +94,7 @@ session_ids: [110371]
 ## 旧项目支持多平台
 
 ### 兼容到 Xcode 14
+
 如果你有使用 Xcode 14 以下版本创建的项目，那么使用 Xcode 14 打开即可以看到多平台选项。添加多平台支持方法和新创建的项目一致。
 
 这里让我们使用 Xcode 14 打开 Xcode 13 所创建的项目，选中名为 "Xcode 13 (iOS)" 的 Target，打开通用设置页添加对 Mac 平台的支持。当项目第一次添加 Mac 支持时，Xcode 会提示会更新 Target 内容包含支持 Mac 平台所需到依赖和框架，原支持 iOS 的 capability 也会支持 macOS。
@@ -100,6 +103,7 @@ session_ids: [110371]
 ![](./images/5.png)
 
 ## 多平台项目开发
+
 新建的项目默认使用的框架为 SwiftUI，无法更改，但是在 Mac 平台，SwiftUI 可以与 Appkit 混编，在 iOS 平台，SwiftUI 可 以和 UIKit 混编。这里简单演示下开发过程：
 打开刚才创建的 Xcode 14 项目，在 ContentView.swift 文件中输入以下内容
 
@@ -113,11 +117,13 @@ struct ContentView: View {
     }
 }
 ```
+
 这时候在 SwiftUI preview 可以看到针对 Mac 的预览
 
 ![](./images/16.png)
 
 既然是多平台开发，验证多平台的 UI 必不可少，接下来让我们添加 iPhone 和 iPad 的预览，在刚才的文件中，加入如下代码，就可以同时看到多平台的预览效果
+
 ```swift
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
@@ -127,6 +133,7 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 ```
+
 ![](./images/17.png)
 
 ![](./images/18.png)
@@ -182,4 +189,3 @@ struct ContentView_Previews: PreviewProvider {
 ## 写在结尾
 
 App Store 上经常可以看到一些精美的应用支持 iOS、iPadOS 双平台，然而当你把目光放到 macOS 时，却不见它们身影，许些遗憾。对于很多 iOS 开发者而言 macOS 开发资料少，难度大，于是都放弃了对 macOS 的兼容。希望通过本文，大家能够对多平台应用开发能有一定的了解，并逐步用上这个技术。
-
