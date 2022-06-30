@@ -14,7 +14,7 @@ session_ids: [10076]
 
 *苹果嘴上说不要，身体却很诚实。*
 
-虽然 Tim Cook 和苹果高级副总裁 Craig Federighi 都曾经明确否认 iOS 与 macOS 并不会走向融合，还强调 Mac 设备不可能推出触屏版，但是其实苹果在 2019 年开始，就在推动开发者将 iOS 应用带到 macOS 中。
+虽然 Tim Cook 和苹果高级副总裁 Craig Federighi 都曾经明确否认 iOS 与 macOS 并不会走向融合，还强调 Mac 设备不可能推出触屏版，但是其实苹果在 2018 年开始，就将 iOS 上的几个应用移植到 macOS Mojave 上，并在 2019 年正式发布 Mac Catalyst，推动开发者将 iOS 应用带到 macOS 中。
 
 在 M 系列芯片的支持下，两者已经在硬件上实现了打通：
 
