@@ -39,9 +39,9 @@ session_ids: [10048]
 
 基于这个视角我们再看下浏览器和浏览器内核的一些历史故事。
 
-初代图形浏览器可以追溯到 Mosaic，它诞生于 1993 年，由 NCSA 开发。Mosaic 的主要开发者嗅到商机建立 Netscape 公司，并发布了 Netscape Navigator（网景浏览器）。微软获取了 Mosaic 的授权开发了 IE 浏览器，并以此为基础推出了 Trident 内核。网景浏览器被 IE 彻底打败，后来建立了Mozilla 组织，开发维护另一个浏览器内核 Gecko，基于此内核推出了 Firefox 浏览器。
+初代图形浏览器可以追溯到 Mosaic，它诞生于 1993 年，由 NCSA 开发。Mosaic 的主要开发者嗅到商机建立 Netscape 公司，并发布了 Netscape Navigator（网景浏览器）。微软获取了 Mosaic 的授权开发了 IE 浏览器，并以此为基础推出了 Trident 内核。网景浏览器被 IE 彻底打败，后来建立了 Mozilla 组织，开发维护另一个浏览器内核 Gecko，基于此内核推出了 Firefox 浏览器。
 
-除了Gecko 还有一个优秀的浏览器框架是 KHTML。macOS 早期需要一个浏览器，Apple 就将目光锁定在了[KDE](https://zh.wikipedia.org/wiki/KDE) 的 [KHTML](https://zh.wikipedia.org/wiki/KHTML)和 [KJS](https://zh.wikipedia.org/zh-sg/KJS) ，并以此为基础开发了 WebKit。WebKit 的排版引擎是 WebCore，JS引擎是 JavaScriptCore，其最早用于 Safari 浏览器。
+除了 Gecko 还有一个优秀的浏览器框架来自于 [KDE](https://zh.wikipedia.org/wiki/KDE)。macOS 早期需要一个浏览器，Apple 就将目光锁定在了[KDE](https://zh.wikipedia.org/wiki/KDE) 的 [KHTML](https://zh.wikipedia.org/wiki/KHTML) 和 [KJS](https://zh.wikipedia.org/zh-sg/KJS) ，并以此为基础开发了 WebKit，并重命名为 WebCore 及 JavaScriptCore。
 
 Google 的 Chrome 早期使用了 WebKit 的 WebCore 作为排版引擎，JS 引擎为其自研的 V8。之后 Google 不再满足于 WebCore 的能力，在其之上开发了 [Blink](https://zh.m.wikipedia.org/zh-sg/Blink)渲染引擎，[Blink](https://zh.m.wikipedia.org/zh-sg/Blink)和 V8 一起构成了 Chromium 内核。
 历史轮转，微软这边，IE 一度落后于其他主流浏览器。于是推出了 Edge 浏览器，Edge 内核早期采用 EdgeHTML 和 Chakra 进行排版引擎和 JS 引擎，但仍然没有太多起色。之后微软宣布将 Chakra 开源，新的 Edge 转为 Chromium 内核。
