@@ -7,6 +7,7 @@ session_ids: [10147]
 本文基于 [Session 10147](https://developer.apple.com/videos/play/wwdc2022/10147/) 梳理。
 
 > 作者：刘思源，就职于字节跳动音乐团队，现参与汽水音乐。
+> 审核：青稞，字节音乐客户端基础技术负责人。
 
 这篇 session 围绕着 Apple 新升级的视频播放器，描述了新的播放器的新界面、新功能，以及 Apple 自己对提高视频播放体验的建议和思考。
 
