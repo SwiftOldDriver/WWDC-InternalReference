@@ -131,7 +131,19 @@ session_ids: [10056]
 
 - 如上图，接口提供了 `subviews` 参数，我们不可以直接修改它，但是可以获取到它们的相关信息，比如它们的 `sizeThatFits` 。
 - 遍历所有的子视图，找出宽度最宽的子视图，拿到它的大小。在示例中，最宽的子视图是 `Goldfish` 。
-- 确定每个子视图之间的间距，并将所有的间距相加。在示例中，通过 `subviews[index].spacing` 的方式拿到了 SwiftUI 默认的间距，当然也可以根据自己的需要自定义。
+- 确定每个子视图之间的间距，并将所有的间距相加。在示例中，通过下面代码块拿到了 SwiftUI 默认的间距，当然也可以根据自己的需要自定义间距的值。
+
+```
+private func spacing(subviews: Subviews) -> [CGFloat] {
+    subviews.indices.map { index in
+        guard index < subviews.count - 1 else { return 0 }
+        return subviews[index].spacing.distance(
+            to: subviews[index + 1].spacing,
+            along: .horizontal)
+    }
+}
+```
+
 - 因为我们在自定义的是一个横向的布局容器，所以无需重新计算高度，只要使用子视图的高度即可。
 - EqualWidthHStack 宽度等于最宽的子视图的宽度乘以子视图的数量，加上总间距。
 - 最终把得到的理想大小上报给容器视图。
