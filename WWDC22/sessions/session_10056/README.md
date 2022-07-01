@@ -67,7 +67,7 @@ session_ids: [10056]
 
 首先，如上图，我们使用 `alignment` 来初始化 `Grid` 。在这里使用的值 `.leading` 适用于 `Grid` 中的所有单元格，现在前两列看起来已经满足我们了。
 
-**但最后一列呢？我们希望的是让它右对齐。**
+**但最后一列怎么办呢？我们希望的是让它右对齐。**
 
 ![](./images/grid_alignment_2.png)
 
@@ -75,7 +75,7 @@ session_ids: [10056]
 
 ### 接下来让我们来看下第三个需求的分析和实现
 
-**现在我们得到了一个还不错的效果，但是每行之间可以加一条分隔线吗？**
+**现在我们得到了一个还不错的效果，但是可以给每行之间加一条分隔线吗？**
 
 ![](./images/divider_1.png)
 
@@ -93,7 +93,7 @@ session_ids: [10056]
 
 ## 场景二：Layout & ViewThatFits
 
-本小节会分为三个部分讨论如何使用新的布局接口创建自定义的 SwiftUI 容器类型，在阅读本小节需要小伙伴掌握 SwiftUI 基础的布局知识，如果还不了解的，可以先参阅 WWDC19 [在 SwiftUI 中创建自定义视图](https://developer.apple.com/videos/play/wwdc2019/237)。
+本小节会分为三个部分讨论如何使用新的布局接口创建自定义的 `SwiftUI` 容器类型，在阅读本小节需要小伙伴掌握 `SwiftUI` 基础的布局知识，如果还不了解的，可以先参阅 WWDC19 [在 SwiftUI 中创建自定义视图](https://developer.apple.com/videos/play/wwdc2019/237)。
 
 ### 第一部分：自定义布局投票按钮组件
 
@@ -101,7 +101,7 @@ session_ids: [10056]
 
 如上图，需求是所有按钮的宽度与最宽的那个按钮保持一致。
 
-**乍一看，这是一个平平无奇的需求，那么我们使用 Hstack 构建它会发生什么？**
+**乍一看，这是一个平平无奇的需求，那么我们使用 `Hstack` 构建它会发生什么？**
 
 ![](./images/voting_buttons_default.png)
 
@@ -115,13 +115,13 @@ session_ids: [10056]
 
 `Text` 计算它们实际需要的大小，这取决于它们包含的字符串，并将其大小上报给 `Button`。然后 `Button` 又把大小往上层视图传递，`HStack` 使用此信息自行调整大小，将 `Button` 放置在其空间中，然后将自己的大小上报给容器。
 
-**如果我将每个 Text 包装在一个 Flexible Frame 中并让它可以随意增长，是不是可以达到我们想要的效果呢？**
+**如果我将每个 Text 包装在一个 `Flexible Frame` 中并让它可以随意增长，是不是可以达到我们想要的效果呢？**
 
 ![](./images/voting_buttons_flexible.png)
 
 如上图，我们通过一个视图修改器 `.frame(maxWidth: .infinity)` 实现了它。现在每个 `Button` 变成了等宽的效果，但是这并没有完全符合我们的预期，当屏幕容器变成 iPad 和 Mac 上，这个视图会撑满整个屏幕，显得十分的拥挤。
 
-**那我们能否实现一个自定义的布局容器 EqualWidthHStack ，来 100%的满足我们的需求呢？**
+**那我们能否实现一个自定义的布局容器 `EqualWidthHStack` ，来 100% 的满足我们的需求呢？**
 
 可以的，`SwiftUI` 提供了一组新的 `Layout` 协议，该协议提供了两个核心接口 `sizeThatFits` 和 `placeSubviews`，使得我们可以直接来控制上报给容器的大小和每个子视图的位置与大小。
 
@@ -159,13 +159,13 @@ private func spacing(subviews: Subviews) -> [CGFloat] {
 
 最终我们终于得到了我们预期的效果。
 
-但是因为我们在自定义布局当中给子视图提供的都是理想大小，Button 的大小只取决于它们包含的文本的宽度，并不会去考虑屏幕空间。当被设置为超大字体时，它们并不会折行，而是会直接超出屏幕的显示区域。
+但是因为我们在自定义布局当中给子视图提供的都是理想大小，`Button` 的大小只取决于它们包含的文本的宽度，并不会去考虑屏幕空间。当被设置为超大字体时，它们并不会折行，而是会直接超出屏幕的显示区域。
 
 ### 第二部分：根据屏幕空间选择容器集合里最合适的容器
 
 **可以不可以有什么智能的方式，在合适屏幕空间选择合适的布局容器呢？**
 
-在这里，SwiftUI 提供了新的布局容器选择器 ViewThatFits，我们可以把它当做一个容器视图的集合，它可以自动选择合适的容器视图来适配屏幕的空间。
+在这里，`SwiftUI` 提供了新的布局容器选择器 `ViewThatFits`，我们可以把它当做一个容器视图的集合，它可以自动选择合适的容器视图来适配屏幕的空间。
 
 ![](./images/view_that_fits_1.png)
 
@@ -232,15 +232,15 @@ private func spacing(subviews: Subviews) -> [CGFloat] {
 3. 子视图上报自己的大小给容器。
 4. 容器基于 `alignment` 定位子视图在其中的位置。
 
-有没有一种回到 `UIKit frame` 手动布局的味道？ 可以看出 `frame?` 对于 SwiftUI Layout 的重要。
+有没有一种回到 `UIKit frame` 手动布局的味道？ 可以看出 `.frame` 对于 `SwiftUI Layout` 的重要性。
 
-**那如果抛开最新 `Layout API`，开发者怎么去获取 `SwiftUI View frame?` 呢？**
+**那如果抛开最新 `Layout API`，开发者怎么去获取 `SwiftUI View .frame` 呢？**
 
 简单的回答是 `GeometryReader`，它的本质是一个闭包，闭包的参数是一个叫 `GeometryProxy`,通过该参数我们可以获取到 `safe area, frame`。
 
 然后子视图可以通过 `View Preferences` 将获取到大小/位置信息上报给自己容器视图。
 
-**那这样的话不也是可以实现 `sizeThatFits` 和 `placeSubviews` 类似功能吗？这不是显得有些鸡肋了？**
+**那这样的话不也是可以实现 `sizeThatFits` 和 `placeSubviews` 类似功能吗？新的 `Layout` 协议是不是显得有些鸡肋了？**
 
 ![](./images/geometry_reader.png)
 
@@ -258,7 +258,7 @@ private func spacing(subviews: Subviews) -> [CGFloat] {
 
 如上图，通过在 `ViewModifier overlay` 中添加一个 `GeometryReader` 来读取视图的布局信息。
 
-这个场景可以经常在日常 Debug 中使用，可以帮助大家获得父视图准确的布局信息，避免一些 SwiftUI 里反直觉的坑。
+这个场景可以经常在日常 Debug 中使用，可以帮助大家获得父视图准确的布局信息，避免一些 `SwiftUI` 里反直觉的坑。
 
 风险等级：低。
 
