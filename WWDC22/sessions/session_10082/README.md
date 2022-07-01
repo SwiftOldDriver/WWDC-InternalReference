@@ -17,7 +17,7 @@ session_ids: [10082]
 
 
 ## 导读
-今年Apple在开发全链路过程中对于卡顿问题的治理分析工具上做了一次相对较完整的更新，借此机会笔者将结合本次WWDC22的更新内容与大家一同探讨个话题——卡顿的治理。本文篇幅有点长，建议大家先浏览下文章的思维导图，可以帮助大家提前梳理本文的主体脉络。
+今年Apple在开发全链路过程中对于卡顿问题的治理分析工具上做了一次相对较完整的更新，借此机会笔者将结合本次WWDC22的更新内容与大家一同探讨分享个话题——卡顿治理。本文篇幅有点长，建议大家先浏览下文章的思维导图，可以帮助大家提前梳理本文的主体脉络。
 ![mind](images/mind.png)
 
 
@@ -109,7 +109,7 @@ session_ids: [10082]
 
 ![food_truck_with_hangs](images/session_food_truck_with_hangs.gif)
 
-这显然是我们在开发时都没有注意到的卡顿问题，它出现在了Beta测试阶段，此时我们可以切换到上述Hang Detection的Avalable Hang Logs列表中来查找该卡顿产生的日志并打开详情。如下图所示，日志详情分为两部分：一部分是基于文本的卡顿日志文件（格式类似崩溃日志），文件后缀名为.ips；另一部分则是tailspin压缩文件，tailspin文件可以在Instruments中打开查看更多维度信息（例如Timer Profile和Disk Usage等系统资源使用情况等）供深入分析使用。
+这显然是我们在开发时都没有注意到的卡顿问题，它出现在了Beta测试阶段，此时我们可以切换到上述Hang Detection的Avalable Hang Logs列表中来查找该卡顿产生的诊断日志并打开详情。如下图所示，日志详情分为两部分：一部分是基于文本的卡顿日志摘要文件（格式类似崩溃日志），文件后缀名为.ips；另一部分则是tailspin压缩文件，tailspin文件可以在Instruments中打开查看更多维度信息（例如Timer Profile和Disk Usage等系统资源使用情况等）供深入分析使用。
 
 ![hang_detection_logs](images/session_hang_detection_logs.png)
 
@@ -123,17 +123,17 @@ session_ids: [10082]
 
 ### Xcode Organizer
 
-最后当App发布到正式环境以后，后续我们就可以通过Xcode Organizer来分析线上版本App的性能指标。Xcode 14以前Organizer只提供了卡顿率这种系统性分析后的数据指标，并没有提供诸如包含堆栈信息的卡顿报告来帮助排查定位，功能上相对鸡肋。终于在Xcode 14 Organizer支持了Hang Reports，它能收集并上报线上用户在遇到卡顿时系统所产生的诊断报告数据（前提是用户同意了与App开发者共享应用分析）。如下图，Xcode 14 Organizer的Reports分类中新增加了Hang Reports栏目；左起第二栏展示问题的聚合列表，问题按用户影响程度进行排序；第三栏展示了具体问题的堆栈信息，可帮助开发者分析定位卡顿原因；第四栏展示了具体问题的汇总统计信息，比如发生卡顿的数量，操作系统和设备分布比例等。
+最后当App发布到正式环境以后，后续我们就可以通过Xcode Organizer来分析线上版本App的性能指标。Xcode 14以前Organizer只提供了卡顿率这种系统性分析后的数据指标，并没有提供诸如包含堆栈信息的卡顿报告来帮助排查定位，功能上相对鸡肋。不过在Xcode 14上Organizer终于支持了Hang Reports，它能收集并上报线上用户在遇到卡顿时系统所产生的诊断报告数据（前提是用户同意了与App开发者共享应用分析）。如下图，Xcode 14 Organizer的Reports分类中新增加了Hang Reports栏目；左起第二栏展示问题的聚合列表，问题按用户影响程度进行排序；第三栏展示了具体问题的堆栈信息，可帮助开发者分析定位卡顿原因；第四栏展示了具体问题的汇总统计信息，比如发生卡顿的数量，操作系统和设备分布比例等。
 
 ![organizer_hang_reports](images/session_organizer_hang_reports.png)
 
-例如，我们观察到Hangs Reports的问题列表中最顶部的问题占了该版本卡顿问题的21%，问题相当严重。我们尝试解决该问题，选中该问题并展开查看具体的堆栈信息，最终可以推断出该问题是因为在主线程同步读取磁盘文件而引起阻塞。这里要补充说明下上述堆栈信息是经过符号化的结果，具体只要用户在App上传到App Store时一并上传符号信息，报告中的堆栈信息就能自动符号化了。
+例如上图所示，我们观察到Hangs Reports的问题列表中最顶部的问题占了该版本卡顿问题的21%，问题相当严重。我们尝试解决该问题，选中该问题并展开查看具体的堆栈信息，最终可以推断出该问题是因为在主线程同步读取磁盘文件而引起阻塞。这里要补充说明下上述堆栈信息是经过符号化的结果，具体只要用户在App上传到App Store时一并上传符号信息，报告中的堆栈信息就能自动符号化了。
 除了Xcode Organizer本身提供的可视化分析工具之外，它也支持第三方开发者通过App Store Connect REST API获取应用的卡顿报告数据，以方便开发者将卡顿分析集成到自己内部的分析系统中并做额外分析。（具体观看WWDC20视频[Identify trends with the Power and Performance API](https://developer.apple.com/videos/play/wwdc2020/10057)的介绍）
-另外在进行排查和治理现有问题时，做好防劣化监控其实也同样重要，Apple建议开发者到Organizer的Regressions中开启版本性能指标劣化通知，当版本卡顿率突然上涨时就能收到劣化通知，并根据相应问题及时做出调整。具体可观看Apple去年WWDC21视频[Diagnose Power and Performance regressions in your app](https://developer.apple.com/videos/play/wwdc2021/10087)介绍
+另外在进行排查和治理现有问题时，做好线上防劣化监控其实也同样重要，Apple建议开发者到Organizer的Regressions中开启版本性能指标劣化通知，当版本卡顿率突然上涨时就能收到劣化通知，并根据相应问题及时做出调整。具体可观看Apple去年WWDC21视频[Diagnose Power and Performance regressions in your app](https://developer.apple.com/videos/play/wwdc2021/10087)介绍
 
 ![session_hang_regression](images/session_hang_regression.png)
 
-至此我们就今年WWDC22上Apple为开发者提供的线上/线下排查卡顿的工具做了相关探讨，对工具的使用上也有了简单的了解。但是笔者想要吐槽一点的是，Apple针对线上卡顿问题的治理分析工具的更新来得太晚了。过去大家在解决线上用户反馈的卡顿问题时苦于没有相对成熟稳定的工具进行排查定位，大多数公司和开发者不得不走上自研道路，经过多年的耕耘，业界也逐渐有了相对成熟完善的WatchDog方案，接下来我们就来简单展开讨论下。
+至此我们就今年WWDC22上Apple为开发者提供的线上/线下排查卡顿的工具做了相关探讨，对工具的使用上也有了简单的了解。但是笔者想要吐槽一点的是，Apple针对线上卡顿问题的治理分析工具的更新来得太晚了。过去大家在解决线上用户反馈的卡顿问题时，苦于Apple官方没有提供相对统一成熟的工具进行排查定位，大多数公司和开发者不得不自研工具，经过多年的耕耘，业界也逐渐有了相对成熟完善的WatchDog方案，接下来我们就来简单展开讨论下。
 
 ### 业界WatchDog方案
 
@@ -141,7 +141,7 @@ session_ids: [10082]
 
 ![session_watchdog_flow](images/session_watchdog_flow.png)
 
-具体首先对主线程Runloop注册两个事件回调：一个为begin事件回调，用于启动检测；另一个为end事件回调，用于关闭检测；在begin事件回调被触发时，可以利用`signal`机制将其运行状态传递给另一个卡顿检测线程（后面称之为monitor线程），monitor线程可以设置等待主线程signal的超时时间进行间隔采样，如果等待`signal`信号超时了，这说明主线程可能发生了阻塞；另外在end事件被触发时，通过`signal`通知monitor线程关闭卡顿检测，进入休眠状态。通过monitor线程，我们可以完整地了解主线程Runloop的运行状态，目前处于哪个阶段，耗时了多久等等。根据这些信息，我们就可以判断主线程是否发生了卡顿/卡死，并采取对应的策略进行异常捕获和上报。更多对方案补充介绍可参考：
+具体首先对主线程Runloop注册两个事件回调：一个为begin事件回调，用于启动检测；另一个为end事件回调，用于关闭检测；在begin事件回调被触发时，可以利用`signal`机制将其运行状态传递给另一个卡顿检测线程（后面称之为monitor线程），monitor线程等待主线程`signal`信号并可以设置等待的超时时间进行间隔采样，如果等待`signal`信号超时了，这说明主线程可能发生了阻塞；另外在end事件被触发时，通过`signal`通知monitor线程关闭卡顿检测，进入休眠状态。通过monitor线程，我们可以完整地了解主线程Runloop的运行状态，目前处于哪个阶段，耗时了多久等等。根据这些信息，我们就可以判断主线程是否发生了卡顿/卡死，并采取对应的策略进行异常捕获和上报。更多对方案的细节补充介绍可参考：
 
 - [字节跳动 iOS Heimdallr 卡死卡顿监控方案与优化之路](https://juejin.cn/post/7055190328260689951)
 - [iOS 稳定性问题治理:卡死崩溃监控原理及最佳实践](https://juejin.cn/post/6937091641656721438)
@@ -149,7 +149,7 @@ session_ids: [10082]
 - [微信iOS卡顿监控系统](https://mp.weixin.qq.com/s/M6r7NIk-s8Q-TOaHzXFNAw)
 - [移动端性能监控方案Hertz](https://tech.meituan.com/2016/12/19/hertz.html)
 
-了解了大致思路后，可以将方案用伪代码实现如下：
+在了解了大致思路后，可以将方案用伪代码大致实现如下：
 
 ```C++
 /***********以下为monitor监听runloop事件回调的核心逻辑*************************************/
