@@ -4,8 +4,6 @@ session_ids: [10056]
 
 # WWDC22 10056 - 在 SwiftUI 中组合各种自定义布局
 
-> 作者：小姜，现就职于 Booking.com 本地支付团队，在努力研究 SwiftUI 相关内容。
-
 本文是根据 WWDC22 中的 [Compose custom layouts with SwiftUI](https://developer.apple.com/videos/play/wwdc2022/10056/) 撰写。
 
 ## 一段话总结
