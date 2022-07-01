@@ -264,7 +264,7 @@ session_ids: [10056]
 
 如上图，默认情况下，`ViewController` 不会随着内容的改变而改变，作者必须再次使用 `GeometryReader`，从它那里拿到 `SwiftUI.View` 大小信息，然后将信息上报给 `navigationController.preferredContentSize` 来控制 `ViewController` 的大小。
 
-这个场景在日常开发中经常会在，将一个继承自 `UIHostingViewController` 的 `ViewController` 插入到 `UITableView Cell` 中使用到。这个情况属于绕过了苹果开发工程师提到的绕过 `SwiftUI` 布局引擎上报信息的情况。
+这个场景在日常开发中经常会在，将一个继承自 `UIHostingController` 的 `ViewController` 插入到 `UITableView Cell` 中使用到。这个情况属于绕过了苹果开发工程师提到的绕过 `SwiftUI` 布局引擎上报信息的情况。
 
 风险等级：高。
 
