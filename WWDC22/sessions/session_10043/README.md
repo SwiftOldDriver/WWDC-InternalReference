@@ -375,7 +375,7 @@ if (subscriptionGroupStatus == .expired) {
 
 ##### StoreKit 1
 
-而StoreKit 1，也就是Original StoreKit，想要实现上面这些功能，首先需要使用 appStoreReceiptURL 来检索 app receipt ：
+而 StoreKit 1，也就是 Original StoreKit，想要实现上面这些功能，首先需要使用 appStoreReceiptURL 来检索 app receipt ：
 
 ```swift
 // StoreKit
