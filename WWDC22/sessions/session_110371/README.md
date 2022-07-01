@@ -2,9 +2,9 @@
 session_ids: [110371]
 ---
 
-# 【WWDC 110371】 多平台开发那些事
+# 【WWDC 110371】 使用 Xcode 进行多平台开发的那些事
 
-> 作者：Sinter，iOS 开发者
+> 作者：Sinter，关注跨平台与 AR 技术
 >
 
 > 审核：四娘，老司机技术周报成员
@@ -139,6 +139,11 @@ struct ContentView_Previews: PreviewProvider {
 ![](./images/18.png)
 
 运行一下，一个简单的多平台应用就完成了。
+
+> 如果想要更深入的了解开发相关的内容，可以查阅以下相关资料
+> [苹果官方教程：Introducing SwiftUI](https://developer.apple.com/tutorials/swiftui/)
+> [【WWDC22 10075】结合使用 SwiftUI 和 AppKit](https://xiaozhuanlan.com/topic/4072968531)
+> [【WWDC22 10072】Use SwiftUI with UIKit](https://developer.apple.com/wwdc22/10072)
 
 ## 多平台项目下的开发问题
 
