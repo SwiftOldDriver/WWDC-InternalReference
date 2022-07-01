@@ -5,11 +5,8 @@
 从近些年苹果的事件来看， SwiftUI即是未来。
 ![](./images/wwdc22New.png)
 
-### 1. What's New In SwiftUI
-### 2. SwiftUI 发展历史对比
 
-
-#### 1. What's New In SwiftUI
+####  What's New In SwiftUI
 
 * 1. SwiftChart
 * 2. Navigation and windows
@@ -501,7 +498,7 @@ struct CalendarIcon: View {
 ![image](./images/backgroundStyle.png)
 ![](./images/sysymbols.png)
 
-##### Grid
+##### Grid / Layout / ViewThatFits / AnyLayout
 ```Grid```提供了一种新的Layout方式，不再局限于```LazyVGrid/LazyHGrid```,开放了GridRow与```.gridCellColumns(count)```。
 ```
 var body: some View {
@@ -525,5 +522,128 @@ var body: some View {
 让layout更自由。
 ```
 ![image](./images/layout.png)
+
+
+至于新增的Layout协议，是继承自Animatable，与UIKit中的UICollectionFlowLayout有相似的地方。
+作为先导篇我们简单介绍其中两个方法，
+```
+func sizeThatFits(proposal: ProposedViewSize, subviews: Self.Subviews, cache: inout Self.Cache) -> CGSize
+
+func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Self.Subviews, cache: inout Self.Cache)
+```
+
+sizeThatFits的功能在于可以手动根据容器(Stack/Grid)内子试图，来自定义的调整容器的size。
+方法中包含了subviews属性来描述容器内的子试图，例如VStack中的每一行， 而proposal参数描述容器原始的建议尺寸。
+比如我们在HStack中放置3个button，如果button的文字长度不同，则无法做到每个button宽度相同的效果，这时候可以考虑使用Layout协议。
+思路是获取HStack中button宽度最大的元素，然后调整HStack宽度为3*最大宽度
+![image](./images/equalWidthButton.png)
+```
+func sizeThatFits(
+        proposal: ProposedViewSize,
+        subviews: Subviews,
+        cache: inout Void
+    ) -> CGSize {
+        guard !subviews.isEmpty else { return .zero }
+
+        let maxSize = maxSize(subviews: subviews)
+        let spacing = spacing(subviews: subviews)
+        let totalSpacing = spacing.reduce(0) { $0 + $1 }
+
+        return CGSize(
+            width: maxSize.width * CGFloat(subviews.count) + totalSpacing,
+            height: maxSize.height)
+}
+```
+对于容器调整完毕，很显然我们接下来该调整subviews了。
+便是利用placeSubviews方法，描述的是每个subview所处位置与size，思路如下。
+
+```
+func placeSubviews(
+    in bounds: CGRect,
+    proposal: ProposedViewSize,
+    subviews: Subviews,
+    cache: inout Void) {
+    
+    guard !subviews.isEmpty else { return }
+
+    let maxSize = maxSize(subviews: subviews)
+    let spacing = spacing(subviews: subviews)
+
+    let placementProposal = ProposedViewSize(width: maxSize.width, height: maxSize.height)
+    var nextX = bounds.minX + maxSize.width / 2
+
+    for index in subviews.indices {
+        subviews[index].place(
+            at: CGPoint(x: nextX, y: bounds.midY),
+            anchor: .center,
+            proposal: placementProposal)
+        nextX += maxSize.width + spacing[index]
+    }
+}
+```
+补充一下自定义的maxSize和spacing方法代码
+```
+func maxSize(subviews: Subviews) -> CGSize {
+    let subviewSizes = subviews.map { $0.sizeThatFits(.unspecified) }
+    let maxSize: CGSize = subviewSizes.reduce(.zero) { currentMax, subviewSize in
+        CGSize(
+            width: max(currentMax.width, subviewSize.width),
+            height: max(currentMax.height, subviewSize.height))
+    }
+
+    return maxSize
+}
+ 
+func spacing(subviews: Subviews) -> [CGFloat] {
+    subviews.indices.map { index in
+        guard index < subviews.count - 1 else { return 0 }
+        return subviews[index].spacing.distance(
+            to: subviews[index + 1].spacing,
+            along: .horizontal)
+    }
+}
+```
+
+我们如果将Layout的代码整合起来，便得到了一个相同宽度的Stack，暂时命名为MyEqualWidth**H**Stack。
+我们如果以相同思路进行设计，也可以得到一个MyEqualWidth**V**Stack。
+由此我们引入我们下一个介绍的方法，ViewThatFits使用合适布局的方法。
+
+比如一种场景，MyEqualWidth**H**Stack容器中的元素无法水平容纳会超出屏幕，比如调整了Accessibility的字体大小，为了适配我们需要切换到MyEqualWidth**V**Stack，水平布局buttons的情况，没错该ViewThatFits出场了。
+```
+struct ViewThatFits<Content> : View where Content : View { ... }
+```
+
+```
+struct ButtonStack: View {
+    var body: some View {
+        ViewThatFits { // Choose the first view that fits.
+            MyEqualWidthHStack { // Arrange horizontally if it fits...
+                Buttons()
+            }
+            MyEqualWidthVStack { // ...or vertically, otherwise.
+                Buttons()
+            }
+        }
+    }
+}
+```
+这样我们可以让程序自动选择适合的Layout模式。
+如果程序可以根据适配情况自动选择，那么很显然我们也可以有很多方式进行手动切换。
+比如AnyLayout
+```
+var body: some View {
+    let layout = alwaysVLayout ? AnyLayout(HStack()) : AnyLayout(VStack())
+    layout {
+        Buttons()
+    }
+    .animation(.default)
+    ...
+    // alwaysVLayout.toggle()
+}
+```
+
+
 其他Layout相关可以参考相关Session，我们之后也会进一步更新。
 [Compose custom layouts with SwiftUI](https://developer.apple.com/videos/play/wwdc2022/10056/)
+
+后续内容请持续关注我们，感谢大家的耐心阅读。
