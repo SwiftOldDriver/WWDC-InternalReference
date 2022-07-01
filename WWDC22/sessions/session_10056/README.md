@@ -195,11 +195,11 @@ private func spacing(subviews: Subviews) -> [CGFloat] {
 - 然后如上图，将一个可以旋转的环形向量放到视图的中间，并根据子视图的所有可能的坐标设置夹角。
 - 根据每个宠物实际的投票数设置偏移量，最终每个子视图得到它们的位置。
 
-**宠物的投票数和排名是不断变化的，那我们如何在 `Layout` 协议中获取这些值并更新视图呢？**
+**宠物的投票数和排名是不断变化的，那我们如何在 `sizeThatFits` 和 `placeSubviews` 协议实现中获取这些值并更新视图呢？**
 
 ![](./images/ranking_layout_update.png)
 
-- 如上图，通过使用协议 `LayoutValueKey` 并且通过`layout(key: value:)` 监听宠物排名的数据，可以实现在 `placeSubviews` 时读取每个宠物的排名值以计算它们的偏移量。
+- 如上图，我们可以通过使用协议 `LayoutValueKey` 并且通过在 `layout(key: value:)` 中监听宠物排名的数据，可以实现在 `placeSubviews` 时读取每个宠物的排名值以计算它们的偏移量。
 
 现在我们得到了一个，可以根据排名信息不断地调整宠物头像位置的 `MyRadialLayout` 。
 
