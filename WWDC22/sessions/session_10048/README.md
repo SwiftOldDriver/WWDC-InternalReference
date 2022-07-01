@@ -30,21 +30,23 @@ session_ids: [10048]
 
 浏览器引擎工作的原理就是将输入的 `HTML`、`CSS` 和 `JavaScript` 进行处理，并最终输出我们看到的完整的、可以进行交互的并且可以在多平台展示的具体网页。
 
-### iOS 和 Android 都基于 Webkit
+### 历史故事
 
-一直以来，我都听到过这样一种说法：
+浏览器最核心的部分是浏览器内核，内核主要组成部分有两个：
 
-> `Chrome`、`Safari`、`Safari on iOS` 和 `Android Browser` 其内核都基于 `WebKit`
+* 排版引擎，用于解析 HTML，CSS 并做页面渲染
+* JS 引擎，用于解释执行 JavaScript 代码
 
-一个完整的浏览器引擎，其核心主要是对网页的排版渲染引擎 `WebCore`以及对 `JavaScript` 处理的 `JS引擎`。
+基于这个视角我们再看下浏览器和浏览器内核的一些历史故事。
 
-参照 [WebKit 缘起](https://en.wikipedia.org/wiki/WebKit#Origins) 部分对 `Webkit` 整个发展情况的描述，`Chrome` 和 `Android Browser` 的负责渲染排版的 `WebCore` 引擎 —— [Blink](https://zh.m.wikipedia.org/zh-sg/Blink)，其本质就是基于`Webkit` 新切的一个新分支，就跟 `WebKit`   最早也是[KDE](https://zh.wikipedia.org/zh-sg/KDE)的[KHTML](https://zh.wikipedia.org/wiki/KHTML)的一个分支。
+初代图形浏览器可以追溯到 Mosaic，它诞生于 1993 年，由 NCSA 开发。Mosaic 的主要开发者嗅到商机建立 Netscape 公司，并发布了 Netscape Navigator（网景浏览器）。微软获取了 Mosaic 的授权开发了 IE 浏览器，并以此为基础推出了 Trident 内核。网景浏览器被 IE 彻底打败，后来建立了Mozilla 组织，开发维护另一个浏览器内核 Gecko，基于此内核推出了 Firefox 浏览器。
 
-> 注：Chrome in iOS 跟 Safari 是用一样的 `WebCore`，而`Android Browser` 其渲染内核用的是 `Blink`
+除了Gecko 还有一个优秀的浏览器框架是 KHTML。macOS 早期需要一个浏览器，Apple 就将目光锁定在了[KDE](https://zh.wikipedia.org/wiki/KDE) 的 [KHTML](https://zh.wikipedia.org/wiki/KHTML)和 [KJS](https://zh.wikipedia.org/zh-sg/KJS) ，并以此为基础开发了 WebKit。WebKit 的排版引擎是 WebCore，JS引擎是 JavaScriptCore，其最早用于 Safari 浏览器。
 
-但其 `JavaScriptCore` 在其应用之初，`Chrome` 和 `Safari` 就走向了两条不同的路，并随着时代的推进，两者的差异化也会越来越大。
+Google 的 Chrome 早期使用了 WebKit 的 WebCore 作为排版引擎，JS 引擎为其自研的 V8。之后 Google 不再满足于 WebCore 的能力，在其之上开发了 [Blink](https://zh.m.wikipedia.org/zh-sg/Blink)渲染引擎，[Blink](https://zh.m.wikipedia.org/zh-sg/Blink)和 V8 一起构成了 Chromium 内核。
+历史轮转，微软这边，IE 一度落后于其他主流浏览器。于是推出了 Edge 浏览器，Edge 内核早期采用 EdgeHTML 和 Chakra 进行排版引擎和 JS 引擎，但仍然没有太多起色。之后微软宣布将 Chakra 开源，新的 Edge 转为 Chromium 内核。
 
-## 忙碌的一年
+## 功能与改进
 
 仅仅在过去的一年中，有 7 个版本 Safari 版本并共有 162 项新的 Web 平台功能和改进。
 
@@ -56,8 +58,25 @@ session_ids: [10048]
 * CSS
 * Web Inspector
 * Web API
-* JavaScript and WebAssembly
-* Security and privacy
+* JavaScript 和 WebAssembly
+* Security 和 Privacy
+
+### 前端基础知识
+
+在详细介绍相关内容之前，需要你有一定的基础知识：
+
+元素：用标签 `<>` 创建的，常见的元素有 `<div>`、`<h1>` 到 `<h6>` 等，元素可以理解整个 `DOM` 树中的一个节点
+
+属性：创建元素时，其支持一些基本的配置项，这些配置项称之为属性
+
+选择器：通过 `id`，元素类型等途径，匹配到对应的元素，这里对应的可以是一个，也可以是一类
+
+伪类：主要是为了已有元素添加样式，其本身是符合某条件的元素`已存在`
+
+* 状态伪类：在某种状态下的元素，如 `:hover`、`:active`、`:focus`
+* 结构性伪类： 符合某种查找条件下的元素，如在 `DOM` 树查看 `:first-child`、`:nth-child(n)`、`:checked` 之类的
+
+伪元素：不是通过标签 `<>` 创建的，但是可以在 `DOM` 树中找到这个节点，伪元素就是伪类对应的`状态`
 
 ### HTML
 
