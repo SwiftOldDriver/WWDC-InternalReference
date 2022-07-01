@@ -15,7 +15,7 @@ session_ids: [110371]
 产品支持多平台是一个常见的运营思路，一般而言又分为以下两种：
 
 - 支持移动平台：Android、iOS
-- 支持苹果生态：iOS iPadOS macOS watchOS
+- 支持苹果生态：iOS、iPadOS、macOS、watchOS
 
 为了提高生产力，许多公司/开发会使用跨平台技术进行开发：
 
