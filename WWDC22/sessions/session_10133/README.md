@@ -142,7 +142,7 @@ class ItemListModel: NSObject, ObservableObject {
 
 最后，将 `itemListModel` 添加为 `environmentObject`，以便我们的视图可以访问该 model。
 
-```
+```swift
 @main
 struct WatchTaskLiskSample_Watch_AppApp: App {
     @StateObject var itemListModel = ItemListModel()
