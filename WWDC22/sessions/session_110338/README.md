@@ -1,3 +1,7 @@
+---
+session_ids: [110338]
+---
+
 # Session 110338 - 在 Now Playing 中展示播放信息与控制播放
 
 本文基于 [Session 110338](https://developer.apple.com/videos/play/wwdc2022/110338/) 梳理，并对原视频中的代码进行优化，并使其更 Swiftly。
