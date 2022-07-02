@@ -4,7 +4,7 @@ session_ids: [10035]
 
 # WWDC22 10035 - 探索苹果地图新功能
 
->作者：钟山，字节跳动音乐平台业务团队 iOS 开发
+>作者：钟山，iOS 开发，就职于字节跳动音乐平台业务
 >
 >审核：士土Edmond木, 对 CocoaPods 有一点了解，目前对 Bazel 和 Swift 比较感兴趣。[Github Page](https://looseyi.github.io)
 >
