@@ -182,16 +182,295 @@ Look Around 是苹果地图在 iOS 13 中引入的，可以环顾四周来真正
 创建步骤
 
 
-## Apple Maps Server API
+## Apple Maps Server API 苹果地图服务接口
+苹果本次开放了四个服务 API 供开发者调用，分别是地址编码、逆向地址编码、地址搜索、估计到达时间。
+本节将对新开放的 API 进行详细介绍，主要分为两大块：
+
+1. 接口文档
+2. 应用场景
+
+### 接口文档
+#### Generate a Maps Access Token 生成访问授权Token
+用来获取请求访问授权 accessToken，为后续请求提供身份验证。
+
+##### URL
+```Json
+GET https://maps-api.apple.com/v1/token
+```
+
+##### 请求例子
+```Json
+curl -si -H”Authorization: Bearer <maps_auth_token>” ”https://maps-api.apple.com/v1/token”
+```
+
+```Json
+{
+  “accessToken”: “<maps_access_token>”,
+  “expiresInSeconds”: 1800
+}
+```
 
 
-苹果提供四个服务 API：地理编码、反向地理编码、搜索、估计到达时间 供开发者调用，
-使用这些API可以减少网络调用，但是有调用上限。
+#### Geocoding 地址编码
+用来获取指定地址的经纬度信息。
+##### URL
+```Json
+GET https://maps-api.apple.com/v1/geocode
+```
+##### Query Parameters
+|  参数   | 描述  | 类型  | 是否必须  |
+|  ----  | ----  |----  | ----  |
+| q  | 需要编码的地址，例子：q=1 Apple Park, Cupertino, CA | string | 是 |
+| limitToCountries  | 限制查询国家范围，格式使用国家地区编码，多个国家是用逗号分割，例子：limitToCountries=US,CA. | [string] | 否 |
+| lang  | 指定响应数据的语言，格式使用 BCP 47 语言标记，默认为英文，例子：lang=en-US. | string | 否 |
+| searchLocation  | 搜索位置，格式为纬度经度，中间使用逗号分割，例子：searchLocation=37.78,-122.42. | string | 否 |
+| searchRegion  | 搜索区域，格式为北纬东经南纬西经，中间使用逗号分割，例子：searchRegion=38,-122.1,37.5,-122.5. | string | 否 |
+| userLocation  | 用户位置, 格式为纬度经度，中间使用逗号分割，例子，userLocation=37.78,-122.42. | string | 否 |
+##### 请求例子
+```Json
+curl -si -H”Authorization: Bearer <maps_access_token>” ”https://maps-api.apple.com/v1/geocode?q=Apple%20Park%2C%20Cupertino%2C%20CA”
+```
 
+```Json
+{
+  “results”: [
+    {
+      “coordinate”: {
+        “latitude”: 37.3301996,
+        “longitude”: -122.0106415
+      },
+      “displayMapRegion”: {
+        “southLatitude”: 37.3257080235794,
+        “westLongitude”: -122.01629018770203,
+        “northLatitude”: 37.3346911764206,
+        “eastLongitude”: -122.00499281229798
+      },
+      “name”: “Apple Park Way”,
+      “formattedAddressLines”: [
+        “Apple Park Way”,
+        “Cupertino, CA  95014”,
+        “United States”
+      ],
+      “structuredAddress”: {
+        “administrativeArea”: “California”,
+        “administrativeAreaCode”: “CA”,
+        “locality”: “Cupertino”,
+        “postCode”: “95014”,
+        “thoroughfare”: “Apple Park Way”,
+        “fullThoroughfare”: “Apple Park Way”,
+        “areasOfInterest”: [
+          “Apple Park”
+        ]
+      },
+      “country”: “United States”,
+      “countryCode”: “US”
+    }
+  ]
+}
+```
 
+####  Reverse Geocoding 逆向地址编码
+用来获取经纬度对应的地址列表。
+##### URL
+```Json
+GET https://maps-api.apple.com/v1/geocode
+```
+##### Query Parameters
+|  参数   | 描述  | 类型  | 是否必须  |
+|  ----  | ----  |----  | ----  |
+| loc  | 需要查询地址的经纬度，格式为纬度经度，中间使用逗号分割，例子：loc=37.3316851,-122.0300674 | string | 是 |
+| lang  | 指定响应数据的语言，格式使用 BCP 47 语言标记，默认为英文，例子：lang=en-US. | string | 否 |
+##### 请求例子
 
+```Json
+curl -si -H”Authorization: Bearer <maps_access_token>” ”https://maps-api.apple.com/v1/reverseGeocode?loc=37.3301996%2C-122.0106415”
+```
 
+```Json
+{
+  “results”: [
+    {
+      “coordinate”: {
+        “latitude”: 37.3301996,
+        “longitude”: -122.0106415
+      },
+      “displayMapRegion”: {
+        “southLatitude”: 37.3257080235794,
+        “westLongitude”: -122.01629018770203,
+        “northLatitude”: 37.3346911764206,
+        “eastLongitude”: -122.00499281229798
+      },
+      “name”: “Apple Park Way”,
+      “formattedAddressLines”: [
+        “Apple Park Way”,
+        “Cupertino, CA  95014”,
+        “United States”
+      ],
+      “structuredAddress”: {
+        “administrativeArea”: “California”,
+        “administrativeAreaCode”: “CA”,
+        “locality”: “Cupertino”,
+        “postCode”: “95014”,
+        “thoroughfare”: “Apple Park Way”,
+        “fullThoroughfare”: “Apple Park Way”,
+        “areasOfInterest”: [
+          “Apple Park”
+        ]
+      },
+      “country”: “United States”,
+      “countryCode”: “US”
+    }
+  ]
+}
+```
+#### Estimated Time of Arrival 预计到达时间
+用来计算从指定位置出发到某个目的地的到达时间。
+##### URL
+```Json
+GET https://maps-api.apple.com/v1/geocode
+```
+##### Query Parameters
+|  参数   | 描述  | 类型  | 是否必须  |
+|  ----  | ----  |----  | ----  |
+| origin  | 开始位置，格式为纬度经度，中间使用逗号分割，例子：origin=37.331423,-122.030503 | string | 是 |
+| destinations  | 目的地 ，格式为纬度经度，例子：destinations=37.32556561130194,-121.94635203581443 | [string] | 是 |
+| departureDate  | 出发时间（UTC），格式为 ISO 8601格式，如果不传则使用服务端当前时间，例子：departureDate=2020-09-15T16:42:00Z | string | 否 |
+| transportType  | 交通工具类型，目前支持三个交通工具，Automobile（汽车）、Transit（运输）、Walking（步行），默认为Automobile，例子：transportType= Automobile | string | 否 |
 
+注意：destinations 参数至少有一个目的地，最多不超过10个，多个的话使用“|”分割，例子：destinations=37.32556561130194,-121.94635203581443|37.44176585512703,-122.17259315798667
+##### 请求例子
+```Json
+curl -si -H”Authorization: Bearer <maps_access_token>” ”https://maps-api.apple.com/v1/etas?origin=37.331423,-122.030503&destinations=37.32556561130194,-121.94635203581443|37.44176585512703,-122.17259315798667”
+```
+
+```Json
+{
+  “etas”: [
+    {
+      “destination”: {
+        “latitude”: 37.32556561130194,
+        “longitude”: -121.94635203581443
+      },
+      “transportType”: “AUTOMOBILE”,
+      “distanceMeters”: 9550,
+      “expectedTravelTimeSeconds”: 975,
+      “staticTravelTimeSeconds”: 540
+    },
+    {
+      “destination”: {
+        “latitude”: 37.44176585512703,
+        “longitude”: -122.17259315798667
+      },
+      “transportType”: “AUTOMOBILE”,
+      “distanceMeters”: 23286,
+      “expectedTravelTimeSeconds”: 1336,
+      “staticTravelTimeSeconds”: 1039
+    }
+  ]
+}
+```
+#### Search 搜索
+用来搜索指定名称的地点。
+##### URL
+```Json
+GET https://maps-api.apple.com/v1/geocode
+```
+##### Query Parameters
+|  参数   | 描述  | 类型  | 是否必须  |
+|  ----  | ----  |----  | ----  |
+| q  | 需要搜索的地址，例子：q=eiffel tower | string | 是 |
+| excludePoiCategories  | 需要排除在搜索结果里的兴趣点类型集合, 格式为兴趣点类型，中间使用逗号分割，例子，excludePoiCategories =Restaurant,Cafe | [PoiCategory] | 否 |
+| includePoiCategories  | 搜索兴趣点类型集合, 格式为兴趣点类型，中间使用逗号分割，例子，includePoiCategories=Restaurant,Cafe | [PoiCategory] | 否 |
+| limitToCountries  | 限制查询国家范围，格式使用国家地区编码，多个国家是用逗号分割，例子：limitToCountries=US,CA. | [string] | 否 |
+| resultTypeFilter  | 用户位置, 格式为纬度经度，中间使用逗号分割，例子：resultTypeFilter=Poi | [string] | 否 |
+| lang  | 指定响应数据的语言，格式使用 BCP 47 语言标记，默认为英文，例子：lang=en-US. | string | 否 |
+| searchLocation  | 搜索位置，格式为纬度经度，中间使用逗号分割，例子：searchLocation=37.78,-122.42. | string | 否 |
+| searchRegion  | 搜索区域，格式为北纬东经南纬西经，中间使用逗号分割，例子：searchRegion=38,-122.1,37.5,-122.5. | string | 否 |
+| userLocation  | 用户位置, 格式为纬度经度，中间使用逗号分割，例子，userLocation=37.78,-122.42. | string | 否 |
+> PoiCategory：兴趣点类型
+
+##### 请求例子
+```Json
+curl -si -H”Authorization: Bearer <maps_access_token>” “https://maps-api.apple.com/v1/search?q=eiffel%20tower”
+```
+
+```Json
+{
+  “displayMapRegion”: {
+    “southLatitude”: 48.856909736059606,
+    “westLongitude”: 2.2924737352877855,
+    “northLatitude”: 48.85963364504278,
+    “eastLongitude”: 2.2965897526592016
+  },
+  “results”: [
+    {
+      “name”: “Eiffel Tower”,
+      “formattedAddressLines”: [
+        “5 Avenue Anatole France”,
+        “75007 Paris”,
+        “France”
+      ],
+      “structuredAddress”: {
+        “administrativeArea”: “Île-de-France”,
+        “locality”: “Paris”,
+        “postCode”: “75007”,
+        “subLocality”: “Tour Eiffel-Champs de Mars”,
+        “thoroughfare”: “Avenue Anatole France”,
+        “subThoroughfare”: “5”,
+        “fullThoroughfare”: “5 Avenue Anatole France”,
+        “areasOfInterest”: [
+          “Eiffel Tower”,
+          “Parc Du Champ De Mars”
+        ],
+        “dependentLocalities”: [
+          “7th arr.”,
+          “Tour Eiffel-Champs de Mars”
+        ]
+      },
+      “country”: “France”,
+      “countryCode”: “FR”,
+      “coordinate”: {
+        “latitude”: 48.85827172505176,
+        “longitude”: 2.294531782785587
+      }
+    }
+  ]
+}
+```
+### 应用场景
+不同设备上的同一个 app 重复请求同一个地址，会造成大量重复的请求，造成用户设备带宽和功耗浪费。苹果建议应用后端服务作为网关来请求苹果地图服务接口，可以大大减少请求数量，节省用户宝贵的带宽、功耗。
+
+> 需要注意的是苹果这次开放的服务 API 有访问配额，目前每天访问配额是25,000次，并且 MapsKit 和 MapKit JS 共享同一份配额。超过访问上限，苹果服务器将返回429错误码。如果你的 app 需要更多的访问配额，可以向苹果进行申请。
+
+#### 应用示例
+现在通过一个例子，来看看使用苹果地图服务接口前后给服务架构带来哪些变化。假如我们正在构建一个漫画书店位置服务，通过下图所示卡片的列表来告诉用户附近有哪些书店，卡片包含书店名称、地址、距离用户路程等位置信息。
+
+![目前架构](./images/comic_book_store.png)
+
+首先来看看没有苹果地图服务 API 的服务架构：（假设包括这家漫画书店在内的地址信息已经存储在服务器上，并随时可以调用）
+
+![目前架构](./images/basic_architecture.png)
+
+1. 设备首先向应用服务器请求，以获取漫画书店地址列表，后端服务器返回漫画书店地址列表到客户端设备。
+2. 通过 MapKit 直接请求苹果地图服务，获取所需信息。
+3. 合并第二步的所有响应，得到想要信息。
+
+客户端和苹果服务端之间的这种互动，尤其是第二步必须执行大量操作，每执行一次任务，用户可能都需要多次向后端发送请求，会对 App 的性能产生负面影响。特别在通常具有高延时的蜂窝网络上，以这种使用方式单个请求，效率很低，甚至可能导致连接中断或数据丢失。当每个请求可以并行完成时，App 必须在单独的连接上发送、等待和处理每个请求的数据，失败的可能性大大增加。最后客户端还要合并端上所有的响应，客户端设备需要为这些额外的调用使用更多的带宽和功耗。
+
+应用后端服务器作为网关请求苹果地图服务 API 的服务架构：
+
+![推荐架构](./images/aggregation_pattern.png)
+
+1. App 首先向应用服务器请求。
+2. 应用服务器通过苹果服务接口来发起请求，并收到苹果地图服务器的响应。
+3. 应用服务器组合来自服务的每个响应，并将响应发给App。
+
+这种做法减少和苹果服务器之间的互动，App 仅仅向应用服务端发送一次请求，应用服务端完成了繁重的工作，相比之前的处理方式，这样用户体验更加友好。
+
+#### 使用开放 API 的好处
+* 全栈架构，一份服务可以多处使用。（考虑到应用还有安卓系统，这点存疑）
+* 更高的网络性能
+* 更低的功耗
 
 ## 总结
 
