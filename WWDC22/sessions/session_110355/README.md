@@ -11,7 +11,7 @@ session_ids: [110355]
 1. Async/Await 对于异步方法的执行和实现。可以观看 WWDC Session [Meet async/await in Swift](https://developer.apple.com/videos/play/wwdc2021/10132)，另外还可以阅读去年内参的两篇翻译文章
   [【WWDC21 10132/10133/10134】认识 Swift 中的异步与并发](https://xiaozhuanlan.com/topic/8627905413)
   [【WWDC21 10132】认识 Swift 的 Async/Await](https://xiaozhuanlan.com/topic/9307851264)
-2. 了解 AsyncSequence 协议，理解其实现的原理，可以观看WWDC Session [Meet AsyncSequence](https://developer.apple.com/videos/play/wwdc2021/10058)。苹果团队在力求 AsyncSequence 在语法和概念上近可能的接近 Sequence，利用 Async/Await 来表示这是异步序列的数据机构之外，包括序列的遍历，序列之间的处理等都保持了一样的语法。另外异步序列有一个标准行为：异步序列对应一个缓冲区（这个缓冲区可调整大小），异步序列一段时间返回多个值时会放到缓冲区中。而且会优先从缓冲区取值，这时候和一般的序列就是一样的表现。
+2. 了解 AsyncSequence 协议，理解其实现的原理，可以观看 WWDC Session [Meet AsyncSequence](https://developer.apple.com/videos/play/wwdc2021/10058)。苹果团队在力求 AsyncSequence 在语法和概念上近可能的接近 Sequence，利用 Async/Await 来表示这是异步序列的数据机构之外，包括序列的遍历，序列之间的处理等都保持了一样的语法。另外异步序列有一个标准行为：异步序列对应一个缓冲区（这个缓冲区可调整大小），异步序列一段时间返回多个值时会放到缓冲区中。而且会优先从缓冲区取值，这时候和一般的序列就是一样的表现。
 
 ## 正文
 
@@ -23,7 +23,7 @@ session_ids: [110355]
 4. Timing 在时间参数下返回数据
 5. All Values 获取异步序列所生成的所有值
 
-在本文中会详细解读多序列合并的算法 `Zip` 和时间参数下的去抖动算法 `Debounce` 
+在本文中会详细解读多序列合并的算法 `Zip` 和时间参数下的去抖动算法 `Debounce`
 在开源包提议文件 ([Github 地址](https://github.com/apple/swift-async-algorithms)) 中，对这个开源包出发的动机和未来的发展有更加详细的介绍。
 
 ![image](./images/async-algorithms.png)
