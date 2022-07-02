@@ -86,7 +86,13 @@ session_ids: [10082]
 
 ![tpc_issue](images/session_tpc_issue.png)
 
-但是该卡顿风险警告提示仅显示主线程堆栈信息，并没有展示在该卡顿期间其它线程的堆栈信息。这时就可以使用开发阶段的另一个工具——Instruments Timer Profile 进行进一步分析；
+但是笔者在 Xcode 14 Beta 版上实际体验了该功能后，发现该功能目前还有一些局限性：
+
+- 在主线程执行比较耗时的 CPU 密集型任务导致卡顿时，Xcode 并没有提示该卡顿风险。
+- 实际测试过程即使没有发生卡顿，也能检测到主线程上的优先级反转问题，但只能检测到等待`utility`和`background` qos 两种类型的线程优先级反转问题，而且运行期间只会提示第一次遇到的线程优先级反转问题。比如 App 同时存在两个等待`utility`和`background`类型的线程优先级反转问题时，如果在运行时先执行了等待`utility`线程的代码，然后再执行等待 `background`线程的代码，则只会提示第一次的等待`utility`线程的问题，反之亦然。
+- 在主线程通过`Data(contentsOf:)`同步请求网络数据时可以检测到卡顿风险，但是在设备上同步读写磁盘文件（无论大小多大）时并没有提示卡顿风险。
+
+不确定以上问题是否是 Beta 版本存在的 BUG，还是目前功能相对不够完善。另外该卡顿风险警告提示仅显示主线程堆栈信息，并没有展示在该卡顿期间其它线程的堆栈信息。这时可以借助开发阶段的另一个工具——Instruments Timer Profiler 进行进一步分析；
 
 ### Instruments
 
@@ -95,7 +101,7 @@ session_ids: [10082]
 
 ![timeprofiler](images/session_timeprofiler.png)
 
-值得一提的是上述的 Instruments 中卡顿检测与标记在 Timer Profiler 和 CPU Profiler 工具中同样都是默认可用的，另外也可以在其它 Trace 模版中添加 Hang tracing 来跟其他工具结合进行测试。
+值得一提的是上述的 Instruments 中卡顿检测与标记在 Timer Profiler 和 CPU Profiler 工具中同样都是默认可用的，另外也可以在其它 Trace 模版中添加 Hang tracing 跟其他工具结合进行测试，不过需要注意的是单独的 Hang tracing 只能检测到运行期间是否发生了卡顿以及卡顿时长，并没有实际的堆栈信息，所以在实际利用 Instruments 排查卡顿时还是建议优先使用 Timer Profiler 进行分析。
 
 ### On-Device Detection
 
