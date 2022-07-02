@@ -9,10 +9,10 @@ session_ids: [10032]
 在 iOS 10，Apple 推出了 SiriKit ,我们可以通过 SiriKit 中的 INIntent 为 App 接入 Siri。如今，Apple 在 iOS 16 推出了 App Intent ,无论是语音唤起 Siri 的 shortcut、Spotlight、Shortcut app 还是 iOS 16 的新功能 [Focus Filter](https://developer.apple.com/videos/play/wwdc2022/10121/)。我们都可以通过实现 App Intent 接入到 App 中，快捷、自动化地使用 App 所提供的功能。
 
 本文将以一个书单 App 为例来逐步深入介绍 App Intent 框架，这个 App 用来追踪用户正在读的书、想要读的书、已阅读的书（对应 App 的三个 Tab)。
-![图片](/images/IMG_1.png)
+![图片](./images/IMG_1.png)
 
 首先需要了解一下 App Intent 三个关键的部分组成：Intent，Entity，AppShortcut。
-![图片](/images/IMG_2.png)
+![图片](./images/IMG_2.png)
 
 - Intent: 在 App 中构建的 Action，提供给系统去使用
 - Entity：用来表示 App 中的内容，提供给 Intent 使用
@@ -72,7 +72,7 @@ struct OpenCurrentlyReading: AppIntent {
 
 定义完成后， 此 Intent 就会出现在 Shortcuts Editor 中了。（Intent 的使用场景非常多)
 
-![图片](/images/IMG_3.png)
+![图片](./images/IMG_3.png)
 
 为了方便用户使用，我们可以直接把 Intent 包装起来，给 App 预置一些 AppShortcut：
 
@@ -117,7 +117,7 @@ public enum Shelf: String, AppEnum {
 遵守[AppValue](https://developer.apple.com/documentation/appintents/appvalue)的类型才能被 Intent 使用。对于枚举我们可以遵守 [AppEnum](https://developer.apple.com/documentation/appintents/appenum), `AppEnum`是一个多层的协议，其中 `typeDisplayName` 定义了本类型用于阅读理解的名称，在 Shortcut app 中展示； `caseDisplayRepresentations` 定义了各个枚举值用于阅读的名称。
 
 下图中的类型都可以作为 AppIntent 的参数。
-![图片](/images/IMG_4.png)
+![图片](./images/IMG_4.png)
 
 接下来我们使用这个参数来实现 Open Shelf Intent：
 
@@ -141,7 +141,7 @@ struct OpenShelf: AppIntent {
 
 Intent 传入的参数需要使用 [`@Parameter`](https://developer.apple.com/documentation/appintents/intentparameter) 包装。 `title` 是用于在 UI 上展示此参数的标题。
 
-![图片](/images/IMG_5.png)
+![图片](./images/IMG_5.png)
 
 此时 Shelf 是作为一个参数在界面中占用了一行单独展示，使用 ParameterSummary API 可以让用户界面更简单，把参数带入到一个表示意图的短语中， “打开\\(某个 Tab)”。
 
@@ -158,7 +158,7 @@ struct OpenShelf: AppIntent {
 ```
 
 展示结果如下图：
-![图片](/images/IMG_6.png)
+![图片](./images/IMG_6.png)
 
 作为最佳实践， 应该永远给一个 Intent 实现 Parameter Summary。
 
@@ -198,7 +198,7 @@ Query 还会提供一些建议的结果供用户选择。[suggestedEntities()](<
 
 如下图所示，当我们点击 Book 时，会弹出一个 Sheet 去检索，除了顶部的搜索栏可以让我们输入字符串检索外，下方也会展示一些建议的结果。
 
-![图片](/images/IMG_7.png)
+![图片](./images/IMG_7.png)
 
 `BookQuery`的实现如下。
 
@@ -297,7 +297,7 @@ struct BookQuery: EntityPropertyQuery {
 ```
 
 实现属性检索后的界面如下图所示
-![图片](/images/IMG_9.png)
+![图片](./images/IMG_9.png)
 
 准备工作完成后，OpenBook Intent 的实现如下：
 
@@ -378,7 +378,7 @@ enum Error: Swift.Error, CustomLocalizedStringResourceConvertible {
 
 这里通过输入的书籍名称和作者来检索图书，得到图书后执行添加操作，最后 Intent 执行完成也可以将 `book`携带，供后续的 Intent 使用。如此即可把多个 Intent 串联组合起来。
 
-![图片](/images/IMG_8.png)
+![图片](./images/IMG_8.png)
 
 如果串联的下一个 Intent 只是为了用于展示，如例子中的 `OpenBook` Intent，那么`OpenBook`可以作为`AddBook`的 showResultIntent， 即添加书籍成功后再执行打开这本书的操作。
 
@@ -402,7 +402,7 @@ Intent 执行完成后， 我们可能需要和用户进行一些交互，或许
 
 `AddBook`我们可以在添加成功时使用简短的 dialog 告知用户。
 
-![图片](/images/IMG_10.png)
+![图片](./images/IMG_10.png)
 
 ```swift
  struct AddBook: AppIntent {
@@ -425,7 +425,7 @@ Intent 执行完成后， 我们可能需要和用户进行一些交互，或许
 
 对于`AddBook` ，也可以在执行成功时展示书籍封面来给用户反馈。
 
-![图片](/images/IMG_11.png)
+![图片](./images/IMG_11.png)
 
 ```swift
 struct AddBook: AppIntent{
@@ -442,7 +442,7 @@ struct AddBook: AppIntent{
 
 如果用户在加书时，只输入了`title`，而此时的查询结果不只有一本，可以向用户请求输入作者。
 
-![图片](/images/IMG_12.png)
+![图片](./images/IMG_12.png)
 
 ```swift
 func perform() async throws -> some PerformResult {
@@ -461,7 +461,7 @@ func perform() async throws -> some PerformResult {
 
 依旧是上述情况，只是此时查询得到结果并不多时，我们可以让用户进行作者的选择，而不必再输入。
 
-![图片](/images/IMG_13.png)
+![图片](./images/IMG_13.png)
 
 ```swift
 func perform() async throws -> some PerformResult {
@@ -480,7 +480,7 @@ func perform() async throws -> some PerformResult {
 
 再或者， 我们可以选定一本最受欢迎的书，来向用户询问这是不是他所添加的书。
 
-![图片](/images/IMG_14.png)
+![图片](./images/IMG_14.png)
 
 ```swift
 
@@ -497,7 +497,7 @@ func perform() async throws -> some PerformResult {
 
 以及在交易时，需要用户确认订单。
 
-![图片](/images/IMG_15.png)
+![图片](./images/IMG_15.png)
 
 这里使用了一张预览图，让用户更清楚地检查订单信息。
 
