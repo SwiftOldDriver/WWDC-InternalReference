@@ -6,7 +6,7 @@ session_ids: [10166]
 
 > 作者：小铁匠 Linus，iOS 开发者，微信公众号《WLB 工作生活两不误》号主。
 >
-> 审核：
+> 审核：Damien，就职于字节跳动，目前负责 TikTok 隐私和安全相关的工作。
 
 > 前情提要
 > App Tracking Transparency（ATT） 是苹果官方从 iOS 14 开始重点强调的`申请用户广告追踪权限`相关的框架。
