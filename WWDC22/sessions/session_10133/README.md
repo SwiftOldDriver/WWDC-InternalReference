@@ -14,11 +14,11 @@ session_ids: [10133]
 
 WWDC 2019，SwiftUI 横空出世，作为新时代声明式布局引擎，兼具性能、美感的同时，还有极低成本的接入方式、灵活的多平台适配等，这一切都让 Apple 开发者兴奋。2019 年也是 Apple Watch 及 WatchOS 最具里程碑的一年。Apple Watch Series 5 的 Always On，带来一块“永不熄灭的屏幕”。以及 watchOS 6 中引入了独立 Watch App，还有流式音频也让我们在没有 iPhone 的情况下随时随地欣赏多媒体内容。我们在 Apple Watch 里能做到的事越来越多。
 
-每年，watchOS 中的 SwiftUI 都会带来很多新功能。今年的 WWDC 也不负众望。
+每年，Apple 都会带来 SwiftUI 在 watchOS 上的新功能。今年的 WWDC 也不负众望。
 
-“你的手腕从未像现在这样如此高效。”我们将展示如何将获取文本输入、与朋友共享内容以及显示基本图表，以及将这些功能结合起来，使用 SwiftUI 为 Apple Watch 构建一个独立的、跟踪「项目完成」的效率 App，这将是一个全新的、并且有很多的功能 Watch App。
+“你的手腕从未像现在这样如此高效。”我们将使用 SwiftUI 在 Apple Watch 上实现滑行键入、与朋友共享内容及显示基本图表，构建一个跟踪「项目完成」效率的、全新的、独立的 watchOS App。
 
-本文是篇实践项目，将实践其他 Session 提到的新功能。欢迎读者跟随文章流程，一起来完成我们的 Apple Watch App。
+本文是实践项目，鼓励读者跟随文章流程，一起来完成该项目，从而简单了解并使用包括“NavigationStack”、“Transferable”、“Swift Chart”在内的新功能。本文不需要太深入的 SwiftUI 、watchOS 经验，在掌握基础的 SwiftUI 开发上，可直接上手尝试。
 
 > 文章将会使用到的相关内容的更多信息请参考：
 >
@@ -106,7 +106,8 @@ Target 并不是 Apple 在 Xcode 14 中唯一简化的东西，还简化了为 A
 
 ![](./images/icon.png)
 
-应用程序图标图像将自动缩放，从而显示在所有该 App 相关的所有位置上。包括 Apple Watch 的主屏幕、通知以及 iPhone 上的 Watch  应用程序的已安装列表。但是，如果我们的图标在较小尺寸时会丢失细节，我们还们最好还是为特定场景添加小尺寸的或细节简化后的自定义图像来达到最好的用户体验。
+应用程序图标图像将自动缩放，从而显示在所有该 App 相关的所有位置上。包括 Apple Watch 的主屏幕、通知以及 iPhone 上的 Watch 应用程序的已安装列表。
+但如果该图标在缩放到小尺寸时丢失细节，我们最好还是为特定场景添加小尺寸的或细节简化后的自定义图像来达到最好的用户体验。
 
 ![](./images/app_icon.png)
 
