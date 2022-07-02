@@ -15,15 +15,15 @@ session_ids: [110403]
 `Background Assets`（后续简称 `BA`）框架可以与现有的资源管理流程快速对接，不需要将资源提交到 `AppStore`，可以为开发者提供应用生命周期之外更新资源的能力，应用下载完毕后，`BA` 通过 `Extension` 启动资源下载，确保用户在第一次打开 `APP` 前所有内容都已 `Ready` 。
 
 本文分为四个部分：
+
 1. `BA` 框架总体介绍；
 2. 如何在应用中使用 `BA` 框架;
 3. 快速了解 `Extension` 提供的能力;
 4. 最佳实践
 
+## 一、Background Assets 框架总览
 
-## 一、Background Assets框架总览
-
-苹果在BA框架中提供了一个新的 `App Extension`，该 `Extension` 会在如下执行：
+苹果在 BA 框架中提供了一个新的 `App Extension`，该 `Extension` 会在如下执行：
 
 1. `APP` 通过 `AppStore` 或 `TestFlight` 安装后；
 2. `APP` 更新后；
@@ -31,9 +31,9 @@ session_ids: [110403]
 
 需要注意的是，`Extension` 的执行时间非常短，如果下载任务不能快速执行，系统可能会终止 `Extension` 的运行。另外 `Extension` 执行的频率与 `APP` 的使用情况相关，如果一个 `APP` 经常被使用，那对应的 `Extension` 也将会被系统频繁执行，反之亦然。
 
-通过BA框架能够保证 `APP` 所需的资源在 `APP` 启动前都已经下载完毕，下面让我们来看下如何在 `APP` 中使用 `BA` 框架。
+通过 BA 框架能够保证 `APP` 所需的资源在 `APP` 启动前都已经下载完毕，下面让我们来看下如何在 `APP` 中使用 `BA` 框架。
 
-## 二、如何在应用中使用Background Assets框架
+## 二、如何在应用中使用 Background Assets 框架
 
 ### 2.1 Download Manager
 
@@ -44,7 +44,8 @@ session_ids: [110403]
 * 取消下载任务
 * 同步 `APP` 与 `Extension` 之间的独占访问
 
-我们用一个例子简单展示如何使用BA框架来获取资源：
+我们用一个例子简单展示如何使用 BA 框架来获取资源：
+
 1. `import BackgroundAssets` 库
 2. 声明资源下载地址
 3. 声明 `APP` 对应的 `Group Indentifier`
@@ -71,7 +72,7 @@ do {
 }
 ```
 
-需要注意的是 `schedule` API 提供的是后台下载能力，`BA` 框架同时提供了前台下载能力，`startForegroundDownload ` 可以帮助我们将后台执行改为前台执行，前台执行不仅有更高的优先级，也能保证下载任务立刻被执行。需要注意的是前台下载是由 `APP` 执行，后台下载是由 `Extension` 执行。
+需要注意的是 `schedule` API 提供的是后台下载能力，`BA` 框架同时提供了前台下载能力，`startForegroundDownload` 可以帮助我们将后台执行改为前台执行，前台执行不仅有更高的优先级，也能保证下载任务立刻被执行。需要注意的是前台下载是由 `APP` 执行，后台下载是由 `Extension` 执行。
 
 ```swift
 // Schedule download in foreground
@@ -82,7 +83,7 @@ do {
 }
 ```
 
-如果当前下载已经在前台执行，调用 `startForegroundDownload ` API 没有任何效果，如果当前下载是在后台执行的，任务首先会被暂停，在前台恢复下载。
+如果当前下载已经在前台执行，调用 `startForegroundDownload` API 没有任何效果，如果当前下载是在后台执行的，任务首先会被暂停，在前台恢复下载。
 
 下面的例子演示如何将后台任务转为前台执行：
 
@@ -103,13 +104,14 @@ do {
 
 ### 2.2 Download Manager Delegate
 
-由于下载任务是由系统调度处理，我们只能通过 `Download Manager Delegate` 对象获取下载回调，如果你触发了10个下载任务，`delegate` 对象将会获得这10个下载任务的回调信息，为了区分每一个任务的回调信息，你需要确保每个任务的 `identifier` 是唯一的。
+由于下载任务是由系统调度处理，我们只能通过 `Download Manager Delegate` 对象获取下载回调，如果你触发了 10 个下载任务，`delegate` 对象将会获得这 10 个下载任务的回调信息，为了区分每一个任务的回调信息，你需要确保每个任务的 `identifier` 是唯一的。
 
 `APP` 如果在前台运行并且设置了 `delegate` 则 `APP` 会收到回调消息，但如果 `APP` 没有处理回调，系统则会唤醒 `Extension`来处理消息。举个例子：当下载结束或失败，并且 `APP` 没有处理这些消息时，`Extension` 会被唤醒。
 
-需要注意的是：只有同时在 `BADownloadManagerDelegate ` 和 `BADownloaderExtension` 中定义的回调才能唤醒 `Extension`。
+需要注意的是：只有同时在 `BADownloadManagerDelegate` 和 `BADownloaderExtension` 中定义的回调才能唤醒 `Extension`。
 
 在 `BADownloadManagerDelegate` 中定义了所有的回调接口包括：
+
 * 下载开始
 * 下载暂停
 * 下载过程管理
@@ -142,11 +144,13 @@ public protocol BADownloadManagerDelegate : NSObjectProtocol {
 ## 三、快速了解 Extension 提供的能力
 
 接下来我们来看看 `BA` 框架引入了的 `APP Extension` 具有的能力：
+
 * 在 `APP` 安装和更新时执行
 * 周期性的在后台检查是否有新的资源
 * 运行时间非常短且受沙箱限制
 
-### 3.1 Info.plist配置
+### 3.1 Info.plist 配置
+
 为了在 `APP` 中使用 `Extension`，在提交 `AppStore` 时在 `Info.plist` 中添加配置：
 
 ![](images/app_info_plist.png)
@@ -162,6 +166,7 @@ public protocol BADownloadManagerDelegate : NSObjectProtocol {
 与其他 `APP Extension` 不同，`BA Extension` 由操作系统管理，系统维护 `Extension 的生命` 期，可以将它视作临时服务。任何协议中执行的操作尽量最小化，保证任务可以快速执行完毕。创建 `Extension` 时需要确保与 `APP` 使用同一个 `group identifier`，这样 `APP` 和 `Extension` 可以读写各自下载的内容。
 
 `BADownloaderExtension` 中定义了所有可以唤醒 `Extension` 的回调：
+
 * `applicationDidInstall` 回调可以让 `Extension` 在应用安装成功后执行资源下载，确保用户打开 `APP` 直接可用，提高产品使用体验
 * `applicationDidUpdate` 回调可以让 `APP` 更新完成后执行资源下载动作
 * `checkForUpdates` 回调可以 `Extension` 在被系统定期唤醒时检查更新
@@ -220,14 +225,12 @@ func download(_ download: BADownload, finishedWithFileURL fileURL: URL) {
 }
 ```
 
-
 ## 四、Background Assets 的最佳实践建议
 
 1. `BADownloadManager` 用来在 `APP` 和 `Extension` 之间协调、调度下载任务，应当在两个地方都使用它；
 2. `APP` 在后台时 `Extension` 会在特定场景被唤醒执行下载任务；
 3. 如果 `APP` 已经在前台运行，可以将任务改为前台执行，确保相关资源可以更快的被下载；
 4. 当出现 `APP` 和 `Extension` 同时访问资源时请使用互斥 `API`
-
 
 ## 五、推荐阅读
 
