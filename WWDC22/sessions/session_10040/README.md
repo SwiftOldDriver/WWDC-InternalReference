@@ -13,7 +13,7 @@ session_ids: [10040]
 > 
 > Damonwong，老司机技术周报编辑，就职于淘系技术部。
 
-基于 [Session 10114](https://developer.apple.com/videos/play/wwdc2022/10040/) 梳理
+基于 [Session 10040](https://developer.apple.com/videos/play/wwdc2022/10040/) 梳理
 
 ## 前言
 
