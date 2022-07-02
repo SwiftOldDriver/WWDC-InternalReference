@@ -8,7 +8,7 @@ SiriusLong ，目前就职于字节跳动中国音乐团队，负责音乐播放
 
 ## 不超过 120 个字的文章简介
 
-本文简要介绍了MusicKit & Apple MusicAPI 的背景和能力，并通过一个简单的需求，详细介绍了在播放列表、搜索等场景下 Apple MusicAPI 的使用过程。
+本文简要介绍了 MusicKit & Apple MusicAPI 的背景和能力，并通过一个简单的需求，详细介绍了在播放列表、搜索等场景下 Apple MusicAPI 的使用过程。
 
 ## 公众号/小专栏图文头图
 
