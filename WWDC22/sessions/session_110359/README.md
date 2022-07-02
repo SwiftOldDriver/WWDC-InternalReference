@@ -325,6 +325,7 @@ CommandPlugin 需要实现的方法：
 performCommand  接受用户提供的上下文和任何自定义参数。在这个方法里实现我们的插件逻辑。
 
 参数说明：
+
 - context：上下文，会带入一些插件信息，例如 pluginWorkDirectory：插件工作目录、package：插件所属包信息
 - arguments：参数数组，由外部传入
 
@@ -346,6 +347,7 @@ BuildToolPlugin 需要实现的协议方法：
 createBuildCommands 也可以接受上下文，没有自定义参数，但是可以支持不同的 target，这也是 CommandPlugin 跟 BuildToolPlugin 的区别。
 
 参数说明：
+
 - context：同上
 - target：目标，可以集成到不同目标构建系统中运行
 
@@ -528,6 +530,7 @@ emit() 方法可以理解为可以使用特殊的类型，支持自定义。erro
         Diagnostics.warning("Diagnostics: GenerateContributors warning")
         Diagnostics.remark("Diagnostics: GenerateContributors remark")
 ```
+
 对应构建工具插件在 Xcode 中的提示：
 ![avatar](./images/pic9.jpg)
 对应命令插件在 Xcode 中的提示：
