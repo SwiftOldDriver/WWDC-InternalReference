@@ -3,32 +3,36 @@ session_ids: [10061]
 
 ---
 
-# WWDC22 - Bring multiple windows to your SwiftUI app
+# WWDC22 - 将多窗口引入 SwiftUI 应用
 
 本文基于 WWDC22 Session 10061 - [Bring multiple windows to your SwiftUI app](https://developer.apple.com/videos/play/wwdc2022/10061/) 整理
 
-本 Session 主要探讨了如何使用 scene types 轻松构建更丰富的 app, 分为以下四个部分:
+由 iPadOS 和 MacOS 的平台特性决定了可以在同一个屏幕上展现不同场景内容的多个窗口，在以往的 Session 中，跟这一特性相关的场景的介绍大多分布在其中某一段中（例如 WindowGroup 和 DocumentGroup， 这些介绍大多需要覆盖多个平台），同时 APIs 也缺少一些必要的的功能（例如缺少打开唯一单一窗口的方法）；在 WWDC22 上苹果补充了两个 scene types，并且新增了一些与场景相关的一些新的 APIs。  
+
+本 Session 将主要探讨了如何使用 scene types 轻松构建更丰富的 app，分为以下四个部分:
 
 * **Scene basics** - SwiftUI 生命周期中的各种 scene types，包括几个新引入的 types；
 * **Auxiliary scenes** - 如何通过添加 auxiliary scenes 的方式将这些 scene types 组合在一起；
-* **Scene navigation** - 介绍一些为特定 scenes 打开窗口的新 API；
+* **Scene navigation** - 介绍一些为特定 scenes 打开窗口的新 APIs；
 * **Scene customizations** - 分享一些在 app 中自定义 scene 的方法；
 
 ## Scene basics
 
-介绍 Scene types 之前我们先回顾一下基础知识，SwiftUI app 是由 App， Scene 和 View 所组成的树状结构； 显示在屏幕上的 Window 表示了 Scenes 的内容。本文依然以 BookClub 为例，这个 app 的 Scene 只有一个 WindowGroup，并运行在多个平台上。如下图所示:
+介绍 Scene basics 之前我们先回顾一下基础知识，SwiftUI app 的结构是由 App， Scene 和 View 共同组成的统一的所有制层次结构(a unified hierarchy of ownership)； App 包含一个或多个 Scene， 而 Scene 作为 View 的根元素包含了众多 View （我们在屏幕上看到的一切内容都是 View）。本文依然以 BookClub 为例，这个在多个平台上运行的 app 的 Scene 只由一个 WindowGroup 组成。如下图所示:
 
 > Tips: BookClub 是一个用来跟踪图书阅读进度的 app，在 WWDC20 介绍 [App essentials in SwiftUI](https://developer.apple.com/videos/play/wwdc2020/10037/) 时，以该 app 为例演示了如何利用 App, Scene 和 View 构建多平台 app，其中也包含了下文提起的 WindowGroup 和 DocumentGroup。
 
+> WindowGroup 是一种符合`Scene`协议的 scene type， SwiftUI app 则是由一个或者多个符合 `Scene` 协议的的实例组成的。因此在这里 Scene basics 是通过 scene types 呈现的。
+
 ![](./images/session_10061_1_1.png)
 
-系统会根据运行平台的不同而调整 Scene 的展示行为， 在诸如 iPadOS 和 macOS 这样支持多窗口的平台上， 一个 WindowGroup 可以包含多个相同类型的 Window。如下图所示：
+系统会根据 Scene type，平台特性及上下文以不同的方式调整 Scene 的展示行为, 可能会填满整个屏幕或部分屏幕等， 在诸如 iPadOS 和 macOS 这样支持多窗口的平台上， 一个 WindowGroup 可以包含多个相同类型的窗口。如下图所示：
 
 ![](./images/session_10061_1_2.png)
 
 Scene 的 behaviors 和 representation 会因使用的 Scene types 而异。 例如， 一个 scene 中可能只包含一个实例，而无视平台差异。
 
-那就让我们回顾一下现有的 Scene types；
+我们先回顾一下现有的 Scene types；
 
 * **WindowGroup** - 这个 Scene 提供了一种跨 Apple 平台的构建数据驱动 app 的方法；
 * **DocumentGroup** - 可以在 iOS 和 macOS 上构建 document-based apps;
@@ -78,7 +82,7 @@ struct MultiSceneApp: App {
 
 * **Window**
 
-不同于 WindowGroup 的多窗口， Window scene 只会在一个唯一的 window 实例中显示其 contents。
+不同于 WindowGroup 的多窗口， Window scene 只会在一个唯一的窗口实例中显示其 contents。
 使用代码如下所示：
 
 ```swift
