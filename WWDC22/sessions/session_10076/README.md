@@ -326,4 +326,19 @@ rootVC.present(wordCountDetailsVC, animated: true)
 
 跨端方案有很多，SwiftUI 可以跨整个苹果生态，Flutter 能做的事情就更多了。但是，如果有一套已经基于 UIKit 实现的 iPad 代码想要迁移到 Mac 上的话，Mac Catalyst 是你的不二之选。
 
+> 对 SwiftUI 跨平台新进展感兴趣的话，推荐阅读：
+> [苹果官方教程：Introducing SwiftUI](https://developer.apple.com/tutorials/swiftui/)
+> [【WWDC22 10075】结合使用 SwiftUI 和 AppKit](https://xiaozhuanlan.com/topic/4072968531)
+> [【WWDC22 10072】Use SwiftUI with UIKit](https://developer.apple.com/wwdc22/10072)
+
 Mac Catalyst 每年都在迭代，M 系列芯片也装进了越来越多的设备中，我很期待 iPad 与 Mac 的融合，希望有一天我们能看到 Xcode 可以跑在 iPad 上。
+
+## 往期阅读推荐
+
+[【WWDC20 10056】美化 Mac Catalyst app](https://xiaozhuanlan.com/topic/9701235486)
+[【WWDC20 10114】Apple Silicon Mac 上的 iPad 与 iPhone App 运行](https://xiaozhuanlan.com/topic/1845067932)
+[【WWDC20 10143】Mac Catalyst 的新功能](https://xiaozhuanlan.com/topic/5932684107)
+[【WWDC20 10214】移植 Mac app 到 Apple Silicon](https://xiaozhuanlan.com/topic/8024365197)
+[【WWDC21 10052】Mac Catalyst 的新功能](https://xiaozhuanlan.com/topic/9734105682)
+[【WWDC21 10053】优秀 Mac Catalyst App 的品质](https://xiaozhuanlan.com/topic/9324781605)
+[【WWDC21 10056】让您的 iPad 与 iPhone 应用程序在 M1 的 Mac 上大放异彩](https://xiaozhuanlan.com/topic/4392718605)
