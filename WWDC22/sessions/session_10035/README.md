@@ -6,7 +6,7 @@ session_ids: [10035]
 
 >作者：钟山，iOS 开发
 >
->审核：XXX
+>审核：士土Edmond木, 对 CocoaPods 有一点了解，目前对 Bazel 和 Swift 比较感兴趣。[Github Page](https://looseyi.github.io)
 >
 >本文基于 [Session 10035](https://developer.apple.com/videos/play/wwdc2022/10035/) 和 [Session 10006](https://developer.apple.com/videos/play/wwdc2022/10006/) 梳理。
 
