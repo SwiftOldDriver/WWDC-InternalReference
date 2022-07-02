@@ -4,7 +4,7 @@ session_ids: [10035]
 
 # WWDC22 10035 - 探索苹果地图新功能
 
->作者：钟山，iOS 开发
+>作者：钟山，字节跳动音乐平台业务团队 iOS 开发
 >
 >审核：士土Edmond木, 对 CocoaPods 有一点了解，目前对 Bazel 和 Swift 比较感兴趣。[Github Page](https://looseyi.github.io)
 >
@@ -12,9 +12,9 @@ session_ids: [10035]
 
 ![Swift 发展时序图](./images/apple_map.png)
 
-自2012年6月11日苹果公司在 WWDC 上向外宣布在自家 iOS 系统中将不会再默认搭载 ‘Google 地图’，‘苹果地图’将取代而之默认在 iOS 的系统中向用户提供地图服务，不知不觉已经过去了整整十个年头。在2012年9月正式开放使用之后，因取代‘Google 地图’所推出的苹果地图服务内容不完整、功能欠佳等问题广受用户诟病。因为漏洞百出甚至引发过苹果的公关危机，CEO 库克还因此专门公开向用户道歉。库克当时表示：“会不断改进‘苹果地图’给予用户的体验”以及“如果消费者不满意该地图所提供的服务，可以使用Google或是Nokia地图”。
+自 2012年6月11日 苹果公司在 WWDC 上向外宣布在自家 iOS 系统中将不会再默认搭载 ‘Google 地图’，‘苹果地图’将取代而之默认在 iOS 的系统中向用户提供地图服务，不知不觉已经过去了整整十个年头。在 2012年9月 正式开放使用之后，因取代‘Google 地图’所推出的苹果地图服务内容不完整、功能欠佳等问题广受用户诟病。因为漏洞百出甚至引发过苹果的公关危机，CEO 库克还因此专门公开向用户道歉。库克当时表示：“会不断改进‘苹果地图’给予用户的体验”以及“如果消费者不满意该地图所提供的服务，可以使用Google或是Nokia地图”。
 
-在这十年里，‘苹果地图’持续修补漏洞、改进功能，从一开始依赖第三方数据到自己收集数据，一直在努力将其打造为世界上最好的地图应用。同时为开发者提供了两种将地图 app 整合到其产品中的方式，其中之一是 MapKit，可以让你将地图 app 整合到 iOS、iPadOS 或 macOS 的 app 中，这样你就能在 app 中显示地图或卫星图像、添加注释和悬浮窗、标注兴趣点、确定地图坐标信息等等。另外一个是MapKit JS，可为网站带来交互式地图，不只是添加注释、悬浮窗，还有搜索和导航等地图服务的界面。
+在这十年里，‘苹果地图’持续修补漏洞、改进功能，从一开始依赖第三方数据到自己收集数据，一直在努力将其打造为世界上最好的地图应用。同时为开发者提供了两种将地图 App 整合到其产品中的方式，其中之一是 MapKit，可以让你将地图 App 整合到 iOS、iPadOS 或 macOS 的 App 中，这样你就能在 App 中显示地图或卫星图像、添加注释和悬浮窗、标注兴趣点、确定地图坐标信息等等。另外一个是MapKit JS，可为网站带来交互式地图，不只是添加注释、悬浮窗，还有搜索和导航等地图服务的界面。
 
 在今年的 WWDC 中，苹果不仅带来了 MapKit 的新功能，还首次开放 Apple Maps Server API（苹果地图服务接口） 来帮助开发者构建性能更好的地图服务。本文将对这部分内容进行详细介绍，主要分为两大块：
 
@@ -111,18 +111,18 @@ class MKStandardMapConfiguration : MKMapConfiguration {
 
 这是一个地图配置基类属性，所有的地图配置都可以设置，下图展示了标准地图配置分别设置 flat 和 realistic 的呈现效果：
 
-![影像地图](./images/realistic.png)
+![影像地图](./images/elevation_style.png)
 
 这个属性可以理解为摄像机在不同高度摄像带来的不同视觉效果：
 
 * flat为默认属性，这个属性下意味着地面看起来是平坦的，包括道路、桥梁和立交桥也显得平坦。
-*  realistic意味着地面地形再现了真实世界的高度，例如丘陵和山脉，道路以逼真的高程细节描绘。
+*  realistic意味着地面地形再现了真实世界，例如丘陵和山脉，道路以逼真的细节描绘。
 
 #### EmphasisStyle 强调样式
 
 这个属性为标准地图配置独有，该属性可以是 default 或 muted。
 
-![标准地图强调样式静音](./images/EmphasisStyle_muted.png)
+![标准地图强调样式静音](./images/emphasis_style.png)
 
 可以看到：
 
@@ -136,15 +136,9 @@ class MKStandardMapConfiguration : MKMapConfiguration {
 ![属性之间的对应关系](./images/map_type_mapping.png)
 
 
-### Overlay improvements
+### Overlay improvements 覆盖物效果提升
 
-简单回顾叠加层
-
-![属性之间的对应关系](./images/aboveLabels.png)
-![属性之间的对应关系](./images/aboveRoads.png)
-
-
-iOS 16 中引入的一个新功能，称为透明建筑。无论您的叠加层是在道路之上还是在标签之上，当从上到下无倾斜地查看时，您的叠加层将始终呈现在建筑物的顶部。
+覆盖物是苹果地图很早就支持的功能，可以盖住指定的地图区域。
 
 ```Swift
 class MKMapView {
@@ -152,41 +146,188 @@ class MKMapView {
 }
 
 enum MKOverlayLevel {   
-    case aboveRoads = 0 //
-    case aboveLabels = 1
+    case aboveRoads = 0 // 覆盖物位于道路之上
+    case aboveLabels = 1 // 覆盖物位于标签之上
+}
+
+```
+下图展示了 aboveLabels 和 aboveRoads 的覆盖效果：
+
+![属性之间的对应关系](./images/overlay.png)
+
+iOS 16 中为 aboveRoads 覆盖物引入的一个新功能，叫做透明建筑。当地图有倾斜角度时，树木和建筑物等地面物体在出现在覆盖物上方时会自动以透明度进行渲染，以免完全遮挡它们。效果如下图所示：
+
+![属性之间的对应关系](./images/overlay.gif)
+
+
+### Blend modes 图层混合模式
+
+iOS 16 中 MKOverlayRenderer 会增加一个这个新的 blendMode 属性，这个属性可以更好地控制覆盖物的外观视觉效果，并解锁一系列新的创意可能性。
+
+```Swift
+class MKOverlayRenderer {
+	var blendMode: CGBlendMode
+}
+```
+在混合操作期间，两个图形层按照指定的一组混合模式进行组合，主要用来突出地理区域、淡化地图，使得内容突出。
+MapKit 支持多种混合模式，如下所列：
+
+![属性之间的对应关系](./images/blend_modes.png)
+
+### Selectable Map Features 可选择地图特征
+在 iOS 16 中支持可选择地图功能，可选择的地图特征包括兴趣点，例如商店、餐馆和地标；领土，例如城市和州；和物理特征，例如山脉和湖泊。
+
+```Swift
+class MKMapView {
+	var selectableMapFeatures:MKMapFeatureOptions
+}
+
+struct MKMapFeatureOptions: OptionSet {
+	static var pointsOfInterest // 兴趣点
+	static var terrirories // 领土
+	static var physicalFeatures // 物理特征
+}
+
+protocol MKMapViewDelegate {
+	optional func mapView(_: MKMapView, didSelect annotation: MKAnnotation)
+	optional func mapView(_: MKMapView, didDeselect annotation: MKAnnotation)
+	
+	// existing
+	optional func mapView(_: MKMapView,viewFor annotation: MKAnnotation) -> MKAnnotationView?
+}
+
+class MKMapFeatureAnnotation: MKAnnotation {
+	var featureType: FeatureType
+	var pointOfinterestCategory: MKPointOfInterestCategory?
+	var iconStyle: MKIconStyle?
+}
+
+class MKIconStyle {
+	var backgroundColor: UIColor
+	var image: UIImage
+}
+
+class MKMapItemRequest: NSObject {
+	init(featureAnnotation: MKMapFeatureAnnotation)
+	
+	func getMapItem(completionHandler: @escaping (MKMapItem?, Error?) -> Void)
+	var mapItem: MKMapItem { get async throws }
+}
+
+// Existing API
+
+open class MKMapItem: NSObject {
+	open var placemark: MKPlacemark { get }
+	
+	open var name: String?
+	open var phoneNumber: String?
+	open var url: URL?
+	
+	// ...
+	
+	func openInMaps(launchOptions: [String: Any]? = nil, from scene: UIScene?) async -> Bool
+
+}
+
+```
+只需要三个步骤就可以支持这个新功能，如下：
+
+1.设置 MKMapView 的 selectableMapFeatures 属性，指定哪些特征类型可被用户选择。
+
+```Swift
+mapView. selectableMapFeatures = [. pointsOfInterest]
+```
+
+2.
+实现 MKMapView 委托代理 MKMapViewDelegate 来处理选择事件，即 func mapView(_: MKMapView,viewFor annotation: MKAnnotation) -> MKAnnotationView? 方法  和 func mapView(_: MKMapView, didSelect annotation: MKAnnotation) 方法。
+
+```Swift
+// 定义可选地图特征大头针样式
+func mapView(_: MKMapView,viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+	if let feature = annotation as MKMapFeatureAnnotation? {
+		var annotationView: MKMarkerAnnotationView = ...
+		annotationView.image = feature.iconStyle?.image
+		annotationView.color = ...
+		return annotationView
+	}
+	
+	return nil
+}
+
+// 处理用户选择事件
+func mapView(_: MKMapView, didDeselect annotation: MKAnnotation) {
+	guard let featureAnnotation = annotation as? MKMapFeatureAnnotation else { retrun }
+	let featureRequest = MKMapItemRequest(mapFeatureAnnotation: featureAnnotation)
+	
+	....
+}
+```
+3.把 MKMapFeatureAnnotation 实例作为 init 参数传递给 MKMapItemRequest 实例，通过 MKMapItemRequest 获取用户界面中显示的额外地点信息。
+
+```Swift
+func mapView(_: MKMapView, didDeselect annotation: MKAnnotation) {
+	guard let featureAnnotation = annotation as? MKMapFeatureAnnotation else { retrun }
+	let featureRequest = MKMapItemRequest(mapFeatureAnnotation: featureAnnotation)
+	
+	Task {
+		// Issue request.
+		do {
+			guard let featureItem = try await featureRequest.mapItem else { return }
+			
+			UIView.animate(withDuration: 4) {
+				self.animateCamera(featureItem)
+			} completion: { _ in
+			 	self.showInfoCardView(featureItem)
+			}
+		} catch {
+		
+		}
+	}
+}
+```
+Selectable Map Features 实际效果：
+
+![属性之间的对应关系](./images/selectable.gif)
+
+### Look Around 环顾四周
+
+Look Around 是苹果地图在 iOS 13 中引入的，可以环顾四周来真正了解一个地方。 Look Around 图像提供了令人难以置信的细节水平，利用 3D 模型提供了与其他地图不同的真实感。在 iOS 16 中，苹果将 Look Around 引入到 MapKit 供开发者使用。
+> Look Around 需要大量环境数据，目前只在部分国家城市支持。
+
+
+```Swift
+class MKLookAroundSceneRequest {
+	init(coordinate: CLLocationCoordinate2D)
+	init(mapItem: MKMapItem)
+	var scene: MKLookAroundScene? { get async throws }
+}
+
+class MKLookAroundScene {
+
+}
+
+class MKLookAroundViewController: UIViewController {
+	init(scene: MKLookAroundScene)
+	var scene: MKLookAroundScene?
+}
+
+class MKLookAroundSnapshotter {
+	init(scene: MKLookAroundScene, options: MKLookAroundSnapshotter. Options)
+	var snapshot: MKLookAroundSnapshotter.Snapshot { get async throws }
+
 }
 
 ```
 
+只需要简单的步骤，即可完成适配，如下：
 
+1. 首先明确该位置有没有 Look Around 数据。为此需要创建一个 LookAroundSceneRequest，这是 iOS 16 中引入的一个新类。通过 LookAroundSceneRequest 可以获得一个 MKLookAroundScene 实例。
+2. MKLookAroundScene 实例作为 init 参数传递给新的 MKLookAroundViewController 实例
+3. 展示 MKLookAroundViewController
 
+Look Around 实际效果：
 
-### Blend modes
-
-这个新的 API 让您可以更好地控制叠加层的外观和感觉，并解锁一系列新的创意可能性。
-
-主要用来突出地理区域、淡化地图，使得内容突出。
-
-![属性之间的对应关系](./images/blend_modes.png)
-
-
-### Selectable Map Features
-用户点击地图可以在上面定义位置标签。
-
-创建步骤
-
-### Look Around 逛一逛
-
-Look Around 是苹果地图在 iOS 13 中引入的，可以环顾四周来真正了解一个地方。 Look Around 图像提供了令人难以置信的细节水平，利用 3D 模型提供了与其他地图不同的真实感。在 iOS 16 中，苹果将 Look Around 引入到MapKit。
-
-创建步骤
-
-带有 3D 城市体验的全新地图需要兼容的硬件。在 iOS 上，新地图支持需要基于 A12 的 iPhone 和 iPad 或更高版本。在 macOS 上，新的地图支持需要任何基于 M1 的计算机或更高版本。
-
-在 3D 城市体验不可用的区域，地图将自动退回以呈现具有平坦海拔的全新地图。在所有其他设备上，全新地图将以平面高度呈现。
-
-在 M1 Mac 上，Xcode 允许您通过更改操作系统版本来模拟这两种体验。我们鼓励您尝试两者，以确保您的应用在所有设备上看起来都很棒！ 3D 城市体验可在世界各地的许多大都市地区使用。我们不断在此列表中添加新城市，因此我鼓励您查看会话说明中链接的功能可用性网站上的 3D 城市体验部分。我们关于采用全新地图和使用地图配置 API 的部分到此结束。
-
+![属性之间的对应关系](./images/look_around.gif)
 
 ## Apple Maps Server API 苹果地图服务接口
 苹果本次开放了四个服务 API 供开发者调用，分别是地址编码、逆向地址编码、地址搜索、估计到达时间。
