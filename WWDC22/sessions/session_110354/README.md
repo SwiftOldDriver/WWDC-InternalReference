@@ -269,4 +269,39 @@ func addEntries1<Entries: Collection<MailmapEntry>>(_ entries: Entries, to mailm
 
 ## 总结
 
-以上就是 Swift 5.7 新特性介绍的全部内容，除了本文提到的新特性以外，Swift 5.7 还有许多变更，如果想要了解更多可以查看 [Swift Forums 的 Evolution 板块](https://forums.swift.org/c/evolution/18)。
+以上就是 Swift 5.7 新特性介绍的全部内容，除了本文提到的新特性以外，Swift 5.7 还有许多变更，如果想要了解更多可以查看 [Swift Forums 的 Evolution 板块](https://forums.swift.org/c/evolution/18)。也可以直接在 [Swift Evolution](https://apple.github.io/swift-evolution/) 页面搜索 5.7 查看 Swift 5.7 相关变更。
+
+### 时间标准
+
+Swift 5.7 引入了一种新的标准方式来获取和表示时间，可分为以下三个部分：
+
+1.Clock: 表示当下，并且能提供在将来特定时间点唤起的功能
+
+2.Instant: 表示某个瞬间
+
+3.Duration: 用于计量流逝的时间
+
+Clock 有 ContinuousClock 和 SuspendingClock 两种内置时钟，ContinuousClock 在系统休眠时也会保持时间递增，而 SuspendingClock 则不会。Task 休眠相关的 API 也会根据新标准有所更新。如果想要了解更多可以参考 [Clock, Instant, and Duration](https://github.com/apple/swift-evolution/blob/main/proposals/0329-clock-instant-duration.md)。
+
+```Swift
+extension Task {
+    @available(*, deprecated, renamed: "Task.sleep(for:)")
+    public static func sleep(_ duration: UInt64) async
+    
+    @available(*, deprecated, renamed: "Task.sleep(for:)")
+    public static func sleep(nanoseconds duration: UInt64) async throws
+    
+    public static func sleep(for: Duration) async throws
+    
+    public static func sleep<C: Clock>(until deadline: C.Instant, tolerance: C.Instant.Duration? = nil, clock: C) async throws
+}
+```
+
+### 基于默认表达式的类型推断
+
+在 Swift 5.7 之前，不支持为泛型参数提供默认值，因为在现有语法规则下，默认值的类型必须在任何调用场景都有效才行。Swift 5.7 提供了一种基于默认表达式的类型推断方式，使得可以为泛型参数添加默认值。如果想要了解更多可以参考 [Type inference from default expressions](https://github.com/apple/swift-evolution/blob/main/proposals/0347-type-inference-from-default-exprs.md)。
+
+```Swift
+func compute<C: Collection>(_ values: C = [0, 1, 2]) {
+}
+```
