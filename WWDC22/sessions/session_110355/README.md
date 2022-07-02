@@ -8,14 +8,22 @@ session_ids: [110355]
 
 阅读本文需要一定的基础，包括：
 
-1. Async/Await 对于异步方法的执行和实现，参考视频链接 [Meet async/await in Swift](https://developer.apple.com/videos/play/wwdc2021/10132)
-2. 了解 AsyncSequence 协议，理解其实现的原理，参考视频链接 [Meet AsyncSequence](https://developer.apple.com/videos/play/wwdc2021/10058)
-
-不了解但有时间的同学可以先观看上面的视频。本文会对使用到的相关语法和结构做一些简单的解释，以保证不影响阅读。
+1. Async/Await 对于异步方法的执行和实现。可以观看 WWDC Session [Meet async/await in Swift](https://developer.apple.com/videos/play/wwdc2021/10132)，另外还可以阅读去年内参的两篇翻译文章
+  [【WWDC21 10132/10133/10134】认识 Swift 中的异步与并发](https://xiaozhuanlan.com/topic/8627905413)
+  [【WWDC21 10132】认识 Swift 的 Async/Await](https://xiaozhuanlan.com/topic/9307851264)
+2. 了解 AsyncSequence 协议，理解其实现的原理，可以观看WWDC Session [Meet AsyncSequence](https://developer.apple.com/videos/play/wwdc2021/10058)。苹果团队在力求 AsyncSequence 在语法和概念上近可能的接近 Sequence，利用 Async/Await 来表示这是异步序列的数据机构之外，包括序列的遍历，序列之间的处理等都保持了一样的语法。另外异步序列有一个标准行为：异步序列对应一个缓冲区（这个缓冲区可调整大小），异步序列一段时间返回多个值时会放到缓冲区中。而且会优先从缓冲区取值，这时候和一般的序列就是一样的表现。
 
 ## 正文
 
-本文基于 [Session 110355](https://developer.apple.com/videos/play/wwdc2022/110355/) 梳理，介绍的是苹果又一新开源包 Swift Async Algorithms ([Github 地址](https://github.com/apple/swift-async-algorithms)｜[Doc 地址](https://developer.apple.com/documentation/swift/asyncsequence))，主要用于实现 AsyncSequences 数据结构相关的算法。
+本文基于 [Session 110355](https://developer.apple.com/videos/play/wwdc2022/110355/) 梳理，介绍的是苹果又一新开源包 Swift Async Algorithms ([Github 地址](https://github.com/apple/swift-async-algorithms)｜[Doc 地址](https://developer.apple.com/documentation/swift/asyncsequence))，主要用于实现 AsyncSequences 数据结构相关的算法。主要可以分为以下几大类：
+
+1. Combining 多个序列合并
+2. Creating 从一种序列生成另一种序列
+3. Chunk 根据数据的特点处理，包括分块，去重，筛选
+4. Timing 在时间参数下返回数据
+5. All Values 获取异步序列所生成的所有值
+
+在本文中会详细解读多序列合并的算法 `Zip` 和时间参数下的去抖动算法 `Debounce` 
 在开源包提议文件 ([Github 地址](https://github.com/apple/swift-async-algorithms)) 中，对这个开源包出发的动机和未来的发展有更加详细的介绍。
 
 ![image](./images/async-algorithms.png)
@@ -37,21 +45,22 @@ session_ids: [110355]
 同年也提出了 AsyncSequence 数据结构协议，而且在[提案](https://github.com/apple/swift-evolution/blob/main/proposals/0298-asyncsequence.md)里已经明确的表示，在语法上使用会和现有的 Sequence 保持一致。
 
 2022 进一步的提出 Async Algorithms，就是在这样的基础上，实现了一些常见的集合算法（包括 `chain/merge/zip` 等等），同时针对异步场景下实现其他一些常见的算法。
-让我们深入了解一下这其中的不同。
+
+让我们深入阅读 Zip 算法的源码。
 
 ### Zip
 
 ![image](./images/zip-algorithms.png)
 
-阅读官方代码，除了 `try await` 部分，会发现语法上是和一般序列是一样的
+我们在上传一个视频附件的时候，需要同时有对应创建的预览。在增加附件的时候，我们也许会采用多线程的方式处理，同时还需要处理好附件和预览的对应关系，然后将视频和预览成对的是上传。
 
-```Swift
-for try await (vid, preview) in zip(videos, previews) {
-  try await upload(vid, preview)
-}
-```
+在这样的处理方式下，代码复杂度和维护难度都有上升。而且考虑到业务需要，我们可能还需要将这些附件和预览以数组的方式存储和展示。而无论是元组类型的数组，还是两个 Sequence 利用 zip 方法处理，都需要我们分别处理好两个数据，然后增加合并逻辑。
 
-假设我们需要实现支持 AsyncSequence 为参数的 zip 方法，得到的结果应该和在一般 Sequence 一致。我们需要实现的功能有
+而现在我们可以直接遍历两个 AsyncSequence 就可以达到相同的效果。
+
+> 阅读官方代码截图，除了 `try await` 部分，会发现语法上是和一般序列是一样的
+
+我们不妨自己先假设，如果需要实现 zip 方法，得到的结果和在一般 Sequence 数据结构下处理的一致。那需要实现的功能就有
 
 1. 从两个 AsyncSequence 中都取到值
 2. 取到的两个值保证顺序一致
@@ -235,6 +244,12 @@ switch state {
 
 1. 比如 zip/merge 方法内部的 next 方法里对于有值和无值使用了枚举的方式来处理
 2. 内部使用 Task 来完成异步调用，包括 Task 相关的优先级参数，返回值，等等
+
+### 注意
+
+并不是所有异步生成的多个数据源处理都需要用到 Async Algorithms。一般的异步处理就足够满足的场景，就不需要滥用算法。
+
+在上面提到的两个方法里，都是多个数据源合并成了一个输出结果。而且在 zip 方法里也详细的提到的了我们需要的是，等异步返回结果之后进行对应组合，然后继续下一步的处理代码。从数据处理上来说，如果出现其一个异步序列还有值的情况下，这个代码会一直处于等待状态。
 
 ## 时钟 Clock
 
@@ -459,6 +474,25 @@ for try await (vid, preview) in zip(videos, previews) {
 ```
 
 包括 merge/combineLatest/debounce 方法等等，这些都能够在这俩框架里找到相近的方法。
+
+### Async Algorithms 替换 Rx
+
+如果是在一些简单的数据源处理和同步，或者调用了几个上面提到的相近算法，那么我们只要自定义需要的 AsyncSequence 数据结构，就能够实现替换一些原本 Rx 实现的逻辑。
+
+但是除了这种简单使用的情况下，在较为复杂的场景甚至是使用 Rx 实现的架构场景下，就不一定适合。
+
+首先要清楚的是，Async Algorithms 是官方支持 AsyncSequence 数据的算法合集，是作为一种补充。AsyncSequence 其中的结果可以是异步生成连续的数据，也可以是一个数据的连续部分，比如下面的代码里返回的就是每一行的数据，并不会等到完整 `lines` 数据就开始执行循环内的代码：
+
+```Swift
+let url = URL(fileURLWithPath: "/tmp/somefile.txt")
+for try await line in url.lines {
+    ...
+}
+```
+
+到这能看出官方对于 AsyncSequence 的定位的重点还是 Sequence。而 Rx 是一种面向过程开发的框架，面向过程的代码逻辑是，拿到一个数据之后进行再次处理得到新结果，或者根据结果通知状态刷新。不仅仅包含那些数据结构和方法，更重要的是编写代码的思维方式。
+
+所以我们在这里讨论的是，主要是在某些场景下既可以使用这个官方的算法合集实现，也可以使用 Rx 框架实现。
 
 ## 总结
 
