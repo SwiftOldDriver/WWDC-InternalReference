@@ -24,23 +24,23 @@ session_ids: [10032]
 >
 > 1. 实现 Intent
 >
-> - 第一个 Intent — 打开“正在阅读”Tab
-> - 携带参数的 Intent — 打开任一个 Tab
-> - 更灵活的 Intent — 打开某一本书
-> - 把多个 Intent 组合起来 — 添加一本书，并打开
+> 	- 第一个 Intent — 打开“正在阅读”Tab
+> 	- 携带参数的 Intent — 打开任一个 Tab
+> 	- 更灵活的 Intent — 打开某一本书
+> 	- 把多个 Intent 组合起来 — 添加一本书，并打开
 >
 > 2. 与 Intent 的交互
 >
-> - Dialog： 文字/声音的反馈
-> - Snippet： 可视化的反馈
-> - Request Value： 向用户请求所需的参数
-> - Disambiguation： 让用户选择存在歧义的结果
-> - Comfirmation： 让用户确认结果
+> 	- Dialog： 文字/声音的反馈
+> 	- Snippet： 可视化的反馈
+> 	- Request Value： 向用户请求所需的参数
+> 	- Disambiguation： 让用户选择存在歧义的结果
+> 	- Comfirmation： 让用户确认结果
 >
 > 3. 关于 App Intent 的一些其他内容
 >
-> - 构建 App Intent 两种方式的比较
-> - 升级 SiriKit Intent 到 App Intent
+> 	- 构建 App Intent 两种方式的比较
+> 	- 升级 SiriKit Intent 到 App Intent
 
 ## 实现 Intent
 
@@ -92,7 +92,7 @@ public struct LibraryAppShortcuts: AppShortcutsProvider {
 
 关于实现 App Shortcuts 的更多内容，可以在另一个 session 中了解 [Implement App Shortcuts with App Intents](https://developer.apple.com/videos/play/wwdc2022/10170)
 
-### 携带参数的 Intent —— 打开任一个 Tab
+### 携带参数的 Intent —— 打开任意一个 Tab
 
 上一个例子中，我们实现了可以打开 App 指定 Tab 的 Intent。但我们可以实现更为通用的 Intent，比如打开 App 的任意一个 Tab。所以我们可以通过给 Intent 添加参数来实现。
 
@@ -138,12 +138,15 @@ struct OpenShelf: AppIntent {
     static var openAppWhenRun: Bool = true
 }
 ```
+使用 [`@Parameter`](https://developer.apple.com/documentation/appintents/intentparameter) 包装表示此属性是通过传入的参数被赋值的。
 
-Intent 传入的参数需要使用 [`@Parameter`](https://developer.apple.com/documentation/appintents/intentparameter) 包装。 `title` 是用于在 UI 上展示此参数的标题。
+`title` 是用于在 UI 上展示此参数的标题，其余被省略的初始化参数具体含义可在文档中查阅。
 
 ![图片](./images/IMG_5.png)
 
-此时 Shelf 是作为一个参数在界面中占用了一行单独展示，使用 ParameterSummary API 可以让用户界面更简单，把参数带入到一个表示意图的短语中， “打开\\(某个 Tab)”。
+如上图所示，此时 Shelf 是作为一个参数在界面中占用了一行单独展示。
+
+使用 ParameterSummary API 可以让用户界面更简单，把参数带入到一个表示意图的短语中， “打开\\(某个 Tab)”。
 
 ```swift
 
@@ -190,11 +193,12 @@ struct BookEntity: AppEntity {
 
 Query 是 App 给系统提供的用于检索 Entity 的接口。有如下几种检索方式：
 
-- 通过 ID 检索， 是 Query 必须实现的方式。 [EntityQuery](https://developer.apple.com/documentation/appintents/entityquery)
-- 通过字符串检索 [EntityStringQuery](https://developer.apple.com/documentation/appintents/entitystringquery)
-- 通过属性检索[EntityPropertyQuery](https://developer.apple.com/documentation/appintents/entitypropertyquery)
+- [EntityQuery](https://developer.apple.com/documentation/appintents/entityquery)
+ 通过 ID 检索(是 Query 必须实现的方式)
+- [EntityStringQuery](https://developer.apple.com/documentation/appintents/entitystringquery) 通过字符串检索 
+- [EntityPropertyQuery](https://developer.apple.com/documentation/appintents/entitypropertyquery) 通过属性检索
 
-Query 还会提供一些建议的结果供用户选择。[suggestedEntities()](<https://developer.apple.com/documentation/appintents/entityquery/suggestedentities()-5jftb>)
+Query 还会提供一些建议的结果供用户选择。即实现[`suggestedEntities()`](<https://developer.apple.com/documentation/appintents/entityquery/suggestedentities()-5jftb>)
 
 如下图所示，当我们点击 Book 时，会弹出一个 Sheet 去检索，除了顶部的搜索栏可以让我们输入字符串检索外，下方也会展示一些建议的结果。
 
