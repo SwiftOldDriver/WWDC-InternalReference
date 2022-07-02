@@ -6,7 +6,7 @@ session_ids: [110403]
 
 **Background Assets** 是苹果在 `iOS 16` 中引入的新框架，目的是帮助用户减少使用 `APP` 时的等待时间。
 
-以游戏《王者荣耀》为例，用户从 `Appstore` 点击下载后去做其他事，游戏完成下载后用户兴奋的打开游戏，提示需要再下载 `1.2G` 的资源包，资源包下载过程经常会因为网速慢、资源体积大导致用户放弃下载，造成用户流失。
+以游戏《王者荣耀》为例，用户从 `Appstore` 点击下载后去做其他事，游戏完成下载后兴奋的打开游戏，提示需要再下载 `1.2G` 的资源包，资源包下载过程中用户经常会因为网速慢、资源体积大等原因放弃下载，造成用户流失。
 
 ![](./images/wangzhe_downloding.png)
 
@@ -19,11 +19,11 @@ session_ids: [110403]
 1. `BA` 框架总体介绍；
 2. 如何在应用中使用 `BA` 框架;
 3. 快速了解 `Extension` 提供的能力;
-4. 最佳实践
+4. 最佳实践；
 
 ## 一、Background Assets 框架总览
 
-苹果在 BA 框架中提供了一个新的 `App Extension`，该 `Extension` 会在如下执行：
+苹果在 `BA` 框架中提供了一个新的 `App Extension`，该 `Extension` 会在如下场景运行：
 
 1. `APP` 通过 `AppStore` 或 `TestFlight` 安装后；
 2. `APP` 更新后；
@@ -31,7 +31,7 @@ session_ids: [110403]
 
 需要注意的是，`Extension` 的执行时间非常短，如果下载任务不能快速执行，系统可能会终止 `Extension` 的运行。另外 `Extension` 执行的频率与 `APP` 的使用情况相关，如果一个 `APP` 经常被使用，那对应的 `Extension` 也将会被系统频繁执行，反之亦然。
 
-通过 BA 框架能够保证 `APP` 所需的资源在 `APP` 启动前都已经下载完毕，下面让我们来看下如何在 `APP` 中使用 `BA` 框架。
+通过 `BA` 框架能够保证 `APP` 所需的资源在 `APP` 启动前都已经下载完毕，下面让我们来看下如何在 `APP` 中使用 `BA` 框架。
 
 ## 二、如何在应用中使用 Background Assets 框架
 
@@ -44,7 +44,7 @@ session_ids: [110403]
 * 取消下载任务
 * 同步 `APP` 与 `Extension` 之间的独占访问
 
-我们用一个例子简单展示如何使用 BA 框架来获取资源：
+我们用一个例子简单展示如何使用 `BA` 框架来下载资源：
 
 1. `import BackgroundAssets` 库
 2. 声明资源下载地址
@@ -159,11 +159,11 @@ public protocol BADownloadManagerDelegate : NSObjectProtocol {
 * BADownloadDomainAllowList：第一次下载时允许下载资源的域名地址
 * BAMaxInstallSize：下载额外资源需要的最大磁盘空间
 
-`BADownloadAllowance`和`BADownloadDomainAllowList`只在应用安装时有效，用户启动 `APP` 后这些限制将不在生效。
+`BADownloadAllowance` 和 `BADownloadDomainAllowList` 只在应用安装时有效，用户启动 `APP` 后这些限制将不在生效。
 
 ### 3.2 Extension protocol
 
-与其他 `APP Extension` 不同，`BA Extension` 由操作系统管理，系统维护 `Extension 的生命` 期，可以将它视作临时服务。任何协议中执行的操作尽量最小化，保证任务可以快速执行完毕。创建 `Extension` 时需要确保与 `APP` 使用同一个 `group identifier`，这样 `APP` 和 `Extension` 可以读写各自下载的内容。
+与其他 `APP Extension` 不同，`BA Extension` 由操作系统管理，系统维护 `Extension` 的生命周期，可以将它视作临时的系统服务。协议中任何方法的执行尽量最小化，保证任务可以快速执行完毕。创建 `Extension` 时需要确保与 `APP` 使用同一个 `group identifier`，这样 `APP` 和 `Extension` 可以互相访问下载的内容。
 
 `BADownloaderExtension` 中定义了所有可以唤醒 `Extension` 的回调：
 
