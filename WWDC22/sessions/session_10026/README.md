@@ -16,7 +16,7 @@ session_ids: [10026]
 
 ## 序言
 
-在这篇文章中，开始时会对实况文本的 **API** 做一个使用概述。接着会通过一个实例，讲解在静态图片上添加实况文本功能时要怎么使用这些 **API**。之后，会深入介绍一些实况文本 **API** 的相关使用技巧，最后会对比下其他系统组件在集成实况文本功能的方式差异，希望能够对你有所帮助。
+在这篇文章中，开始时会对实况文本的 **API** 做一个使用概述。接着会通过一个实例，讲解在静态图片上添加实况文本功能时要怎么使用这些 **API**。之后，会深入介绍一些实况文本 **API** 的相关使用技巧，最后会也对比下，其他系统组件在集成实况文本功能的方式差异，希望能够对你有所帮助。
 
 > 实况文本仅提供 **Swift** 版本 API。
 
@@ -121,6 +121,64 @@ class LiveTextViewController: BaseViewController, ImageAnalysisInteractionDelega
 
 简单看下一下我们写的效果。实况文本的按钮出现了。我们也可以选择上面的文本。
 
+如果是在 Mac 平台上，相关 API 会有什么不一样呢? 
+
+```
+class ViewController: NSViewController, ImageAnalysisOverlayViewDelegate, NSGestureRecognizerDelegate {
+
+    let imageDataAnalyzer = ImageAnalyzer()
+    // 交互对象变成 ImageAnalysisOverlayView
+    let overlayView = ImageAnalysisOverlayView.init(frame: .zero)
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // 通过 addSubview 为 imageView 添加交互视图
+        imageView.addSubview(overlayView)
+        self.image = imageView.image
+        analyzeCurrentImage()
+    }
+    
+    var image: NSImage? {
+        didSet {
+            imageView.image = image
+            // 清空 overlayView 缓存内容
+            overlayView.preferredInteractionTypes = []
+            overlayView.analysis = nil
+        }
+    }
+    
+    override func viewDidLayout() {
+        super.viewDidLayout()
+        // 指定 overlayView 的布局样式
+        overlayView.frame = self.imageView.bounds
+    }
+    
+    func analyzeCurrentImage() {
+        if let image = image {
+            Task {
+                let configuration = ImageAnalyzer.Configuration([.text, .machineReadableCode])
+                do {
+                    // 除了分析的图片图像，分析配置 configuration，分析函数还需要设置图片的旋转方向
+                    let analysis = try await imageDataAnalyzer.analyze(image, orientation: .up, configuration: configuration)
+                    if let analysis = analysis, image == self.image {
+                        // overlayView 接收分析信息结果
+                        overlayView.analysis = analysis
+                        // overlayView 设置交互类型
+                        overlayView.preferredInteractionTypes = .automatic
+                    }
+                } catch {
+                    // 处理异常
+                }
+            }
+        }
+    }
+}
+```
+
+我们可以看到除了交互对象变成 `ImageAnalysisOverlayView` 大部分的处理几乎一样。除此明显差异的地方有以下两点：
+1. `ImageAnalysisOverlayView` 由于继承的是 `NSView`，添加到视图上的方式是 `addSubview`，当然也就同时需要设置 `ImageAnalysisOverlayView` 的布局样式。
+2. macOS 的 `imageDataAnalyzer` 没有直接分析图片的 **API**，分析函数的参数需要有 `image`（图像），`orientention`(图片的旋转方向)，`configuration`（指定分析的内容配置）。旋转方向的参数是为了指定读取图片数据的起始位置和读取方向，以及让系统选定正确的处理程序。
+
 ![viewer-demo][viewer-demo]
 
 这些交互控件的位置是自动放置的，并且会自动保持显示在画面边缘的可视区域位置。点击实况文本按钮会同时高亮图片内容中的所有可选择项，并且给其添加下划线。在画面左下角还会出一个快捷方式。点击快捷方式可以拨打内容中的电话号码，还可以长按，会弹出还有更多处理选项。
@@ -155,6 +213,8 @@ ImageAnalysisInteraction.InteractionTypes
 - `preferredInteractionTypes` 设成空值会让所有交互不可用。
 - 当设置了 `.textSelection` 或者 `.automatic` 模式的时候，仍可以通过长按激活文本内容检测分析。这是通过 `interaction` 对象的 `allowLongPressForDataDetectorsInTextMode` 属性控制的，默认值是 `true`。需要的话设置成 `false` 就可以关掉这个设置。
 
+> 以上的大部分枚举的含义及用法在 macOS 平台是相同的。除了最后提到的 `allowLongPressForDataDetectorsInTextMode` 属性，macOS 上由于平台交互效果的差异，没有该控制属性。
+
 ### 控件样式定制
 
 ![bottom-button][bottom-button]
@@ -162,6 +222,8 @@ ImageAnalysisInteraction.InteractionTypes
 我们接下来再介绍下在底部的这些按钮，看下要如何才能给他们设置成我们，它们主要都属于扩展控件（原文为：`supplementary interface`，指的是实况文本功能响应时的界面交互控件）。
 
 实况文本功能里按钮的位置是系统自动设置好的。通常出现在右下角的位置，而快捷操作按钮则会放在左下的位置。当实况文本按钮变成高亮时，快捷操作按钮就会出现，它表示检测到的文本可以进行快捷操作。这些控件的大小、位置和是否可见都是通过 `interaction` 对象控制。
+
+> 接下来讲的所有 `interaction` 对象属性的含义及用法，或者是其协议方法，在 macOS 平台上，除了对象换成 `ImageAnalysisOverlayView`，其它均都是相同的。
 
 #### 布局样式
 
