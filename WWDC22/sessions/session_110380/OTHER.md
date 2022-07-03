@@ -14,4 +14,4 @@ ps. 这里补充其他信息。请严格按照以下格式填写。
 
 ## 公众号/小专栏图文头图
 
-![](./images/banner.png)
+![](./images/banner.jpeg)
