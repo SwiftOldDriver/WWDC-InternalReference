@@ -10,4 +10,4 @@ bq，野生工程师一枚，rocker，专注于音视频和图像处理，就职
 
 ## 公众号/小专栏图文头图
 
-![](images/WWDC22 - 110338 - Explore media metadata publishing and playback interactions-0002.png)
+![](images/session_110338_02.jpg)
