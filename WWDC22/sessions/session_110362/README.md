@@ -2,7 +2,7 @@
 session_ids: [110362]
 ---
 
-# WWDC22 110362 - Link Fast: Improve build and launch times
+# 【WWDC22 110362】快速链接：优化构建和启动耗时
 
 本文基于 [Session 110362](https://developer.apple.com/videos/play/wwdc2022/110362/) 梳理。
 
