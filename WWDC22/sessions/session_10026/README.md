@@ -122,7 +122,7 @@ class LiveTextViewController: BaseViewController, ImageAnalysisInteractionDelega
 
 简单看下一下我们写的效果。实况文本的按钮出现了。我们也可以选择上面的文本。
 
-如果是在 Mac 平台上，相关 API 会有什么不一样呢? 
+如果是在 Mac 平台上，相关 API 会有什么不一样呢?
 
 ```
 class ViewController: NSViewController, ImageAnalysisOverlayViewDelegate, NSGestureRecognizerDelegate {
@@ -177,6 +177,7 @@ class ViewController: NSViewController, ImageAnalysisOverlayViewDelegate, NSGest
 ```
 
 我们可以看到除了交互对象变成 `ImageAnalysisOverlayView` 大部分的处理几乎一样。除此明显差异的地方有以下两点：
+
 1. `ImageAnalysisOverlayView` 由于继承的是 `NSView`，添加到视图上的方式是 `addSubview`，当然也就同时需要设置 `ImageAnalysisOverlayView` 的布局样式。
 2. macOS 的 `imageDataAnalyzer` 没有直接分析图片的 **API**，分析函数的参数需要有 `image`（图像），`orientention`(图片的旋转方向)，`configuration`（指定分析的内容配置）。旋转方向的参数是为了指定读取图片数据的起始位置和读取方向，以及让系统选定正确的处理程序。
 
