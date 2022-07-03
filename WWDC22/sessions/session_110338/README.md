@@ -387,6 +387,8 @@ MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
 
 ## Now Playing 时下的实践与骚操作
 
+早在 WWDC 2019，Apple 就做过一次 Now Playing 最佳实践的 session，里面详细介绍了在 iOS/iPadOS 12.2+、tvOS 12.2+ 和 macOS 10.14+ 上成为 Now Playing App 的通用实现。详细 session 可收看 [501: Reaching the Big Screen with AirPlay 2](https://developer.apple.com/videos/play/wwdc19/501/)，还精心搭配了示例代码 [Becoming a Now Playable App](https://developer.apple.com/documentation/mediaplayer/becoming_a_now_playable_app)。
+
 回顾 Now Playing 的使用，因为需要兼容旧系统以及自定义播放器的需求，如今大多数 App 展示在 Now Playing 都是通过上述的 [手动发布元数据](#手动发布元数据)来实现的，即围绕以下两个类的单例进行配置：
 
 - `MPNowPlayingInfoCenter`：展示 Now Playing 元数据信息。
@@ -396,7 +398,7 @@ MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
 
 ### 动态展示
 
-先回到 Apple Music App 的标准示例：
+先回到 Apple Music App 的标准榜样，下图是在控制中心展开的样式：
 
 ![](images/Apple_Music_Now_Playing.png)
 
@@ -415,6 +417,10 @@ MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
 
 还有更骚的操作，用 `MPMediaItemPropertyArtwork` 实现滚动歌词，实现的方式也很简单粗暴，就是实时地将歌词绘制到专辑封面图片上，然后创建 `MPMediaItemArtwork`，更新到 `MPMediaItemPropertyArtwork`。
 
+iOS 11 之后，控制中心和锁屏界面的专辑封面变小了，还在上面展示歌词就太局促了，甚至都看不清了，ROI 自然就降低了，所以后来大家都只在文字展示的位置玩出花。在 iOS 13.6.1 上还是能看出在专辑封面上的滚动歌词。
+
+![IMG_5284](images/Now_Playing_Artwork_Lyrics.png)
+
 ### 自定义控制
 
 `MPRemoteCommandCenter` 提供了许多内置的 `MPFeedbackCommand`，注册不同的命令会有不同的 UI。与上面类似的思路，这些命令只是定义了展示的 UI，或者准确地来说是定义了展示的图标，其文字都可以通过 `localizedTitle` 进行配置的。所以就有了像“网易云音乐”的更多菜单的效果：
@@ -422,7 +428,3 @@ MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
 ![](images/Now_Playing_More.png)
 
 这里使用了 `MPRemoteCommandCenter` 的 `likeCommand` 作为“红心”的菜单选项，使用 `dislikeCommand` 作为“上一首”的菜单选项。这里不用 `previousTrackCommand` 作为“上一首”也是有原因的，因为当有上面提到的这些命令注册后，会“吃掉” `previousTrackCommand` 的位置，导致无法展示。更多组合方式大家可以发挥脑洞试一试吧。
-
-### 更多官方实例
-
-- [Becoming a Now Playable App](https://developer.apple.com/documentation/mediaplayer/becoming_a_now_playable_app)：讲述在 macOS、tvOS、iOS 上使用 Now Playing 的基本示例。
