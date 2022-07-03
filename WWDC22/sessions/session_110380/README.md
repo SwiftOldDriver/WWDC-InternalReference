@@ -40,13 +40,13 @@ session_ids: [110380]
 
 为了解决双方视频的同步问题，Apple 给了两种不同的同步策略：Skip（Default） 和 Wait。
 
-1. Skip（Default）：暂停事件不会通过 Group Activity 传递给远端的 AVPlaybackCoordinator，远端持续播放，待本地暂停结束后，双方自动同步播放进度。
+- Skip（Default）：暂停事件不会通过 Group Activity 传递给远端的 AVPlaybackCoordinator，远端持续播放，待本地暂停结束后，双方自动同步播放进度。
 
 ​  假设如下图所示，当 B 因网络延时触发 loading 时，A 仍然继续观看视频。B 结束 loading 后，A 已经播放到了  time2，B 直接跳过 time1 至 time2 这段时间的内容，从 time2 开始播放，和 A 保持同步。
 
 ![img2](./images/img2.svg)
 
-2. Wait：暂停事件会通过 Group Activity 传递给远端的 AVPlaybackCoordinator，远端暂停。待本地暂停结束后，双方自动同步播放进度。
+- Wait：暂停事件会通过 Group Activity 传递给远端的 AVPlaybackCoordinator，远端暂停。待本地暂停结束后，双方自动同步播放进度。
 
 ​  即如下图所示，当 B 在暂停时，A 也会同步暂停。等待 B 在暂停结束后，A 和 B 再同时播放，保持同步。
 
