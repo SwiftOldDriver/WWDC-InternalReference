@@ -1,3 +1,7 @@
+---
+session_ids: [110380]
+---
+
 # 【WWDC - 110380】 SharePlay中显示广告和插播内容
 
 本文基于 [Session 110380](https://developer.apple.com/videos/play/wwdc2022/10147/) 梳理。
