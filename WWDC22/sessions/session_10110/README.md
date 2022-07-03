@@ -9,6 +9,7 @@ session_ids: [10110]
 > 本文将以 [WWDC22-10110 Build global apps: Localization by example](https://developer.apple.com/videos/play/wwdc2022/10110/) 为核心，讲述应用本地化的完整流程，并对过程中的几个关键部分做出详细的解释。
 >
 > 作者：DylanYang，iOS 开发者，现就职于字节跳动国际音乐团队。
+> 审核：极速男孩，老司机技术周报成员，就职于回响科技。
 
 苹果的应用商店在全球的许多地区都提供着服务。借助应用商店的分发，开发者的应用可以被来自不同地区的用户下载使用。然而不同地区的用户使用着不同的语言，也有着不同的阅读习惯。在没有进行任何处理的情况下，一个应用很难满足不同地区的不同用户。
 
@@ -30,7 +31,7 @@ lproj 文件夹内通常会包含的本地化资源文件可能有：
 - LaunchScreen.storyboard（应用的开屏界面）
 - Localizable.strings（常规字符串的翻译）
 - InfoPlist.strings（info.plist 文件内的翻译)
-- AppIntentVocabulary.plist（SiriKit中 使用词汇的翻译）
+- AppIntentVocabulary.plist（SiriKit 中使用词汇的翻译）
 
 Base 是用来处理那些可在不同语言之间共享的本地化文件的，比如：storyboard 和 xib。如果新建的是 SwiftUI 项目的话，Xcode 并不会自动把你生成 Base 这个选项。
 
@@ -159,7 +160,7 @@ Text("You have ^[\(count) apple](inflect: true).")
 ```swift
 let package = Package(
     name: "FoodTruckKit",
-		//默认语言
+    //默认语言
     defaultLocalization: "en",
 
     products: [
@@ -220,7 +221,8 @@ formatter.string(from: NSNumber(value: 0.54)) //54%
 //Dates, times, measurements, percentages, names, and lists should use formatter
 ["pop", "rock", "electronic"].formatted(.list(type: .or)) // pop, rock, or electronic
 
-Text("Total: \(price, format: .currency(code: "USD"))"), comment: "Order subtitle: total price of all tickets") // Total: $9.41
+Text("Total: \(price, format: .currency(code: "USD"))"), // Total: $9.41
+    comment: "Order subtitle: total price of all tickets")
 ```
 
 苹果对不同类型格式的支持是十分丰富的，下图是一些常用的例子。
@@ -303,4 +305,3 @@ return String(localized: "EXPECTED_RAINFALL",
 > [Searching for Custom Functions With genstrings](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/LoadingResources/Strings/Strings.html#//apple_ref/doc/uid/10000051i-CH6-SW11)
 >
 > [CLDR](https://cldr.unicode.org/index/cldr-spec/plural-rules)
-
