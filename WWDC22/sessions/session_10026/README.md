@@ -2,7 +2,7 @@
 session_ids: [10026]
 ---
 
-# Session 10026 - 让信息也能触手可得——实况文本 API 介绍
+# Session 10026 - 沟通静态世界的新桥梁——实况文本 API 介绍
 
 本文基于[Session 10026](https://developer.apple.com/videos/play/wwdc2022/10026/)梳理。
 
@@ -12,7 +12,7 @@ session_ids: [10026]
 
 ## 背景介绍
 
-实况文本（**Live Text**）是 **Apple** 为全平台新增的实用功能之一，简单来说，实况文本能够帮助我们把照片、相机界面当中的文字转化为可交互的文本。它不仅是一个系统级的 **OCR** 工具，而是包括一些人类可读的内容均能识别并进一步交互，比如识别照片中钟表上时刻，并提示创建基于该时间日程。在 **iOS 16** 系统中开放了一系列封装好的实况文本 **API**，让我们可以方便地在应用中集成实况文本功能。集成这个功能后，用户可以对图片里的文本进行操作。例如对文本进行选中和复制，对内容快速查看和翻译，还有提供文本处理的工作流，像是由内容查询对应地址、拨打文本中的电话号码或者跳转到文本里的 **URL**，等等。
+实况文本（**Live Text**）是 **Apple** 为全平台新增的实用功能之一，简单来说，实况文本能够帮助我们把照片、相机界面当中的文字转化为可交互的文本。它不仅是一个系统级的 **OCR** 工具，而是包括一些人类可读的内容均能识别并进一步交互，比如识别照片中钟表上时刻，并提示创建基于该时间日程。在去年，实况文本的场景十分有限，只有输入文本的时候，简单配置下实况文本功能入口提醒，以及实况文本的扫描类型，除此以外没有其他可供交互的 **API**。而在今年的新系统上，官方开放了一系列封装好的实况文本 **API**，让我们可以方便地在应用中集成实况文本功能。集成这个功能后，用户可以对图片里的文本进行操作。例如对文本进行选中和复制，对内容快速查看和翻译，还有提供文本处理的工作流，像是查询内容中对应的地址、拨打文本中的电话号码或者跳转到文本里的 **URL**，等等。
 
 ## 序言
 
@@ -29,23 +29,27 @@ session_ids: [10026]
 
 相关的内容，可以在以下链接获取更多信息。
 
-- [wwdc2022-10025：Capture machine-readable codes and text with VisionKit][wwdc2022-10025]
-- [WWDC2022 内参：VisionKit 的机器视觉方案，更智能的捕获文本与条码][wwcdc-xiaozhuanlan]
+- [WWDC2022-10025：Capture machine-readable codes and text with VisionKit][WWDC2022-10025]
+- [WWDC2022 内参：VisionKit 的机器视觉方案，更智能的捕获文本与条码][WWDC-xiaozhuanlan]
 
-实况文本 **API** 从 **iOS 16** 开始，可以在配有 A12 仿生或后续芯片的 **iPhone** 的设备上使用。**Mac** 上的版本要求是 `macOS 13` 系统及以后。
+在 **iPhone** 上，实况文本需要配备 A12 仿生或更新的芯片，并更新到 **iOS 16**；在 **Mac** 上，并无 Intel/M 系列要求，仅需更新至 macOS 13。
 
 ## API 初识
 
-实况文本的 **API** 构成主要有以下几个类：`ImageAnalyzer`、`ImageAnalysis`、`ImageAnalysisInteraction` 或 `ImageAnalysisOverlayView`。
+实况文本的 **API** 构成主要有以下几个类：
+- `ImageAnalyzer`：图片内容的分析器。
+- `ImageAnalysis`：分析图片后得到的分析结果，跨平台复用（平台无关）。
+- `ImageAnalysisInteraction`：移动端上 **UI** 相关的结果交互展示载体。
+- `ImageAnalysisOverlayView`：**Mac** 端上 **UI** 相关的结果交互展示载体。
 
 ![image][live-text-data-flow]
 
-开局我们得有一张图。内容全靠编...“码”。然后把这张图传给一个 `ImageAnalyzer`。让它帮我们做异步的分析处理。
+首先我们得有一张图，它是我们处理的主要对象。然后把这张图传给一个 `ImageAnalyzer`。让它帮我们做异步的分析处理。
 当 `ImageAnalyzer` 处理好后，结果会封装到一个叫 `ImageAnalysis` 的对象给我们。我们再将这个 `ImageAnalysis` 对象传给 `ImageAnalysisInteraction`（**Mac** 上是 `ImageAnalysisOverlayView`），这样就完成了，是不是很简单？
 
 ## 示例导读
 
-接下来我们会通过具体示例来讲解 **API** 的具体使用方法。我们准备的是一个简单的图片查看工具。里面是一个内嵌了 `ImageView` 的 `ScrollView`。里面的图片内容是可以缩放跟滑动的，但图片里的内容还无法选中或者响应快捷操作。
+接下来我们会通过具体示例来讲解 **API** 的具体使用方法。我们准备了一个简单的图片查看工具。里面是一个内嵌了 `ImageView` 的 `ScrollView`。里面的图片内容是可以缩放跟滑动的，但图片里的内容还无法选中或者响应快捷操作。
 ![demo-app][demo-app]
 
 接下来那我们就到项目里面给这个应用加实况文本功能。
@@ -87,18 +91,22 @@ class LiveTextViewController: BaseViewController, ImageAnalysisInteractionDelega
 ```swift
 class LiveTextViewController: BaseViewController, ImageAnalysisInteractionDelegate, UIGestureRecognizerDelegate {
     ···
+    // 分析当前图片
     func analyzeCurrentImage() {
         if let image = image {
             Task {
-                // 分析准备
+                // 配置 configuration 对象
                 let configuration = ImageAnalyzer.Configuration([.text, .machineReadableCode])
                 do {
-                    // 执行分析
+                    // 开始执行分析
                     let analysis = try await imageDataAnalyzer.analyze(image, configuration: configuration)
-                    // 结果接收
-                    interaction.analysis = analysis
-                    interaction.preferredInteractionTypes = .automatic
-                    interaction.allowLongPressForDataDetectorsInTextMode = false
+                    // 检查 `analysis` 是否成功生成，图片是否有被修改
+                    if let analysis = analysis, image == self.image {
+                        // 分析信息结果接收
+                        interaction.analysis = analysis
+                        // 设置我们期望的交互方式类型
+                        interaction.preferredInteractionTypes = .automatic
+                    }
                 } catch {
                  // 处理异常
                 }
@@ -108,10 +116,6 @@ class LiveTextViewController: BaseViewController, ImageAnalysisInteractionDelega
     ···
  }
 ```
-
-我们创建了一个分析用的函数，先准备 `configuration` 对象，给它配置的是 `text` 和 `machine-readable` 两个类型。用配置好的 `configuration` 作为参数传 `analyzeImage` 函数，让其开始分析处理。
-
-一旦分析结果对象 `analysis` 生成完毕后，其存在状态就会发生变化，所以这里同时检查 `analysis` 是否成功生成，还有图片是否有被修改。判断结果都没问题的话，就可以直接把 `analysis` 对象赋给 `interaction` 实例，并且设置下我们期望的交互方式类型 `preferredInteractionTypes`。这里用的是系统默认的类型 `.automatic`。关于 `preferredInteractionTypes` 不同枚举类型代表的含义，下文会详细讲解.
 
 ![image-viewer-demo][image-viewer-demo]
 
@@ -134,8 +138,9 @@ class LiveTextViewController: BaseViewController, ImageAnalysisInteractionDelega
 ImageAnalysisInteraction.InteractionTypes 
 ```
 
-`.automatic`: 大部分情况我们都喜欢用 `.automatic`，它有提供了文本选择功能。但同时它会在实况文本按钮变成可点击的时候，对检测到的内容区域进行高亮。这样会把图片内所有可操作项进行下划线提示，并且可以通过单击对其进行操作。这些跟你在一些内嵌的应用中看到的效果是一样的。
-> `preferredInteractionTypes` 的默认值时 `[]` 一个空的 option set，不是 `.automatic`。
+`.automatic`: 大部分情况我们都喜欢用 `.automatic`，它有提供了文本选择功能。但同时它会在实况文本按钮变成可点击的时候，对检测到的内容区域进行高亮。这样会把图片内所有可操作项进行下划线提示，并且可以通过单击对其进行操作。这些跟你在一些内嵌应用中看到的效果是一样的。
+
+> 我们需要给 `interactionTypes` 设置值才能让图片可以交互。它是一个 option set 类型，当你传递的 option set 中包含了 `.automatic`，那 option set 中的其它类型就会被忽略。它的默认值是一个空 option set，代表的意思是不可交互。
 
 ![interaction-type-automatic][interaction-type-automatic]
 
@@ -164,10 +169,6 @@ ImageAnalysisInteraction.InteractionTypes
 
 首先讲下 `isSupplementaryInterfaceHidden` 属性。如果只想要应用可以选择文本，而不想显示实况文本按钮，那就可以把 `isSupplementaryInterfaceHidden` 的值设成 `true`，那实况文本按钮跟快捷操作就都不会显示。
 
-```
-interaction.isSupplementaryInterfaceHidden = true
-```
-
 ![supplementary-element-hidden][supplementary-element-hidden]
 
 我们还可以设置内容的边距。如果我们有需要在控件上叠加其他的交互控件，那可能需要调整控件的边距，让实况文本按钮和快捷操作控件可以适配显示，避免被遮挡到。
@@ -178,7 +179,7 @@ interaction.supplementaryInterfaceContentInsets = UIEdgeInsets(top: 0, left: 12,
 
 ![supplementary-element-inset][supplementary-element-inset]
 
-如果我们应用用的是自定义的字体。要想让这些扩展控件也能显示成对应的字体，那就设置 `interaction` 对象的 `supplementaryInterfaceFont`。这会让实况文本按钮和快捷操作控件都设置成自定义的字体和指定图形的文本权重值大小。
+如果我们应用用的是自定义的字体。要想让这些扩展控件也能显示成对应的字体，那就设置 `interaction` 对象的 `supplementaryInterfaceFont`。这会让实况文本按钮和快捷操作控件的样式都产生变化，把它们都设置成自定义的字体和指定图形的文本权重值大小。
 
 ```
 interaction.supplementaryInterfaceFont = UIFont.init(name: "Copperplate", size: 0)
@@ -186,11 +187,11 @@ interaction.supplementaryInterfaceFont = UIFont.init(name: "Copperplate", size: 
 
 ![supplemetary-element-font][supplemetary-element-font]
 
-> 这时按钮在做自适应大小计算时，实况文本计算时会忽略设置的样式大小值，而是用原生默认字体大小进行计算。
+> 按钮在做自适应大小计算时，实况文本会忽略设置的样式大小值，而是用原生默认字体大小进行计算。
 
 ##### 高亮区域匹配
 
-注意下，有当前操作的不是 `UIImageview` 对象，而是其 `image` 属性对象，所以我们会发现高亮的区域跟 `image` 对象不是那么匹配。这是因为 `UIImageView` 的原因，`VisionKit` 是根据它的 `ContentMode` 属性来自动计算 `contentsRect` 大小。生成的交互视图是矩形的样式，而这个区域会比图片中的内容大许多。
+注意下，有当前操作的不是 `UIImageView` 对象，而是其 `image` 属性对象，所以我们会发现高亮的区域跟 `image` 对象不是那么匹配。这是因为 `UIImageView` 的原因，`VisionKit` 是根据它的 `ContentMode` 属性来自动计算 `contentsRect` 大小。生成的交互视图是矩形的样式，而这个区域会比图片中的内容大许多。
 
 ![highlight-rect][highlight-rect]
 
@@ -216,7 +217,7 @@ func contentsRect(for interaction: ImageAnalysisInteraction) -> CGRect {
 
 #### 手势冲突处理
 
-接下来介绍下引入实况文本 **API** 时可能会遇到另外一个问题——手势冲突。实况文本的功能里有十分丰富的手势。有时当我们应用中的视图层级一复杂，我们可能会发现 `interaction` 对象响应了原来的手势和事件，或者反过来我们的手势响应者变成 `interaction` 对象。这时候就需要我们来处理这个问题了。解决方案有以下几种：
+接下来介绍下引入实况文本 **API** 时可能会遇到另外一个问题——手势冲突。实况文本的功能里有十分丰富的手势。有时当我们应用中的视图层级一复杂，我们可能会发现 `interaction` 对象响应了原来的手势和事件；或者反过来，我们的控件响应了 `interaction` 对象的手势和事件。这时候就需要我们来处理这个问题了。解决方案有以下几种：
 
 ##### 解决方案一：实现 `Interaction` 的 `interactionShouldBeginAtPointFor` 代理方法
 
@@ -228,11 +229,11 @@ func interaction(_ interaction: ImageAnalysisInteraction, shouldBeginAt point: C
 }
 ```
 
-实现 `Interaction` 的代理方法`interactionShouldBeginAtPointFor`是一种通用的解决方式。如果返回的是 `false`，该动作事件就不会被响应。在触控的点位置判断是否有 `interaction` 响应的交互项，或者有可以选择的文本。在这里检查文本是否可以选择，可以让我们轻触取消在文本上的点击响应。
+实现 `Interaction` 的代理方法`interactionShouldBeginAtPointFor`是一种通用的解决方式。如果返回的是 `false`，该动作事件就不会被响应。在触控的点位置判断是否有 `interaction` 响应的交互项，或者可以选择的文本。在这里检查文本是否可以选择，可以让我们轻触取消在文本上的点击响应。
 
 ##### 解决方案二：实现手势 `gestureRecognizerShouldBegin` 代理方法
 
-这是最常用的解决办法，在我们的手势对象的代理方法 `gestureRecognizerShouldBegin` 进行处理。这里我们在触摸的位置进行校验，看是否有可交互的文本内容或者有可选择的文本，有则给方法返回 `false`。
+这是最常用的解决办法，在我们手势对象的代理方法 `gestureRecognizerShouldBegin` 进行处理。这里我们在触摸的位置进行校验，看是否有可交互的文本内容或者可选择的文本，有则给方法返回 `false`。
 
 ```
 func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -274,17 +275,17 @@ override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 ![performance][performance]
 
 1. 理想情况下，我们的应用中应该只有一个 `ImageAnalyzer` 对象。
-2. `ImageAnalyzer` 同时支持好几种不同类型的图片（`UIImage`、`CGImage`、`CIImage`、`CVPixelBuffer`）。我们也需要尽量最小化图片在类型转换时带来的性能损耗，在这几种类型中，`CVPixelBuffer` 的图片对象处理起来最为高效，不过它需要在特定的场景才会生成，比如获取相机采集代理中的 `AVCaptureVideoDataOutput`时，或是 `AVAssetReader` 读取媒体资源时，又或者是 `AVPlayer` 做视频播放时，这类媒体流相关的场景。
+2. `ImageAnalyzer` 同时支持好几种不同类型的图片（`UIImage`、`CGImage`、`CIImage`、`CVPixelBuffer`）。我们也需要尽量最小化图片在类型转换时带来的性能损耗，在这几种类型中，`CVPixelBuffer` 的图片对象处理起来最为高效，不过它需要在特定的场景才会生成，比如相机获取采集代理中的 `AVCaptureVideoDataOutput`时，或是 `AVAssetReader` 读取媒体资源时，又或者是 `AVPlayer` 播放视频时，这类媒体流相关的场景。
 3. 为了把系统资源利用做到最优，我们需要在图片刚好或者提前准备上屏时，开始图片检测处理。
 4. 如果我们的应用内容是想时间线一样可以滚动的内容，那就在滚动停止时再来开始图片检测。
 
 目前我们看到的都是图片相关的实况文本 **API**，在系统中还有几个已经支持了的组件。像是 `UITextField`、`UITextView` 可以支持在键盘输入的时候，通过摄像头来采集实况文本到输入栏中。请查看下面这个 session：
 
-- [wwdc2021-10276: Use the camera for keyboard input in your app][use-the-camera-for-keyboard-input-in-your-app]
+- [WWDC2021-10276: Use the camera for keyboard input in your app][use-the-camera-for-keyboard-input-in-your-app]
 
 ## 扩展：文本输入时的实况文本功能
 
-当我们的应用中有集成 `UITextField` 和 `UITextView` 这两个文本输入控件时，实况文本输入功能时默认值支持的。我们可以通过双击或者长安文本输入区域唤出它。当我们选择使用实况文本功能来开启相机扫描周边环境的文本后，扫描的文本内容类型是可以配置的。它的配置方式时通过我们给文本输入控件限制内容类型来匹配的。目前支持输入的内容如下图：
+当我们的应用中有集成 `UITextField` 和 `UITextView` 这两个文本输入控件时，实况文本输入功能是默认值支持的。我们可以通过双击或者长按文本输入区域唤出它。当我们选择了使用实况文本功能，通过开启相机扫描周边环境的文本后，扫描的文本内容类型是可以配置的。它的配置方式是通过我们给文本输入控件限制内容类型来实现的。目前支持输入的内容如下图：
 
 ![text-content-type][text-content-type]
 
@@ -330,5 +331,5 @@ let frame = playerLayer.currentlyDisplayedPixelBuffer() // AVPlayerLayer 的新 
 [use-the-camera-for-keyboard-input-in-your-app]: https://developer.apple.com/videos/play/wwdc2021/10276/
 [quick-look-previews-from-the-ground-up]: https://developer.apple.com/videos/play/wwdc2018/237/
 [text-content-type]: ./images/text-content-type.png
-[wwdc2022-10025]: https://developer.apple.com/videos/play/wwdc2022/10025/
-[wwcdc-xiaozhuanlan]: https://xiaozhuanlan.com/topic/8205316479
+[WWDC2022-10025]: https://developer.apple.com/videos/play/wwdc2022/10025/
+[WWDC-xiaozhuanlan]: https://xiaozhuanlan.com/topic/8205316479
