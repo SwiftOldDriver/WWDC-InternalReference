@@ -4,9 +4,11 @@ session_ids: [110351]
 
 # WWDC22 110351 - 使用 Swift 并发消除数据竞争
 
+本文基于 [Session 110351](https://developer.apple.com/videos/play/wwdc2022/110351/) 梳理。
+
 > 作者：SZ，iOS 开发者，就职于 LinkedIn，喜欢研究编程语言和操作系统相关的内容，目前从事移动应用架构和基础设施的相关工作。
 >
-> 审核：四娘，老司机周报核心成员。
+> 审核：四娘，老司机技术社区核心成员。
 
 本文基于[Session 110351](https://developer.apple.com/videos/play/wwdc2021/110351/)梳理。去年 WWDC 21 Apple 在 Swift 5.5 中引入了协同式的 Swift 并发特性，简化了并发编程的同时还提高了安全性(如果想了解去年引入的特性，比如: async/await、结构化并发、actor 等等，可以参考附注中 WWDC 21 的演讲)。今年在此基础上 Apple 引入了更多特性来保障并发编程的数据安全。 本文主要聚焦于这些新引入的安全特性，共分为四个部分：任务隔离、Actor 隔离、原子性、执行顺序。
 

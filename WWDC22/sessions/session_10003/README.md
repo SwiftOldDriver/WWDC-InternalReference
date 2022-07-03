@@ -6,11 +6,9 @@ session_ids: [10003]
 
 本文基于 Session [10003](https://developer.apple.com/videos/play/wwdc2022/10003/)、Xcode 14.0 beta (14A5228q) 撰写，介绍 Apple 推出的 `WeatherKit` 天气服务，后续版本可能存在 API 变更，请读者朋友们留意。可在 [nuomi1/TestWeatherKit](https://github.com/nuomi1/TestWeatherKit) 仓库中获取本文的全部代码。
 
-本文基于 [Session 10002](https://developer.apple.com/videos/play/wwdc2022/10002) 梳理。
-
 > 作者：nuomi1，Swift with iOS，果粉 / 米家粉。
 >
-> 审核：JonyFang，方春，老司机技术社区核心成员，现于 BILIBILI 负责直播稳定性及性能优化相关工作；
+> 审核：方春（JonyFang），老司机技术社区核心成员，现于 BILIBILI 负责直播稳定性及性能优化相关工作。
 
 ## Apple 平台中的天气
 

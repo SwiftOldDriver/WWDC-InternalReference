@@ -4,6 +4,16 @@ session_ids: [110355]
 
 # WWDC22 110355 - Meet Swift Async Algorithms
 
+本文基于 [Session 110355](https://developer.apple.com/videos/play/wwdc2022/110355/) 梳理。
+
+> 作者：Rec，iOS 开发，就职于极客时间
+>
+> 审核：
+>
+> 四娘，老司机技术社区核心成员
+>
+> 王浙剑（Damonwong），老司机技术社区负责人、《WWDC22 内参》主理人，目前就职于阿里巴巴。
+
 ## 前言
 
 阅读本文需要一定的基础，包括：

@@ -4,11 +4,15 @@ session_ids: [110336]
 
 # WWDC22 110336 - Screen Time API 的新特性
 
-> 本文基于 [WWDC22 Session 110336](https://developer.apple.com/videos/play/wwdc2022/110336/) 梳理。
->
+本文基于 [Session 110336](https://developer.apple.com/videos/play/wwdc2022/110336/) 梳理。
+
 > 作者：neverLand，就职于货拉拉，主要负责地图相关业务的开发与维护。
 >
-> 审核：[ChengzhiHuang](https://github.com/ChengzhiHuang)，老司机技术社区核心成员，就职于字节，现负责西瓜视频的稳定性（OOM / WatchDog）相关工作。
+> 审核：
+>
+> 黄骋志（橙汁），老司机技术社区核心成员，现于西瓜视频负责稳定性 OOM/Watchdog 相关工作。
+>
+> 王浙剑（Damonwong），老司机技术社区负责人、《WWDC22 内参》主理人，目前就职于阿里巴巴。
 
 ## 导读
 

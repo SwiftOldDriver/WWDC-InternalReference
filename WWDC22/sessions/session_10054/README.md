@@ -4,6 +4,16 @@ session_ids: [10054]
 
 # WWDC22 10054 - SwiftUI 导航
 
+本文基于 [Session 10054](https://developer.apple.com/videos/play/wwdc2022/10054) 梳理。
+
+> 作者：zddhub(张东东)，iOS 开发，开源爱好者，个人博客地址 [zddhub.com](https://zddhub.com/)。
+>
+> 审核：
+>
+> Jake Lin，在 REA Group 担任 Senior Mobile Tech Lead，负责公司的移动研发和团队建设。喜欢研究 iOS 和 Android 两平台的架构，爱折腾声明式 UI 和响应式编程范式。并编写了 [iOS 开发进阶](https://t2.lagounews.com/lR59RGRBct5E3) 课程。
+>
+> 水水，前字节跳动影像团队 iOS 开发，独立负责 SwiftUI 项目在业务侧落地，目前即将前往美国读研。热衷于思考构建高质量 iOS 架构，对关于 Swift 一切新鲜事物感兴趣，常年混迹于声明式 UI 和响应式编程范式。3 年 SwiftUI 实战编程老鸟。
+
 > **注：因为文章撰写时，SwiftUI 导航新 API 还处于 Beta 软件阶段，并且存在一些已知的 bug，我们后面将会根据正式版 API 更新一些内容**
 
 清晰而稳健的导航结构，简单的交互和良好的用户体验是 App 成功的关键。这一切都离不开导航的支持，导航的重要性不言而喻。良好的导航模式可以帮助人们轻松地探索应用程序中的信息，更快的上手。经过四年的迭代，WWDC22 带来了全新的 SwiftUI 导航的设计和实现，并丰富了其能力，让我们先睹为快。

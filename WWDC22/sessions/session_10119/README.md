@@ -2,9 +2,17 @@
 session_ids: [10119]
 ---
 
-# WWDC22 - Optimize your use of Core Data and CloudKit / 优化 CoreData & CloudKit 实现
+# WWDC22 10115/10119 - Optimize your use of Core Data and CloudKit / 优化 CoreData & CloudKit 实现
+
+本文基于 [Session 10119](https://developer.apple.com/videos/play/wwdc2022/10119)、[Session 10115](https://developer.apple.com/videos/play/wwdc2022/10115) 梳理。
 
 > 作者：LabLawliet，在广州搬砖的 iOS 独立开发者，Swift 爱好者，[GitHub](https://github.com/RyukieSama)。
+>
+> 审核：
+>
+> 黄骋志（橙汁），老司机技术社区核心成员，现于西瓜视频负责稳定性 OOM/Watchdog 相关工作。
+>
+> 王浙剑（Damonwong），老司机技术社区负责人、《WWDC22 内参》主理人，目前就职于阿里巴巴。
 
 ## 前言
 

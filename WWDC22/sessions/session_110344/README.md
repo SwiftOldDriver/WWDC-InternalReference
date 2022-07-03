@@ -4,11 +4,15 @@ session_ids: [110344]
 
 # WWDC2022 110344/10109 - Developer Mode 与 Notarization
 
-本文基于[Session 110344](https://developer.apple.com/videos/play/wwdc2022/110344)和[Session_10109](https://developer.apple.com/videos/play/wwdc2022/10109/)梳理。
+本文基于[Session 110344](https://developer.apple.com/videos/play/wwdc2022/110344)、[Session_10109](https://developer.apple.com/videos/play/wwdc2022/10109/)梳理。
 
 > 作者：郑一一，就职于字节跳动，目前负责 TikTok 隐私和安全相关的工作。
 >
-> 审核：Damien，就职于字节跳动，目前负责 TikTok 隐私和安全相关的工作。
+> 审核：
+>
+> Damien，就职于字节跳动，目前负责 TikTok 隐私和安全相关的工作。
+>
+> 王浙剑（Damonwong），老司机技术社区负责人、《WWDC22 内参》主理人，目前就职于阿里巴巴。
 
 ## 前言
 

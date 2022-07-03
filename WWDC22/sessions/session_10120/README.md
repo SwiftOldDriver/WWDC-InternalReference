@@ -4,7 +4,15 @@ session_ids: [10120]
 
 # WWDC22 - 进化你的 Core Data Schema
 
-> 本文基于 WWDC22 [Evolve your Core Data Schema](https://developer.apple.com/videos/play/wwdc2022/10120/) 创作。阅读本文需要对 Core Data 有基础的了解。如果你从未使用过 Core Data，[官方文档](https://developer.apple.com/documentation/coredata)是很好的起点。
+本文基于 WWDC22 [Evolve your Core Data Schema](https://developer.apple.com/videos/play/wwdc2022/10120/) 创作。阅读本文需要对 Core Data 有基础的了解。如果你从未使用过 Core Data，[官方文档](https://developer.apple.com/documentation/coredata)是很好的起点。
+
+> 作者：[kukushi](https://kukushi.github.io)，Swift 爱好者，上架多款 iOS／macOS App，就职于字节跳动音乐团队。
+>
+> 审核：
+>
+> 黄骋志（橙汁），老司机技术社区核心成员，现于西瓜视频负责稳定性 OOM/Watchdog 相关工作。
+>
+> SZ，iOS 开发者，就职于 LinkedIn，喜欢研究编程语言和操作系统相关的内容，目前从事移动应用架构和基础设施的相关工作。
 
 在 App 开发中，我们经常因为各种各样的原因修改 Model。在 CoreData 中，Model 的改变意味着底层存储需要进行迁移以适配新的 Model，这让迁移成为了每一个 Core Data 使用者的必修课。本文将介绍如何高效地更新与迁移 Core Data Schema，我们会依次聊聊：
 

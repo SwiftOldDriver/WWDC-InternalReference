@@ -4,6 +4,8 @@ session_ids: [10040]
 
 # WWDC22 10040 - 探索 In-App Purchase 集成和迁移
 
+基于 [Session 10040](https://developer.apple.com/videos/play/wwdc2022/10040/) 梳理
+
 > 作者：iHTCboy，目前就职于三七互娱37手游，从事游戏 SDK 开发多年，对 IAP 和 SDK 架构设计有丰富的实践经验。
 >
 > 审核：
@@ -11,9 +13,7 @@ session_ids: [10040]
 > 
 > SeaHub，目前任职于腾讯 TEG 计费平台部，负责搭建服务于腾讯系业务的支付组件 SDK，对 IAP 相关内容及 SDK 设计开发有一定的经验。
 > 
-> Damonwong，老司机技术周报编辑，就职于淘系技术部。
-
-基于 [Session 10040](https://developer.apple.com/videos/play/wwdc2022/10040/) 梳理
+> 王浙剑（Damonwong），老司机技术社区负责人、《WWDC22 内参》主理人，目前就职于阿里巴巴。
 
 ## 前言
 

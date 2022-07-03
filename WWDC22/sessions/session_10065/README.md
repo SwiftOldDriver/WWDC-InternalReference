@@ -2,11 +2,13 @@
 session_ids: [10065]
 ---
 
-# WWDC22 10065 - 即插即用：将 Apple frameworks 添加到您的 Unity 游戏项目
+# WWDC22 10065/10151/10064/110930 - 即插即用：将 Apple frameworks 添加到您的 Unity 游戏项目
+
+本文基于 [Session 10065](https://developer.apple.com/videos/play/wwdc2022/10065)、[Session 10151](https://developer.apple.com/videos/play/wwdc2022/10065) 、[Session 10064](https://developer.apple.com/videos/play/wwdc2022/10065)、[Session 110930](https://developer.apple.com/videos/play/wwdc2022/10065)梳理。
 
 > 作者：七夜，一名外企伪全栈开发工程师。
 >
-> 审核：xxx
+> 审核：たこ，目前就职于网易游戏，负责云游戏项目 iOS 技术团队。
 
 作者本人作为最早的一批手游开发者，当年使用 ObjC 对接苹果应用内支付、推送以及一些三方登录、广告、分享等 SDK ，要痛苦就有多么痛苦。是的，当时还是 MRC 时代，手一抖就内存泄露了。毫不夸张的是就算现在，很多项目组只有一个人知道如何对接 iOS 的相关功能，是的，这个人还是被负责人按着头去开发的。
 

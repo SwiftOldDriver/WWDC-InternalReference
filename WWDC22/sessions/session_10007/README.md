@@ -6,6 +6,10 @@ session_ids: [10007]
 
 本文基于 [Session 10007](https://developer.apple.com/videos/play/wwdc2022/10007) 梳理。
 
+> 作者：SeaHub，目前任职于腾讯 TEG 计费平台部，负责搭建服务于腾讯系业务的支付组件 SDK，对 IAP 相关内容及 SDK 设计开发有一定的经验
+>
+> 审核：黄骋志（橙汁），目前就职于字节跳动西瓜视频，负责基础技术相关工作，协助复杂业务进行重构。曾参与长视频支付相关工作。
+
 ## 前言
 
 本次 WWDC22，客户端通知层（StoreKit 2）、服务端层（App Store Server API、App Store Server Notifications V2）均有相关的新特性。虽然对比 WWDC21，本次更像是“小修小补”，但是也确实对一些痛点进行了优化。
