@@ -44,7 +44,7 @@ session_ids: [10078]
 
 ### 使用现代网络协议
 
-我们通过使用现代网络协议即可显著的降低应用的网络延迟，主要包括 IPv6、TLS 1.3 和 HTTP/3 等。只要服务端支持这些协议，在 App 侧，你只需要使用 URLSession 和 Network.framework 框架的 API 即可自动使用以上的协议。IPv6 在很早的版本苹果就已经支持了；从 iOS 12.2 开始 TLS 1.3 默认被支持（值得注意的是，你需要使用上面提到的 API, 比如 GCDAsyncSocket 是无法支持 TLS 1.3 的）；而从 iOS 15 开始，苹果系统提供了 HTTP/3 协议的支持。目前，通过 Safari 浏览器的流量有 20% 是基于 HTTP/3 来承载的。
+我们通过使用现代网络协议即可显著的降低应用的网络延迟，主要包括 IPv6、TLS 1.3 和 HTTP/3 等。只要服务端支持这些协议，在 App 侧，你只需要使用 URLSession 和 Network.framework 框架的 API 即可自动使用以上的协议。IPv6 在很早的版本苹果就已经支持了；从 iOS 12.2 开始 TLS 1.3 默认被支持（值得注意的是，你需要使用上面提到的 API，比如 GCDAsyncSocket 是无法支持 TLS 1.3 的）；而从 iOS 15 开始，苹果系统提供了 HTTP/3 协议的支持。目前，通过 Safari 浏览器的流量有 20% 是基于 HTTP/3 来承载的。
 
 ![](images/safari_http3.png)
 
@@ -54,7 +54,7 @@ session_ids: [10078]
 
 ### 启用 handover 处理网络切换
 
-就我们以往的经验来看，在网络切换的场景下，我们的连接需要重新建立（主要是基于 TCP 的长连接），这个过程往往会相当耗时，很影响用户体验；但现在我们可以启用 handover 来优化这个过程, 苹果称之为连接迁移。配置连接迁移的核心代码如下：
+就我们以往的经验来看，在网络切换的场景下，我们的连接需要重新建立（主要是基于 TCP 的长连接），这个过程往往会相当耗时，很影响用户体验；但现在我们可以启用 handover 来优化这个过程，苹果称之为连接迁移。配置连接迁移的核心代码如下：
 
 ```swift
 // URLSession
@@ -66,11 +66,11 @@ let parameters = NWParameters.quic(alpn: ["myproto"])
 parameters.multipathServiceType = .handover
 ```
 
-MultipathServiceType 是一个枚举类型，它实际上是定义了一系列 Multipath 场景下使用网络的配置。所谓 Multipath 指的是用户同时有多条网络通道 （一般来说是移动网络和 WIFI 共存）的情况下，App 可以采用不同的策略来利用这些网络通道。 handover 枚举配置的含义是启用 Multipath, 但当且仅当主通道无法使用时，才会使用其他的通道。启用 handover 并且确保它正常工作，可以使我们的应用获得无缝切换的效果。
+MultipathServiceType 是一个枚举类型，它实际上是定义了一系列 Multipath 场景下使用网络的配置。所谓 Multipath 指的是用户同时有多条网络通道 （一般来说是移动网络和 WIFI 共存）的情况下，App 可以采用不同的策略来利用这些网络通道。 handover 枚举配置的含义是启用 Multipath，但当且仅当主通道无法使用时，才会使用其他的通道。启用 handover 并且确保它正常工作，可以使我们的应用获得无缝切换的效果。
 
 ### 启用 QUIC 数据报
 
-如果你使用基于 UDP 的自有协议, 在 iOS 16 和 macOS Ventura 下，苹果建议我们启用 QUIC 数据报，在该协议配置下，通过优化的拥塞控制算法可以显著的降低 RTT 时间并减少丢包。具体配置代码如下：
+如果你使用基于 UDP 的自有协议，在 iOS 16 和 macOS Ventura 下，苹果建议我们启用 QUIC 数据报，在该协议配置下，通过优化的拥塞控制算法可以显著的降低 RTT 时间并减少丢包。具体配置代码如下：
 
 ```swift
 // Only one datagram flow can be created per connection
@@ -142,14 +142,14 @@ CONFIG proxy.config.http2.write_buffer_block_size   INT 262144
 ![](images/screenshare.png)
 在本地和远端屏幕分别开启时钟，应用效果如下：
 ![](images/previous.png)
-很明显我们可以看到，应用的延迟大概是 2s。下面我们启用 L4S,重启应用，效果如下：
+很明显我们可以看到，应用的延迟大概是 2s。下面我们启用 L4S，重启应用，效果如下：
 ![](images/after.png)
 可以看到，远端屏幕的时间和本地基本上完全同步了。  
 接下来我们使用测试工具对比开启 L4S 前后的网络延迟：
 ![](images/l4srtt_compare.png)
 对比出来的效果非常夸张，相差了数十倍以上。
 
-### 启用 L4S, 测试应用兼容性
+### 启用 L4S，测试应用兼容性
 
 如果你的应用使用了 HTTP/3 或者 QUIC，就可以通过启用 L4S 来测试应用的兼容情况和优化后的效果。在 iOS 16 上，其设置在开发者设置选项中；在 macOS Ventura 上，我们可以通过执行命令行的方式对 其进行设置。要在 Linux 服务器上进行设置，你的 QUIC 实现需要支持 accurate ECN 和一种可伸缩的拥塞控制算法。  
 具体设置可参考下图：

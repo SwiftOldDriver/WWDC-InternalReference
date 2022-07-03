@@ -22,13 +22,13 @@ session_ids: [10061]
 
 介绍 Scene basics 之前我们先回顾一下基础知识，SwiftUI app 的结构是由 App， Scene 和 View 共同组成的统一的所有制层次结构(a unified hierarchy of ownership)； App 包含一个或多个 Scene， 而 Scene 作为 View 的根元素包含了众多 View （我们在屏幕上看到的一切内容都是 View）。本文依然以 BookClub 为例，这个在多个平台上运行的 app 的 Scene 只由一个 WindowGroup 组成。如下图所示:
 
-> Tips: BookClub 是一个用来跟踪图书阅读进度的 app，在 WWDC20 介绍 [App essentials in SwiftUI](https://developer.apple.com/videos/play/wwdc2020/10037/) 时，以该 app 为例演示了如何利用 App, Scene 和 View 构建多平台 app，其中也包含了下文提起的 WindowGroup 和 DocumentGroup。
+> Tips: BookClub 是一个用来跟踪图书阅读进度的 app，在 WWDC20 介绍 [App essentials in SwiftUI](https://developer.apple.com/videos/play/wwdc2020/10037/) 时，以该 app 为例演示了如何利用 App，Scene 和 View 构建多平台 app，其中也包含了下文提起的 WindowGroup 和 DocumentGroup。
 
 > WindowGroup 是一种符合`Scene`协议的 scene type， SwiftUI app 则是由一个或者多个符合 `Scene` 协议的的实例组成的。因此在这里 Scene basics 是通过 scene types 呈现的。
 
 ![](./images/session_10061_1_1.png)
 
-系统会根据 Scene type，平台特性及上下文以不同的方式调整 Scene 的展示行为, 可能会填满整个屏幕或部分屏幕等， 在诸如 iPadOS 和 macOS 这样支持多窗口的平台上， 一个 WindowGroup 可以包含多个相同类型的窗口。如下图所示：
+系统会根据 Scene type，平台特性及上下文以不同的方式调整 Scene 的展示行为，可能会填满整个屏幕或部分屏幕等， 在诸如 iPadOS 和 macOS 这样支持多窗口的平台上， 一个 WindowGroup 可以包含多个相同类型的窗口。如下图所示：
 
 ![](./images/session_10061_1_2.png)
 

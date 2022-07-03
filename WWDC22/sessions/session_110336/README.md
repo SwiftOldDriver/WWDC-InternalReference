@@ -8,7 +8,7 @@ session_ids: [110336]
 >
 > 作者：neverLand，就职于货拉拉，主要负责地图相关业务的开发与维护。
 >
-> 审核：[ChengzhiHuang](https://github.com/ChengzhiHuang)，老司机周报编辑，就职于字节，现负责西瓜视频的稳定性（OOM / WatchDog）相关工作。
+> 审核：[ChengzhiHuang](https://github.com/ChengzhiHuang)，老司机技术社区核心成员，就职于字节，现负责西瓜视频的稳定性（OOM / WatchDog）相关工作。
 
 ## 导读
 

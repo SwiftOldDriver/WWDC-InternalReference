@@ -4,7 +4,7 @@ session_ids: [110351]
 
 # WWDC22 110351 - 使用 Swift 并发消除数据竞争
 
-> 作者：SZ, iOS 开发者，就职于 LinkedIn，喜欢研究编程语言和操作系统相关的内容，目前从事移动应用架构和基础设施的相关工作。
+> 作者：SZ，iOS 开发者，就职于 LinkedIn，喜欢研究编程语言和操作系统相关的内容，目前从事移动应用架构和基础设施的相关工作。
 >
 > 审核：四娘，老司机周报核心成员。
 
@@ -42,7 +42,7 @@ session_ids: [110351]
 当我们在类型里声明符合 Sendable 协议时，编译器会检查类型中定义的所有成员。如果类型本身是值类型，并且每一个成员都是符合 Sendable 协议，那么就能成功通过编译器的检查。同时 Sendable 协议也可以通过 Collections 进行传导， 如果一个 Array 里的元素都符合 Sendable 协议，那么该数组也是 Sendable 类型，这样的类型推导使用了 Swift 泛型的 Conditional Conformance。
 ![](images/sendable_check.png)
 
-Swift Class 类型都是引用类型，但这并不代表引用类型就无法符合 Sendable 协议。如果 Class 类型是 final immutable Class, 那也符合 Sendable 协议。( 注: 要求 final 是为了避免通过继承产生出违反 Sendable 协议的衍生类，要求 immutable 是因为即便不同的任务通过引用共享同一个对象，对象的状态无法改变，也就不会产生数据竞争 )。除此之外，如果 Class 类型通过锁或者其他的同步机制保证同一时间只有一个任务能改变实例对象的状态，也可以被认为符合 Sendable 协议。但这种情况，编译器无法识别，因此需要用到 @unchecked 来阻止编译器报错。使用 @unchecked 时，需要非常小心，必须由开发者自己保证对数据的更改是线程安全的。
+Swift Class 类型都是引用类型，但这并不代表引用类型就无法符合 Sendable 协议。如果 Class 类型是 final immutable Class，那也符合 Sendable 协议。( 注: 要求 final 是为了避免通过继承产生出违反 Sendable 协议的衍生类，要求 immutable 是因为即便不同的任务通过引用共享同一个对象，对象的状态无法改变，也就不会产生数据竞争 )。除此之外，如果 Class 类型通过锁或者其他的同步机制保证同一时间只有一个任务能改变实例对象的状态，也可以被认为符合 Sendable 协议。但这种情况，编译器无法识别，因此需要用到 @unchecked 来阻止编译器报错。使用 @unchecked 时，需要非常小心，必须由开发者自己保证对数据的更改是线程安全的。
 ![](images/unchecked_sendable.png)
 
 上文提到，在任务进行传参或者返回的时候，Swift 编译器都会进行 Sendable 检查。除此以外，在新建任务时，用来表述任务的闭包也可以捕获外部变量，这也是一种数据交互，因此编译器也会进行检查。例如下图的程序，Chicken 类型的实例 `lily` 被一个分离任务的闭包捕获，编译器检查之后会报错。由于这里创建了一个分离任务 ( Detached Task )，编译器会推导这是一个 @Sendable 闭包并对闭包捕获的变量进行 Sendable 检查，Chicken 类型不符合 Sendable 协议，因此编译器会报错。(注：分离任务会在独立的上下文中运行，任务闭包可能会逃离当前的线程。为了保证数据安全，在不同线程之间传递的闭包必须是 Sendable 闭包，所以编译器会对闭包进行检查。想深入了解不同类型的任务之间的区别，可以参考 [WWDC 21 Session 10134 Explore structured concurrency in Swift](https://developer.apple.com/videos/play/wwdc2021/10134) ）

@@ -10,7 +10,7 @@ session_ids: [10065]
 
 作者本人作为最早的一批手游开发者，当年使用 ObjC 对接苹果应用内支付、推送以及一些三方登录、广告、分享等 SDK ，要痛苦就有多么痛苦。是的，当时还是 MRC 时代，手一抖就内存泄露了。毫不夸张的是就算现在，很多项目组只有一个人知道如何对接 iOS 的相关功能，是的，这个人还是被负责人按着头去开发的。
 
-今年的 WWDC 给大家最直观的感受是，没那么多黑科技，也许是在憋大招。不过今年 Apple 竟然破天荒的为 Unity 提供了 C# 版本的 Apple 插件，这完全不符合 Apple 的高冷气质，令人非常惊讶。另外， Apple 还提供了 Metal-cpp 插件，开发者可以使用 C++ 去调用 Metal API ,展现了我果的开放与包容，终于接地气了。对于，从事游戏开发者，尤其是 Unity 开发者来说，是一个非常大的福音。
+今年的 WWDC 给大家最直观的感受是，没那么多黑科技，也许是在憋大招。不过今年 Apple 竟然破天荒的为 Unity 提供了 C# 版本的 Apple 插件，这完全不符合 Apple 的高冷气质，令人非常惊讶。另外， Apple 还提供了 Metal-cpp 插件，开发者可以使用 C++ 去调用 Metal API，展现了我果的开放与包容，终于接地气了。对于，从事游戏开发者，尤其是 Unity 开发者来说，是一个非常大的福音。
 
 翻开手游引擎的老黄历，最早比较知名的 iOS 平台游戏引擎： Cocos2d-iPhone 。后来，为了兼顾安卓平台，国人重写了 Cocos2d-iPhone ，于是出现了风靡一时的 2D 开源游戏引擎 Cocos2d-X 。随着手机性能的爆发性增长，以及传统的轻度休闲、卡牌类游戏已不能满足日益增长的玩家需求， 3D 重度游戏应运而生。作为工具链齐全、功能强大的 3D 游戏引擎 Unity 脱颖而出。曾经被 Adobe 拒绝收购的 Unity 快速占领手机游戏引擎市场，据 Unity 2022 年的[官方报告](https://developer.unity.cn/projects/62938cebedbc2a001d6cac25)统计，过去一年上线的手机游戏，超过 50% 的游戏使用了 Unity 作为游戏引擎 。大家熟知的游戏：《王者荣耀》、《英雄联盟手游》、《APEX》、《原神》、《万国觉醒》、《使命召唤手游》、《Pokemon Go》等都使用了 Unity 作为游戏引擎。当然，《和平精英》和《堡垒之夜》使用的是另外一个知名游戏引擎 Unreal 。目前，国内除了网易还在使用自研的游戏引擎 Messiah 和 NeoX ，诸如腾讯、米哈游等一线游戏厂商基本上使用 Unity 或是 Unreal 作为主流游戏引擎开发手机游戏。面对游戏每年提供给 Apple 的巨额分成，尤其是占据半壁江山的功勋 Unity ，苹果爸爸今年终于为 Unity 提供了 C# 版本的 Apple 插件。
 
@@ -631,7 +631,7 @@ xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer dire
 [WARNING]: No Unity installation tracked with version: 2020.3.33f1
 ```
 
-第一个问题是环境设置问题，需要打开 Xcode -> Preference -> Locations -> Command Line Tools ,勾选安装的 Xcode 版本。
+第一个问题是环境设置问题，需要打开 Xcode -> Preference -> Locations -> Command Line Tools，勾选安装的 Xcode 版本。
 
 ![](./images/Xcode-set-01.png)
 ![](./images/Xcode-set-02.png)
@@ -652,7 +652,7 @@ python3 build.py -u /Applications/2021.3.3f1c1
 
 ![](./images/import-open-pm.png)
 
-2、选择 `Add package from tarball...` ,然后将上文编译的 `xxx.tgz` 文件导入:
+2、选择 `Add package from tarball...`，然后将上文编译的 `xxx.tgz` 文件导入:
 
 ![](./images/import-add-plugin.png)
 
@@ -670,7 +670,7 @@ python3 build.py -u /Applications/2021.3.3f1c1
 
 ![](./images/plugin-link.png)
 
-由于 Apple 插件库是苹果系平台独有功能,建议在调用相关 API 时候，在需要的情况下判断下平台，不然在其它平台运行会报错。代码示例:
+由于 Apple 插件库是苹果系平台独有功能，建议在调用相关 API 时候，在需要的情况下判断下平台，不然在其它平台运行会报错。代码示例:
 
 ```csharp
 
