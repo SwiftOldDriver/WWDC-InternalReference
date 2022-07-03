@@ -124,9 +124,12 @@ let connection = NWConnection(host: "www.example.org", port: .https, using: para
 以下是一些可能导致 DNSSEC 失败的情况。
 
 - 当原始 DNS 响应被修改了，不匹配的签名将无法通过 DNSSEC 检查，从而导致验证失败
+
 - 当设备无法访问任何预安装的信任锚并且无法与其建立信任链时
+
 - 当网络不支持 DNSSEC 所需的必要协议时，例如 DNS over TCP 和 EDNS0 选项，它携带了 DNSSEC 启用位
--  当签名的域名不支持 IPv6 时，由互联网服务提供商提供的合成 IPv6 地址将无法通过验证
+
+- 当签名的域名不支持 IPv6 时，由互联网服务提供商提供的合成 IPv6 地址将无法通过验证
 
 这就是使用 DNSSEC 对 DNS 响应进行身份验证的方法，但如果它们仍未加密，网络上的任何人都可以看到它们。
 
