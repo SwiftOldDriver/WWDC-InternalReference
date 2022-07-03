@@ -21,26 +21,21 @@ session_ids: [10032]
 接下来我们开始逐步为书单 App 实现各种方便用户使用的 Intent。
 
 > 目录
->
-> 1. 实现 Intent
->
->  - 第一个 Intent — 打开“正在阅读”Tab
->  - 携带参数的 Intent — 打开任一个 Tab
->  - 更灵活的 Intent — 打开某一本书
->  - 把多个 Intent 组合起来 — 添加一本书，并打开
->
-> 2. 与 Intent 的交互
->
->  - Dialog： 文字/声音的反馈
->  - Snippet： 可视化的反馈
->  - Request Value： 向用户请求所需的参数
->  - Disambiguation： 让用户选择存在歧义的结果
->  - Comfirmation： 让用户确认结果
->
-> 3. 关于 App Intent 的一些其他内容
->
->  - 构建 App Intent 两种方式的比较
->  - 升级 SiriKit Intent 到 App Intent
+> * 实现 Intent
+>    * 第一个 Intent — 打开“正在阅读”Tab
+>    * 携带参数的 Intent — 打开任一个 Tab
+>    * 更灵活的 Intent — 打开某一本书
+>    * 把多个 Intent 组合起来 — 添加一本书，并打开
+> * 与 Intent 的交互
+>    * Dialog： 文字/声音的反馈
+>    * Snippet： 可视化的反馈
+>    * Request Value： 向用户请求所需的参数
+>    * Disambiguation： 让用户选择存在歧义的结果
+>    * Comfirmation： 让用户确认结果
+> * 关于 App Intent 的一些其他内容
+>    * 构建 App Intent 两种方式的比较
+>    * 升级 SiriKit Intent 到 App Intent
+
 
 ## 实现 Intent
 
