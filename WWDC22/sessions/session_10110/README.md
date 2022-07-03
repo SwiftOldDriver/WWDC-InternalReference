@@ -1,5 +1,5 @@
 ---
-session_ids:[10110]
+session_ids: [10110]
 ---
 
 # WWDC22 - 如何搭建一个国际化的应用
