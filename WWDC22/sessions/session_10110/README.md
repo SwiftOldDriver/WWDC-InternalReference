@@ -26,12 +26,11 @@ session_ids: [10110]
 
 lproj 文件夹内通常会包含的本地化资源文件可能有：
 
-- Main.storyboard（storyboard项目的入口）
+- Main.storyboard（storyboard 项目的入口）
 - LaunchScreen.storyboard（应用的开屏界面）
 - Localizable.strings（常规字符串的翻译）
 - InfoPlist.strings（info.plist 文件内的翻译)
-- AppIntentVocabulary.plist（SiriKit中使用词汇的翻译）
-- ......
+- AppIntentVocabulary.plist（SiriKit中 使用词汇的翻译）
 
 Base 是用来处理那些可在不同语言之间共享的本地化文件的，比如：storyboard 和 xib。如果新建的是 SwiftUI 项目的话，Xcode 并不会自动把你生成 Base 这个选项。
 
@@ -62,7 +61,7 @@ UserDefaults.standard.object(forKey: "AppleLanguages")
 
 ## 文案翻译
 
-翻译是本地化过程中最重要的一步。毫不夸张的说，当你完成了应用内文案的翻译，你的本地化过程就完成了90%。
+翻译是本地化过程中最重要的一步。毫不夸张的说，当你完成了应用内文案的翻译，你的本地化过程就完成了 90%。
 
 ### 客户端内字符串的翻译流程
 
@@ -100,7 +99,7 @@ String(localized: "Order", comment:"xxxxx")
 
 ![](./images/export.png)
 
-按照上图操作的导出方式，Xcode将把工程内按照前文几种方式声明的字符串自动按每种语言导出为 xcloc 文件，当然已经存在的 Localizable.strings 也会被导入。
+按照上图操作的导出方式，Xcode 将把工程内按照前文几种方式声明的字符串自动按每种语言导出为 xcloc 文件，当然已经存在的 Localizable.strings 也会被导入。
 
 xcloc 在 Xcode13 后可以直接打开，它的文件格式如下。
 
@@ -135,7 +134,7 @@ extension String {
 
 ![](./images/plural_with_stringsdict_2.png)
 
-在iOS15之后, 苹果引入了 automatic grammar agreement 来处理单复数以及性别的场景，可以通过`^[xxxxxx](inflect: true)`语法来包裹需要特殊处理的部分。但是这个语法目前仅对英语、西语等极少数几种生效，并且笔者在实践中只能在 SwiftUI 场景下使用成功，不确定是苹果的 bug 还是笔者使用的姿势有问题。
+在 iOS15 之后, 苹果引入了 automatic grammar agreement 来处理单复数以及性别的场景，可以通过`^[xxxxxx](inflect: true)`语法来包裹需要特殊处理的部分。但是这个语法目前仅对英语、西语等极少数几种生效，并且笔者在实践中只能在 SwiftUI 场景下使用成功，不确定是苹果的 bug 还是笔者使用的姿势有问题。
 
 ```swift
 Text("You have ^[\(count) apple](inflect: true).")
@@ -153,9 +152,9 @@ Text("You have ^[\(count) apple](inflect: true).")
 
 ### 三方库中的文案处理
 
-如果你是一个三方库的开发者，并且你的库中也存在一些文案用于展示或者提供给外部，那你也应该对你的三方库做好的本地化的支持。也许你的三方库就被一个国际化的App使用了呢。
+如果你是一个三方库的开发者，并且你的库中也存在一些文案用于展示或者提供给外部，那你也应该对你的三方库做好的本地化的支持。也许你的三方库就被一个国际化的应用使用了呢。
 
-今年在 Swift Package 的描述中新增了一个变量`defaultLocalization`来描述 Package 的默认语言，这和我们在主工程中使用的 Developemnt Language 相似。当添加了这个参数后，Xcode 就会认为这个库有本地化的需求，因此前面提到的导入/导出本地化文件的功能也将可以对这个 Swift Package 生效了。而非 Swift Package 的开发者们就只能请大家自己去建一下对应的lproj文件目录了。
+今年在 Swift Package 的描述中新增了一个变量`defaultLocalization`来描述 Package 的默认语言，这和我们在主工程中使用的 Developemnt Language 相似。当添加了这个参数后，Xcode 就会认为这个库有本地化的需求，因此前面提到的导入/导出本地化文件的功能也将可以对这个 Swift Package 生效了。而非 Swift Package 的开发者们就只能请大家自己去建一下对应的 lproj 文件目录了。
 
 ```swift
 let package = Package(
@@ -186,13 +185,13 @@ let title = String(localized: "Wind",
 
 ### 服务端的翻译
 
-开发App的过程中，有些场景的文案是由服务端下发到客户端，再由客户端去展现的，这类文案无法直接在客户端完成本地化。
+开发应用的过程中，有些场景的文案是由服务端下发到客户端，再由客户端去展现的，这类文案无法直接在客户端完成本地化。
 
 ![](./images/localized_remote_content.png)
 
 对于这种情况苹果推荐使用`Bundle.preferredLocalizations(from: [serverLanguages])`方法，传入服务端支持的语言，系统会帮你选出匹配的语言，再通过特定的语言去向服务端请求资源。
 
-当然在能确定服务端支持的语言和客户端相同时（绝大多数的情况），客户端直接使用当前App展示的语言去请求会更简单一些。
+当然在能确定服务端支持的语言和客户端相同时（绝大多数的情况），客户端直接使用当前应用展示的语言去请求会更简单一些。
 
 ## 格式化(Formatter)
 
@@ -200,7 +199,7 @@ let title = String(localized: "Wind",
 
 ![](./images/fomatters.png)
 
-不过好在苹果提供的格式化 API (Formater) 帮助我们处理所有的这些差异。在iOS 15 之后苹果提供了更加 Swift 化的 API 来帮助我们处理格式问题。
+不过好在苹果提供的格式化 API (Formater) 帮助我们处理所有的这些差异。在 iOS 15 之后苹果提供了更加 Swift 化的 API 来帮助我们处理格式问题。
 
 ```swift
 //iOS 15
@@ -221,8 +220,7 @@ formatter.string(from: NSNumber(value: 0.54)) //54%
 //Dates, times, measurements, percentages, names, and lists should use formatter
 ["pop", "rock", "electronic"].formatted(.list(type: .or)) // pop, rock, or electronic
 
-Text("Total: \(price, format: .currency(code: "USD"))"), // Total: $9.41
-		comment: "Order subtitle: total price of all tickets")
+Text("Total: \(price, format: .currency(code: "USD"))"), comment: "Order subtitle: total price of all tickets") // Total: $9.41
 ```
 
 苹果对不同类型格式的支持是十分丰富的，下图是一些常用的例子。
@@ -250,7 +248,7 @@ return String(localized: "EXPECTED_RAINFALL",
 
 ![](./images/combine_a_fomatter_with_text.png)
 
-关于更多的 Fomatter 相关的信息，也可以去看 WWDC20-10160 Formatters: Make data human-friendly](https://developer.apple.com/videos/play/wwdc2020/10160/)
+关于更多的 Fomatter 相关的信息，也可以去看 [WWDC20-10160 Formatters: Make data human-friendly](https://developer.apple.com/videos/play/wwdc2020/10160/)
 
 ## 界面布局
 
@@ -305,3 +303,4 @@ return String(localized: "EXPECTED_RAINFALL",
 > [Searching for Custom Functions With genstrings](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/LoadingResources/Strings/Strings.html#//apple_ref/doc/uid/10000051i-CH6-SW11)
 >
 > [CLDR](https://cldr.unicode.org/index/cldr-spec/plural-rules)
+
