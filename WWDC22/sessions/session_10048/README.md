@@ -10,19 +10,19 @@ session_ids: [10048]
 
 ![文章架构](./images/文章架构.png)
 
-我们先介绍一些 WebKit 背景知识，介绍什么是 WebKit 以及关于几个主流浏览器之间浏览器内核的发展之路。
+我们先介绍一些 WebKit 背景知识，什么 WebKit，浏览器内核的架构如何。
 
-然后我们先以 HTML 和 CSS 的基础知识为先，然后再依次介绍最近一年 HTML、CSS 、网页检查器（Web Inspector）、Web API、
+然后我们将介绍最近一年在 HTML、CSS 、网页检查器（Web Inspector）、Web API、
 
-JavaScript 和 WebAssembly、Security 和 privacy 上的新增的功能与改进。
+JavaScript 和 WebAssembly、Security 和 privacy 上的新增的功能与改进，期间会穿插一些前端的知识以方便于你更好的理解。
 
-每个小节都提供了导图，介绍 Safari 在哪个版本有哪些功能与改进。
+每个小节都提供了导图，介绍 Safari 在哪个版本有哪些功能与改进，我们将挑选其中有代表性的几个，通过示例展示效果以便加深理解
 
-接下来，我将介绍今天的主角：WebKit
+那么我们开始介绍今天的主角：WebKit
 
 ## WebKit 介绍
 
-为了更好的理解 WebKit，我们需要了解 WebKit  是什么的
+为了更好的理解 WebKit，我们需要了解 WebKit  是什么
 
 [WebKit](https://en.wikipedia.org/wiki/WebKit) 是 Apple 开发的浏览器引擎，主要用于其 Safari 网络浏览器以及所有 iOS 网络浏览器。
 
