@@ -7,6 +7,8 @@ session_ids: [10061]
 
 本文基于 WWDC22 Session 10061 - [Bring multiple windows to your SwiftUI app](https://developer.apple.com/videos/play/wwdc2022/10061/) 整理
 
+> 注意： 阅读本文之前需要具有 SwiftUI 基础，并且对 macOS 平台特性有所了解； 更多基础知识请参考 [WWDC20 - App essentials in SwiftUI](https://xiaozhuanlan.com/topic/6438270915)， [WWDC20 - Build document-based apps in SwiftUI](https://xiaozhuanlan.com/topic/6745310982)， [WWDC21 - 通过 SwiftUI 构建优秀的 Mac App](https://xiaozhuanlan.com/topic/5389016427)。
+
 由 iPadOS 和 MacOS 的平台特性决定了可以在同一个屏幕上展现不同场景内容的多个窗口，在以往的 Session 中，跟这一特性相关的场景的介绍大多分布在其中某一段中（例如 WindowGroup 和 DocumentGroup， 这些介绍大多需要覆盖多个平台），同时 APIs 也缺少一些必要的的功能（例如缺少打开唯一单一窗口的方法）；在 WWDC22 上苹果补充了两个 scene types，并且新增了一些与场景相关的一些新的 APIs。  
 
 本 Session 将主要探讨了如何使用 scene types 轻松构建更丰富的 app，分为以下四个部分:
