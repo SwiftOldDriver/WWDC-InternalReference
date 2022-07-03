@@ -12,7 +12,7 @@ session_ids: [10035]
 
 ![Swift 发展时序图](./images/apple_map.png)
 
-自 2012年6月11日 苹果公司在 WWDC 上向外宣布在自家 iOS 系统中将不会再默认搭载 ‘Google 地图’，‘苹果地图’将取代而之默认在 iOS 的系统中向用户提供地图服务，不知不觉已经过去了整整十个年头。在 2012年9月 正式开放使用之后，因取代‘Google 地图’所推出的苹果地图服务内容不完整、功能欠佳等问题广受用户诟病。因为漏洞百出甚至引发过苹果的公关危机，CEO 库克还因此专门公开向用户道歉。库克当时表示：“会不断改进‘苹果地图’给予用户的体验”以及“如果消费者不满意该地图所提供的服务，可以使用 Google 或是 Nokia 地图”。
+自 2012 年 6 月 11 日苹果公司在 WWDC 上向外宣布在自家 iOS 系统中将不会再默认搭载 ‘Google 地图’，‘苹果地图’将取代而之默认在 iOS 的系统中向用户提供地图服务，不知不觉已经过去了整整十个年头。在 2012 年 9 月正式开放使用之后，因取代‘Google 地图’所推出的苹果地图服务内容不完整、功能欠佳等问题广受用户诟病。因为漏洞百出甚至引发过苹果的公关危机，CEO 库克还因此专门公开向用户道歉。库克当时表示：“会不断改进‘苹果地图’给予用户的体验”以及“如果消费者不满意该地图所提供的服务，可以使用 Google 或是 Nokia 地图”。
 
 在这十年里，‘苹果地图’持续修补漏洞、改进功能，从一开始依赖第三方数据到自己收集数据，一直在努力将其打造为世界上最好的地图应用。同时为开发者提供了两种将地图 App 整合到其产品中的方式，其中之一是 MapKit，可以让你将地图 App 整合到 iOS、iPadOS 或 macOS 的 App 中，这样你就能在 App 中显示地图或卫星图像、添加注释和悬浮窗、标注兴趣点、确定地图坐标信息等等。另外一个是MapKit JS，可为网站带来交互式地图，不只是添加注释、悬浮窗，还有搜索和导航等地图服务的界面。
 
@@ -97,6 +97,7 @@ class MKStandardMapConfiguration : MKMapConfiguration {
 ```
 
 #### 配置类用途
+
 以上配置使用效果如下图所示，从左到右依次为影像地图、混合地图、标准地图效果：
 
 ![影像地图](./images/map_configuration.png)
@@ -175,6 +176,7 @@ MapKit 支持多种混合模式，如下所列：
 ![属性之间的对应关系](./images/blend_modes.png)
 
 ### Selectable Map Features 可选择地图特征
+
 在 iOS 16 中支持可选择地图功能，可选择的地图特征包括兴趣点，例如商店、餐馆和地标；领土，例如城市和州；和物理特征，例如山脉和湖泊。
 
 ```Swift
@@ -244,7 +246,7 @@ mapView. selectableMapFeatures = [. pointsOfInterest]
 ```Swift
 // 定义可选地图特征大头针样式
 func mapView(_: MKMapView,viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-	if let feature = annotation as MKMapFeatureAnnotation? {
+    if let feature = annotation as MKMapFeatureAnnotation? {
 		var annotationView: MKMarkerAnnotationView = ...
 		annotationView.image = feature.iconStyle?.image
 		annotationView.color = ...
@@ -256,7 +258,7 @@ func mapView(_: MKMapView,viewFor annotation: MKAnnotation) -> MKAnnotationView?
 
 // 处理用户选择事件
 func mapView(_: MKMapView, didDeselect annotation: MKAnnotation) {
-	guard let featureAnnotation = annotation as? MKMapFeatureAnnotation else { retrun }
+    guard let featureAnnotation = annotation as? MKMapFeatureAnnotation else { retrun }
 	let featureRequest = MKMapItemRequest(mapFeatureAnnotation: featureAnnotation)
 	
 	....
@@ -286,6 +288,7 @@ func mapView(_: MKMapView, didDeselect annotation: MKAnnotation) {
 	}
 }
 ```
+
 Selectable Map Features 实际效果：
 
 ![属性之间的对应关系](./images/selectable.gif)
@@ -330,6 +333,7 @@ Look Around 实际效果：
 ![属性之间的对应关系](./images/look_around.gif)
 
 ## Apple Maps Server API 苹果地图服务接口
+
 苹果本次开放了四个服务 API 供开发者调用，分别是地址编码、逆向地址编码、地址搜索、估计到达时间。
 本节将对新开放的 API 进行详细介绍，主要分为两大块：
 
@@ -337,7 +341,9 @@ Look Around 实际效果：
 2. 应用场景
 
 ### 接口文档
+
 #### Generate a Maps Access Token 生成访问授权Token
+
 用来获取请求访问授权 accessToken，为后续请求提供身份验证。
 
 ##### URL
@@ -360,7 +366,9 @@ curl -si -H”Authorization: Bearer <maps_auth_token>” ”https://maps-api.app
 ```
 
 #### Geocoding 地址编码
+
 用来获取指定地址的经纬度信息。
+
 ##### URL
 
 ```Json
@@ -368,6 +376,7 @@ GET https://maps-api.apple.com/v1/geocode
 ```
 
 ##### Query Parameters
+
 |  参数   | 描述  | 类型  | 是否必须  |
 |  ----  | ----  |----  | ----  |
 | q  | 需要编码的地址，例子：q=1 Apple Park, Cupertino, CA | string | 是 |
@@ -376,6 +385,7 @@ GET https://maps-api.apple.com/v1/geocode
 | searchLocation  | 搜索位置，格式为纬度经度，中间使用逗号分割，例子：searchLocation=37.78,-122.42. | string | 否 |
 | searchRegion  | 搜索区域，格式为北纬东经南纬西经，中间使用逗号分割，例子：searchRegion=38,-122.1,37.5,-122.5. | string | 否 |
 | userLocation  | 用户位置, 格式为纬度经度，中间使用逗号分割，例子，userLocation=37.78,-122.42. | string | 否 |
+
 ##### 请求例子
 
 ```Json
@@ -421,7 +431,9 @@ curl -si -H”Authorization: Bearer <maps_access_token>” ”https://maps-api.a
 ```
 
 ####  Reverse Geocoding 逆向地址编码
+
 用来获取经纬度对应的地址列表。
+
 ##### URL
 
 ```Json
@@ -429,10 +441,12 @@ GET https://maps-api.apple.com/v1/geocode
 ```
 
 ##### Query Parameters
+
 |  参数   | 描述  | 类型  | 是否必须  |
 |  ----  | ----  |----  | ----  |
 | loc  | 需要查询地址的经纬度，格式为纬度经度，中间使用逗号分割，例子：loc=37.3316851,-122.0300674 | string | 是 |
 | lang  | 指定响应数据的语言，格式使用 BCP 47 语言标记，默认为英文，例子：lang=en-US. | string | 否 |
+
 ##### 请求例子
 
 ```Json
@@ -477,7 +491,9 @@ curl -si -H”Authorization: Bearer <maps_access_token>” ”https://maps-api.a
 }
 ```
 #### Estimated Time of Arrival 预计到达时间
+
 用来计算从指定位置出发到某个目的地的到达时间。
+
 ##### URL
 
 ```Json
@@ -485,6 +501,7 @@ GET https://maps-api.apple.com/v1/geocode
 ```
 
 ##### Query Parameters
+
 |  参数   | 描述  | 类型  | 是否必须  |
 |  ----  | ----  |----  | ----  |
 | origin  | 开始位置，格式为纬度经度，中间使用逗号分割，例子：origin=37.331423,-122.030503 | string | 是 |
@@ -493,6 +510,7 @@ GET https://maps-api.apple.com/v1/geocode
 | transportType  | 交通工具类型，目前支持三个交通工具，Automobile（汽车）、Transit（运输）、Walking（步行），默认为 Automobile，例子：transportType= Automobile | string | 否 |
 
 注意：destinations 参数至少有一个目的地，最多不超过 10 个，多个的话使用“|”分割，例子：destinations=37.32556561130194,-121.94635203581443|37.44176585512703,-122.17259315798667
+
 ##### 请求例子
 
 ```Json
@@ -527,7 +545,9 @@ curl -si -H”Authorization: Bearer <maps_access_token>” ”https://maps-api.a
 ```
 
 #### Search 搜索
+
 用来搜索指定名称的地点。
+
 ##### URL
 
 ```Json
@@ -535,6 +555,7 @@ GET https://maps-api.apple.com/v1/geocode
 ```
 
 ##### Query Parameters
+
 |  参数   | 描述  | 类型  | 是否必须  |
 |  ----  | ----  |----  | ----  |
 | q  | 需要搜索的地址，例子：q=eiffel tower | string | 是 |
@@ -599,11 +620,13 @@ curl -si -H”Authorization: Bearer <maps_access_token>” “https://maps-api.a
 ```
 
 ### 应用场景
+
 不同设备上的同一个 app 重复请求同一个地址，会造成大量重复的请求，造成用户设备带宽和功耗浪费。苹果建议 App 后端服务作为网关来请求苹果地图服务接口，可以大大减少请求数量，节省用户宝贵的带宽、功耗。
 
 > 需要注意的是苹果这次开放的服务 API 有访问配额，目前每天访问配额是 25,000 次，并且 MapsKit 和 MapKit JS 共享同一份配额。超过访问上限，苹果服务器将返回 429 错误码。如果你的 app 需要更多的访问配额，可以向苹果进行申请。
 
 #### 应用示例
+
 现在通过一个例子，来看看使用苹果地图服务接口前后给服务架构带来哪些变化。假如我们正在构建一个漫画书店位置服务，通过下图所示卡片的列表来告诉用户附近有哪些书店，卡片包含书店名称、地址、距离用户路程等位置信息。
 
 ![目前架构](./images/comic_book_store.png)
@@ -629,6 +652,7 @@ curl -si -H”Authorization: Bearer <maps_access_token>” “https://maps-api.a
 这种做法减少和苹果服务器之间的频繁互动，App 仅仅向应用服务端发送一次请求，应用服务端完成了繁重的工作，相比之前的处理方式，这样用户体验更加友好。
 
 #### 使用开放 API 的好处
+
 * 全栈架构，一份服务可以多处使用。（考虑到应用还有安卓系统，这点存疑）
 * 更高的网络性能。（请求数量减少，节约了带宽）
 * 更低的功耗。（繁重工作在后端，端上计算量降低）
