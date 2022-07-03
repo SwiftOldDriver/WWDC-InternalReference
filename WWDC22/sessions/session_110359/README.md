@@ -506,7 +506,7 @@ struct GenstringsPlugin: BuildToolPlugin {
 
 API 使用说明：
 
-```
+```swift
     /// Emits an error with a specified severity and message, and optional file path and line number.
     public static func emit(_ severity: PackagePlugin.Diagnostics.Severity, _ description: String, file: String? = #file, line: Int? = #line)
 
@@ -524,7 +524,7 @@ emit() 方法可以理解为可以使用特殊的类型，支持自定义。erro
 
 举个例子：
 
-```
+```swift
         Diagnostics.emit(Diagnostics.Severity.error, "Diagnostics: GenerateContributors emit error")
         Diagnostics.error("Diagnostics: GenerateContributors error")
         Diagnostics.warning("Diagnostics: GenerateContributors warning")
