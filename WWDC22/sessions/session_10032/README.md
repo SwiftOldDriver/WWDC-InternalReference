@@ -36,7 +36,6 @@ session_ids: [10032]
 >    * 构建 App Intent 两种方式的比较
 >    * 升级 SiriKit Intent 到 App Intent
 
-
 ## 实现 Intent
 
 ### 第一个 Intent —— 打开“正在阅读”Tab
