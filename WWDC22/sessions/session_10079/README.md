@@ -134,7 +134,7 @@ let connection = NWConnection(host: "www.example.org", port: .https, using: para
 
 如何使用 DDR 自动启用 DNS 加密。在 iOS 14 和 macOS Big Sur 中，我们引入了加密 DNS 以帮助保护隐私。您可以使用应用程序中的 NEDNSSettingsManager 或配置文件中的 DNSSettings 手动配置加密的 DNS 系统范围。您还可以使用 NWParameters 上的 PrivacyContext 为您的应用程序选择加密 DNS。有关详细信息，请观看“[Enable encrypted DNS](https://developer.apple.com/videos/play/wwdc2020/10047)”， iOS 16 和 macOS Ventura 的新增功能，可以自动使用加密的 DNS。
 
-如果您的网络支持发现指定解析器（也称为 DDR ），则 DNS 查询将自动使用 TLS 或 HTTPS。要使用加密的 DNS，您的设备需要知道解析器支持 TLS 或 HTTPS，并且可能还需要学习端口或 URL 路径。诸如 DHCP 或路由器播发等常见机制仅提供普通 IP地址。DDR 是 Apple 与其他行业合作伙伴在 IETF 中开发的一种新协议。
+如果您的网络支持发现指定解析器（也称为 DDR ），则 DNS 查询将自动使用 TLS 或 HTTPS。要使用加密的 DNS，您的设备需要知道解析器支持 TLS 或 HTTPS，并且可能还需要学习端口或 URL 路径。诸如 DHCP 或路由器播发等常见机制仅提供普通 IP 地址。DDR 是 Apple 与其他行业合作伙伴在 IETF 中开发的一种新协议。
 
 它为 DNS 客户端提供了一种通过使用特殊 DNS 查询来了解这些必要信息的方法。当你的设备加入新网络时，它将发出“_dns.resolver.arpa”的服务绑定查询。如果 DNS 服务器支持 DDR，它会回复一个或多个配置。然后，设备使用此信息建立与指定解析器的加密连接。它验证未加密解析器的 IP 地址是否包含在指定解析器的 TLS 证书中。这样做是为了确保未加密的解析器和加密的解析器属于同一实体。
 
