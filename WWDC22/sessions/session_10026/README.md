@@ -37,6 +37,7 @@ session_ids: [10026]
 ## API 初识
 
 实况文本的 **API** 构成主要有以下几个类：
+
 - `ImageAnalyzer`：图片内容的分析器。
 - `ImageAnalysis`：分析图片后得到的分析结果，跨平台复用（平台无关）。
 - `ImageAnalysisInteraction`：移动端上 **UI** 相关的结果交互展示载体。
