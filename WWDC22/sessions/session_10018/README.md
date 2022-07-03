@@ -267,11 +267,13 @@ func metadataOutput(_ output: AVCaptureMetadataOutput,
 }
 ```
 
-> 如果你看过 `AVMetadataObjectType` 并也看过了 WWDC22 关于 VisionKit 的内容「Capture machine-readable codes and text with VisionKit」（Session 10025），你会发现这两者在设置内容上十分相似，让人不禁猜想 `DataScannerViewController` 的实现是否是 AVFoundation + CoerML 封装起来的。
-
 ### 支持的输出内容/格式
 
-除了上述提到的 `AVCapturePhotoOutput` 和 `AVCaptureMetadataOutput`，连续互动相机还支持：视频数据输出、电影文件输出、`AVCaptureVideoPreviewLayer`。
+除了上述提到的 `AVCapturePhotoOutput` 和 `AVCaptureMetadataOutput`，连续互动相机还支持：
+
+- 视频数据输出（`AVCaptureVideoDataOutput`）
+- 电影文件输出（`AVCaptureMovieFileOutput`）
+- 视频预览层（`AVCaptureVideoPreviewLayer`）
 
 ![](./images/wwdc2022-10018_hd-0016.png)
 
@@ -306,7 +308,7 @@ private func deskViewDevices() -> [AVCaptureDevice] {
 let deskViewCam = videoCameraDevice.companionDeskViewCamera
 ```
 
-获得所需 Desk View 摄像机的 `AVCaptureDevice` 对象后，就像使用其他摄像机设备一样，应用程序可以在捕获会话中将其与 `AVCapture` 视频数据输出、电影文件输出或视频预览层一起使用。 Desk View 设备目前支持一种 420v 像素格式的流格式。该格式的分辨率为 1920 x 1440，支持的最大帧速率为 30 fps。
+获得所需 Desk View 摄像机的 `AVCaptureDevice` 对象后，就像使用其他摄像机设备一样，应用程序可以在捕获会话中将其与 `AVCapture` 的 `AVCaptureVideoDataOutput`、 `AVCaptureMovieFileOutput` 或 `AVCaptureVideoPreviewLayer` 一起使用。 Desk View 设备目前支持一种 420v 像素格式的流格式。该格式的分辨率为 1920 x 1440，支持的最大帧速率为 30 fps。
 
 ## 总结
 
