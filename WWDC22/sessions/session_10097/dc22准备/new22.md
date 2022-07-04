@@ -112,7 +112,7 @@ In the attributes dictionary, add information like the action name, which catego
 
 
 
-Finally, the App Clip experiences API. As your app clip grows, you'll have more and more advanced App Clip experiences, each with their own information or location. You need an easy way to add and update all of these experiences. App Store Connect has an App Clip experiences web API that's designed to automate this workflow. Let's look at an example that uses this API to add an advanced App Clip experience.
+Finally, the App Clip experiences API. As your app clip grows, you'll have more and more advanced App Clip experiences, each with their own information or location. You need an easy way to add and update all of these experiences. App Store Connect has an ··that's designed to automate this workflow. Let's look at an example that uses this API to add an advanced App Clip experience.
 
 First, get the App Clip resource ID. Next, upload your header image. Last, create the advanced App Clip experience. First, let's find the resource ID for the app clip. Call the web API with your app's item ID and App Clip bundle ID. And from the response, save the App Clip resource ID for later. Next, upload a header image for the advanced App Clip experience. Save the header image's resource ID for the next step. Last, with your App Clip resource ID and your header image ID, we can now create your advanced App Clip experience.
 

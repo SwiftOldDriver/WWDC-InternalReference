@@ -150,3 +150,176 @@ SecItemCopyMatching(readSecretsQuery as CFDictionary, &secretsCopy)
 
 
 ## App Clip experiences API
+
+随着 App Clip 的迭代发展，一个 App Clip 会拥有越来越多的 advanced App Clip experiences，每一个 experiences 都包含独有的信息和定位。开发者需要一种简单的方式来添加和更新这些 experiences。因此，App Store Connect 提供了 App Clip experiences web API，旨在自动化此工作流。接下来让我们看看使用此 API 的示例。
+
+##### 解释下什么是 Advanced App Clip Experiences
+>  App Clip 的任何唤醒方式，都需要在 App Store Connect 上配置default App Clip experience。App Clip 有两种体验方式 Default App Clip Experience 和  Advanced App Clip Experiences。
+>  App Clip 通过 Safari App Banner 或者 iMessage app 中的唤醒方式称为 Default App Clip Experience，这些唤醒方式的相同点都是基于 App Clip 配置链接。
+>
+>  对于更复杂的唤醒情况，可以根据 URL 的不同、地理位置的不同，来提供不一样的 App Clip Card。这类启动方式被称为 Advanced App Clip Experiences。以下几种情况需要配置 Advanced App Clip Experiences
+>
+>  - App Clip 能支持所有的唤醒方式，包括 Map、Spotlight search、QR Codes、App Clip Codes 、NFC tags。
+>  - 需要将 App Clip 与一个物理位置进行绑定。
+>  - 需要在不同的域名或子域名上展示 Safari App Banner。
+>  - 同一个 App Clip 供不同企业使用。
+>
+>  *这两个英文，是我翻译过程中遇见最头痛的两个词语。我始终没有想出信达雅的解释，所以在本文中我就以英文表示。*
+
+参考：[Configuring Your App Clip’s Launch Experience](https://developer.apple.com/documentation/app_clips/configuring_your_app_clip_s_launch_experience) 
+
+![kinds_of_experience](/Users/zhongyiwang/Desktop/WWDC22/sessions/session_10097/images/kinds_of_experience.png)
+
+### 使用 Web Api 创建 Advanced App Clip Experiences 流程
+
+创建一个 Advanced App Clip Experiences 只需以下三步
+
+1. 获取 App Clip resource ID。
+2. 上传 App Clip Card 的 header image。	
+3. 创建 App Clip experiences web API。
+
+![截屏2022-07-05 02.05.23](/Users/zhongyiwang/Desktop/WWDC22/sessions/session_10097/images/截屏2022-07-05 02.05.23.png)
+
+
+
+### App Clip experiences web API 使用示例
+
+#### 获取 App Clip resource ID
+
+使用 App item ID 和 App Clip bundle ID 调用 API，然后从响应数据中获取 App Clip resource ID。这个 ID 会在后面使用到。
+
+```json
+# Get the App Clip resource ID
+
+GET /v1/apps/1234567890/appClips?filter[bundleId]=com.example.foodsample.Clip
+
+# Response
+
+{
+    "data": {
+        "attributes": {
+            "bundleId": "com.example.foodsample.Clip"
+        },
+        "id": "726ad1bb-3e1b-40eb-a986-d8a9897e4f1e"
+    }
+}
+```
+
+#### 上传 header image
+
+从响应数据中保存 header image's recource ID，以供下一步使用。
+
+```json
+# Upload a header image for the advanced App Clip experience
+POST /v1/appClipAdvancedExperienceImages
+{
+    "data": {
+        "type": "appClipAdvancedExperienceImages",
+        "attributes": {
+            "fileName": "Hero_image_US.png",
+            "fileSize": 43500
+        }
+    }
+}
+
+# Response
+{
+    "data": {
+        "attributes": "..."
+        "id": "91c52741-832b-48a2-8935-1797655edbe7"
+    }
+}
+```
+
+#### 创建 App Clip experiences web API
+
+接下来看看如何使用前两步保存的 App Clip resource ID 和 header image's recource ID来创建 advanced App Clip experience。
+
+```json
+# Create advanced App Clip experience
+
+POST /v1/appClipAdvancedExperiences
+{
+    "data": {
+        "type": "appClipAdvancedExperiences",
+        "attributes": {
+            "action": “OPEN",
+            "businessCategory": "FOOD_AND_DRINK",
+            "defaultLanguage": "EN",
+            "isPoweredBy": true,
+            "link": "https://fruta.example.com/restauraunt/simply_salad",
+            "place": {
+                "names": [ "Caffe Macs" ],
+                "mapAction": "RESTAURANT_ORDER_FOOD",
+                "displayPoint": {
+                    "coordinates": { "latitude": 37.33611, "longitude": -122.00731 },
+                    "source": "CALCULATED"
+                }
+            }
+        },
+        "relationships": {
+            "appClip": {
+                "data": {
+                    "type": "appClip",
+                    "id": "726ad1bb-3e1b-40eb-a986-d8a9897e4f1e"
+                }
+            },
+            "headerImage": {
+                "data": {
+                    "type": "appClipAdvancedExperienceImages",
+                    "id": "91c52741-832b-48a2-8935-1797655edbe7"
+                }
+            }
+        },
+        "included": {
+            "type": "appClipAdvancedExperienceLocalizations",
+            "attributes": {
+                "language": "EN",
+                "subtitle": "Fresh salad every day",
+                "title": "Simply Salad"
+            }
+        }
+    }
+}
+```
+
+请求体中有三个字典需要进行数据填充，attributes、relationships、included。接下来让我介绍每一个字典数据的填充规则。
+
+##### attributes
+
+在属性字典中，需要添加诸如 App Clip Card 上的启动按钮的标题、类别、配置链接等信息。
+
+如果你的 advanced App Clip experience 与地理位置关联，需要添加 `place` 字典。在 `place` 字典中添加地点名称、地图动作和地图坐标信息。
+
+![api_place](/Users/zhongyiwang/Desktop/WWDC22/sessions/session_10097/images/api_place.png)
+
+##### relationships
+
+在关系字典中，添加前两步保存的 App Clip resource ID 和 header image's recource ID 即可。
+
+![api_relationship](/Users/zhongyiwang/Desktop/WWDC22/sessions/session_10097/images/api_relationship.png)
+
+##### included
+
+在包含字典中，添加本地化的标题和副标题。就这么简单。
+
+![api_included](/Users/zhongyiwang/Desktop/WWDC22/sessions/session_10097/images/api_included.png)
+
+这就是 App Store Connect API 的全部配置内容，有了这个 API，开发者可以自动化创建  advanced App Clip experience。要了解有关App Store Connect的更多信息，请参阅 [WWDC18 Automating App Store Connect](https://developer.apple.com/videos/play/wwdc2018/303/)和[WWDC20 What's new in App Store Connect](https://developer.apple.com/videos/play/wwdc2022/10043/)。
+
+
+
+## 总结
+
+在今年的 session 中，iOS 16 将 App Clip 的包体积大小提升到了 15 MB，给了工程师更多的空间来创造更多天马行空的功能。App Clip 诊断工具也帮助工程师更好地解决 App Clip 链接配置问题。CloudKit 和 keychain 让我们可以更大程度地复用 App 中的代码来让 App Clip 的开发变得轻松。App Clip experiences API 可自动化管理你的 advanced App Clip experiences。
+
+TODO: 总结性，瞻望等补充。
+
+**我们，明年见！**
+
+
+
+
+
+
+
