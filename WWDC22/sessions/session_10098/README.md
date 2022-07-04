@@ -11,7 +11,10 @@ session_ids: [10098]
 
 Session 10098 本身内容不多，本文内容除了 Session 中提到的信息外，还包括一些从 Digital Lougue 和从 webkit blog、MDN、web.dev  上获取的信息。以下是大纲
 
-[TOC]
+1 - **Web Push 终获 macOS 完整支持**
+2 - **Web Push 的使用简介**
+3 - **使用 Web Push 时注意事项**
+4 - **Web Push 在 macOS 实现的部分细节**
 
 ## Web Push 终获 macOS 完整支持
 
