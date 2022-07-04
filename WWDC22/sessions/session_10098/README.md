@@ -189,6 +189,10 @@ if (isWebPushEnabled()) {
 
 > 熟悉 App 推送的人应该对 APNS 比较熟悉，和图中的 Push Service 作用相同。native 是拿到 os 生成的 deviceToken 来表明自身作为信息接收者的唯一 ID，后台发送推送时带上 deviceToken 从而验证证书和找到合适的 device。而 Web Push 则是通过 Push Service url 来找到合适的浏览器的。
 
+另外一个重要参数是 `userVisibleOnly`，它表示浏览器接收的推送是否可以静默处理。Safari 和 Chrome 都不容许静默推送。因为浏览器接收到推送不给用户显示推送 UI 是对用户知情权的侵犯，强制要求 userVisibleOnly 是为了杜绝程序在背地里干一些见不得人的事情。和用户开通推送一定要通过的操作如键盘点击、鼠标点击触发一样，保护用户隐私和安全。另外一个原因，避免程序滥用静默推送，在后台消耗设备资源，其中最重要是电量。
+
+> 为什么不直接忽略  userVisibleOnly 入参，在内部默认为 true？ 那是因为 Web Push 协议标准是支持 false，但在各大浏览器实现时，只支持 true
+
 **难点：如何保证只有合法 Web App 后端发送消息给注册页面？**
 
 因为 Web App 后端消息是通过 Push Service 来传播的。具体一些说，是注册时传入的 `applicationServerKey` 保证的。`applicationServerKey` 和浏览器返回给我们的 Push Service url 绑定在一起，一对一映射，可以相互找得到。当后续 Web App 后端发起通知时，携带了这些参数
@@ -196,7 +200,7 @@ if (isWebPushEnabled()) {
 - Payload 即通知的数据（如样式、内容）
 - Encrypted info。 `applicationServerKey` 对于的私钥加密后的信息
 
-以及请求本身 url （即 Push Service url）。验证时，Push Service 用 Push Service url 找到对应的公钥来解密 Encrypted info ，解密成功即视为这个 Web App 后端时合法 Web App 后端。
+以及请求本身 url （即 Push Service url）。验证时，Push Service 用 Push Service url 找到对应的公钥来解密 Encrypted info ，解密成功即视为这个 Web App 后端是合法的 Web App 后端。
 
 ![applicationServerKey 在生成推送配置时的作用](assets/nHEwbmGFjtttom6DTFAw.svg)
 [上图](https://web-dev.imgix.net/image/C47gYyWYVMMhDmtYSLOWazuyePF2/nHEwbmGFjtttom6DTFAw.svg)，描述了 applicationServerKey 在生成推送配置时，如何两者绑定。
@@ -303,7 +307,7 @@ self.addEventListener('notificationclick', function (event) {
 
 回到 service-worker.js 向 Push Service 注册自身的场景，也是 `webpushd` 将 Javascript 里传递过来的 `applicationServerKey` 和 macOS 自身的一些数据合并成真正的注册信息，发送给 `Push Service`；远端的数据也是先发送给 `webpushd` 再转发给网页。
 
-关于可推送数量和是否支持静默推送，标准规范是需要支持静默推送，但是 Chrome 明确不支持静默推送，会有默认提示。Safari 也不支持，处理逻辑是如果接收了推送但是没有 show 出来（和静默推送效果相同），违规达到一定次数会吊销通知权限。
+关于可推送数量和是否支持静默推送，标准规范是需要支持静默推送，但是 Chrome 明确不支持静默推送，会有默认提示。Safari 也不支持，处理逻辑是如果接收了推送但是没有 show 出来（和静默推送效果相同），违规达到 3 次会吊销通知权限，之后需要重新走一遍权限申请流程才能继续。
 
 Safari 早在 2013 年就支持 Safari Push Notifications，它同时支持本地和远端推送，在消息中心显示。但是它的远程推送是通过 Apple Push Notification service (APNs) 实现的。APNs 意味着需要 Website Push ID，证书和开发者账号。在 Web Push 出现之后还会继续支持。所以为 Safari 编写代码时，使用特性检测来决定是否启用 Web Push，还是回归到旧的 Safari Push Notioncation。Web Push 远程推送猜测目前还是复用了 APNs，只是 macOS 为 Safari 单独创建了一个 appID，本质上还是客户端推送机制；后续会不会做两份—— APNs + Web Push ，很难说，这部分对开发者是黑盒。为什么猜测 Web Push 复用了 APNs ？是因为这句话， [ref](https://developer.apple.com/documentation/usernotifications/sending_web_push_notifications_in_safari_and_other_browsers)
 

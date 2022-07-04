@@ -1,10 +1,10 @@
 ## 个人介绍
 
-Hite（希德），软件工程师，就职于 Shopee，目前参与 iOS 性能优化和动态化相关研发。
+[Hite](https://hite.me)（希德），软件工程师，就职于 Shopee，目前参与 iOS 性能优化和动态化相关研发。
 
 ## 审核介绍
 
-[zhangferry](https://github.com/SwiftOldDriver/WWDC22/pull/zhangferry.com)，iOS 摸鱼周报编辑，就职于抖音 iOS 基础技术团队，从事研发效能相关工作。
+[zhangferry](https://zhangferry.com)，iOS 摸鱼周报编辑，就职于抖音 iOS 基础技术团队，从事研发效能相关工作。
 
 ## 不超过 120 个字的文章简介
 
