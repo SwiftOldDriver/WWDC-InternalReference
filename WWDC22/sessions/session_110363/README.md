@@ -57,13 +57,12 @@ func log(value: Any) {
 
 ```swift
 struct Event: CustomLoggable {
-var name: String
-var date: Date
+    var name: String
+    var date: Date
 
     var customLogString: String {
         return "\(self.name), on \(self.date)"
     }
-
 }
 ```
 
@@ -214,12 +213,12 @@ ldr x1, [x1, selector "dateFromComponents"]
 
 Apple 为我们提供了两个优化策略：
 
-- 专注于针对 App 包大小进行优化，需要通过设置 -objc_stubs_small 链接器 lag 获得最极致的包大小优化效果。
+- 专注于针对 App 包大小进行优化，需要通过设置 -objc_stubs_small 链接器 flag 获得最极致的包大小优化效果。
 - 兼顾包大小优化的同时保证最佳的性能，这是默认的策略，无需手动开启。
 
 > Apple 给我们的建议是除非受到了非常严重的 App 包大小限制问题，尽量使用策略二来保证性能不受影响，所以这也就是为什么默认是包大小和性能的平衡策略。
 
-通过 Objective-C 消息发送上的优化，在 ARM64 上之前 12 个字节的开销被压缩到了 8 个字节。这可以带来最高 2% 的包大小优化效果。即使你的 App 的最低支持版本低于 iOS 16 ，只要是基于 Xcode 14 进行编译的话，就可以自动享受到 Apple 给我们带来的优化。
+通过 Objective-C 消息发送上的优化，在 ARM64 上之前 12 个字节的开销被压缩到了 8 个字节。这可以带来最高 2% 的包大小优化效果。即使你的 App 的最低部署版本低于 iOS 16 ，只要是基于 Xcode 14 进行编译的话，就可以自动享受到 Apple 给我们带来的优化。
 
 ## Retain & Release 调用
 
@@ -241,11 +240,11 @@ Xcode 14 对于 Retain 和 Release 的开销也进行了针对性的优化，从
 
 ![Retain Release - Part 3](./images/pic10.png)
 
-基于 ARC 计数，编译器会帮助优化掉部分 `_objc_retain` 和 `_objc_release` 指令调用。但是如上图所示，在方法最后结束前，局部变量 cal 和 dateComponents 并没有作为返回值返回给方法的调用方，因此需要被释放掉来达到内存的平衡。
+基于 ARC 计数，编译器会帮助优化掉部分 `_objc_retain` 和 `_objc_release` 指令调用。但是如上图所示，在方法最后结束前，局部变量 cal 和 dateComponents 并没有作为返回值返回给方法的调用方，因此需要被释放掉来实现内存回收。
 
 ![Retain Release - Part 4](./images/pic11.png)
 
-在底层实现上，objc_retain 和 objc_release 都是普通的 C 函数，接收唯一的参数 - 要被释放掉的对象。而由于 ARC 的存在，编译器会插入对这两个 C 函数的调用，并传入合适的指针对象。而为了遵循底层 ABI 定义的 C 函数的调用约定，我们需要更多的代码执行这些调用来达到将对象指针传入正确的寄存器中的目的。体现在汇编代码层面就是上图中各种 mov 指令。
+在底层实现上，objc_retain 和 objc_release 都是普通的 C 函数，接收唯一的参数 - 要被释放掉的对象。而由于 ARC 的存在，编译器会插入对这两个 C 函数的调用，并传入对应的指针对象。而为了遵循底层 ABI 定义的 C 函数的调用约定，我们需要更多的代码执行这些调用来达到将对象指针传入正确的寄存器中的目的。体现在汇编代码层面就是上图中各种 mov 指令。
 
 ### 自定义调用约定
 
@@ -441,7 +440,7 @@ callerAcceptsOptimizedReturn(const void *ra)
 
 - Swfit 协议检查更加高效
 - Autorelease 自动省略速度更快
-- 基于最新的 Xcode 14 的编译器和链接器重新编译 App 之后，以及消息发送 stub 带来的底层优化，最多可以压缩 2% 的 App 大小
+- 消息发送 stub 带来的底层优化，最多可以压缩 2% 的 App 大小
 
 如果基于最新的 iOS 16、tvOS 16 或者 watchOS 9 ，你可以得到
 
