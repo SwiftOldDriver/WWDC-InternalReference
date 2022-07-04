@@ -14,4 +14,4 @@
 
 ## 公众号/小专栏图文头图
 
-![title_page](/Users/zhongyiwang/Desktop/WWDC22/sessions/session_10097/images/title_page.png)
+![title_page](./images/title_page.png)
