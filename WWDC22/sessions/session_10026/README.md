@@ -372,7 +372,7 @@ let frame = playerLayer.currentlyDisplayedPixelBuffer() // AVPlayerLayer 的新 
 如果我们要用 `AVPlayerLayer`，一定注意是在当前视频帧中获取到 `currentlyDisplayedPixelBuffer` 后，再进行 `analysis` 和 `interaction` 对象处理。只有这样才能保证检测的帧内容是准确。只有当视频播放速率是 0。这个获取 `currentlyDisplayedPixelBuffer` 的结果才可用。这是一个浅拷贝的内存对象，而且一定不能用来写数据。
 
 > 重要的事情提醒一下，这个功能只能用在非加密的播放资源上。非加密播放资源是指未使用官方 FairPlay 流式处理（FPS）格式加密的 **HTTP Live Streaming** (HLS) 内容。相关信息可以查看以下链接：
- 
+
 > [FairPlay Streaming][fps-hls]
 
 ## 结语
