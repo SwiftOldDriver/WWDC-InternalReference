@@ -107,3 +107,46 @@ if let title = record["Title"] as? String,
 
 ## 钥匙串迁移
 
+App Clip 的最终目的是将用户吸引到主 App 中，因此在 App Clip 过渡到 App 的过程中，就涉及到了数据转移。
+
+在 iOS 16 之前，当从 App Clip 转移敏感数据（例如身份验证令牌和支付信息）到 App 的过程中，App Clip 会在 App Group 容器中保存这些数据。当用户从 App Clip 升级到完整应用程序后，App 会从 App Group 容器读取传递过来的数据，并将该信息保存在钥匙串中。
+
+![key_chain_tranfer_old](/Users/zhongyiwang/Desktop/WWDC22/sessions/session_10097/images/key_chain_tranfer_old.png)
+
+但是，钥匙串是安全存储敏感信息的理想场所。因此在今年推出的新功能则是，在用户升级到 App 后，保存在 App Clip 钥匙串中的数据会直接迁移到 App 中。因此，开发者可以将敏感数据直接保存到 App Clip 的钥匙串中。
+
+![key_chain_tranfer_new](/Users/zhongyiwang/Desktop/WWDC22/sessions/session_10097/images/key_chain_tranfer_new.png)
+
+钥匙串在 App 和 App Clip 之间仍是有一些区别。App Clip 不支持共享钥匙串和 iCloud 钥匙串。这些差异也是凸显了 App Clip “用完即走”的特点，当 App Clip 被卸载的时候，iOS 不会保存任何钥匙串信息。
+
+![key_chain_difference](/Users/zhongyiwang/Desktop/WWDC22/sessions/session_10097/images/key_chain_difference.png)
+
+### 使用钥匙串读写数据的示例
+
+开发者可以使用 `SecItemAdd` 添加数据项到钥匙串，使用 `SecItemCopyMatching` 从钥匙串中读取数据项。为数据项添加标签（示例中的 `kSecAttrLabel`），可以在 App 中更好地识别出哪些数据项是从 App Clip 迁移过来的。
+
+```swift
+// Write authentication token to App Clip keychain
+let addSecretsQuery: [String: Any] = [
+    kSecClass as String: kSecClassGenericPassword,
+    kSecValueData as String: "smoothie-secret".data(using: .utf8),
+    kSecAttrLabel as String: "foodsample-appclip"
+]
+SecItemAdd(addSecretsQuery as CFDictionary, nil)
+
+// Read authentication token from app or App Clip
+var readSecretsQuery: [String: Any] = [
+    kSecClass as String: kSecClassGenericPassword,
+    kSecReturnAttributes as String: true,
+    kSecAttrLabel as String: "foodsample-appclip",
+    kSecReturnData as String: true
+]
+var secretsCopy: AnyObject?
+SecItemCopyMatching(readSecretsQuery as CFDictionary, &secretsCopy)
+```
+
+> 这段代码同时适用于 App 和 App Clip。
+
+
+
+## App Clip experiences API

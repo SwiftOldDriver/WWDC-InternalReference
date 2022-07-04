@@ -112,6 +112,28 @@ In the attributes dictionary, add information like the action name, which catego
 
 
 
+Finally, the App Clip experiences API. As your app clip grows, you'll have more and more advanced App Clip experiences, each with their own information or location. You need an easy way to add and update all of these experiences. App Store Connect has an App Clip experiences web API that's designed to automate this workflow. Let's look at an example that uses this API to add an advanced App Clip experience.
+
+First, get the App Clip resource ID. Next, upload your header image. Last, create the advanced App Clip experience. First, let's find the resource ID for the app clip. Call the web API with your app's item ID and App Clip bundle ID. And from the response, save the App Clip resource ID for later. Next, upload a header image for the advanced App Clip experience. Save the header image's resource ID for the next step. Last, with your App Clip resource ID and your header image ID, we can now create your advanced App Clip experience.
+
+There are three dictionaries to fill in: attributes, relationships, and included.
+
+In the attributes dictionary, add information like the action name, which category and language, and the link for the advanced App Clip experience. If your advanced experience is tied to a Maps location, add a place dictionary. In the place dictionary, add the matching Maps business place name, a map action, and the map coordinates. In the relationships dictionary, add the App Clip resource ID and the header image ID. And in the included dictionary, add a localized title and subtitle for the advanced App Clip experience. And that's it! With this App Store Connect API, you can fully automate creating advanced App Clip experiences. To learn more about App Store Connect, check out “Automating App Store Connect” and “What's new in App Store Connect” from WWDC 2020.
+
+
+
+```
+最后，应用程序剪辑体验API。随着应用程序剪辑的增长，您将拥有越来越多的高级应用程序剪辑体验，每个应用程序剪辑都有自己的信息或位置。你需要一种简单的方式来添加和更新所有这些体验。App Store Connect有一个App Clip experiences web API，旨在自动化此工作流。让我们来看一个使用此API添加高级应用程序剪辑体验的示例。
+
+首先，获取应用程序剪辑资源ID。接下来，上传标题图像。最后，创建高级应用程序剪辑体验。首先，让我们找到应用程序剪辑的资源ID。使用应用程序的项目ID和应用程序剪辑包ID调用web API。然后从响应中保存应用程序剪辑资源ID，以备将来使用。接下来，上传用于高级应用程序剪辑体验的标题图像。保存标题图像的资源ID以供下一步使用。最后，使用你的应用程序剪辑资源ID和标题图像ID，我们现在可以创建你的高级应用程序剪辑体验。
+
+有三个字典需要填写：属性、关系和包含。
+
+在属性字典中，添加动作名称、类别和语言等信息，以及高级应用程序剪辑体验的链接。如果您的高级体验与地图位置有关，请添加位置词典。在地点词典中，添加匹配的地图业务地点名称、地图动作和地图坐标。在关系字典中，添加应用程序剪辑资源ID和标题图像ID。在包含的字典中，添加高级应用程序剪辑体验的本地化标题和副标题。就这样！有了这个应用商店连接API，你可以完全自动创建高级应用剪辑体验。要了解有关App Store Connect的更多信息，请查看WWDC 2020中的“自动化App Store Connect”和“App Store Connect中的新增功能”。
+```
+
+
+
 To wrap up, the new App Clip size limit gives you more room to build your ideal experience. App Clip diagnostics tools are a great way to understand your App Clip and universal link configuration end to end. CloudKit and keychain can ease your development by sharing more code with your app. And the App Clip experiences API automates the workflow for managing your advanced App Clip experiences. To learn more about developing App Clips, please watch “What's new in App Clips” from WWDC 2021 and “Design great App Clips” from WWDC 2020.
 
 You developers have made such great App Clips. They're so creative! We hope these new features help you build your next great App Clip. Thanks for watching!  ♪ ♪
