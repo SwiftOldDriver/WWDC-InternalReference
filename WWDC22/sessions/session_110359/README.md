@@ -668,4 +668,6 @@ Target 0: (Xcode) stopped.
 
 ## 参考
 
+[Package Manager Extensible Build Tools](https://github.com/apple/swift-evolution/blob/main/proposals/0303-swiftpm-extensible-build-tools.md)
+
 [Swift Package Plugin 和 Sandbox 的那些事](https://zhuanlan.zhihu.com/p/536293173?utm_source=wechat_session&utm_medium=social&utm_oi=34621496492032&s_r=0)
