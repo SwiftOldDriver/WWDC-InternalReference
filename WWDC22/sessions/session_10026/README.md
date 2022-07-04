@@ -2,7 +2,7 @@
 session_ids: [10026]
 ---
 
-# Session 10026 - 沟通静态世界的新桥梁——实况文本 API 介绍
+# Session 10026 - 沟通影像世界的新桥梁——实况文本 API 介绍
 
 本文基于[Session 10026](https://developer.apple.com/videos/play/wwdc2022/10026/)梳理。
 
@@ -363,7 +363,7 @@ addressTextField.textContentType = .fullStreetAddress
 
 ## AVKit
 
-新一年的 **iOS 16** 中， `AVKit` 也加了实况文本支持。`AVPlayerView`（仅 macOS 系统支持） 和 `AVPlayerViewController` 可以通过设置 `allowsVideoFrameAnalysis` 属性，在暂停的视频帧里自动进行实况文本处理，该功能是默认设置为 `true` 的。注意这个功能只能用在合法播放资源上。
+`AVKit` 在新系统中也增加了实况文本支持，`AVPlayerView`（macOS） 和 `AVPlayerViewController`（iOS/tvOS）可以通过设置 `allowsVideoFrameAnalysis` 属性，在暂停的视频帧里自动进行实况文本处理，该功能是默认设置为 `true` 的。注意这个功能只能用在合法播放资源上。
 
 ```
 let frame = playerLayer.currentlyDisplayedPixelBuffer() // AVPlayerLayer 的新 API
@@ -371,11 +371,13 @@ let frame = playerLayer.currentlyDisplayedPixelBuffer() // AVPlayerLayer 的新 
 
 如果我们要用 `AVPlayerLayer`，一定注意是在当前视频帧中获取到 `currentlyDisplayedPixelBuffer` 后，再进行 `analysis` 和 `interaction` 对象处理。只有这样才能保证检测的帧内容是准确。只有当视频播放速率是 0。这个获取 `currentlyDisplayedPixelBuffer` 的结果才可用。这是一个浅拷贝的内存对象，而且一定不能用来写数据。
 
-> 重要的事情提醒一下，这个功能只能用在合法播放资源上。
+> 重要的事情提醒一下，这个功能只能用在非加密的播放资源上。非加密播放资源是指未使用官方 FairPlay 流式处理（FPS）格式加密的 **HTTP Live Streaming** (HLS) 内容。相关信息可以查看以下链接：
+ 
+> [FairPlay Streaming][fps-hls]
 
 ## 结语
 
-到这里本文就到尾声了，新的 **API** 已经准备好了，要怎么玩，请尽情探索吧！
+到这里本文就到尾声了。怎么样？与影像世界沟通的新桥梁都已经搭建出来了，那未来，是否我们也能沟通现实生活与 `realityOS` 中的世界呢？
 
 [live-text-data-flow]: ./images/live-text-flow.png
 [demo-app]: ./images/demo-app.png
@@ -397,3 +399,4 @@ let frame = playerLayer.currentlyDisplayedPixelBuffer() // AVPlayerLayer 的新 
 [text-content-type]: ./images/text-content-type.png
 [WWDC2022-10025]: https://developer.apple.com/videos/play/wwdc2022/10025/
 [WWDC-xiaozhuanlan]: https://xiaozhuanlan.com/topic/8205316479
+[fps-hls]: https://developer.apple.com/streaming/fps/
