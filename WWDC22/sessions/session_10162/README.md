@@ -39,7 +39,7 @@ session_ids: [10162]
 
 ![](./images/bunny.png)
 
-### 传统渲染管线
+### 传统渲染管线（Traditional rendering pipeline）
 
 主要流程：
 
@@ -59,13 +59,13 @@ session_ids: [10162]
 - 需要创建两个不同的命令编码器，而且这两个编码器无法在 GPU 上同时工作
 - 需要额外的内存来存储生成的几何数据，而且如果有间接的 draw call，可能导致更高的内存占用
 
-### 网格渲染管线
+### 网格渲染管线（Mesh rendering pipeline）
 
 主要流程：
 
 - 创建渲染命令编码器，调用网格 draw call
   - 对象着色器（Object shader）处理网格数据（顶点数据），然后输出 `payload` 数据
-  - 网格着色器（Mesh shader）处理对象着色器输出的payload数据，然后输出 `metal::mesh` 数据
+  - 网格着色器（Mesh shader）处理对象着色器输出的 payload 数据，然后输出 `metal::mesh` 数据
   - 光栅化
   - 片元着色器处理，生成最后的数据
 
@@ -233,13 +233,11 @@ encoder.endEncoding()
 主要流程：
 
 - 视锥体剔除（相机所见范围外的物体直接剔除）
-
 - 层次细节选择（近处的物体加载高精度模型，越远的物体选择加载越低精度模型）
-
 - 编码
 - 进入渲染流程，最后生成图像
 
-其中**Compute pass**阶段由CPU处理完成，CPU 并行能力相比 GPU 弱很多，而且还需要缓冲区存储中间绘制命令（Scene draw commands），所以整个过程不是特别高效。
+其中**Compute pass**阶段由 CPU 处理完成，CPU 并行能力相比 GPU 弱很多，而且还需要缓冲区存储中间绘制命令（Scene draw commands），所以整个过程不是特别高效。
 
 ![](./images/compute_culling.png)
 
@@ -248,12 +246,12 @@ encoder.endEncoding()
 主要流程：
 
 - 对象着色器阶段，经过视锥体剔除、细节层次选择，输出 payload 数据，即一系列网格片段 ID（Meshlet IDs）
-- 网格着色器阶段，经过编码，输出metal::mesh类型数据到光栅化器
+- 网格着色器阶段，经过编码，输出 `metal::mesh` 类型数据到光栅化器
 - 渲染，生成最后图像
 
 ![](./images/meshlet_culling_pipeline.png)
 
-新的渲染管线由GPU驱动渲染，并行处理能力比 CPU 强很多，而且避免了缓存中间绘制命令，效率比传统渲染管线高。下面重点讲述下其中的`剔除`过程：
+新的渲染管线由 GPU 驱动渲染，并行处理能力比 CPU 强很多，而且避免了缓存中间绘制命令，效率比传统渲染管线高。下面重点讲述下其中的`剔除`过程：
 
 - 将场景模型划分成对象网格，这个过程完由你决定
 - 将每个对象网格划分颗粒度更小的网格片段，其中不可见的网格片段将会被剔除，后续也不会再处理
