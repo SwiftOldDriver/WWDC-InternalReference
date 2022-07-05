@@ -124,7 +124,7 @@ class LiveTextViewController: BaseViewController, ImageAnalysisInteractionDelega
 
 如果是在 Mac 平台上，相关 API 会有什么不一样呢?
 
-```
+```swift
 class ViewController: NSViewController, ImageAnalysisOverlayViewDelegate, NSGestureRecognizerDelegate {
 
     let imageDataAnalyzer = ImageAnalyzer()
@@ -237,7 +237,7 @@ ImageAnalysisInteraction.InteractionTypes
 
 我们还可以设置内容的边距。如果我们有需要在控件上叠加其他的交互控件，那可能需要调整控件的边距，让实况文本按钮和快捷操作控件可以适配显示，避免被遮挡到。
 
-```
+```swift
 interaction.supplementaryInterfaceContentInsets = UIEdgeInsets(top: 0, left: 12, bottom: 18, right: 12)
 ```
 
@@ -245,7 +245,7 @@ interaction.supplementaryInterfaceContentInsets = UIEdgeInsets(top: 0, left: 12,
 
 如果我们应用用的是自定义的字体。要想让这些扩展控件也能显示成对应的字体，那就设置 `interaction` 对象的 `supplementaryInterfaceFont`。这会让实况文本按钮和快捷操作控件的样式都产生变化，把它们都设置成自定义的字体和指定图形的文本权重值大小。
 
-```
+```swift
 interaction.supplementaryInterfaceFont = UIFont.init(name: "Copperplate", size: 0)
 ```
 
@@ -261,7 +261,7 @@ interaction.supplementaryInterfaceFont = UIFont.init(name: "Copperplate", size: 
 
 要想解决问题，很简单，实现 `contentsRectForInteraction` 代理方法，在返回单元坐标系下表明大小跟位置的 `CGRect` 对象，表示清楚图片中内容跟上层交互视图边缘的距离。返回的 `CGRect` 对象会修正好边距问题，所以需要基于当前的内容和布局来进行调整。
 
-```
+```swift
 // 该函数的默认返回值是一个单位坐标系下的矩形 { 0, 0, 1, 1 }
 func contentsRect(for interaction: ImageAnalysisInteraction) -> CGRect {
     // 单位坐标系下的计算方法是（imageOriginX / imageViewWidth, imageOriginY / imageViewHeight, imageWidth / imageViewWidth, imageHeight / imageViewHeight）
@@ -285,7 +285,7 @@ func contentsRect(for interaction: ImageAnalysisInteraction) -> CGRect {
 
 ##### 解决方案一：实现 `Interaction` 的 `interactionShouldBeginAtPointFor` 代理方法
 
-```
+```swift
 func interaction(_ interaction: ImageAnalysisInteraction, shouldBeginAt point: CGPoint, for interactionType: ImageAnalysisInteraction.InteractionTypes) -> Bool {
 
     return interaction.hasInteractiveItem(at: point) || 
@@ -299,7 +299,7 @@ func interaction(_ interaction: ImageAnalysisInteraction, shouldBeginAt point: C
 
 这是最常用的解决办法，在我们手势对象的代理方法 `gestureRecognizerShouldBegin` 进行处理。这里我们在触摸的位置进行校验，看是否有可交互的文本内容或者可选择的文本，有则给方法返回 `false`。
 
-```
+```swift
 func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
 
     let windowPoint = gestureRecognizer.location(in: nil)
@@ -316,7 +316,7 @@ func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> B
 
 ##### 解决方案三：重写 `hitTest:WithEvent` 方法
 
-```
+```swift
 override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
     let windowPoint = self.convert(point, to: nil)
     let interactionPoint = self.convert(windowPoint, to: interaction.view)
@@ -353,7 +353,7 @@ override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 
 ![text-content-type][text-content-type]
 
-```
+```swift
 phoneTextField.keyboardType = .phonePad
 // 由于我们文本检测分析依赖于原本的内容，所以这里自动纠正功能需要关闭
 phoneTextField.autocorrectionType = .no
@@ -365,7 +365,7 @@ addressTextField.textContentType = .fullStreetAddress
 
 `AVKit` 在新系统中也增加了实况文本支持，`AVPlayerView`（macOS） 和 `AVPlayerViewController`（iOS/tvOS）可以通过设置 `allowsVideoFrameAnalysis` 属性，在暂停的视频帧里自动进行实况文本处理，该功能是默认设置为 `true` 的。注意这个功能只能用在合法播放资源上。
 
-```
+```swift
 let frame = playerLayer.currentlyDisplayedPixelBuffer() // AVPlayerLayer 的新 API
 ```
 
