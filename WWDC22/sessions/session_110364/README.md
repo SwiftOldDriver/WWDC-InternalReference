@@ -16,7 +16,7 @@ session_ids: [110364]
 
 ```Command+B```这个组合键相信大家都已经按下过无数次了，那么这个操作的背后，到底发生了什么？
 
-一个项目会包含很多源码文件，assets，构建设置（Build Setting），构建阶段（Build Phases）和其他配置等等，这些在计算机的世界里就是一堆数据。在执行构建时，这些数据会被一系列工具调用，例如编译器，包括 Clang 和 Swift编译器，会把 OC 和 Swift 的源码文件编译成目标文件。链接器（LD），负责把所有目标文件链接在一起，最终形成一个可执行文件。这里可以看出，编译任务和链接任务之间是存在依赖关系的，必须要等到编译任务完成后，才可以进行链接任务。编译和链接只是整个构建过程的中一部分任务，其他任务也会被其他的工具执行。
+一个项目会包含很多源码文件，assets，构建设置（Build Setting），构建阶段（Build Phases）和其他配置等等，这些在计算机的世界里就是一堆数据。在执行构建时，这些数据会被一系列工具调用，例如编译器，包括 Clang 和 Swift 编译器，会把 OC 和 Swift 的源码文件编译成目标文件。链接器（LD），负责把所有目标文件链接在一起，最终形成一个可执行文件。这里可以看出，编译任务和链接任务之间是存在依赖关系的，必须要等到编译任务完成后，才可以进行链接任务。编译和链接只是整个构建过程的中一部分任务，其他任务也会被其他的工具执行。
 
 构建系统的工作就是根据项目文件和配置等数据进行解析，确定有哪些任务需要执行，用哪些工具去执行以及执行的顺序。
 
@@ -44,7 +44,7 @@ session_ids: [110364]
 
 上一章内容提到构建系统关心的是任务之间的依赖关系，而依赖关系对构建时间起着至关重要的作用。
 
-以一个包含多 Target 的场景为例，不同颜色表示不同的 Target，其中任务可以代表编译，链接，处理 asset，复制文件等等。一个 App 包含了一个 App Extension 和一个 Framework，该场景展示了App，APP Extension， Framework的依赖关系，以及各自内部A，B，C，D，E任务的依赖关系。任务 B 和 C 依赖了任务 A，任务 D 和 E 依赖了任务 B。任务 A 被称为 任务 B 和 C 的上游，任务 D 和 E 被称为任务 B 的下游。 
+以一个包含多 Target 的场景为例，不同颜色表示不同的 Target，其中任务可以代表编译，链接，处理 asset，复制文件等等。一个 App 包含了一个 App Extension 和一个 Framework，该场景展示了 App，APP Extension， Framework 的依赖关系，以及各自内部 A，B，C，D，E 任务的依赖关系。任务 B 和 C 依赖了任务 A，任务 D 和 E 依赖了任务 B。任务 A 被称为 任务 B 和 C 的上游，任务 D 和 E 被称为任务 B 的下游。
 
 ![image-20220624001939565](images/image-20220624001939565.png)
 
@@ -126,7 +126,7 @@ Xcode14 在这方面做了优化，支持并行自定义构建脚本，在构建
 
 ## 多 Target 之间的并行优化
 
-多 Target 之间的并行优化主要是针对 Swift Module。所有Swift Target 的构建离不开 Swift 编译驱动程序（Swift Driver）。Swift Target 的构建一直是由 Swift 编译驱动程序（Swift Driver）统一处理。任何包含 Swift 源码的 Target 都对应一个模块（Module），二进制模块文件是下游 Target 的前置依赖。Swift 编译驱动程序是如何构建一个目标的？
+多 Target 之间的并行优化主要是针对 Swift Module。所有 Swift Target 的构建离不开 Swift 编译驱动程序（Swift Driver）。Swift Target 的构建一直是由 Swift 编译驱动程序（Swift Driver）统一处理。任何包含 Swift 源码的 Target 都对应一个模块（Module），二进制模块文件是下游 Target 的前置依赖。Swift 编译驱动程序是如何构建一个目标的？
 
 在 Release 配置中，编译模式默认为 Whole Module 。Swift 编译驱动程序将安排一个编译任务处理所有源文件，生成这个目标对应的模块。
 
