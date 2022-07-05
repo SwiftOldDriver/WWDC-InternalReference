@@ -581,13 +581,13 @@ emit() 方法可以理解为可以使用特殊的类型，支持自定义。erro
 
 启动过程使用静态分析方法很难快递定位启动流程逻辑，这里采用动态分析的方法。首先一个进程要想启动，一般会通过 fork + exec* 或者 posix_spawn 这几个系统调用来实现。所以这里我们先用 dtrace 对这几个 syscall 进行拦截（这里用的是 posix_spawn）。
 
-```
+```shell
 sudo dtrace -n 'syscall::posix_spawn:entry/pid == 591/ { ustack(); }'
 ```
 
 得到堆栈：
 
-```
+```shell
 dtrace: description 'syscall::posix_spawn:entry' matched 1 probe
 breakpoint set -n "-[NSConcreteTask launchWithDictionary:error:]"
 CPU     ID                    FUNCTION:NAME
@@ -613,13 +613,13 @@ CPU     ID                    FUNCTION:NAME
 
 下面继续看下 launchWithDictionary:error: 的参数，在 LLDB 下断点
 
-```
+```shell
 breakpoint set -n "-[NSConcreteTask launchWithDictionary:error:]"
 ```
 
 断住后检查运行变量：
 
-```
+```shell
 * thread #22, queue = 'swift.org.swiftpm.shared.concurrent', stop reason = breakpoint 3.1
     frame #0: 0x00007ff81b68763c Foundation`-[NSConcreteTask launchWithDictionary:error:]
 Foundation`-[NSConcreteTask launchWithDictionary:error:]:
