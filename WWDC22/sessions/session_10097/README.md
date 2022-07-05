@@ -148,14 +148,13 @@ SecItemCopyMatching(readSecretsQuery as CFDictionary, &secretsCopy)
 > - 需要将 App Clip 与一个物理位置进行绑定。
 > - 需要在不同的域名或子域名上展示 Safari App Banner。
 > - 同一个 App Clip 供不同企业使用。
-
 参考：[Configuring Your App Clip’s Launch Experience](https://developer.apple.com/documentation/app_clips/configuring_your_app_clip_s_launch_experience) 
 
 ![kinds_of_experience](./images/kinds_of_experience.png)
 
 ### 使用 Web Api 创建 Advanced App Clip Experiences 流程
-
 创建一个 Advanced App Clip Experiences 只需以下三步
+
 1. 获取 App Clip resource ID。
 2. 上传 App Clip Card 的 header image。
 3. 创建 App Clip experiences web API。
@@ -294,10 +293,4 @@ POST /v1/appClipAdvancedExperiences
 ![end](./images/end.png)
 
 TODO: 总结性，瞻望等补充。
-
 **我们，明年见！**
-
-
-
-
-
