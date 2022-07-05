@@ -43,10 +43,10 @@ struct OpenCurrentlyReading: AppIntent {
 }
 ```
 
-如上述代码所示， 定义了一个遵守 [AppIntent](https://developer.apple.com/documentation/appintents/appintent)协议的结构体 `OpenCurrentlyReading` 即可实现一个最简单的 Intent。
+如上述代码所示， 定义了一个遵守 [AppIntent](https://developer.apple.com/documentation/appintents/appintent) 协议的结构体 `OpenCurrentlyReading` 即可实现一个最简单的 Intent。
 协议内容如下：
 
-- `perform()` 方法实现了 Tab 的跳转， 由于此操作与 UI 相关，需要在主线程执行，额外使用了 `@MainActor` 修饰。
+- `perform()` 方法实现了 Tab 的跳转， 由于此操作与 UI 相关，需要在主线程执行，额外使用了 `@MainActor` 修饰
 - `title` 是此 Intent 的标题，适配本地化的文案
 - 此 Intent 的操作需要打开 App , `openAppWhenRun` 赋值为 `true`
 
@@ -94,7 +94,7 @@ public enum Shelf: String, AppEnum {
 }
 ```
 
-遵守[AppValue](https://developer.apple.com/documentation/appintents/appvalue)的类型才能被 Intent 使用。对于枚举我们可以遵守 [AppEnum](https://developer.apple.com/documentation/appintents/appenum), `AppEnum`是一个多层的协议，其中 `typeDisplayName` 定义了本类型用于阅读理解的名称，在 Shortcut app 中展示； `caseDisplayRepresentations` 定义了各个枚举值用于阅读的名称。
+遵守 [AppValue](https://developer.apple.com/documentation/appintents/appvalue) 的类型才能被 Intent 使用。对于枚举我们可以遵守 [AppEnum](https://developer.apple.com/documentation/appintents/appenum), `AppEnum`是一个多层的协议，其中 `typeDisplayName` 定义了本类型用于阅读理解的名称，在 Shortcut app 中展示； `caseDisplayRepresentations` 定义了各个枚举值用于阅读的名称。
 
 下图中的类型都可以作为 AppIntent 的参数。
 ![图片](./images/IMG_4.png)
@@ -168,14 +168,14 @@ struct BookEntity: AppEntity {
 和枚举相似， 实体也需要实现对应的协议 [AppEntity](https://developer.apple.com/documentation/appintents/appentity) 才能供 Intent 使用。
 
 - id 作为标识符需要稳定不变
-- 关联`defaultQuery` 供系统查询
+- 关联 `defaultQuery` 供系统查询
 
 #### 实现 Query
 
 Query 是 App 给系统提供的用于检索 Entity 的接口。有如下几种检索方式：
 
 - [EntityQuery](https://developer.apple.com/documentation/appintents/entityquery)
- 通过 ID 检索(是 Query 必须实现的方式)
+  通过 ID 检索(是 Query 必须实现的方式)
 - [EntityStringQuery](https://developer.apple.com/documentation/appintents/entitystringquery) 通过字符串检索
 - [EntityPropertyQuery](https://developer.apple.com/documentation/appintents/entitypropertyquery) 通过属性检索
 
@@ -212,7 +212,7 @@ struct BookQuery: EntityStringQuery {
 
 #### EntityPropertyQuery
 
-实现 `EntityPropertyQuery`前，需要给对应的 Entity 中的属性包装为[EntityProperty](https://developer.apple.com/documentation/appintents/entityproperty)，才能供 Query 使用。
+实现 `EntityPropertyQuery` 前，需要给对应的 Entity 中的属性包装为[EntityProperty](https://developer.apple.com/documentation/appintents/entityproperty)，才能供 Query 使用。
 对于 `BookEntity` 可以对标题、出版时间等进行包装。
 
 ```swift
