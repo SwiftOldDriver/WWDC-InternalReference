@@ -2,7 +2,7 @@
 session_ids: [10116]
 ---
 
-# WWDC22 10116 Meet CKTool JS
+# WWDC22 10116 Meet CKTool JS / 初见 CKTool JS
 
 本文基于 [Session 10116](https://developer.apple.com/videos/play/wwdc2022/10116) 梳理。
 
@@ -10,5 +10,58 @@ session_ids: [10116]
 
 ## 前言
 
+![](images/001-overview.png)
+
 本文将带你了解如何使用 `CKTool JS` 自动化管理 `iCloud` 容器。展示如何配置 `CKTool JS` 来管理容器、修改记录以及操作数据。我们还将探讨如何将 `CKTool JS` 集成到自动化工作流程中。为了更好的理解，建议先熟悉 `CloudKit`、`JavaScript` 和 `npm`。
+
+> 本次 `WWDC` 还有其他关于 `CloudKit` 的更新内容可以移步 [WWDC22 10115/10119 - Optimize your use of Core Data and CloudKit / 优化 CoreData & CloudKit 实现](../session_10119/README.md)
+
+## 一、 介绍
+
+### 1.1 CloudKit 简介
+
+`CloudKit` 是苹果为开发者提供的云端存储服务，可将应用程序的数据存储在 `iCloud` 容器中。通过在应用程序中使用 `CloudKit`，还可以让数据在不同设备上保持同步。
+
+### 1.2 访问 iCloud 数据的方式
+
+![](images/002-accessingicloud.png)
+
+为了构建应用程序，你可以使用 `Apple` 平台上的 `CloudKit` 或 `Web` 上的 `CloudKit JS` 访问 `iCloud` 存储空间。为了实现自动化和工具化，`Xcode` 提供了 `cktool` 以在 `macOS` 上使用。现在，有了与 `iCloud` 交互的新方式 `CKTool JS`。
+
+### 1.3 CKTool JS 能做什么
+
+![](images/003-whatcando.png)
+
+`CKTool JS` 可以达到与 `Xcode 13` 中引入的 `cktool` 命令行工具相同的功能。实际上，`CKTool JS` 是用来实现 `CloudKit 控制台`中添加记录类型和查询记录等功能的。
+
+通过 `CKTool JS`，可以管理应用程序的 `CloudKit Container` 和 `Schema`。这是以前通过 `JavaScript` 无法做到的。
+
+![](images/004-readwrite.png)
+
+通过 `CKTool JS` 可以使用其 ID 或通过查询条件获取现有记录。也可以创建新记录更新记录。`CKTool JS` 为 `TypeScript` 提供了严格的类型定义。这些类型定义启用了编译检查，并可在支持的 `IDE` 中进行代码补全，让编辑 `CKTool JS` 代码更容易。
+
+### 1.4 npm 支持
+
+`CKTool JS` 支持了对 `Node.js` 和浏览器的支持。`CKTool JS` 作为 `npm` 包进行分发，可以轻易的在 `JavaScript` 项目中集成。
+
+这些 `package` 是以 `@apple/cltool.*` 开头的。这里的核心依赖库是 `@apple/cltool.database`。同时，为例与 `iCloud` 通讯，根据平台不同可选用 `@apple/cktool.target.nodejs`　和 `@apple/cktool.target.browser`。
+
+`@apple/cltool.database` 依赖了另外三个核心库 `@apple/cktool.core`、`@apple/cktool.api.base`、`@apple/cktool.api.database`。
+
+![](images/005-npm.png)
+
+### 1.5 访问授权
+
+`CKTool JS` 要与 `iCloud` 通讯，首先需要授权。根据你需要的具体操作，你可能需要不同类型的授权：`Management Token` 或者 `User Token`。这两个 `Token` 都是从 `CloudKit 控制台`获取的。
+
+* Management Token
+  * 用于访问管理操作，并仅限于开发团队和用户。
+  * 此类操作包括 `Schema` 的导入和导出、验证以及将 `CloudKit Container` 发布为生产。
+* User Token
+  * 仅限于开发团队和特定容器，允许访问这些容器中的私有用户数据。
+
+> 要了解如何获取这些授权令牌，请查看[WWDC21 - Automate CloudKit tests with cktool and declarative schema](https://developer.apple.com/videos/play/wwdc2021/10118)。
+
+## 二、 配置 CKTool JS
+
 
