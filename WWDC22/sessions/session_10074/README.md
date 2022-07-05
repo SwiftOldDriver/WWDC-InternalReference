@@ -4,9 +4,15 @@ session_ids: [10074]
 
 # WWDC22 10074 - AppKit 框架的新特性
 
+本文基于 [Session 10074](https://developer.apple.com/videos/play/wwdc2022/10074) 梳理。
+
 > 作者：Ethan Wong，iOS 和 Mac 应用开发者，曾获 WWDC 21 & 22 学生挑战赛奖项。
 >
-> 审核：Cyandev，目前就职于抖音基础技术团队，研发流程方向全栈工程师，在 Swift、大前端领域有比较丰富的经验。
+> 审核：
+>
+> Cyandev，目前就职于抖音基础技术团队，研发流程方向全栈工程师，在 Swift、大前端领域有比较丰富的经验。
+>
+> 王浙剑（Damonwong），老司机技术社区负责人、《WWDC22 内参》主理人，目前就职于阿里巴巴。
 
 > **注：因为文章撰写时，相关的特性和对应的 API 还处于 Beta 阶段，我们将根据最终的 API 更新一些内容**
 

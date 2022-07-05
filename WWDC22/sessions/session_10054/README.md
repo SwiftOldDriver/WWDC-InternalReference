@@ -4,6 +4,16 @@ session_ids: [10054]
 
 # WWDC22 10054 - SwiftUI 导航
 
+本文基于 [Session 10054](https://developer.apple.com/videos/play/wwdc2022/10054) 梳理。
+
+> 作者：zddhub(张东东)，iOS 开发，开源爱好者，个人博客地址 [zddhub.com](https://zddhub.com/)。
+>
+> 审核：
+>
+> Jake Lin，在 REA Group 担任 Senior Mobile Tech Lead，负责公司的移动研发和团队建设。喜欢研究 iOS 和 Android 两平台的架构，爱折腾声明式 UI 和响应式编程范式。并编写了 [iOS 开发进阶](https://t2.lagounews.com/lR59RGRBct5E3) 课程。
+>
+> 水水，前字节跳动影像团队 iOS 开发，独立负责 SwiftUI 项目在业务侧落地，目前即将前往美国读研。热衷于思考构建高质量 iOS 架构，对关于 Swift 一切新鲜事物感兴趣，常年混迹于声明式 UI 和响应式编程范式。3 年 SwiftUI 实战编程老鸟。
+
 > **注：因为文章撰写时，SwiftUI 导航新 API 还处于 Beta 软件阶段，并且存在一些已知的 bug，我们后面将会根据正式版 API 更新一些内容**
 
 清晰而稳健的导航结构，简单的交互和良好的用户体验是 App 成功的关键。这一切都离不开导航的支持，导航的重要性不言而喻。良好的导航模式可以帮助人们轻松地探索应用程序中的信息，更快的上手。经过四年的迭代，WWDC22 带来了全新的 SwiftUI 导航的设计和实现，并丰富了其能力，让我们先睹为快。
@@ -118,7 +128,7 @@ NavigationView {
 
 ## 新导航方案
 
-新方案废弃了 NavigationView, 引入了 NavigationStack 和 NavigationSplitView 来实现导航功能。新方案直接采用导航路径数据驱动视图的方式，而不再需要我们手动逐个管理 NavigationLink 的状态，成功地解决了导航路径状态难以管理的难题。于此同时，新方案提出了 NavigationLink 和目标视图分离的方案，解决了目标视图会被重复创建的诟病。
+新方案废弃了 NavigationView，引入了 NavigationStack 和 NavigationSplitView 来实现导航功能。新方案直接采用导航路径数据驱动视图的方式，而不再需要我们手动逐个管理 NavigationLink 的状态，成功地解决了导航路径状态难以管理的难题。于此同时，新方案提出了 NavigationLink 和目标视图分离的方案，解决了目标视图会被重复创建的诟病。
 
 ### NavigationStack
 
@@ -142,7 +152,7 @@ NavigationStack {
 - `init<S, P>(S, value: P?)`
 - `init<P>(value: P?, label: () -> Label)`
 
-除了显示链接的文本信息外，最重要的参数是 `value`。当用户点击该 NavigationLink 时，SwiftUI 会通过 `value` 的类型，匹配最近的目标视图, 并将目标视图压入视图栈顶，来显示目标视图。目标视图通过 View 上的修饰符 `navigationDestination(for:destination:)` 来定义。上述代码中，传给 `value` 的值是 Poem 类型的，所以找到最近为 `Poem.self` 定义的目标视图 `PoemDetail`。SwiftUI 确保将 `value` 的备份传递给目标视图，用于绘制。
+除了显示链接的文本信息外，最重要的参数是 `value`。当用户点击该 NavigationLink 时，SwiftUI 会通过 `value` 的类型，匹配最近的目标视图，并将目标视图压入视图栈顶，来显示目标视图。目标视图通过 View 上的修饰符 `navigationDestination(for:destination:)` 来定义。上述代码中，传给 `value` 的值是 Poem 类型的，所以找到最近为 `Poem.self` 定义的目标视图 `PoemDetail`。SwiftUI 确保将 `value` 的备份传递给目标视图，用于绘制。
 
 利用类型匹配的方式，新 APIs 将目标视图的创建从 NavigationLink 中分离出来，放在了修饰符中。而修饰符中的 `PoemDetail` 视图，只有在用户点击后才创建，解决了目标视图被重复创建的问题，节省了空间，提高了性能。
 
@@ -165,7 +175,7 @@ var body: some View {
 
 ![NavigationStack 说明][navigation-stack-diagram]
 
-上述例子中，当点击某一个诗名后，SwiftUI 会通过当前值 `value: poem` 的类型，根据 `.navigationDestination(for: Poem.self)` 找到目标视图 PoemDetail, 将 PoemDetail 压入视图栈栈顶，显示诗词详情页。于此同时，将值`poem` 放入导航路径中，通过 path 绑定传回，此时 path 定义为 Poem 数组。Poem 数据的个数反映出视图栈的个数，Poem 的内容决定了 `PoemDetail` 显示的内容。
+上述例子中，当点击某一个诗名后，SwiftUI 会通过当前值 `value: poem` 的类型，根据 `.navigationDestination(for: Poem.self)` 找到目标视图 PoemDetail，将 PoemDetail 压入视图栈栈顶，显示诗词详情页。于此同时，将值`poem` 放入导航路径中，通过 path 绑定传回，此时 path 定义为 Poem 数组。Poem 数据的个数反映出视图栈的个数，Poem 的内容决定了 `PoemDetail` 显示的内容。
 
 同样的，可以通过设置 path 的值来影响视图栈的内容，比如以下代码，将某一作者的所有诗词全都放入视图栈中。
 
@@ -181,7 +191,7 @@ func showPoems(author: String) {
 
 ### NavigationSplitView
 
-SwiftUI 为了方便在大屏上做分屏显示，提供了一个非常便利的分屏视图 NavigationSplitView, 它能根据不同平台屏幕的尺寸把视图分两列或者三列显示。在小屏幕上显示时，自动折叠成单列。而 NavigationStack 即使在大屏上，也只是单列显示。
+SwiftUI 为了方便在大屏上做分屏显示，提供了一个非常便利的分屏视图 NavigationSplitView，它能根据不同平台屏幕的尺寸把视图分两列或者三列显示。在小屏幕上显示时，自动折叠成单列。而 NavigationStack 即使在大屏上，也只是单列显示。
 
 #### 两列视图
 
@@ -189,7 +199,7 @@ SwiftUI 为了方便在大屏上做分屏显示，提供了一个非常便利的
 
 ![Two-column View][two-column-view]
 
-以下代码使用 `NavigationSplitView + List + NavigationLink` 组合，创建了一个诗词列表的导航。当用户选择第一列的 List 时，会更新传给 selection 的 poem 状态，详情页拿到 poem 后通过 PoemDetail 显示详细信息。注意 List 的 id 参数很重要，此处传递的值为 `\.self`。所以 selection 接收的类型为 Poem。如果更换为 `\.id`，那么只能使用 `@State private var poemId: Int?` 类型来接收了, 使用时需要特别注意。另外，用来选择的 poem 是可选的，空表示没有选择任何 poem。
+以下代码使用 `NavigationSplitView + List + NavigationLink` 组合，创建了一个诗词列表的导航。当用户选择第一列的 List 时，会更新传给 selection 的 poem 状态，详情页拿到 poem 后通过 PoemDetail 显示详细信息。注意 List 的 id 参数很重要，此处传递的值为 `\.self`。所以 selection 接收的类型为 Poem。如果更换为 `\.id`，那么只能使用 `@State private var poemId: Int?` 类型来接收了，使用时需要特别注意。另外，用来选择的 poem 是可选的，空表示没有选择任何 poem。
 
 ```swift
 @State private var poem: Poem?
@@ -395,7 +405,7 @@ NavigationSplitView 能根据平台智能地分屏显示，达到最大限度使
 
 ### 配合 Regex 实现 Deeplink
 
-有了新导航, 再配上最新引进的 Regex [WWDC 110358][wwdc-110358]，实现起 Deeplink 简直太便利了。SwiftUI 获取 Deeplink 的方法也特别简单，在 plist 里配置好 URL Types 后，就可以在任意层级的 View 上调用 `onOpenURL`, 来获取 Deeplink：
+有了新导航，再配上最新引进的 Regex [WWDC 110358][wwdc-110358]，实现起 Deeplink 简直太便利了。SwiftUI 获取 Deeplink 的方法也特别简单，在 plist 里配置好 URL Types 后，就可以在任意层级的 View 上调用 `onOpenURL`，来获取 Deeplink：
 
 ```swift
   NavigationSplitView { ... }
@@ -426,7 +436,7 @@ func redirect(to: String) {
 
 ### 更容易实现路由
 
-由于新导航 APIs 支持在 View 上按类型不同，调用多次 `navigationDestination`, 这样，可以将目标视图放在根视图上，集中管理。其次将链接和目标视图分开，也达到了解藕的目的。
+由于新导航 APIs 支持在 View 上按类型不同，调用多次 `navigationDestination`， 这样，可以将目标视图放在根视图上，集中管理。其次将链接和目标视图分开，也达到了解藕的目的。
 
 ```swift
 NavigationStack {
@@ -442,7 +452,7 @@ NavigationStack {
 }
 ```
 
-当然，如果觉得 NavigationLink 散落在根视图的多个子视图中不好管理，也可以用 Router 将其放在集中的地方, 统一管理：
+当然，如果觉得 NavigationLink 散落在根视图的多个子视图中不好管理，也可以用 Router 将其放在集中的地方，统一管理：
 
 ```swift
 class Router: ObservableObject {
@@ -484,7 +494,7 @@ var body: some View {
 
 ### NavigationPath 的使用
 
-操作导航路径很便利，你一定会发现，存入视图栈中的视图对应的数据类型有可能完全不一样，这样使用数组来存储导航路径信息就不适用了，如以下代码所示, 存入 path 中的值类型有可能是 `String.self` 或者 `Poem.self`，那么 path 的类型既不能是 String，又不能是 Poem，SwiftUI 为我们提供了一种方案 —— NavigationPath。
+操作导航路径很便利，你一定会发现，存入视图栈中的视图对应的数据类型有可能完全不一样，这样使用数组来存储导航路径信息就不适用了，如以下代码所示，存入 path 中的值类型有可能是 `String.self` 或者 `Poem.self`，那么 path 的类型既不能是 String，又不能是 Poem，SwiftUI 为我们提供了一种方案 —— NavigationPath。
 
 ```swift
 @State private var path: NavigationPath = NavigationPath()
