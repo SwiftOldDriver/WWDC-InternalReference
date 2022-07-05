@@ -4,11 +4,16 @@ session_ids: [110354]
 
 # WWDC22 110354 - Swift 新特性介绍
 
->作者：汤圆，iOS 开发
+本文基于 [Session 110354](https://developer.apple.com/videos/play/wwdc2022/110354/) 梳理。
+
+> 作者：汤圆，iOS 开发
 >
->审核：四娘，老司机技术周报成员
+> 审核：
 >
->本文基于 [Session 110354](https://developer.apple.com/videos/play/wwdc2022/110354/) 梳理。
+> 四娘，老司机技术社区核心成员
+>
+> 王浙剑（Damonwong），老司机技术社区负责人、《WWDC22 内参》主理人，目前就职于阿里巴巴。
+
 
 Swift 一直致力于让编程变得更简单，并以此为目标不断地进行迭代。Swift 的发展历程如下图所示：
 

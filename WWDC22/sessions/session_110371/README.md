@@ -4,11 +4,15 @@ session_ids: [110371]
 
 # 【WWDC 110371】 使用 Xcode 进行多平台开发的那些事
 
+本文基于 [Session 110371](https://developer.apple.com/videos/play/wwdc2022/110371/) 梳理。
+
 > 作者：Sinter，关注跨平台与 AR 技术
 >
-
-> 审核：四娘，老司机技术周报成员
+> 审核：
 >
+> 四娘，老司机技术社区核心成员
+>
+> 王浙剑（Damonwong），老司机技术社区负责人、《WWDC22 内参》主理人，目前就职于阿里巴巴。
 
 ## 序
 

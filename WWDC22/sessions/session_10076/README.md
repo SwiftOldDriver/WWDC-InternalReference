@@ -4,9 +4,11 @@ session_ids: [10076]
 
 # Session 10076 - 将你的 iOS 应用搬到 Mac 上
 
+本文基于 [Session 10076](https://developer.apple.com/videos/play/wwdc2022/10076/%20) 梳理。
+
 > 作者：JPlay，iOS 开发者，Base 厦门，曾就职于美图，现就职于稿定科技，专注于视频/图片编辑类产品开发
-> 审核：待审核同学填充
-> 引申：本文基于 [WWDC2022 Session 10076](https://developer.apple.com/videos/play/wwdc2022/10076/%20) 梳理。
+>
+> 审核：Cyandev，目前就职于抖音基础技术团队，研发流程方向全栈工程师，在 Swift、大前端领域有比较丰富的经验。
 
 ## iPad 与 Mac 的融合之路
 

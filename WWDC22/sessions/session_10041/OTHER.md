@@ -1,10 +1,15 @@
 ## 个人介绍
 
-**展菲**，目前在某上市企业从事移动端项目研发。[#公众号:Swift 社区](https://mp.weixin.qq.com/mp/homepage?__biz=MzAxNzgzNTgwMw==&hid=1&sn=a7c21e2cd8e35545b737dc6c549fb1d7&scene=18 "公众号:Swift社区") 负责人，《ESP32-C3 物联网工程开发实战》作者。CSDN 博客专家，iOS 领域新星创作者，技术博客总访问量已达数百万。
+展菲，目前在某上市企业从事移动端项目研发。Swift 社区负责人，《ESP32-C3 物联网工程开发实战》作者。CSDN 博客专家，iOS 领域新星创作者，技术博客总访问量已达数百万。
 
 ## 审核介绍
 
-士土Edmond木, 对 CocoaPods 有一点了解，目前对 Bazel 和 Swift 比较感兴趣。[#Github Page](https://looseyi.github.io)
+士土Edmond木， 对 CocoaPods 有一点了解，目前对 Bazel 和 Swift 比较感兴趣。[#Github Page](https://looseyi.github.io)
+
+小姜，现就职于 Booking.com 本地支付团队，在努力研究 SwiftUI 相关内容。目前 Booking.com 在伦敦、阿姆斯特丹、上海办公室都在招募移动开发，需要内推的同学欢迎加微信
+`jiangyi--1130` 私聊。
+
+王浙剑（Damonwong），老司机技术社区负责人、《WWDC22 内参》主理人，目前就职于阿里巴巴。
 
 ## 文章简介
 
