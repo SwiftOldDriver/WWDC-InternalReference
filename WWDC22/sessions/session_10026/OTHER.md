@@ -12,4 +12,4 @@ anotheren（刘栋），老司机周报编辑，就职于丁香园 iOS 团队，
 
 ## 公众号/小专栏图文头图
 
-![live-text-banner][./images/live-text-banner.png]
+![live-text-banner](./images/session-banner.png)
