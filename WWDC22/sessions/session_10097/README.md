@@ -139,18 +139,15 @@ SecItemCopyMatching(readSecretsQuery as CFDictionary, &secretsCopy)
 
 随着 App Clip 的迭代发展，一个 App Clip 会拥有越来越多的 advanced App Clip experiences，每一个 experiences 都包含独有的信息和定位。开发者需要一种简单的方式来添加和更新这些 experiences。因此，App Store Connect 提供了 App Clip experiences web API，旨在自动化此工作流。接下来让我们看看使用此 API 的示例。
 
->  **解释下什么是 Advanced App Clip Experiences**
+> **解释下什么是 Advanced App Clip Experiences**
+> App Clip 的任何唤醒方式，都需要在 App Store Connect 上配置 default App Clip experience。App Clip 有两种体验方式 Default App Clip Experience 和  Advanced App Clip Experiences。
+> App Clip 通过 Safari App Banner 或者 iMessage app 中的唤醒方式称为 Default App Clip Experience，这些唤醒方式的相同点都是基于 App Clip 链接。
+> 对于更复杂的唤醒情况，可以根据 URL 的不同、地理位置的不同，来提供不一样的 App Clip Card。这类启动方式被称为 Advanced App Clip Experiences。以下几种情况需要配置 Advanced App Clip Experiences
 >
->  App Clip 的任何唤醒方式，都需要在 App Store Connect 上配置 default App Clip experience。App Clip 有两种体验方式 Default App Clip Experience 和  Advanced App Clip Experiences。
->  App Clip 通过 Safari App Banner 或者 iMessage app 中的唤醒方式称为 Default App Clip Experience，这些唤醒方式的相同点都是基于 App Clip 链接。
->
->  对于更复杂的唤醒情况，可以根据 URL 的不同、地理位置的不同，来提供不一样的 App Clip Card。这类启动方式被称为 Advanced App Clip Experiences。以下几种情况需要配置 Advanced App Clip Experiences
->
->  - App Clip 能支持所有的唤醒方式，包括 Map、Spotlight search、QR Codes、App Clip Codes 、NFC tags。
->  - 需要将 App Clip 与一个物理位置进行绑定。
->  - 需要在不同的域名或子域名上展示 Safari App Banner。
->  - 同一个 App Clip 供不同企业使用。
->
+> - App Clip 能支持所有的唤醒方式，包括 Map、Spotlight search、QR Codes、App Clip Codes 、NFC tags。
+> - 需要将 App Clip 与一个物理位置进行绑定。
+> - 需要在不同的域名或子域名上展示 Safari App Banner。
+> - 同一个 App Clip 供不同企业使用。
 
 参考：[Configuring Your App Clip’s Launch Experience](https://developer.apple.com/documentation/app_clips/configuring_your_app_clip_s_launch_experience) 
 
@@ -159,9 +156,8 @@ SecItemCopyMatching(readSecretsQuery as CFDictionary, &secretsCopy)
 ### 使用 Web Api 创建 Advanced App Clip Experiences 流程
 
 创建一个 Advanced App Clip Experiences 只需以下三步
-
 1. 获取 App Clip resource ID。
-2. 上传 App Clip Card 的 header image。	
+2. 上传 App Clip Card 的 header image。
 3. 创建 App Clip experiences web API。
 
 ![web_API_summary](./images/web_API_summary.png)
@@ -300,8 +296,6 @@ POST /v1/appClipAdvancedExperiences
 TODO: 总结性，瞻望等补充。
 
 **我们，明年见！**
-
-
 
 
 
