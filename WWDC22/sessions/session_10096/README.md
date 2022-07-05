@@ -1,6 +1,9 @@
 --- 
-session_ids:[100096]
+session_ids：[10096]
 ---
+# Session 10096 - What’s new in privacy
+
+本文基于[Session 10096](https://developer.apple.com/videos/play/wwdc2022/10096/ )梳理。
 
 # 【WWDC22 10096】What’s new in privacy
 > 本文是基于 Session 10096 梳理
