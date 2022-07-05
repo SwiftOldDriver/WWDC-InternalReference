@@ -64,4 +64,80 @@ session_ids: [10116]
 
 ## 二、 配置 CKTool JS
 
+### 2.1 CloudKit Schema
+
+在开始配置 `CKTool JS` 之前，先简单了解下 `CloudKit Schema`。在 `CloudKit` 中，数据以结构化的方式进行存储。具有相同数据结构的数据以 `Record` 的形式存储在一起。`Record` 是 `RecordType` 的实例，`RecordType` 除了可以自定字段，也包含了一些自带的字段，如 `recordName` 即 `ID 唯一标识`。
+
+![](images/006-schema.png)
+
+例如这里以国家和货币为例该怎么去设计 `RecordType` 呢？
+
+![](images/007-countrycoins.png)
+
+并将 `Countries` 与 `Coins` 通过 `isoCode - nation` 的对应关系绑定起来。
+
+![](images/008-relationship.png)
+
+`RecordType` 和 `Relationship` 合起来就构成了 `Schema`。
+
+![](images/009-schematwopart.png)
+
+在应用程序功能迭代的过程中，我们的 `Schema` 也可能会不断的更新。
+
+### 2.2 Container
+
+`Schema` 决定了数据存储的结构，这些数据存储的地方就是 `Container`。每个 `Container` 都有一个唯一的 ID 并且是与 `Developer Team` 绑定的。和我们平时开发分测试生产环境一样，`Container` 也分为了 `Development` 和 `Production` 环境。在 `Development` 环境中完成了 `Schema` 的设计调试，就可以将 `Schema` 发布到 `Producti` 环境了。
+
+### 2.3 配置信息
+
+为了使 `CKTool JS` 拥有权限访问正确的 `CloudKit Container`，我们需要进行一些参数配置如制定环境等。不同情况需要的信息在下图中列出了：
+
+![](images/010-configureInfos.png)
+
+### 2.4 Node.js 配置示例
+
+导入需要使用的相关依赖。并将需要的信息保存起来，如下面示例中的 `security` 和 `defaultArgs`。
+
+#### 构建参数
+
+```JavaScript
+const { CKEnvironment } = require("@apple/cktool.database");
+
+// 权限安全相关
+const security = {
+    "ManagementTokenAuth": "<YOUR_MANAGEMENT_TOKEN>",
+    "UserTokenAuth": "<YOUR_USER_TOKEN>"
+};
+
+// 默认参数
+const defaultArgs = {
+    // Developer Team ID
+    "teamId": "<YOUR_TEAM_ID>",
+    // CloudKit Container ID
+    "containerId": "<YOUR_CONTAINER_ID>",
+    // 指定环境
+    "environment": CKEnvironment.DEVELOPMENT
+};
+```
+
+#### 构建 configuration 和 API 对象
+
+```JavaScript
+const { createConfiguration } = require("@apple/cktool.target.nodejs");
+const { PromisesApi } = require("@apple/cktool.database");
+
+const configuration = createConfiguration();
+// 将 configuration 和 前面填写的令牌数据传给 API 对象
+const api = new PromisesApi({
+    "configuration": configuration,
+    "security": security
+});
+```
+
+> API 对象提供了异步访问 iCloud 的方法。
+
+## 三、管理 Schema
+
+
+
 
