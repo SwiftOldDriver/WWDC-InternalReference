@@ -12,9 +12,13 @@ session_ids: [10116]
 
 ![](images/001-overview.png)
 
-本文将带你了解如何使用 `CKTool JS` 自动化管理 `iCloud` 容器。展示如何配置 `CKTool JS` 来管理容器、修改记录以及操作数据。我们还将探讨如何将 `CKTool JS` 集成到自动化工作流程中。为了更好的理解，建议先熟悉 `CloudKit`、`JavaScript` 和 `npm`。
+本文将带你了解如何使用 `CKTool JS` 自动化管理 `iCloud` 容器。展示如何配置 `CKTool JS` 来管理容器、修改记录以及操作数据。我们还将探讨如何将 `CKTool JS` 集成到自动化工作流程中。为了更好的理解，建议先了解 `CloudKit`、`JavaScript` 和 `npm`。
 
-> 本次 `WWDC` 还有其他关于 `CloudKit` 的更新内容可以移步 [WWDC22 10115/10119 - Optimize your use of Core Data and CloudKit / 优化 CoreData & CloudKit 实现](../session_10119/README.md)
+### 来自作者的温馨提示
+
+`CKTool JS` 对于业务基于 `CloudKit` 的开发团队来说能够降低操作成本，并提供了拓展后台功能的可能性，建议仔细品读，`Apple` 也提供了示例代码，文末有贴上，有需要可以自取。
+
+本次 `WWDC` 还有其他关于 `CloudKit` 的更新内容可以移步 [WWDC22 10115/10119 - Optimize your use of Core Data and CloudKit / 优化 CoreData & CloudKit 实现](../session_10119/README.md)，其中也有涉及到 CloudKit 控制台的一些更新，建议阅读。
 
 ## 一、 介绍
 
@@ -59,6 +63,8 @@ session_ids: [10116]
   * 此类操作包括 `Schema` 的导入和导出、验证以及将 `CloudKit Container` 发布为生产。
 * User Token
   * 仅限于开发团队和特定容器，允许访问这些容器中的私有用户数据。
+
+![](images/014-tokens.jpg)
 
 > 要了解如何获取这些授权令牌，请查看[WWDC21 - Automate CloudKit tests with cktool and declarative schema](https://developer.apple.com/videos/play/wwdc2021/10118)。
 
@@ -371,4 +377,29 @@ await api.deleteRecord({
    "recordName": coinRecord1.recordName // 记录 ID
 });
 ```
+
+## CKTool JS 的意义
+
+长久以来，在基于 `CloudKit` 进行开发的时候，我们都需要直接使用开发者账号登录 `CloudKit` 控制台进行人工操作。这种方式对于流程自动化较强的团队来说并不高效。现在 `CKTool JS` 带来了自动化的能力，完全能够集成到自有开发后台中进行进行开发管理。
+
+当前 `CloudKit` 控制台进行数据检索是非常低效的，通过 `CKTool JS` 我们完全可以实现在自建的后台上根据业务场景，自定义检索筛选需求，更加高效省力。
+
+此次推出的 `CKTool JS` 对于业务基于 `CloudKit` 的开发团队来说无疑是一个非常棒的效率工具。
+
+### 推荐阅读
+
+> [Automating CloudKit Development](https://developer.apple.com/icloud/cloudkit/automating/)
+>  
+> [CKTool JS Framework](https://developer.apple.com/documentation/cktooljs)
+>  
+> [Sample code](https://github.com/apple/sample-cloudkit-tooling)
+>  
+> [WWDC22 10115/10119 - Optimize your use of Core Data and CloudKit / 优化 CoreData & CloudKit 实现](../session_10119/README.md)
+>  
+> [WWDC21 - Automate CloudKit tests with cktool and declarative schema](https://developer.apple.com/videos/play/wwdc2021/10118)
+>  
+> [Integrating a Text-Based Schema into Your Workflow](https://developer.apple.com/documentation/cloudkit/integrating_a_text-based_schema_into_your_workflow)
+>  
+> [Integrating CloudKit access into your JavaScript automation scripts](https://developer.apple.com/documentation/cktooljs/integrating_cloudkit_access_into_your_javascript_automation_scripts)
+
 
