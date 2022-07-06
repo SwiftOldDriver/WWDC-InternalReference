@@ -398,15 +398,23 @@ WKContentRuleListStore.default().compileContentRuleList(forIdentifier: "ContentB
 
 ## 允许三方浏览器远程调试 Web （ Remote Web Inspector ）
 
-在这个功能之前，Apple 只允许在 Safari 中调试 App 中的内嵌 H5 页面。但在 iOS 16 中，您可以使用第三方浏览器在 debug 模式下，无需添加任何代码或更改任何代码就可调试 Web 页面，调试流程与 Safari 一样。相比之前单一的调试 Web 方式，这次增加了开发者更多的选择性，以及为跨端调试提供便利。
+如果您的应用具备 Web 浏览器权限，可以像 iOS 中的 Safari一样，开启 Web Inspector ，然后在 macOS Safari 的开发模式下调试 三方浏览器中的 Web 页面。
 
-> 注：Safari 调试内嵌 H5 必须在 debug 模式下进行，release 环境下无法进行调试
+在这个功能之前，苹果只允许 iOS 设备中自带的 Safari 在 Release 模式下，可以在 macOS 中调试，如下所示。
+![小米办公20220706-130352](assets/%E5%B0%8F%E7%B1%B3%E5%8A%9E%E5%85%AC20220706-130352.png)
+
+现在相当于给三方浏览器也开放了这个权限，使三方浏览器的发布版本调试变得更为便利。简单来说，就是在 iOS 16 之前， App如果想要调试 Web，只能在 Debug 模式下进行，而在 iOS 16 之后，我们的 App 如果具备浏览器权限，无论是 Debug 还是 Release 模式下，都可以调试 Web 页面了。
+
+> 注：
+> 1. MacOS 中的 Safari 调试内嵌 H5 必须在 debug 模式下进行，release 环境下无法进行调试。
+> 2. 苹果移动设备自动的 Safari 应用，可以随时在 macOS 中调试。
+> 3. 关于如何获取浏览器权限，这个目前官方并未说明，如果有这方面需要的朋友，建议可以联系 Apple 的工程师进行了解。
 
 **演示**
 
-> 下面是以 Safari 浏览器调试 Web 页面为例。
+> 下面是以 MacOS Safari 浏览器调试 iOS 设备 Safari 应用打开的 Web 页面为例。
 
-如果您的 App 中有内嵌 H5 页面，您可以通过 macOS 中的 Safari 调试 App 中的 Web 页面，其操作步骤如下：
+macOS 调试 Web 页面的操作步骤如下：
 
 - 首先在 iOS 设备中开启 Web Inspector（Web 检查器），路径为：`设置 - Safari - 高级 - Web Inspector`，如下所示：
 ![iOS 设备开启 Web 调试](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.3/img/wwdc_session_10049/session_10049_21.jpg)
@@ -427,4 +435,4 @@ WKContentRuleListStore.default().compileContentRuleList(forIdentifier: "ContentB
 1. Web content interaction：新增了 3 种交互方式，分别是 full screen、20 种新增的 CSS 视口单位以及查找交互功能；
 2. Content blocking：新增了特定 URL 特定规则的拦截场景；
 3. Encrypted media：可以像在 macOS 中一样在 iPadOS App 中加密媒体资源；
-4. Remote Web Inspector：通过开启 Web 检查器，实现在第三方浏览器中调试 App 内嵌的 Web页面。
+4. Remote Web Inspector：通过在三方浏览器中开启 Web 检查器，实现 Release 环境下通过 macOS 中调试三方浏览器的 Web页面。
