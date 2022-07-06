@@ -206,6 +206,7 @@ Xcode 14 为 Swift Package 插件提供了 XcodeProjectPlugin API，扩展了 Sw
    ])
  ]
 ```
+
 上述代码中，swift-game 为了避免和 swift-draw 的 Utils 重名被重命名为 GameUtils，如果应用程序想要实用 swift-game 中的 Utils，那么就需要直接 `import GameUtils`，需要注意的是：**只有纯 Swift Module 且不是二进制文件才能使用 `moduleAliases` 重命名**
 
 > Tips: 更多关于 Swift Package 插件参考
