@@ -78,7 +78,7 @@ let package = Package(
 
 ### 协议一致性检查性能
 
-Swift 5.7 之前，iOS App 启动时进行协议一致性检查大概需要 4s 左右。每次 App 启动都要重新进行协议一致性检查，这导致协议越多，耗时就越久。Swift 5.7 会对计算结果进行缓存，可以提高运行时协议一致性检查的性能，缩短 App 启动时长。如果想要了解更多可以参考 [Improve app size and runtime performance](https://developer.apple.com/videos/play/wwdc2022/110363/)。
+Swift 5.7 之前，iOS App 启动时进行协议一致性检查最长需要 4s 左右。每次 App 启动都要重新进行协议一致性检查，这导致协议越多，耗时就越久。Swift 5.7 会对计算结果进行缓存，可以提高运行时协议一致性检查的性能，缩短 App 启动时长。如果想要了解更多可以参考 [Improve app size and runtime performance](https://developer.apple.com/videos/play/wwdc2022/110363/)。
 
 ## Swift 并发模型
 
