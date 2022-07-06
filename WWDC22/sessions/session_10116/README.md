@@ -188,7 +188,187 @@ api.resetToProduction(defaultArgs)
   .then(() => importMySchema());
 ```
 
+## 四、 数据读写
 
+### 4.1 类型校验
 
+`CKTool JS` 在将数据发送到服务端之前，会在客户端进行类型与边界校验。如果类型错误或者超出了边界就会抛出异常。对于无法在 `JavaScript` 中原生支持的 `Large number` 可以使用 `CKTool JS` 类型来代替。例如：
 
+* 将数字强制转换为 `CKTool JS Int64`，使用 `toInt64` 函数。
+* 将数字强制转换为 `Double` 浮点值，使用 `toDouble` 函数。
+
+> 在编写 `TypeScript` 时，如果不使用这些强制转换函数，编译器将报错。
+
+### 4.2 构建 FieldValue
+
+承接前文，继续以硬币为例。创建一枚 2007 年发行的硬币，将该值传递给 `makeRecordFieldValue.int64` 函数，以创建包含 `Int64` 的记录字段值。如果函数无法使用传入的值创建记录，就会抛出异常。
+
+```JavaScript
+// Create fields with factory functions.
+const {
+    makeRecordFieldValue
+} = require("@apple/cktool.database");
+
+const value = makeRecordFieldValue.int64(2007);
+```
+
+### 4.3 配置公共参数
+
+在这里，创建了一个对象来保存发送给处理记录的方法的公共值。由于 `containerId`、`environment`、`databaseType` 和 `zoneName` 通常是必需的，因此我们将它们包含在此 `databaseArgs` 对象中。
+
+```JavaScript
+const {
+    CKDatabaseType, CKEnvironment
+} = require("@apple/cktool.database");
+
+const databaseArgs = {
+    "containerID": "<YOUR_CONTAINER_ID>",
+    "environment": CKEnvironment.DEVELOPMENT,
+    "databaseType": CKDatabaseType.PRIVATE,
+    "zoneName": "_defaultZone"
+};
+```
+
+### 4.4 查询数据
+
+为查询记录，这里使用 queryRecords 方法。为了使后续使用更加方便，这里创建了一个辅助函数，来查找 `isoCode3` 代码匹配的国家/地区。这里除了包含查询的正文之外，还传递了包含公共参数的 `databaseArgs` 对象。
+
+```JavaScript
+// Define helper function for querying records
+const { CKDBQueryFilterType } = require("@apple/cktool.database");
+
+const countryQueryRecordForCountryCode3 = async (countryCode3) => {
+    const response = await api.queryRecords({
+        ...databaseArgs,// 公共参数
+        "body": {
+            "query": {
+                // 记录类型
+                "recordType": "Countries",
+                // 筛选条件
+                "filters": [{
+                    // 字段名
+                    "fieldName": "isoCode3",
+                    // 字段值
+                    "fieldValue": makeRecordFieldValue.string(countryCode3),
+                    // 匹配规则为相等
+                    "type": CKDBQueryFilterType.EQUALS
+                }]
+            }
+        }
+    });
+    // 取结果的第一条
+    return response.result.records[0];
+}
+```
+
+### 4.5 构建 FieldValue 与关联关系
+
+为了将原始值转换为 `createRecord` 可以使用的字段值，这里封装了一个名为 `makeCoinFieldValues` 的辅助函数来执行此操作。对于要转换为字段值的硬币的每个原始属性，调用相应的 `RecordFieldValue` 函数。但是，对于国家/地区字段，需要创建一个关联关系。
+
+```JavaScript
+// Define a helper function for creating field values
+const {
+    makeRecordFieldValue, CKDBRecordReferenceAction
+} = require("@apple/cktool.database");
+
+const makeCoinFieldValues = ({ countryRecordName, issueYear, nominalValue }) => ({
+    // 这是并非原始值，而是一个关联关系，通过 countryRecordName 将 Coin 与 Country 关联起来
+    "country": makeRecordFieldValue.reference({
+        recordName: countryRecordName,
+        action: CKDBRecordReferenceAction.DELETE_SELF
+    }),
+    // 这里两条就是原始数据
+    "issueYear": makeRecordFieldValue.int64(issueYear),
+    "nominalValue": makeRecordFieldValue.double(nominalValue)
+});
+```
+
+### 4.6 创建一条记录
+
+这里创建了一个辅助函数，它获上文创建的 `FieldValues` 并将 `createRecord` 请求发送到服务器。在这个函数中，传递了之前声明的 `databaseArgs` 的内容和一个 `body`。如果成功，则返回 `response.result.record`。
+
+```JavaScript
+// Define helper method for creating coins
+const coinCreateRecord = async (fields) => {
+    const response = await api.createRecord({
+        ...databaseArgs, // 公共参数
+        "body": {
+            // 记录类型
+            "recordType": "Coins",
+            // 需要保存的数据主体
+            "fields": fields
+        },
+    });
+    return response.result.record;
+}
+```
+
+根据前文定义的 makeCoinFieldValues 函数，我们知道还需要获取关联的 contryRecord 的 recordName。下面我们获取并完成记录的创建和上传：
+
+```JavaScript
+// 通过国家代码获取 contryRecord 对象
+const countryRecord = await countryQueryRecordForCountryCode3("USA");
+
+// 传入参数，构建 FieldValues，上传，成功后返回新的 record
+const coinRecord1 = await coinCreateRecord(
+    makeCoinFieldValues({
+        "countryRecordName": countryRecord.recordName,
+        "issueYear": 2007,
+        "nominalValue": 0.10
+    })
+);
+```
+
+### 4.7 更新记录
+
+要更新记录，请使用 `updateRecord` 方法。这里创建了一个函数，它使用传递给该辅助函数的字段更新与 recordName 匹配的硬币记录。然后，使用 `databaseArgs`、`recordName` 和一个包含 `recordType` 和新记录的 `FieldValues` 调用 `updateRecord`。如果成功，更新后的记录将在 response.result.record 中返回。
+
+```JavaScript
+// Define helper method for updating coins.
+// Note that recordChangeTag is required
+
+const coinUpdate =
+    async (recordName, recordChangeTag, fields) => {
+        const response = await api.updateRecord({
+            ...databaseArgs,// 公共参数
+            "recordName": recordName,// 需要更新的记录 ID
+            "body": {
+                "recordType": "Coins",// 记录类型
+                "recordChangeTag": recordChangeTag, // 变更标签
+                "fields": fields // 字段
+            }
+        });
+        return response.result.record;
+    }
+
+// Call coin updating method with field values.
+// Note that the recordChangeTag of the record
+// to update is passed to the coin update function.
+
+// 先获取关联的 country 
+const countryRecord = await countryQueryRecordForCountryCode3("USA");
+
+const updatedCoinRecord1 = await coinUpdate(
+    coinRecord1.recordName,
+    coinRecord1.recordChangeTag,
+    makeCoinFieldValues({
+        // 关联的 country 的记录 ID
+        "countryRecordName": countryRecord.recordName,
+        "issueYear": 2010,
+        "nominalValue": 0.10
+    });
+);
+```
+
+### 4.8 删除记录
+
+`CKTool JS` 提供了便捷的删除方法，只需提供对应记录的 recordName 调用异步函数 deleteRecord 即可。
+
+```JavaScript
+// Deleting a record
+await api.deleteRecord({
+    ...databaseArgs,// 公共参数
+   "recordName": coinRecord1.recordName // 记录 ID
+});
+```
 
