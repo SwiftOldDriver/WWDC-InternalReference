@@ -140,25 +140,25 @@ const api = new PromisesApi({
 });
 ```
 
-> API 对象提供了异步访问 iCloud 的方法。
+> `API` 对象提供了异步访问 `iCloud` 的方法。
 
 ## 三、管理 Schema
 
 ![](images/011-manageyourschema.png)
 
-在应用程序中，存储例如 2007 年发行的硬币之的信息。这枚硬币由铜和镍组成，价值 1/10 美元。在考虑了如何存储这些数据之后，决定将有关硬币成分的信息数据独立出来，即将硬币的铜百分比和镍的百分比分别存储在不同的 Record 中。
+在应用程序中，存储例如 2007 年发行的硬币之的信息。这枚硬币由铜和镍组成，价值 1/10 美元。在考虑了如何存储这些数据之后，决定将有关硬币成分的信息数据独立出来，即将硬币的铜百分比和镍的百分比分别存储在不同的 `Record` 中。
 
 ![](images/012-coinschema.png)
 
 ### 3.1 Schema File
 
-现在定义好了 Schema 的结构，就可以按照一定的规则，创建一个文本文件 `Schema File` 来描述这些信息。后缀名 `.ckdb`。
+现在定义好了 `Schema` 的结构，就可以按照一定的规则，创建一个文本文件 `Schema File` 来描述这些信息。后缀名 `.ckdb`。
 
 > 具体规则可以查看文档[Integrating a Text-Based Schema into Your Workflow](https://developer.apple.com/documentation/cloudkit/integrating_a_text-based_schema_into_your_workflow)
 
-`Schema File` 配置的 Schema 可以通过 CKTool JS 应用到 iCloud。在这之前，我们需要将当前 Development 环境的 Schema 恢复到 Production 环境的状态。调用 `api.resetToProduction()` 方法即可，记住要将在前面准备好的 defaultArgs 也穿进去哦。如果当前 Development 环境中存在 Schema 不存在与 Production 环境，那么进行恢复操作后，这些 Schema 和数据会被删除。
+`Schema File` 配置的 `Schema` 可以通过 `CKTool JS` 应用到 `iCloud`。在这之前，我们需要将当前 `Development` 环境的 `Schema` 恢复到 `Production` 环境的状态。调用 `api.resetToProduction()` 方法即可，记住要将在前面准备好的 `defaultArgs` 也传进去哦。如果当前 `Development` 环境中存在 `Schema` 不存在与 `Production` 环境，那么进行恢复操作后，这些 `Schema` 和数据会被删除。
 
-> 注意，这是一个异步的方法，返回的是一个 PromisesApi 对象。
+> 注意，这是一个异步的方法，返回的是一个 `PromisesApi` 对象。
 
 ### 3.2 导入导出 Schema File
 
@@ -237,7 +237,7 @@ const databaseArgs = {
 
 ### 4.4 查询数据
 
-为查询记录，这里使用 queryRecords 方法。为了使后续使用更加方便，这里创建了一个辅助函数，来查找 `isoCode3` 代码匹配的国家/地区。这里除了包含查询的正文之外，还传递了包含公共参数的 `databaseArgs` 对象。
+为查询记录，这里使用 `queryRecords` 方法。为了使后续使用更加方便，这里创建了一个辅助函数，来查找 `isoCode3` 代码匹配的国家/地区。这里除了包含查询的正文之外，还传递了包含公共参数的 `databaseArgs` 对象。
 
 ```JavaScript
 // Define helper function for querying records
@@ -309,7 +309,7 @@ const coinCreateRecord = async (fields) => {
 }
 ```
 
-根据前文定义的 makeCoinFieldValues 函数，我们知道还需要获取关联的 contryRecord 的 recordName。下面我们获取并完成记录的创建和上传：
+根据前文定义的 `makeCoinFieldValues` 函数，我们知道还需要获取关联的 `contryRecord` 的 `recordName`。下面我们获取并完成记录的创建和上传：
 
 ```JavaScript
 // 通过国家代码获取 contryRecord 对象
@@ -327,7 +327,7 @@ const coinRecord1 = await coinCreateRecord(
 
 ### 4.7 更新记录
 
-要更新记录，请使用 `updateRecord` 方法。这里创建了一个函数，它使用传递给该辅助函数的字段更新与 recordName 匹配的硬币记录。然后，使用 `databaseArgs`、`recordName` 和一个包含 `recordType` 和新记录的 `FieldValues` 调用 `updateRecord`。如果成功，更新后的记录将在 response.result.record 中返回。
+要更新记录，请使用 `updateRecord` 方法。这里创建了一个函数，它使用传递给该辅助函数的字段更新与 `recordName` 匹配的硬币记录。然后，使用 `databaseArgs`、`recordName` 和一个包含 `recordType` 和新记录的 `FieldValues` 调用 `updateRecord`。如果成功，更新后的记录将在 `response.result.record` 中返回。
 
 ```JavaScript
 // Define helper method for updating coins.
@@ -368,7 +368,7 @@ const updatedCoinRecord1 = await coinUpdate(
 
 ### 4.8 删除记录
 
-`CKTool JS` 提供了便捷的删除方法，只需提供对应记录的 recordName 调用异步函数 deleteRecord 即可。
+`CKTool JS` 提供了便捷的删除方法，只需提供对应记录的 `recordName` 调用异步函数 `deleteRecord` 即可。
 
 ```JavaScript
 // Deleting a record
