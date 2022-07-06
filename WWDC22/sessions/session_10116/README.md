@@ -401,5 +401,3 @@ await api.deleteRecord({
 > [Integrating a Text-Based Schema into Your Workflow](https://developer.apple.com/documentation/cloudkit/integrating_a_text-based_schema_into_your_workflow)
 >  
 > [Integrating CloudKit access into your JavaScript automation scripts](https://developer.apple.com/documentation/cktooljs/integrating_cloudkit_access_into_your_javascript_automation_scripts)
-
-
