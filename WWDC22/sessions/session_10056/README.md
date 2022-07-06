@@ -282,13 +282,13 @@ private func spacing(subviews: Subviews) -> [CGFloat] {
 
 ![](./images/geometry_reader_crash.png)
 
-如上图，`AttributeGraph` 这个 `Crash` 笔者在自己的工程中也经常遇到，大胆猜测这个就是苹果工程师所说的循环引用的问题。如果有小伙伴知道如果处理，欢迎留言🤗。
+如上图，`AttributeGraph` 这个 `Crash` 笔者在自己的工程中也经常遇到，大胆猜测这个就是苹果工程师所说的循环引用的问题。如果有小伙伴知道如何处理，欢迎留言🤗。
 
 **新的 `Layout API` 只能在最近的版本才能使用，那之前版本又该如何处理呢？**
 
 笔者在这里倒是知道有一个比较 hacky 的方案（谨慎使用！），如果你恰好是在使用了 `UIViewRepresentable` 的场景下，重写 [_overrideSizeThatFits(_ size:, in proposedSize:, uiView:)](https://github.com/xybp888/iOS-SDKs/blob/a110a31ce82e42621b3e7ba31bd6563c02d2631a/iPhoneOS13.0.sdk/System/Library/Frameworks/SwiftUI.framework/Modules/SwiftUI.swiftmodule/arm64e-apple-ios.swiftinterface#L7613) 方法可以得到跟新接口中的 `sizeThatFits` 相同的效果。
 
-至于 `placeSubviews`，笔者没有找到的替代方案，如果有小伙伴知道如果处理，欢迎留言🤗。
+至于 `placeSubviews`，笔者没有找到的替代方案，如果有小伙伴知道如何处理，欢迎留言🤗。
 
 ## 最后
 
