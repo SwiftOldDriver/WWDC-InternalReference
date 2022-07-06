@@ -138,6 +138,57 @@ const api = new PromisesApi({
 
 ## 三、管理 Schema
 
+![](images/011-manageyourschema.png)
+
+在应用程序中，存储例如 2007 年发行的硬币之的信息。这枚硬币由铜和镍组成，价值 1/10 美元。在考虑了如何存储这些数据之后，决定将有关硬币成分的信息数据独立出来，即将硬币的铜百分比和镍的百分比分别存储在不同的 Record 中。
+
+![](images/012-coinschema.png)
+
+### 3.1 Schema File
+
+现在定义好了 Schema 的结构，就可以按照一定的规则，创建一个文本文件 `Schema File` 来描述这些信息。后缀名 `.ckdb`。
+
+> 具体规则可以查看文档[Integrating a Text-Based Schema into Your Workflow](https://developer.apple.com/documentation/cloudkit/integrating_a_text-based_schema_into_your_workflow)
+
+`Schema File` 配置的 Schema 可以通过 CKTool JS 应用到 iCloud。在这之前，我们需要将当前 Development 环境的 Schema 恢复到 Production 环境的状态。调用 `api.resetToProduction()` 方法即可，记住要将在前面准备好的 defaultArgs 也穿进去哦。如果当前 Development 环境中存在 Schema 不存在与 Production 环境，那么进行恢复操作后，这些 Schema 和数据会被删除。
+
+> 注意，这是一个异步的方法，返回的是一个 PromisesApi 对象。
+
+### 3.2 导入导出 Schema File
+
+`CKTool JS` 提供了 `exportSchema` 和 `importSchema` 方法来执行 `Schema File` 的导入导出操作。通过 `exportSchema` 可以下载保存当前 `Schema` 结构，通过 `importSchema` 可以将新的 `Schema` 结构上传到 `CloudKit`。
+
+![](images/013-importexportschema.png)
+
+下面是上传 `Schema` 的一个封装示例：
+
+```JavaScript
+// Create a function to apply a schema
+const { File } = require("@apple/cktool.target.nodejs");
+const fs = require("fs/promises");
+const path = require("path");
+
+const importMySchema = async () => {
+    // 指定 Schema File 文件路径
+    const schemaPath = "<YOUR_SCHEMA_FILE>.ckdb";
+    // 将文件写入 buffer
+    const buffer = await fs.readFile(schemaPath);
+    // 创建 File 对象
+    const file = new File([buffer], schemaPath);
+    // 使用前面配置的参数，上传 file
+    await api.importSchema({ ...defaultArgs, "file": file });
+}
+
+/* 链式调用： 
+ * 先同步 Production 环境的 Schema 到 Development 环境
+ * 注意 这里 resetToProduction 方法是异步的
+ * 完成后再调用 importMySchema 上传需要应用的 Schema File 
+ */
+api.resetToProduction(defaultArgs)
+  .then(() => importMySchema());
+```
+
+
 
 
 
