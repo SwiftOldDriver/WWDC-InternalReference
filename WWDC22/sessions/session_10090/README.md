@@ -148,6 +148,11 @@ class Attachment: NSTextAttachment {
 
 ```
 
+当把 tracksTextAttachmentViewBounds 设置为 true 时，系统会在 layout 阶段调用 `-[NSTextAttachment attachmentBoundsForAttributes:location:textContainer:proposedLineFragment:position:]` 方法来访问我们的自定义 view，来根据 location、position、lineFragment 等参数来确定位置；当将该属性设置为 false 时，默认会使用当前 TextAttachment 本身的 bounds 作为 viewProvider 的大小。查看上例调用栈：![](./images/IMG_17.png) 可印证上述说法。
+以上例来说，最终渲染完成的样式如下：![](./images/IMG_18.png)
+
+可以看到，由于 TextKit 2 分段渲染的特性，最终多段文本会渲染在不同的 view 上，其中我们的 Attachment 会作为 _UITextLayoutFragmentView 的子 view 进行呈现。这也是 TextKit 2 高性能渲染的表现之一。
+
 ## 兼容模式
 
 接来下这部分将详细介绍 TextKit 1 的兼容性模式，原因及排查方式。由于 TextKit 2 与 TextKit 1 设计方式的不同，对于某些在 TextKit 1 体系中投入较大的 App，亦或是脱离 UIKit，直接使用 TextKit 1 进行自定义渲染绘制操作的组件，全面采用 TextKit 2 可能需要一些时间。所以针对于此，Apple 提供了兼容模式，以便其能够顺利完成过渡。
@@ -156,11 +161,11 @@ class Attachment: NSTextAttachment {
 
 #### 构造函数兼容
 
-前面已经提到过，当初始化时，显示使用 TextKit 1 进行渲染时，TextView 将使用 TextKit 1 进行渲染。
+前面已经提到过，当初始化时，显式使用 TextKit 1 进行渲染时，TextView 将使用 TextKit 1 进行渲染。
 
-#### 显示调用 API
+#### 显式调用 API
 
-而当显示的调用 NSLayoutManager 等 TextKit 1 中的 API 时，文本组件也会在内部重新将 NSTextLayoutManager 替换为 NSLayoutManager，并将其自身重新配置为使用 TextKit 1 进行渲染。
+而当显式的调用 NSLayoutManager 等 TextKit 1 中的 API 时，文本组件也会在内部重新将 NSTextLayoutManager 替换为 NSLayoutManager，并将其自身重新配置为使用 TextKit 1 进行渲染。
 
 #### 属性不支持兼容
 
