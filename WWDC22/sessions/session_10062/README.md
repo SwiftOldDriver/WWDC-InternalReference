@@ -6,7 +6,7 @@ session_ids: [10062]
 
 > 作者：ooatuoo，iOS 开发者。
 >
-> 审核：
+> 审核：Cyandev，目前就职于抖音基础技术团队，研发流程方向全栈工程师，在 Swift、大前端领域有比较丰富的经验。
 
 本文基于 Session 10062 [Meet Transferable](https://developer.apple.com/videos/play/wwdc2022/10062) 梳理
 
