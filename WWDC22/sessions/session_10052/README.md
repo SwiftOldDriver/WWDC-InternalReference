@@ -1,5 +1,5 @@
-# Section 10052
-# What's New In SwiftUI(WWDC22)
+# WWDC22 What's New In SwiftUI
+# (WWDC22)
 
 稍后了解完今年的新内容后如果想回顾去年的视频，传送门 [WWDC21 What's New in SwiftUI]() 。
 
@@ -29,7 +29,7 @@
 ---
 
 
-### 1 首先是介绍一下重头戏 SwiftChart
+### 首先是介绍一下重头戏 SwiftChart
 
 ![Charts Images](./images/chartall.png)
 上图看到的这些效果是 WWDC22，Apple 在介绍 Charts 时候所展示的效果，有没有很酷炫。
@@ -40,7 +40,7 @@
   
 今天先进行一些简单实用介绍，比如常见的柱状图/折线图/基准线等。
 
-1.1 柱状图( `BarMark` )
+1 柱状图( `BarMark` )
 ```swift
 Chart(partyTasksRemaining) { task in
     BarMark(
@@ -50,7 +50,7 @@ Chart(partyTasksRemaining) { task in
 }
 ```
 
-1.2 折线图( `LineMark` )
+2 折线图( `LineMark` )
 ```swift
 Chart(partyTasksRemaining) { task in
     LineMark(
@@ -61,7 +61,7 @@ Chart(partyTasksRemaining) { task in
 }
 ```
 
-1.3 基准线( `RuleMark` )
+3 基准线( `RuleMark` )
 甚至可以为其添加文字说明 `.annotation(...)` 。
 ```swift
 Chart(partyTasksRemaining) { task in
@@ -105,7 +105,7 @@ Chart(date.source) { source in
 
 介绍完 SwiftUI Charts， 让我们一起看看 SwiftUI 对导航栏和窗口进行的 API 更新。
 
-### 2. Navigation and windows
+### Navigation and windows
 
 SwiftUI刚推出时候，导航栏使用的是 `NavigationView` 与 `NavigationButton` 的组合来进行跳转，使用 `@Environment (\.presentationMode)` 环境变量进行 `pop/dismiss` 返回。
 
@@ -115,7 +115,7 @@ SwiftUI刚推出时候，导航栏使用的是 `NavigationView` 与 `NavigationB
 今年这个功能它来了～
 
 
-2.1 NavigationStack
+> NavigationStack
 
 听名字就知道他终于开放导航栏堆栈了，这赋予了我们比过去更简洁优雅的跳转方式。
 与过去 UIKit中 的`UINavigaitonViewController.viewControllers`类似。
@@ -174,7 +174,8 @@ struct FoodDetailView: View {
 
 既然说完了导航跳转，那就不得不也要提一下模态弹出页面的跳转方式。
 
-2.2 `.presentationDetents`
+> `.presentationDetents`
+
 在 SwiftUI 中常使用 `.sheet` 和 `.fullScreenCover` 等方式从底部弹出一个新的 View 。
 不过这种弹出目前却有一个不足之处，无法让弹出的 View 顶部透明，继续显示底层 View 的一些细节， 而 UIKit 中 present 方法却可以做到。
 这一遗憾今年终于也得以弥补，那就是新的 modifier，`.presentationDetents`。
@@ -200,7 +201,7 @@ struct FoodDetailView: View {
 
 说完 iOS 上的各种跳转，让我们看看 iPad 上特有的一些组件。
 
-2.2 NavigationSplitView
+> NavigationSplitView
 
 以前做过iPad适配的小伙伴应该对这个 Split 关键字并不陌生，提供了一个列表的分屏展示能力，在 UIKit 与之对应的组件有 `UISplitViewController`，而在 SwiftUI 的 AppKit 中有 `HSplitView` 。
 现在 iPad 设备中，SwiftUI终于为我们提供了类似的Components。
@@ -209,9 +210,10 @@ struct FoodDetailView: View {
 
 `NavigationSplitView` 中 List 为左侧列表一级页面，而 `detail` 所展示为二级详情页面内容。同时 `NavigationSplitView` 还可以很好的支持 iPad 的多 App 分屏模式。
 
-说了这么多都是 iOS 和 iPadOS 上的内容，接下来我们看看 Mac os 的多 window 更新。
+说了这么多都是 iOS 和 iPadOS 上的内容，接下来我们看看 macOS 的多 window 更新。
 
-2.3 mac 新 window 支持
+> macOS 独立 window 支持
+
 之前使用 SwiftUI 来构建程序主页面时候，一般来说使用 `WindowGroup` ，可以生成多个窗口以允许对应用程序的数据进行不同的透视。
 今年新增了 `Window` 容器，为 Mac 的 app 声明一个唯一的窗口，切支持快捷键打开，同时为其提供了较多的 modifier，例如默认大小/位置/可调整大小等等。
 示例代码如下。
@@ -233,10 +235,12 @@ struct PartyPlanner: App {
 ```
 示例中Window可以使用快捷键 Command + 0 单独唤醒，设置了默认尺寸与位置。
 其使用场景更适合作为一个独立且较小的辅助来窗口使用。
+如果对于Scene和window有兴趣，可以参考我们的另一片文章
+[将多窗口引入 SwiftUI 应用](https://xiaozhuanlan.com/topic/3529016874)
 
-当然 Mac os 的更新不止于此，SwiftUI 的能力也不限于一个平台，比如上段代码中的 `BudgetView` , 自定义的 SwiftUI View，也可以在不修改代码的情况下，跨平台的支持 iOS / iPadOS 等。
+当然 macOS 的更新不止于此，SwiftUI 的能力也不限于一个平台，比如上段代码中的 `BudgetView` , 自定义的 SwiftUI View，也可以在不修改代码的情况下，跨平台的支持 iOS / iPadOS 等。
 
-Mac os 除了新增独立辅助窗口外，也新增了 Menubar 组件，可以展示在系统桌面右上角的位置  `MenuBarExtra`。
+macOS 除了新增独立辅助窗口外，也新增了 Menubar 组件，可以展示在系统桌面右上角的位置  `MenuBarExtra`。
 话不多说，上代码～
 ```swift
 @main
@@ -258,12 +262,12 @@ struct PartyPlanner: App {
 [What's new in Xcode](https://developer.apple.com/videos/play/wwdc2022/110427/)
 [Use Xcode to develop a multiplatform app](https://developer.apple.com/videos/play/wwdc2022/110371/)
 
-刚刚我们介绍了一些跳转与窗口等， 接下来介绍一下对其中视图控制的提升。
+刚刚我们介绍了一些跳转与窗口等， 接下来介绍一下对视图控制的提升。
 
-> 3. 高级控制
+>  Advanced controls 高阶控制
 
 3.1 Form
-SwiftUI中的 `Form` 增加了新的style，当然 `Form` 会自动适配 iOS/iPadOS/Mac os。
+SwiftUI中的 `Form` 增加了新的style，当然 `Form` 会自动适配 iOS/iPadOS/macOS。
 ```
 Form {
     Section { 
@@ -284,13 +288,9 @@ Form {
 .formStyle(.grouped)
 ```
 ![image](./images/formStyleGroup.png)
-图中可以看出，`formstyle` 对于 `Form` 的影响，这个例子中使用 `.grouped` 更佳合适。
+图中可以看出，`formstyle` 对于 `Form` 的影响，这个例子中使用 `.grouped` 更加合适。
 
-
-3.2 Controls
-
-3.2.1 ```.lineLimit```
-这是一个对于```Text/TextField```等都有效的modifier。
+除了 `Form` 的提升，作为最常用的 `Test` / `TextField` 也有些提升，属于很细节很重要的变化。让我们一起来看看 `lineLimit` 的提升。
 ```
 Text("Hello World")
     .lineLimt(2...3)
@@ -298,17 +298,27 @@ Text("Hello World")
 TextField("Description", text: $description, axis: .vertical)
     .lineLimit(5...10)
 ```
-![](./images/textLinelimit.png)
+过去 `lineLimt` 只支持一个常数，限制其最高行数，限制也可以限制最低行数，让我们在一个例子中看一下其作用。
 
-这个modifier的存在可以解决过去SwiftUI对于垂直布局页面支持的不足。
-比如有一个两列的```LazyVGrid```， 之前使用```.lineLimit(2)```， 由于服务器数据的不确定性，无法保证每个item的相同大小，需要进行额外的适配操作。
-当然使用iOS16的```Grid``` + ```GridRwo```也可以避免这个问题，我们稍后进行介绍。
+![image](./images/linelimit.png)
+这是使用 `LazyVGrid` 创建的 `View` , 每一个 Item 包含一个色块，一个标题和一段副标题，同时为副标题 `Text` 增加了浅橙色背景。
+可见左侧截图中黑色框范围内，出现了 Item 没有对齐的现象，原因在于副标题文本长度的不确定。
+而右侧使用 `lineLimit(2...2)` 将行数锁定为2行来优雅简单的解决这个问题。
+如果是 iOS16 之前，就需要使用类似如下的代码思路来解决。
+```swift
+Text("\n\n")
+    .frame(maxWidth: .infinity)
+    .overlay {
+        Text(model.subTitle)
+            .lineLimit(2)
+    }
+    
+```
+这便是使用 `overlay` / `background` 之类的思路来做两层 `Text`。
 
-把之前不好的地方展示出来，这个坑如何解决。
+除了 `Text` 这种贴心好用的更新外，对于 `DatePicker` 也有些更新。
+`MultiDatePicker`, 看名字也可以理解，日期选择器支持多选啦～
 
-
-3.2.2 MultiDatePicker 
-日期选择器支持多选了。
 ```
 @State private var activityDates: Set<DateComponents>
 
@@ -319,9 +329,9 @@ var body: some View {
 如图所示
 ![image](./images/datePicker.png)
 
-3.2.3 Mixed-state
-我们可能有些情况需要控制一系列的toggles。更多转折。
-> ```DisclosureGroup```可以将简单的进行toggle等的全选了。
+日期选择代码和逻辑比较简答，便不过多介绍，我们继续来看一下好玩的新东西，我姑且翻译成 ‘状态聚合’（Mixed-state）。
+这个功能可以将多种相同类型的 `View` 进行组合，统一管理.
+我们以 `Toggle` 为例，创建四个 `Toogle`, 而后进行 ‘状态聚合’。 
 ```
 DisclosureGroup {
     Toggle("Balloons", isOn: $includeBalloons)
@@ -338,60 +348,11 @@ DisclosureGroup {
 }
 ```
 ![](./images/toggles.gif)
-当然也可以对```DisclosureGroup```进行一定的自定义
-```
-struct MyDisclosureStyle: DisclosureGroupStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        VStack {
-            Button {
-                withAnimation {
-                    configuration.isExpanded.toggle()
-                }
-            } label: {
-                HStack(alignment: .firstTextBaseline) {
-                    configuration.label
-                    Spacer()
-                    Text(configuration.isExpanded ? "hide" : "show")
-                        .foregroundColor(.accentColor)
-                        .font(.caption.lowercaseSmallCaps())
-                        .animation(nil, value: configuration.isExpanded)
-                }    
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            if configuration.isExpanded {
-                configuration.content
-            }
-        }
-    }
-}
-```
-> DisclosureGroup也可以用在Picker上但是只能用在MacOS上， 对于iOS和iPadOS则只有其他风格可选。
-> ```Picker```也支持与```DisclosureGroup```类似的组合多选方式，不过仅仅MacOS可用。
-```
-@Binding var selectedDecorations: [Decoration]
 
-var themes: [Binding<Theme>] {
-    selectedDecorations.lazy.map(\.theme)
-}
+另外 `DisclosureGroup` 也支持风格的自定义，需要继承 `DisclosureGroupStyle`，如果有兴趣可以持续关注我们后续文章。
+另外 SwiftUI 作为跨平台语言，`DisclosureGroup` 也支持 macOS。
+得益于 SwiftUI 的 View tree 机制，很多 modifier 都具有 Environment 的特性，方便批量设置，比如接下来介绍的 `toggleStyle`。
 
-var body: some View {
-    Picker("Decoration Theme", selection: $themes) {
-        Text("Blue").tag(Theme.blue)
-        Text("Black").tag(Theme.black)
-        Text("Gold").tag(Theme.gold)
-        Text("White").tag(Theme.white)
-    }
-    .pickerStyle(.radioGroup)
-}
-```
-除了```.radioGroup```（仅MacOS可用） style以外还有```.inline/.wheel/.menu/.segmented/.automatic```等风格，大家可以多多尝试。
-![](./images/Picker.png)
-
-
-> .toggleStyle
-> 
-对于多选Button也提供了一种使用Toggle的新方式。
 ```
 @State private var useSwiftHashtag = false
 @State private var usePartyHashtag = false
@@ -415,13 +376,12 @@ var body: some View {
 }
 ```
 ![image](./images/toggleStyle(.button).png)
+代码中创建了4个 Toggle， 分为两行。
+右侧截图与左侧截图相比，只是多了一行 `.toggleStyle(.button)`。
+除此之外 `Menu`/`Picker` 也新增了多种 `style`， 接下来我们继续看看其他控件，`Stepper`。
 
-除此之外Menu/Picker也有各自的组合style。
-
-> ```Stepper```
-
-```Stepper```新增```format```， 支持number/百分比等13种类型。
-且自动适配MacOS支持数字填写，iOS为+-按钮，watchOS也有对应适配。
+`Stepper` 新增 `format` 能力， 支持number/百分比等13种类型。
+且自动适配 macOS 支持数字填写，iOS 为 +- 按钮，watchOS 也有对应适配。
 ```
 Stepper(value: $value,
         step: step,
@@ -429,10 +389,10 @@ Stepper(value: $value,
     Text("Current value: \(value), step: \(step)")
 }
 ```
-3.3 Table
-MacOS之前推出的Table，现在在iPadOS/iOS中也可以使用，方便快捷的创建多列列表。
-只是在iOS中会默认只显示首列`TableColumn`，在iPad和Mac中效果会更好。
-也提供了`contextMenu`的点击事件响应。
+![stepper](./images/Stepper.png)
+
+下一个组件，是先在 macOS 上使用的，刚刚登陆 iOS / iPadOS 平台。
+那就是 `Table`， 话不多说，直接上代码和图片。
 ```
 @State private var attendees: [Attendee]
 
@@ -463,10 +423,12 @@ var body: some View {
 }
 ```
 ![image](./images/table.png)
+不过我认为在 iOS 中仍然有许多不足支持，比如默认只显示首列 `TableColumn`，在iPad和Mac中才会展开，如果在 iOS 系统中支持左右滑动也许效果会更好。
+另外 `Table` 提供了`contextMenu`的点击事件处理，可以直接在屏幕 popup 一个菜单选项。
+支持与 `List` 类似的 `searchable` modifier， 甚至更强大。
 
-对于iPadOS的`.toobar`也进行了一些加强。
-.toobar 的问题在于。
-
+除此之外还有些 `Toobar` 的更新，我们简单介绍一下。
+iOS16之前的 `.toobar` 提供了自定义导航栏左右按钮，以及键盘顶部跟随等选项, 为我们提供了很多便捷， 今年在此基础上进一步加强，不过更多在 iPad 上。
 ```
 Table(attendees, selection: $selection) {
     ...
@@ -480,18 +442,22 @@ Table(attendees, selection: $selection) {
 }
 ```
 ![](./images/iPadToobar.png)
-Table同时也支持iOS15为List推出的```.searchable```， 甚至可以分```scope```进行范围搜索。
-更多详情可以参考WWDC
+
+`ToolbarItemPlacement` 新增了 `secondaryAction` 类型，开发者进行导航栏按钮预设后，允许用户自己决定自己的导航栏按钮的顺序位置等。
+
+关于这些 UI 组件的更新，我们之后的文章会进行详细介绍。 等不及的小伙伴可以查看 WWDC 视频。
 [SwiftUI on iPad: Organize your interface](https://developer.apple.com/videos/play/wwdc2022/10058/)
 [SwiftUI on iPad: Add toobars, titles, and more](https://developer.apple.com/videos/play/wwdc2022/110343/)
 [What's new in iPad app design](https://developer.apple.com/videos/play/wwdc2022/10009/)
 [SwiftUI on the Mac: Build the fundamentals](https://developer.apple.com/videos/play/wwdc2021/10062/)
 
-说完新的，让我们看一下新的API更新。（转折润色）
-> 4. Sharing
-新推出了```ShareLink``` API，方便唤起系统UI进行数据向外部的分享
-以前Watch不可以。
 
+上面提到的大部分更新都是对已有内容的更新。
+让我们看点新出的内容，`ShareLink`。
+
+### Sharing
+
+新推出了 `ShareLink` API，来使用系统的分享功能，与 UIKit 中的 UIActivityViewController 所提供的能力类似，现在可以在 SwiftUI 中使用 `ShareLink` 来做了， 同时可以自动在多平台以不同的 UI 进行适配。
 ```
 Gallery( ... )
     .toobar {
@@ -503,7 +469,9 @@ Gallery( ... )
 ```
 ![image](./images/share.png)
 
-与之对应，也有从外部向App传递数据的API。
+图中介绍了相同代码，在 iOS / watchOS/ macOS 中所呈现的不同形态。
+分享是相互的，可以将数据向外分享，自然也可以从外部向App传递，与之对应的便是 `dropDestination` 来接受外部传入的数据，默认支持 `String, Data, URL, Attributed String, Image` 等类型的数据。
+
 ```
 Gallery( ... )
     .dropDestination(
@@ -513,29 +481,21 @@ Gallery( ... )
         return !receivedImage.isEmpty
     }
 ```
-数据传递默认可以支持如下类型
-```String, Data, URL, Attributed String, Image```.
-如果想要更多数据类型，可以遵守```Transferable```协议进行自定义。
-```
-struct BirthdayFilter: Codable {
-    ...
-}
-
-extension BirthdayFilter: Transferable {
-    static var representation: some TransferRepresentation {
-        CodableRepresentation(contentType: .birthdayFilter)
-    }
-}
-
-```
+其中 `payloadType` 为所接受的数据类型，方法闭包所跟随的闭包类型为 `([Transferable], CGPoint) async -> Bool`, 我们只需要获取到元组中第一个元素即可取得传递进来的数据。
+从 API 可以看到，数据需要遵守 `Transferable`，其实只需要遵守此协议，自定义类型的数据也可以接受传递。
 详情参照 [Meet Transferable](https://developer.apple.com/videos/play/wwdc2022/10062/)
 
-##### Graphics and layout
-介绍SF symbol（），扩展SF Symbol字体让普通图片也可以，但是Shadows不足了。
+介绍完分享功能，接下来介绍一下 SwiftUI 在图形和布局的更新。
 
-获得更惊艳的UI效果，配合SF Symbol效果更佳。
-示例中蓝色的背景使用```backgroundStyle```带有了渐变效果，而SF Symbol/Text 则带有了阴影效果，这些新的modifier为编程带来了很多便利。
-同时也都适配了动画。
+<!---->介绍SF symbol（），扩展SF Symbol字体让普通图片也可以，但是Shadows不足了。
+
+### Graphics and layout
+提到 Graphics，那必须先介绍一下 SF Symbol, 今年已经更新到 4.0 beta 版本。
+SF Symbol 现在拥有4000+的图标，可以和 Apple 的文字系统无缝集成，可以跟随 Dynamic Type 进行无损的放大缩小， 我们一些常用的图标，箭头，形状，天气，健康，媒体等均内置与系统中。
+![image](./images/sfSymbol.png)
+SF Symbol 有 Mac 版 App，需要的小伙伴可以自行[下载](https://developer.apple.com/sf-symbols/)。
+在系统中使用 SF Symbol 只需要 使用 `Image(systemName: "SF Symbol Name")` 即可。
+而今年对 SF Symbol 新增了阴影效果与渐变效果，代码如下。
 ```
 struct CalendarIcon: View {
     var body: some View {
@@ -555,10 +515,17 @@ struct CalendarIcon: View {
 ![image](./images/backgroundStyle.png)
 ![](./images/sysymbols.png)
 
-##### Grid / Layout / ViewThatFits / AnyLayout
-先说明原来的不足。幸运的
+示例中蓝色的背景使用 `backgroundStyle` 带有了渐变效果，另外 SF Symbol 的图片也带有了阴影效果，这些都是新的modifier，他们使图像更立体，更时尚，我们都知道苹果的设计，几乎引领了手机 UI 的设计，也许这种图像效果接下来就是所流行的。
 
-```Grid```提供了一种新的Layout方式，不再局限于```LazyVGrid/LazyHGrid```，开放了GridRow与```.gridCellColumns(count)```。
+说完图像，我们最后说说布局。
+
+> Grid / Layout / ViewThatFits / AnyLayout
+ 
+目前 SwiftUI 的瀑布流布局， 仅仅有 `LazyVGrid` 与 `LazyHGrid`, 无法随意的控制瀑布流中的每个元素大小/位置等。过去自定义 `UICollectionViewFlowLayout` 的一些布局效果/动画效果，几乎全部丧失。
+
+好在今年一切都有了变化，我们先来介绍新的 `Grid`。
+
+`Grid` 提供了一种新的布局方式，不再局限于 `LazyVGrid/LazyHGrid`，开放了 `GridRow` 与 `.gridCellColumns(count)`。
 ```swift
 var body: some View {
     Grid {
@@ -574,137 +541,17 @@ var body: some View {
 }
 ```
 ![image](./images/layout.png)
+可以查看到代码中，任务头像与名字的cell（NameHeadline），占用两列cell宽度。
+日历占用一个cell（CalendarIcon）宽度，四种符号占用一个cell（SymbolGrid）的空间。
+这种大小不相同布局，过去 `LazyV/HGrid` 过去便无法直接做到，现在只需要几行就可以优雅设置，实在是太棒了。
 
+如果有更复杂的需求，还可以自定义 `Layout`，与过去重写 `UICollectionFlowLayout` 比较接近, 遵守 `Layout` 协议， 提供每个元素所在位置，并且根据协议提供的子试图来返回父视图所需空间即可完成。
 
-列举一下剩下的Modifier
-.gridCellColumns(Int) 可以规定某个item所占用是几倍cell空间。
-.gridCellAnchor(UnitPoint) 可以layout所占用空间的位置
-除此之外还有
-.gridColumnAlignment(HorizontalAlignment)
-.gridCellUnsizedAxes(Axis.Set)
-让layout更自由。
+而新的 ViewThatFits API, 就更有趣了，可以根据设备尺寸来自动代码中预设的布局方式。
+如果想要手动控制/切换布局，Apple 还提供了 AnyLayout 来进行支持动画的切换。
+本文作为介绍文章就不一一详细介绍了。
 
-
-至于新增的Layout协议，是继承自Animatable，与UIKit中的UICollectionFlowLayout有相似的地方。
-作为先导篇我们简单介绍其中两个方法，
-```
-func sizeThatFits(proposal: ProposedViewSize, subviews: Self.Subviews, cache: inout Self.Cache) -> CGSize
-
-func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Self.Subviews, cache: inout Self.Cache)
-```
-
-sizeThatFits的功能在于可以手动根据容器(Stack/Grid)内子试图，来自定义的调整容器的size。
-方法中包含了subviews属性来描述容器内的子试图，例如VStack中的每一行， 而proposal参数描述容器原始的建议尺寸。
-比如我们在HStack中放置3个button，如果button的文字长度不同，则无法做到每个button宽度相同的效果，这时候可以考虑使用Layout协议。
-思路是获取HStack中button宽度最大的元素，然后调整HStack宽度为3*最大宽度
-![image](./images/equalWidthButton.png)
-```
-func sizeThatFits(
-        proposal: ProposedViewSize,
-        subviews: Subviews,
-        cache: inout Void
-    ) -> CGSize {
-        guard !subviews.isEmpty else { return .zero }
-
-        let maxSize = maxSize(subviews: subviews)
-        let spacing = spacing(subviews: subviews)
-        let totalSpacing = spacing.reduce(0) { $0 + $1 }
-
-        return CGSize(
-            width: maxSize.width * CGFloat(subviews.count) + totalSpacing,
-            height: maxSize.height)
-}
-```
-对于容器调整完毕，很显然我们接下来该调整subviews了。
-便是利用placeSubviews方法，描述的是每个subview所处位置与size，思路如下。
-
-```
-func placeSubviews(
-    in bounds: CGRect,
-    proposal: ProposedViewSize,
-    subviews: Subviews,
-    cache: inout Void) {
-    
-    guard !subviews.isEmpty else { return }
-
-    let maxSize = maxSize(subviews: subviews)
-    let spacing = spacing(subviews: subviews)
-
-    let placementProposal = ProposedViewSize(width: maxSize.width, height: maxSize.height)
-    var nextX = bounds.minX + maxSize.width / 2
-
-    for index in subviews.indices {
-        subviews[index].place(
-            at: CGPoint(x: nextX, y: bounds.midY),
-            anchor: .center,
-            proposal: placementProposal)
-        nextX += maxSize.width + spacing[index]
-    }
-}
-```
-补充一下自定义的maxSize和spacing方法代码
-```
-func maxSize(subviews: Subviews) -> CGSize {
-    let subviewSizes = subviews.map { $0.sizeThatFits(.unspecified) }
-    let maxSize: CGSize = subviewSizes.reduce(.zero) { currentMax, subviewSize in
-        CGSize(
-            width: max(currentMax.width, subviewSize.width),
-            height: max(currentMax.height, subviewSize.height))
-    }
-
-    return maxSize
-}
- 
-func spacing(subviews: Subviews) -> [CGFloat] {
-    subviews.indices.map { index in
-        guard index < subviews.count - 1 else { return 0 }
-        return subviews[index].spacing.distance(
-            to: subviews[index + 1].spacing,
-            along: .horizontal)
-    }
-}
-```
-
-我们如果将Layout的代码整合起来，便得到了一个相同宽度的Stack，暂时命名为MyEqualWidth**H**Stack。
-我们如果以相同思路进行设计，也可以得到一个MyEqualWidth**V**Stack。
-由此我们引入我们下一个介绍的方法，ViewThatFits使用合适布局的方法。
-
-比如一种场景，MyEqualWidth**H**Stack容器中的元素无法水平容纳会超出屏幕，比如调整了Accessibility的字体大小，为了适配我们需要切换到MyEqualWidth**V**Stack，水平布局buttons的情况，没错该ViewThatFits出场了。
-```
-struct ViewThatFits<Content> : View where Content : View { ... }
-```
-
-```
-struct ButtonStack: View {
-    var body: some View {
-        ViewThatFits { // Choose the first view that fits.
-            MyEqualWidthHStack { // Arrange horizontally if it fits...
-                Buttons()
-            }
-            MyEqualWidthVStack { // ...or vertically, otherwise.
-                Buttons()
-            }
-        }
-    }
-}
-```
-这样我们可以让程序自动选择适合的Layout模式。
-如果程序可以根据适配情况自动选择，那么很显然我们也可以有很多方式进行手动切换。
-比如AnyLayout
-```
-var body: some View {
-    let layout = alwaysVLayout ? AnyLayout(HStack()) : AnyLayout(VStack())
-    layout {
-        Buttons()
-    }
-    .animation(.default)
-    ...
-    // alwaysVLayout.toggle()
-}
-```
-
-
-其他Layout相关可以参考相关Session，我们之后也会进一步更新。
-[Compose custom layouts with SwiftUI](https://developer.apple.com/videos/play/wwdc2022/10056/)
+其他 Layout 相关可以参考我们介绍布局的详细文章。
+[在 SwiftUI 中组合各种自定义布局](https://xiaozhuanlan.com/topic/1507368249)
 
 后续内容请持续关注我们，感谢大家的耐心阅读。
