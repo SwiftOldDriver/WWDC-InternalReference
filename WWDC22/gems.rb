@@ -2,5 +2,5 @@
 
 source "https://rubygems.org"
 
-gem 'danger', github: 'kemchenj/danger', ref: '885ba4811c3757cabaf26d914900081e36ac0afe'
+gem 'danger', github: 'kemchenj/danger', ref: 'ff8daae04bb69688356e653cac9bfadb704befec'
 gem 'faraday'
