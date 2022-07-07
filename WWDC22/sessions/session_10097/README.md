@@ -289,9 +289,14 @@ POST /v1/appClipAdvancedExperiences
 
 ## 总结
 
-在今年的 session 中，iOS 16 将 App Clip 的包体积大小提升到了 15 MB，给了工程师更多的空间来创造更多天马行空的功能。App Clip 诊断工具也帮助工程师更好地解决 App Clip 链接配置问题。CloudKit 和 keychain 让我们可以更大程度地复用 App 中的代码来让 App Clip 的开发变得轻松。App Clip experiences API 可自动化管理你的 advanced App Clip experiences。
+在今年的 session 中，iOS 16 将 App Clip 的包体积大小提升到了 15 MB，给了工程师空间来创造更多天马行空的功能。App Clip 诊断工具也帮助工程师更好地解决 App Clip 链接配置问题。CloudKit 和 keychain 让我们可以更大程度地复用 App 中的代码来让 App Clip 的开发变得轻松。App Clip experiences API 可自动化管理你的 advanced App Clip experiences。
 
 ![end](./images/end.png)
 
-TODO: 总结性，瞻望等补充。
+在今年 session 中，苹果工程师展示了一个名为 Toast 的 App Clip 例子。顾客扫描账单上面的二维码，在弹出的 App Clip 中即可完成结账。苹果工程师非常骄傲于这个流程的便捷和快速。但是在国内支付环境发展的如此好的中国，这一所谓的**快速**是比不上使用微信和支付宝的。
+
+![toast_app_clip](images/toast_app_clip.png)
+
+在去年我做 App Clip 内参的时候，我觉得 App Clip 可能会在点餐支付这种场景中大放异彩，但是这一年却始终趋于沉寂。因为摆在面前的还有一座大山，就是无法兼容 Android 用户。我希望在明年做有关 App Clip 内参的时候，我可以骄傲的跟大家介绍我们身边优秀的 App Clip。
+
 **我们，明年见！**
