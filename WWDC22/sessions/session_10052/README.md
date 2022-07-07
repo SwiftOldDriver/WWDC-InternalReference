@@ -6,23 +6,21 @@ session_ids: [10052]
 
 本文基于[Session 10052](https://developer.apple.com/videos/play/wwdc2022/10052/)梳理.
 
-
-今天很荣幸与大家分享 WWDC22 的 What's New in SwiftUI Session.
+今天很荣幸与大家分享 WWDC22 的 What's New in SwiftUI Session。
 一起来看看今年又有哪些更新呢？在开始之前先让我们回忆一下 **去年的更新内容**。
-1. SafeArea 内容，新增了 `.safeAreaInset` 来将任意 view 作为主 view 的 任意方向safeArea等.
-2. List 增强， 包括 `.refreshable` 的下拉刷新能力， `searchable` 的搜索能力 `.swipeActions` 的 row 侧滑功能，以及一些小的UI调整，比如支持 `.listRowSeparator` 隐藏等。
-3. Toobar 的增强，可以自定义 SwiftIUI 导航栏BarItem，自定义依附于键盘顶端的 view 等。
+1. SafeArea 内容，新增了 `.safeAreaInset` 来以某个 View 作为 safeArea。
+2. List 增强， 包括 `.refreshable` 的下拉刷新能力， `searchable` 的搜索能力 `.swipeActions` 的 row 侧滑功能，以及一些小的 UI 调整，比如支持 `.listRowSeparator` 隐藏等。
+3. Toobar 的增强，可以自定义 SwiftIUI 导航栏 BarItem，自定义依附于键盘顶端的 view 等。
 4. 新增了 `@FocusState` 关键字，手动控制 firstResponder 进行输入等操作。
 5. 新增 `AsyncImage` 进行异步图片网络请求。
-6. 增加了Text对于Mardown的支持等。
+6. 增加了 Text 对于 Mardown 的支持等。
 
-
-
-**而回到今年的 WWDC， 我们用一张图来完整展示今年SwiftUI的更新内容**
+**而回到今年的 WWDC， 我们用一张图来完整展示今年 SwiftUI 的更新内容**
 
 ![SwiftUI Update List](./images/wwdc22New.png)
 
-有没有发现特别感兴趣的主题，先别着急，我们分5大类来依次介绍一下。
+有没有发现特别感兴趣的主题，先别着急，我们分 5 大类来依次介绍一下。
+
 * SwiftChart
 * Navigation and windows
 * Advanced controls
@@ -31,15 +29,14 @@ session_ids: [10052]
 
 ---
 
-
-### 首先是介绍一下重头戏 SwiftChart
+## 首先是介绍一下重头戏 SwiftChart
 
 ![Charts Images](./images/chartall.png)
 上图看到的这些效果是 WWDC22，Apple 在介绍 Charts 时候所展示的效果，有没有很酷炫。
-在iOS16以前当我们需要绘制图表的时候，开源图表库使用最多是 25.6k Star的danielgindi/Charts 。
-支持常用的大部分图表，使用时候主要注意点在于xAsix与yAsix坐标设置，iOS部分使用 CoreGraphics 进行绘制，Android与iOS两套代码具有相同的API，很强大与便捷。
+在 iOS16 以前当我们需要绘制图表的时候，开源图表库使用最多是 25.6k Star 的 danielgindi/Charts 。
+支持常用的大部分图表，使用时候主要注意点在于 xAsix 与 yAsix 坐标设置，iOS 部分使用 CoreGraphics 进行绘制，Android与iOS两套代码具有相同的 API，很强大与便捷。
 可惜对于 Accessibility 的支持有限，Dynamic Type 与 VoiceOver 等处理也非常复杂，这点还是 Apple 原生的 SwiftUI Chart 更胜一筹。
-加上目前海外App，例如我司App主要所在的美国市场，有政策要求必须支持Accessibility，相信未来 SwiftUI Chart 对有海外需求的小伙伴也是有非常大的帮助的
+加上目前海外 App，例如我司 App 主要所在的美国市场，有政策要求必须支持 Accessibility，相信未来 SwiftUI Chart 对有海外需求的小伙伴也是有非常大的帮助的
   
 今天先进行一些简单实用介绍，比如常见的柱状图/折线图/基准线等。
 
@@ -108,7 +105,7 @@ Chart(date.source) { source in
 
 介绍完 SwiftUI Charts， 让我们一起看看 SwiftUI 对导航栏和窗口进行的 API 更新。
 
-### Navigation and windows
+## Navigation and windows
 
 SwiftUI刚推出时候，导航栏使用的是 `NavigationView` 与 `NavigationButton` 的组合来进行跳转，使用 `@Environment (\.presentationMode)` 环境变量进行 `pop/dismiss` 返回。
 
@@ -116,7 +113,6 @@ SwiftUI刚推出时候，导航栏使用的是 `NavigationView` 与 `NavigationB
 
 不过这些只是 API 的改变，还是只能逐级页面跳转，我们无法方便操作导航栏堆栈，比如跳转多级页面后，直接返回中间的某一级别页面。
 今年这个功能它来了～
-
 
 > NavigationStack
 
@@ -136,7 +132,7 @@ NavigationStack {
     }
 }
 ```
-在iOS16之前，我们只能使用`NavigationView`来包裹`NavigationLink`来让其跳转。
+在 iOS16 之前，我们只能使用`NavigationView`来包裹`NavigationLink`来让其跳转。
 现在只需要将原本`NavigationView`所在位置替换为`NavigationStack`我们就获得了上面的一段代码，区别仅仅在于有了新的 modifier`.navigationDestination`可以统一处理跳转入口了，提升好像不明显啊， 我们期待的堆栈操作呢？
 别急，看下一段代码。
 ```swift
@@ -271,7 +267,7 @@ struct PartyPlanner: App {
 
 3.1 Form
 SwiftUI中的 `Form` 增加了新的style，当然 `Form` 会自动适配 iOS/iPadOS/macOS。
-```
+```swift
 Form {
     Section { 
         LabeledContent("Location") {
@@ -294,7 +290,7 @@ Form {
 图中可以看出，`formstyle` 对于 `Form` 的影响，这个例子中使用 `.grouped` 更加合适。
 
 除了 `Form` 的提升，作为最常用的 `Test` / `TextField` 也有些提升，属于很细节很重要的变化。让我们一起来看看 `lineLimit` 的提升。
-```
+```swift
 Text("Hello World")
     .lineLimt(2...3)
     
@@ -322,7 +318,7 @@ Text("\n\n")
 除了 `Text` 这种贴心好用的更新外，对于 `DatePicker` 也有些更新。
 `MultiDatePicker`, 看名字也可以理解，日期选择器支持多选啦～
 
-```
+```swift
 @State private var activityDates: Set<DateComponents>
 
 var body: some View {
@@ -335,7 +331,7 @@ var body: some View {
 日期选择代码和逻辑比较简答，便不过多介绍，我们继续来看一下好玩的新东西，我姑且翻译成 ‘状态聚合’（Mixed-state）。
 这个功能可以将多种相同类型的 `View` 进行组合，统一管理.
 我们以 `Toggle` 为例，创建四个 `Toogle`, 而后进行 ‘状态聚合’。 
-```
+```swift
 DisclosureGroup {
     Toggle("Balloons", isOn: $includeBalloons)
     Toggle("Confetti", isOn: $includeConfetti)
@@ -356,7 +352,7 @@ DisclosureGroup {
 另外 SwiftUI 作为跨平台语言，`DisclosureGroup` 也支持 macOS。
 得益于 SwiftUI 的 View tree 机制，很多 modifier 都具有 Environment 的特性，方便批量设置，比如接下来介绍的 `toggleStyle`。
 
-```
+```swift
 @State private var useSwiftHashtag = false
 @State private var usePartyHashtag = false
 @State private var useChartsHashtag = false
@@ -385,7 +381,7 @@ var body: some View {
 
 `Stepper` 新增 `format` 能力， 支持number/百分比等13种类型。
 且自动适配 macOS 支持数字填写，iOS 为 +- 按钮，watchOS 也有对应适配。
-```
+```swift
 Stepper(value: $value,
         step: step,
         format: .number) {
@@ -396,7 +392,7 @@ Stepper(value: $value,
 
 下一个组件，是先在 macOS 上使用的，刚刚登陆 iOS / iPadOS 平台。
 那就是 `Table`， 话不多说，直接上代码和图片。
-```
+```swift
 @State private var attendees: [Attendee]
 
 var body: some View {
@@ -426,13 +422,13 @@ var body: some View {
 }
 ```
 ![image](./images/table.png)
-不过我认为在 iOS 中仍然有许多不足支持，比如默认只显示首列 `TableColumn`，在iPad和Mac中才会展开，如果在 iOS 系统中支持左右滑动也许效果会更好。
+不过我认为在 iOS 中仍然有许多不足支持，比如默认只显示首列 `TableColumn`，在 iPad 和 Mac 中才会展开，如果在 iOS 系统中支持左右滑动也许效果会更好。
 另外 `Table` 提供了`contextMenu`的点击事件处理，可以直接在屏幕 popup 一个菜单选项。
 支持与 `List` 类似的 `searchable` modifier， 甚至更强大。
 
 除此之外还有些 `Toobar` 的更新，我们简单介绍一下。
 iOS16之前的 `.toobar` 提供了自定义导航栏左右按钮，以及键盘顶部跟随等选项, 为我们提供了很多便捷， 今年在此基础上进一步加强，不过更多在 iPad 上。
-```
+```swift
 Table(attendees, selection: $selection) {
     ...
 }
@@ -454,14 +450,13 @@ Table(attendees, selection: $selection) {
 [What's new in iPad app design](https://developer.apple.com/videos/play/wwdc2022/10009/)
 [SwiftUI on the Mac: Build the fundamentals](https://developer.apple.com/videos/play/wwdc2021/10062/)
 
-
 上面提到的大部分更新都是对已有内容的更新。
 让我们看点新出的内容，`ShareLink`。
 
-### Sharing
+## Sharing
 
 新推出了 `ShareLink` API，来使用系统的分享功能，与 UIKit 中的 UIActivityViewController 所提供的能力类似，现在可以在 SwiftUI 中使用 `ShareLink` 来做了， 同时可以自动在多平台以不同的 UI 进行适配。
-```
+```swift
 Gallery( ... )
     .toobar {
         ShareLink(
@@ -475,7 +470,7 @@ Gallery( ... )
 图中介绍了相同代码，在 iOS / watchOS/ macOS 中所呈现的不同形态。
 分享是相互的，可以将数据向外分享，自然也可以从外部向App传递，与之对应的便是 `dropDestination` 来接受外部传入的数据，默认支持 `String, Data, URL, Attributed String, Image` 等类型的数据。
 
-```
+```swift
 Gallery( ... )
     .dropDestination(
         payloadType: Image.self
@@ -492,14 +487,14 @@ Gallery( ... )
 
 <!---->介绍SF symbol（），扩展SF Symbol字体让普通图片也可以，但是Shadows不足了。
 
-### Graphics and layout
+## Graphics and layout
 提到 Graphics，那必须先介绍一下 SF Symbol, 今年已经更新到 4.0 beta 版本。
 SF Symbol 现在拥有4000+的图标，可以和 Apple 的文字系统无缝集成，可以跟随 Dynamic Type 进行无损的放大缩小， 我们一些常用的图标，箭头，形状，天气，健康，媒体等均内置与系统中。
 ![image](./images/sfSymbol.png)
 SF Symbol 有 Mac 版 App，需要的小伙伴可以自行[下载](https://developer.apple.com/sf-symbols/)。
 在系统中使用 SF Symbol 只需要 使用 `Image(systemName: "SF Symbol Name")` 即可。
 而今年对 SF Symbol 新增了阴影效果与渐变效果，代码如下。
-```
+```swift
 struct CalendarIcon: View {
     var body: some View {
         VStack {
