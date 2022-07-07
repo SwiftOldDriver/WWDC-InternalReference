@@ -1,7 +1,10 @@
-# WWDC22 What's New In SwiftUI
-# (WWDC22)
+---
+session_ids: [10052]
+---
 
-稍后了解完今年的新内容后如果想回顾去年的视频，传送门 [WWDC21 What's New in SwiftUI]() 。
+# Session 10052 - What's New In SwiftUI
+
+本文基于[Session 10052](https://developer.apple.com/videos/play/wwdc2022/10052/)梳理.
 
 
 今天很荣幸与大家分享 WWDC22 的 What's New in SwiftUI Session.
