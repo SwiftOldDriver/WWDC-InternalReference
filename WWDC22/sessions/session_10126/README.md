@@ -6,7 +6,7 @@ session_ids: [10126]
 
 本文基于[Session 10126](https://developer.apple.com/videos/play/wwdc2022/10126)梳理
 
-> 作者：员凯，iOS开发，在大前端的路上一去不复返，《ARKit开发实战》作者，最近在折腾音视频相关的内容[GitHub](https://github.com/kayyyuan)。
+> 作者：员凯，端侧开发，在大前端的路上一去不复返，《ARKit开发实战》作者，最近在折腾音视频相关的内容。
 
 ## 前言
 
@@ -222,7 +222,7 @@ override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 
 #### （4）EXIF标签
 
-和相机相关的最后一个更新点就是可以读取EXIF标签，EXIF全拼是Exchangeable Image File，翻译过来是可交换图像文件，包含了数码相机照片的很多信息，比如白平衡、光圈、快门、日期等。与图像相关的信息，都会保存在ARFrame中，所以直接调用frame.exifData就可以获取到一个字典，字典就包含了成对的信息。代码如下：
+和相机相关的最后一个更新点就是可以读取EXIF标签，EXIF全拼是Exchangeable Image File，翻译过来是可交换图像文件，包含了数码相机照片的很多信息，比如白平衡、光圈、快门、日期等，更详细的可参考[exifTool站点](https://exiftool.org/TagNames/EXIF.html)。与图像相关的信息，都会保存在ARFrame中，所以直接调用frame.exifData就可以获取到一个字典，字典就包含了成对的信息。代码如下：
 
 ```swift
 open class ARFrame : NSObject, NSCopying {
@@ -253,7 +253,7 @@ open class ARFrame : NSObject, NSCopying {
 | 0x829A | ExposureTime | 曝光时间、快门速度 | 0.01 |
 | 0x829D | FNumber | 光圈系数、光圈F值 | 1.8 |
 | 0x9209 | Flash | 闪光灯状态 | 0 |
-| 0xa405 | FocalLenIn35mmFilm | 假设为35mm相机的等效焦距，也称FocalLengthIn35mmFormat | 27，27mm代表广角镜头，200mm代表长焦镜头。<https://en.wikipedia.org/wiki/35_mm_equivalent_focal_length，https://zh.mungo.pro/photo/144749/，https://www.awaresystems.be/imaging/tiff/tifftags/privateifd/exif/focallengthin35mmfilm.html>， |
+| 0xa405 | FocalLenIn35mmFilm | 假设为35mm相机的等效焦距，也称FocalLengthIn35mmFormat | 27，27mm代表广角镜头，200mm代表长焦镜头 |
 | 0x920A | FocalLength | 镜头焦距，镜头物理焦距 | 4.25 |
 | 0x8827 | ISOSpeedRatings | ISO感光度 | （80） |
 | 0xA433 | LensMake | 镜头生产商 | Apple |
@@ -1126,3 +1126,14 @@ class ViewController: UIViewController
 RealityKit在WWDC2019发布第一个版本后，接着在WWDC2020、WWDC2021分别更新了1.5、2.0版本，其中1.5版本新增了Video Materials，允许将视频用作 RealityKit 中的材料，另外会使用LiDAR传感器进行场景理解，并改进了渲染调试，其余和ARKit4相关，就是面部跟踪适配更多设备、增加位置锚点；在2.0版本中优化了动画和材质，增加角色控制器，自定义ECS，并且可以在运行时生成资源。
 
 ## 参考链接（推荐阅读）
+
+1、[CMOS 摄像头的Skipping 和 Binning 模式](https://blog.csdn.net/lz0499/article/details/105890600)
+2、[35mm等效焦距](https://en.wikipedia.org/wiki/35_mm_equivalent_focal_length)
+3、[What’s New in ARKit 2](https://developer.apple.com/videos/play/wwdc2018/602/)
+4、[Introducing ARKit 3](https://developer.apple.com/videos/play/wwdc2019/604/)
+5、[Explore ARKit 4](https://developer.apple.com/videos/play/wwdc2020/10611/)
+6、[Explore ARKit 5](https://developer.apple.com/videos/play/wwdc2021/10073/)
+7、[What's new in RealityKit](https://developer.apple.com/videos/play/wwdc2020/10612)
+8、[Dive into RealityKit 2](https://developer.apple.com/videos/play/wwdc2021/10074/)
+9、[Interacting with App Clip Codes in AR](https://developer.apple.com/documentation/app_clips/interacting_with_app_clip_codes_in_ar)
+10、[WWDC20 10174 - App Clips 探索之旅](https://xiaozhuanlan.com/topic/4063519872)
