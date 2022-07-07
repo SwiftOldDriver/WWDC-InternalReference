@@ -55,7 +55,7 @@ App Clip 诊断工具使用 App Clip Code、Safari、iMessage 来检查，它也
 
 CloudKit 是一个框架，可以让您的应用访问存储在 iCloud 上的数据。到目前为止，CloudKit 还不能用于 App Clip。现有的 App Clip 大多数使用服务器来读取数据和资源。
 
-在 iOS 16，App Clip 也可以访问存储在 CloudKit 公共数据库中的数据和资源。现在开发者可以在 App Clip 中和 App Clip 复用相同的代码，访问相同的云端数据。
+在 iOS 16，App Clip 也可以访问存储在 CloudKit 公共数据库中的数据和资源。现在开发者可以在 App Clip 中复用 App 的相关代码，来访问云端数据。
 
 ![cloud_kit_relation](./images/cloud_kit_relation.png)
 
