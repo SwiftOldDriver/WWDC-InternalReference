@@ -4,15 +4,21 @@ session_ids: [10049]
 
 # Session 10049 - 探索 iOS 16 中 WKWebView 的新功能
 
-> 作者：Style 月月， iOS 程序媛，简书/掘金文章贡献者，目前任职于小米，侧重于海外相关业务
-
 本文是根据 WWDC22 中的 [What's new in WKWebView](https://developer.apple.com/videos/play/wwdc2022/10049/) 撰写，主要是了解 WKWebView 在 iOS 16 中的新增功能。
+
+> 作者：Style 月月， iOS 程序媛，简书/掘金文章贡献者，目前任职于小米，侧重于海外相关业务；
+>
+> 审核：
+>
+> 方春（JonyFang），老司机技术社区核心成员，现于 BILIBILI 负责直播稳定性及性能优化相关工作；
+>
+> 王浙剑（Damonwong），老司机技术社区负责人、《WWDC22 内参》主理人，目前就职于阿里巴巴。
 
 ## 引言
 
 针对 WKWebView 的介绍，这里就简单说明下，WKWebView 是 iOS 8 中新增的用于展示 H5 的 UI 控件，在 iOS 12 中全面推广用于替代 UIWebView。UIWebView 与 WKWebView 的架构上最大的区别是：UIWebView 的方法是`同步`的，而 WKWebView 的方法是`异步`的，所以相比而言 WKWebView 加载网页的性能是远优于 UIWebView 的。
 
-这里简单说下为什么是「同步」和「异步」的。首先需要了解什么是`跨进程通信`（Inter-Process Communication，IPC）。IPC 是多线程协作的基础，一般来说，IPC 至少需要 2 个进程参与，根据信息流动的方向，被称为`发送者`和`接受者`。在实际应用中，IPC 常被用于服务调用，而参与 IPC 的被称为调用者（客户端）和被调用者（服务端），如下所示
+这里简单说下为什么是「同步」和「异步」的。首先需要了解什么是`跨进程通信`（Inter-Process Communication，IPC）。IPC 是指两个进程的数据之间的交互，一般来说，IPC 至少需要 2 个进程参与，根据信息流动的方向，被称为`发送者`和`接受者`。在实际应用中，IPC 常被用于服务调用，而参与 IPC 的被称为调用者（客户端）和被调用者（服务端），如下所示
 ![简单的 IPC 图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.3/img/wwdc_session_10049/session_10049_25.jpg)
 
 多进程协作主要有以下优点：
@@ -21,7 +27,7 @@ session_ids: [10049]
 - 增强模块间的间隔，提高更强的安全保证
 - 提高应用的容错能力
 
-进程间通信分类主要分为`同步 IPC` 和`异步 IPC`。简单来说，同步 IPC 是指它的 IPC 操作会阻塞进程，知道该操作完成，这种方式典型的问题就是并发的处理。而异步 IPC 是指它的 IPC 操作是非阻塞的，进程只要发起一次操作即可返回，而不需要等待其完成，这种方式解决了同步中的并发问题。通常来说，大部分操作系统都会同时具备这两种 IPC，以满足不同的需求。基于上述理论，下面来分别对 WebView 的同步和异步做简单说明：
+进程间通信分类主要分为`同步 IPC` 和`异步 IPC`。简单来说，同步 IPC 是指它的 IPC 操作会阻塞进程，直到该操作完成，这种方式典型的问题就是并发的处理。而异步 IPC 是指它的 IPC 操作是非阻塞的，进程只要发起一次操作即可返回，而不需要等待其完成，这种方式解决了同步中的并发问题。通常来说，大部分操作系统都会同时具备这两种 IPC，以满足不同的需求。基于上述理论，下面来分别对 WebView 的同步和异步做简单说明：
 
 - 在使用 UIWebView 时，它和 App 处于同一个进程，加载页面所占的内存被计算为 App 内存的一部分。当 App 超过了系统分配的内存时，由于 UIWebView 的方法是 同步的，且处于同一个进程中，该进程会被阻塞，导致 App 被操作系统 Crash 掉，虽然我们可以监听系统的通知防止 App 被系统杀掉，但也会出现通知不够及时，或者来不及通知的情况，这就是 UIWebView 的弊端。
 - 对于 WKWebView，与 UIWebVIew 最大的变化就是多进程模型（即多进程组件）。当 WKWebVIew 在运行时，会从 App 内存中分离内存到单独的进程中，其核心模块运行在独立的进程中，与 App 进程保持独立。当 Web 的内存超过了系统分配给 WKWebView 的内存时，会导致 WKWebView 浏览器崩溃白屏，但 App 不会 Crash，此时 App 会收到系统通知，我们可以尝试去重新加载页面。
@@ -34,7 +40,7 @@ session_ids: [10049]
 - [探索 WKWebView 新增功能](https://xiaozhuanlan.com/topic/1352486079)，介绍了 UIWebView、WKWebView、SFSafariViewController 的使用方式，以及 iOS 15 中新增的功能。
 
 综合往期 WKWebView 的更新，绘制了以下更新的图示（包含本文新增的功能）：
-![WKWebView发展历程图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.6/img/wwdc_session_10049/session_10049_27.png)
+![WKWebView发展历程图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.9/img/wwdc_session_10049/session_10049_27.png)
 
 ## WKWebView 的新功能
 
@@ -138,7 +144,7 @@ webView.loadHTMLString(htmlString, baseURL: Bundle.main.resourceURL)
 
 > **使用场景**
 > 1、应用于 App 中通过 H5 上传图片的功能，便于核对信息的准确性；
-> 2、Fullacreen 结合 canvas 应用到 H5 页面游戏中，提升用户游戏体验。
+> 2、Fullscreen 结合 canvas 应用到 H5 页面游戏中，提升用户游戏体验。
 
 ### 新增 CSS 视口单位（CSS viewport units）
 
