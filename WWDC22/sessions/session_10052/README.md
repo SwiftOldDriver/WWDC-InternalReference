@@ -41,6 +41,7 @@ session_ids: [10052]
 今天先进行一些简单实用介绍，比如常见的柱状图/折线图/基准线等。
 
 1 柱状图( `BarMark` )
+
 ```swift
 Chart(partyTasksRemaining) { task in
     BarMark(
@@ -51,6 +52,7 @@ Chart(partyTasksRemaining) { task in
 ```
 
 2 折线图( `LineMark` )
+
 ```swift
 Chart(partyTasksRemaining) { task in
     LineMark(
@@ -62,6 +64,7 @@ Chart(partyTasksRemaining) { task in
 ```
 
 3 基准线( `RuleMark` )
+
 甚至可以为其添加文字说明 `.annotation(...)` 。
 ```swift
 Chart(partyTasksRemaining) { task in
@@ -77,6 +80,7 @@ Chart(partyTasksRemaining) { task in
 }
 ```
 除此之外还可以进行图表的叠加，只需要合理操作 Chart 数据源，即可实现
+
 ```swift
 Chart(date.source) { source in
     BarMark(x: .value("data", source.date, unit: .hour),                    
@@ -89,10 +93,12 @@ Chart(date.source) { source in
     RuleMark(y: .value("value", source.value))
 }
 ```
+
 ![Charts Images](./images/chartBarLine.png)
 
 ---
-上面是使用过原生API在10行左右即可实现的效果，对开发者真的非常友好，苹果之前在 iOS 内置的 Health app 中苹果开始大量使用图表，而现在开放成为开发者使用的framework。
+
+上面是使用过原生API在10行左右即可实现的效果，对开发者真的非常友好，苹果之前在 iOS 内置的 Health app 中苹果开始大量使用图表，而现在开放成为开发者使用的 framework。
 
 这很 Apple，会借鉴很多开源库，了解解决开发者的需求。
 比如早期 Apple 借鉴而推出的 UICollectionView，以及随着 Swift 推出的 Codable 等等，现在都在 iOS 开发领域抢夺了很多开源库的份额。
@@ -117,7 +123,7 @@ SwiftUI刚推出时候，导航栏使用的是 `NavigationView` 与 `NavigationB
 > NavigationStack
 
 听名字就知道他终于开放导航栏堆栈了，这赋予了我们比过去更简洁优雅的跳转方式。
-与过去 UIKit中 的`UINavigaitonViewController.viewControllers`类似。
+与过去 UIKit中 的 `UINavigaitonViewController.viewControllers` 类似。
 下面是代码的例子。
 
 ```swift
@@ -132,9 +138,11 @@ NavigationStack {
     }
 }
 ```
-在 iOS16 之前，我们只能使用`NavigationView`来包裹`NavigationLink`来让其跳转。
-现在只需要将原本`NavigationView`所在位置替换为`NavigationStack`我们就获得了上面的一段代码，区别仅仅在于有了新的 modifier`.navigationDestination`可以统一处理跳转入口了，提升好像不明显啊， 我们期待的堆栈操作呢？
+
+在 iOS16 之前，我们只能使用` NavigationView` 来包裹 `NavigationLink` 来让其跳转。
+现在只需要将原本 `NavigationView` 所在位置替换为 `NavigationStack` 我们就获得了上面的一段代码，区别仅仅在于有了新的 modifier `.navigationDestination` 可以统一处理跳转入口了，提升好像不明显啊， 我们期待的堆栈操作呢？
 别急，看下一段代码。
+
 ```swift
 @State private var selectedItems: [FoodItem] = []
 NavigationStack(path: $selectedItems) {
@@ -148,9 +156,11 @@ NavigationStack(path: $selectedItems) {
     }
 }
 ```
-可以看到这段代码与上段代码多了个`path:`与一个`FoodItem`数组。
+
+可以看到这段代码与上段代码多了个 `path:` 与一个 `FoodItem` 数组。
 SwiftUI 作为响应式编程语言，`var selectedItems: [FoodItem]` 便是与导航栏堆栈双向绑定的数组，跳转方式没变，但是我们现在可以操作这个数组来控制导航栏堆栈了。
-接下来看在二级页面`FoodDetailView`中具体操作堆栈的代码。
+接下来看在二级页面 `FoodDetailView` 中具体操作堆栈的代码。
+
 ```swift
 struct FoodDetailView: View {
     let item: foodItem
@@ -193,6 +203,7 @@ struct FoodDetailView: View {
             })
     }
 ```
+
 效果如图。
 ![image](./images/presentationDetents.gif)
 
@@ -216,6 +227,7 @@ struct FoodDetailView: View {
 之前使用 SwiftUI 来构建程序主页面时候，一般来说使用 `WindowGroup` ，可以生成多个窗口以允许对应用程序的数据进行不同的透视。
 今年新增了 `Window` 容器，为 Mac 的 app 声明一个唯一的窗口，切支持快捷键打开，同时为其提供了较多的 modifier，例如默认大小/位置/可调整大小等等。
 示例代码如下。
+
 ```swift
 @main
 struct PartyPlanner: App {
@@ -232,15 +244,17 @@ struct PartyPlanner: App {
     }
 }
 ```
+
 示例中Window可以使用快捷键 Command + 0 单独唤醒，设置了默认尺寸与位置。
 其使用场景更适合作为一个独立且较小的辅助来窗口使用。
-如果对于Scene和window有兴趣，可以参考我们的另一片文章
+如果对于 Scene 和 window 有兴趣，可以参考我们的另一片文章
 [将多窗口引入 SwiftUI 应用](https://xiaozhuanlan.com/topic/3529016874)
 
 当然 macOS 的更新不止于此，SwiftUI 的能力也不限于一个平台，比如上段代码中的 `BudgetView` , 自定义的 SwiftUI View，也可以在不修改代码的情况下，跨平台的支持 iOS / iPadOS 等。
 
 macOS 除了新增独立辅助窗口外，也新增了 Menubar 组件，可以展示在系统桌面右上角的位置  `MenuBarExtra`。
 话不多说，上代码～
+
 ```swift
 @main
 struct PartyPlanner: App {
@@ -251,13 +265,14 @@ struct PartyPlanner: App {
     .menuBarExtraStyle(.window)
 }
 ```
+
 ![image](./images/macMenubar.png)
 
 需要额外提一下的地方是， MenuBarExtra 可以独立运行， 也就是说 App 可以不唤醒 WindowGroup 甚至没有 代码中没有 WindowGroup ，而独立运行。
 
 说了这么多，SwiftUI 对于跨平台的支持真是不遗余力，各位小伙伴要不要考虑在公司为技术发言为自己发言，将自己的 App 做成跨平台项目？
 
-关于这方面的Xcode支持，可以参照以下视频，也可以持续关注我们后续相关专题更新。
+关于这方面的 Xcode 支持，可以参照以下视频，也可以持续关注我们后续相关专题更新。
 [What's new in Xcode](https://developer.apple.com/videos/play/wwdc2022/110427/)
 [Use Xcode to develop a multiplatform app](https://developer.apple.com/videos/play/wwdc2022/110371/)
 
@@ -267,6 +282,7 @@ struct PartyPlanner: App {
 
 3.1 Form
 SwiftUI中的 `Form` 增加了新的style，当然 `Form` 会自动适配 iOS/iPadOS/macOS。
+
 ```swift
 Form {
     Section { 
@@ -286,10 +302,12 @@ Form {
 }
 .formStyle(.grouped)
 ```
+
 ![image](./images/formStyleGroup.png)
 图中可以看出，`formstyle` 对于 `Form` 的影响，这个例子中使用 `.grouped` 更加合适。
 
 除了 `Form` 的提升，作为最常用的 `Test` / `TextField` 也有些提升，属于很细节很重要的变化。让我们一起来看看 `lineLimit` 的提升。
+
 ```swift
 Text("Hello World")
     .lineLimt(2...3)
@@ -297,6 +315,7 @@ Text("Hello World")
 TextField("Description", text: $description, axis: .vertical)
     .lineLimit(5...10)
 ```
+
 过去 `lineLimt` 只支持一个常数，限制其最高行数，限制也可以限制最低行数，让我们在一个例子中看一下其作用。
 
 ![image](./images/linelimit.png)
@@ -304,6 +323,7 @@ TextField("Description", text: $description, axis: .vertical)
 可见左侧截图中黑色框范围内，出现了 Item 没有对齐的现象，原因在于副标题文本长度的不确定。
 而右侧使用 `lineLimit(2...2)` 将行数锁定为2行来优雅简单的解决这个问题。
 如果是 iOS16 之前，就需要使用类似如下的代码思路来解决。
+
 ```swift
 Text("\n\n")
     .frame(maxWidth: .infinity)
@@ -313,6 +333,7 @@ Text("\n\n")
     }
     
 ```
+
 这便是使用 `overlay` / `background` 之类的思路来做两层 `Text`。
 
 除了 `Text` 这种贴心好用的更新外，对于 `DatePicker` 也有些更新。
@@ -325,12 +346,14 @@ var body: some View {
     MultiDatePicker("Dates", selection: $activityDates)
 }
 ```
+
 如图所示
 ![image](./images/datePicker.png)
 
-日期选择代码和逻辑比较简答，便不过多介绍，我们继续来看一下好玩的新东西，我姑且翻译成 ‘状态聚合’（Mixed-state）。
+日期选择代码和逻辑比较简答，便不过多介绍，我们继续来看一下好玩的新东西，我姑且翻译成 ‘状态聚合’（ Mixed-state ）。
 这个功能可以将多种相同类型的 `View` 进行组合，统一管理.
 我们以 `Toggle` 为例，创建四个 `Toogle`, 而后进行 ‘状态聚合’。 
+
 ```swift
 DisclosureGroup {
     Toggle("Balloons", isOn: $includeBalloons)
@@ -346,6 +369,7 @@ DisclosureGroup {
     ])
 }
 ```
+
 ![](./images/toggles.gif)
 
 另外 `DisclosureGroup` 也支持风格的自定义，需要继承 `DisclosureGroupStyle`，如果有兴趣可以持续关注我们后续文章。
@@ -374,13 +398,15 @@ var body: some View {
     .buttonStyle(.bordered)
 }
 ```
+
 ![image](./images/toggleStyle(.button).png)
-代码中创建了4个 Toggle， 分为两行。
+代码中创建了 4 个 Toggle， 分为两行。
 右侧截图与左侧截图相比，只是多了一行 `.toggleStyle(.button)`。
 除此之外 `Menu`/`Picker` 也新增了多种 `style`， 接下来我们继续看看其他控件，`Stepper`。
 
-`Stepper` 新增 `format` 能力， 支持number/百分比等13种类型。
+`Stepper` 新增 `format` 能力， 支持 number / 百分比等13种类型。
 且自动适配 macOS 支持数字填写，iOS 为 +- 按钮，watchOS 也有对应适配。
+
 ```swift
 Stepper(value: $value,
         step: step,
@@ -388,10 +414,12 @@ Stepper(value: $value,
     Text("Current value: \(value), step: \(step)")
 }
 ```
+
 ![stepper](./images/Stepper.png)
 
 下一个组件，是先在 macOS 上使用的，刚刚登陆 iOS / iPadOS 平台。
 那就是 `Table`， 话不多说，直接上代码和图片。
+
 ```swift
 @State private var attendees: [Attendee]
 
@@ -421,6 +449,7 @@ var body: some View {
     }
 }
 ```
+
 ![image](./images/table.png)
 不过我认为在 iOS 中仍然有许多不足支持，比如默认只显示首列 `TableColumn`，在 iPad 和 Mac 中才会展开，如果在 iOS 系统中支持左右滑动也许效果会更好。
 另外 `Table` 提供了`contextMenu`的点击事件处理，可以直接在屏幕 popup 一个菜单选项。
@@ -428,6 +457,7 @@ var body: some View {
 
 除此之外还有些 `Toobar` 的更新，我们简单介绍一下。
 iOS16之前的 `.toobar` 提供了自定义导航栏左右按钮，以及键盘顶部跟随等选项, 为我们提供了很多便捷， 今年在此基础上进一步加强，不过更多在 iPad 上。
+
 ```swift
 Table(attendees, selection: $selection) {
     ...
@@ -440,6 +470,7 @@ Table(attendees, selection: $selection) {
     }
 }
 ```
+
 ![](./images/iPadToobar.png)
 
 `ToolbarItemPlacement` 新增了 `secondaryAction` 类型，开发者进行导航栏按钮预设后，允许用户自己决定自己的导航栏按钮的顺序位置等。
@@ -456,6 +487,7 @@ Table(attendees, selection: $selection) {
 ## Sharing
 
 新推出了 `ShareLink` API，来使用系统的分享功能，与 UIKit 中的 UIActivityViewController 所提供的能力类似，现在可以在 SwiftUI 中使用 `ShareLink` 来做了， 同时可以自动在多平台以不同的 UI 进行适配。
+
 ```swift
 Gallery( ... )
     .toobar {
@@ -465,6 +497,7 @@ Gallery( ... )
         )
     }
 ```
+
 ![image](./images/share.png)
 
 图中介绍了相同代码，在 iOS / watchOS/ macOS 中所呈现的不同形态。
@@ -479,21 +512,22 @@ Gallery( ... )
         return !receivedImage.isEmpty
     }
 ```
+
 其中 `payloadType` 为所接受的数据类型，方法闭包所跟随的闭包类型为 `([Transferable], CGPoint) async -> Bool`, 我们只需要获取到元组中第一个元素即可取得传递进来的数据。
 从 API 可以看到，数据需要遵守 `Transferable`，其实只需要遵守此协议，自定义类型的数据也可以接受传递。
 详情参照 [Meet Transferable](https://developer.apple.com/videos/play/wwdc2022/10062/)
 
 介绍完分享功能，接下来介绍一下 SwiftUI 在图形和布局的更新。
 
-<!---->介绍SF symbol（），扩展SF Symbol字体让普通图片也可以，但是Shadows不足了。
-
 ## Graphics and layout
+
 提到 Graphics，那必须先介绍一下 SF Symbol, 今年已经更新到 4.0 beta 版本。
-SF Symbol 现在拥有4000+的图标，可以和 Apple 的文字系统无缝集成，可以跟随 Dynamic Type 进行无损的放大缩小， 我们一些常用的图标，箭头，形状，天气，健康，媒体等均内置与系统中。
+SF Symbol 现在拥有 4000+ 的图标，可以和 Apple 的文字系统无缝集成，可以跟随 Dynamic Type 进行无损的放大缩小， 我们一些常用的图标，箭头，形状，天气，健康，媒体等均内置与系统中。
 ![image](./images/sfSymbol.png)
 SF Symbol 有 Mac 版 App，需要的小伙伴可以自行[下载](https://developer.apple.com/sf-symbols/)。
 在系统中使用 SF Symbol 只需要 使用 `Image(systemName: "SF Symbol Name")` 即可。
 而今年对 SF Symbol 新增了阴影效果与渐变效果，代码如下。
+
 ```swift
 struct CalendarIcon: View {
     var body: some View {
@@ -510,10 +544,11 @@ struct CalendarIcon: View {
     }
 }
 ```
+
 ![image](./images/backgroundStyle.png)
 ![](./images/sysymbols.png)
 
-示例中蓝色的背景使用 `backgroundStyle` 带有了渐变效果，另外 SF Symbol 的图片也带有了阴影效果，这些都是新的modifier，他们使图像更立体，更时尚，我们都知道苹果的设计，几乎引领了手机 UI 的设计，也许这种图像效果接下来就是所流行的。
+示例中蓝色的背景使用 `backgroundStyle` 带有了渐变效果，另外 SF Symbol 的图片也带有了阴影效果，这些都是新的 modifier，他们使图像更立体，更时尚，我们都知道苹果的设计，几乎引领了手机 UI 的设计，也许这种图像效果接下来就是所流行的。
 
 说完图像，我们最后说说布局。
 
@@ -524,6 +559,7 @@ struct CalendarIcon: View {
 好在今年一切都有了变化，我们先来介绍新的 `Grid`。
 
 `Grid` 提供了一种新的布局方式，不再局限于 `LazyVGrid/LazyHGrid`，开放了 `GridRow` 与 `.gridCellColumns(count)`。
+
 ```swift
 var body: some View {
     Grid {
@@ -538,8 +574,9 @@ var body: some View {
     }
 }
 ```
+
 ![image](./images/layout.png)
-可以查看到代码中，任务头像与名字的cell（NameHeadline），占用两列cell宽度。
+可以查看到代码中，任务头像与名字的 cell（NameHeadline），占用两列cell宽度。
 日历占用一个cell（CalendarIcon）宽度，四种符号占用一个cell（SymbolGrid）的空间。
 这种大小不相同布局，过去 `LazyV/HGrid` 过去便无法直接做到，现在只需要几行就可以优雅设置，实在是太棒了。
 
