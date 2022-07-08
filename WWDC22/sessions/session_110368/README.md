@@ -6,7 +6,7 @@ session_ids: [110368,110369]
 
 ## 前言
 
-2021 年 WWDC 上苹果推出了文档编译器 Swift-DocC（以下简称 DocC），为开发者们提供了全新的官方文档开发工具，并于 10 月底将 DocC 开源。一年过去了，让我们看看苹果官方以及社区为 DocC 加了哪些新东西吧。文中使用的 Slothy Demo 工程可以看这里：https://github.com/WAMaker/Slothy
+2021 年 WWDC 上苹果推出了文档编译器 Swift-DocC（以下简称 DocC），为开发者们提供了全新的官方文档开发工具，并于 10 月底将 DocC 开源。一年过去了，让我们看看苹果官方以及社区为 DocC 加了哪些新东西吧。文中使用的 Slothy Demo 工程可以看这里：https://github.com/WAMaker/Slothy。
 
 > 还没有了解过 DocC 的小伙伴可以先阅读去年的文章 [【WWDC21 10166/10167/10235/10236】DocC: 未曾设想的苹果文档](https://xiaozhuanlan.com/topic/0483621759) 再继续～
 >
@@ -138,7 +138,7 @@ let package = Package(
 )
 ```
 
-在命令行执行 ` swift package generate-documentation` 命令便可生成文档，执行 `swift package --disable-sandbox preview-documentation --target [target-name]` 命令便可起一个本地服务预览文档。
+在命令行执行 `swift package generate-documentation` 命令便可生成文档，执行 `swift package --disable-sandbox preview-documentation --target [target-name]` 命令便可起一个本地服务预览文档。
 
 对于 Xcode 工程来说，依然可以在命令行执行 `xcodebuild docbuild` 生成文档。
 
@@ -188,17 +188,17 @@ public struct SlothView: View {
 ```json
 // 符号图文件
 {
-  	// 元数据包含了版本和生成器的信息
-		"metadata": {
-      	"formatVersion": {
+    // 元数据包含了版本和生成器的信息
+    "metadata": {
+        "formatVersion": {
             "major": 0,
             "minor": 5,
             "patch": 3
         },
         "generator": "Apple Swift version 5.7 (swiftlang-5.7.0.113.202 clang-1400.0.16.2)"
     },
-  	// 模块信息
-		"module": {
+    // 模块信息
+    "module": {
         "name": "Slothy",
         "platform": {
             "architecture": "x86_64",
@@ -214,11 +214,11 @@ public struct SlothView: View {
             }
         }
     },
-  	/// 符号信息
-		"symbols": [...],
+    /// 符号信息
+    "symbols": [...],
     /// 所有符号间的关系存储于此
-		"relationships": [
-      	{
+    "relationships": [
+        {
             // 关系类型
             "kind": "memberOf",
             "source": "s:7SwiftUI4ViewPAAE17searchSuggestions_2inQrAA10VisibilityO_AA06SearchE9PlacementV3SetVtF::SYNTHESIZED::s:6Slothy9SlothViewV",
@@ -237,12 +237,12 @@ public struct SlothView: View {
 
 ```json
 {
-  	// 符号类型
+    // 符号类型
     "kind": {
         "identifier": "swift.property",
         "displayName": "Instance Property"
     },
-  	// 符号唯一标识
+    // 符号唯一标识
     "identifier": {
         "precise": "s:6Slothy9SlothViewV4bodyQrvp",
         "interfaceLanguage": "swift"
@@ -251,7 +251,7 @@ public struct SlothView: View {
         "SlothView",
         "body"
     ],
-  	// 符号名
+    // 符号名
     "names": {
         "title": "body",
         "subHeading": [
@@ -286,7 +286,7 @@ public struct SlothView: View {
             }
         ]
     },
-  	// 文档注释
+    // 文档注释
     "docComment": {
         "lines": [
             {
@@ -379,9 +379,9 @@ public struct SlothView: View {
             "spelling": " }"
         }
     ],
-  	// 访问级别
+    // 访问级别
     "accessLevel": "public",
-  	// 文件路径
+    // 文件路径
     "location": {
         "uri": "file:///Users/wamaker/10_Projects/Slothy/Slothy/SlothView.swift",
         "position": {
