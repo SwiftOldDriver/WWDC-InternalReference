@@ -64,8 +64,8 @@ Chart(partyTasksRemaining) { task in
 ```
 
 3 基准线( `RuleMark` )
-
 甚至可以为其添加文字说明 `.annotation(...)` 。
+
 ```swift
 Chart(partyTasksRemaining) { task in
     AnyCharts{ ... }
@@ -79,6 +79,7 @@ Chart(partyTasksRemaining) { task in
     )
 }
 ```
+
 除此之外还可以进行图表的叠加，只需要合理操作 Chart 数据源，即可实现
 
 ```swift
@@ -98,13 +99,13 @@ Chart(date.source) { source in
 
 ---
 
-上面是使用过原生API在10行左右即可实现的效果，对开发者真的非常友好，苹果之前在 iOS 内置的 Health app 中苹果开始大量使用图表，而现在开放成为开发者使用的 framework。
+上面是使用过原生 API 在 10 行左右即可实现的效果，对开发者真的非常友好，苹果之前在 iOS 内置的 Health app 中苹果开始大量使用图表，而现在开放成为开发者使用的 framework。
 
 这很 Apple，会借鉴很多开源库，了解解决开发者的需求。
 比如早期 Apple 借鉴而推出的 UICollectionView，以及随着 Swift 推出的 Codable 等等，现在都在 iOS 开发领域抢夺了很多开源库的份额。
 
-了解更多关于 Swift Charts 内容，请持续关注我们，后续我们也会更新 Charts 相关Session。
-心急的小伙伴可以先查看WWDC以下两个 Session 的视频提前了解。
+了解更多关于 Swift Charts 内容，请持续关注我们，后续我们也会更新 Charts 相关 Session。
+心急的小伙伴可以先查看 WWDC 以下两个 Session 的视频提前了解。
 
 [Hello Swift Charts](https://developer.apple.com/videos/play/wwdc2022/10136/)
 [SwiftCharts: Raise the bar](https://developer.apple.com/videos/play/wwdc2022/10137/)
@@ -113,9 +114,9 @@ Chart(date.source) { source in
 
 ## Navigation and windows
 
-SwiftUI刚推出时候，导航栏使用的是 `NavigationView` 与 `NavigationButton` 的组合来进行跳转，使用 `@Environment (\.presentationMode)` 环境变量进行 `pop/dismiss` 返回。
+SwiftUI 刚推出时候，导航栏使用的是 `NavigationView` 与 `NavigationButton` 的组合来进行跳转，使用 `@Environment (\.presentationMode)` 环境变量进行 `pop/dismiss` 返回。
 
-很快跳转下一层级所使用的 `NavigationButton` 就被 `NavigationLink` 所替代， 在iOS15中，返回页面所使用的 `\.presentationMode` 也被 `\.dismiss` 替代， 而在今年导航栏 `NavigationView` 也会被 `NavigationStack` 的替代。
+很快跳转下一层级所使用的 `NavigationButton` 就被 `NavigationLink` 所替代， 在 iOS15 中，返回页面所使用的 `\.presentationMode` 也被 `\.dismiss` 替代， 而在今年导航栏 `NavigationView` 也会被 `NavigationStack` 的替代。
 
 不过这些只是 API 的改变，还是只能逐级页面跳转，我们无法方便操作导航栏堆栈，比如跳转多级页面后，直接返回中间的某一级别页面。
 今年这个功能它来了～
@@ -123,7 +124,7 @@ SwiftUI刚推出时候，导航栏使用的是 `NavigationView` 与 `NavigationB
 > NavigationStack
 
 听名字就知道他终于开放导航栏堆栈了，这赋予了我们比过去更简洁优雅的跳转方式。
-与过去 UIKit中 的 `UINavigaitonViewController.viewControllers` 类似。
+与过去 UIKit 中的 `UINavigaitonViewController.viewControllers` 类似。
 下面是代码的例子。
 
 ```swift
@@ -139,7 +140,7 @@ NavigationStack {
 }
 ```
 
-在 iOS16 之前，我们只能使用` NavigationView` 来包裹 `NavigationLink` 来让其跳转。
+在 iOS16 之前，我们只能使用 `NavigationView` 来包裹 `NavigationLink` 来让其跳转。
 现在只需要将原本 `NavigationView` 所在位置替换为 `NavigationStack` 我们就获得了上面的一段代码，区别仅仅在于有了新的 modifier `.navigationDestination` 可以统一处理跳转入口了，提升好像不明显啊， 我们期待的堆栈操作呢？
 别急，看下一段代码。
 
@@ -207,14 +208,14 @@ struct FoodDetailView: View {
 效果如图。
 ![image](./images/presentationDetents.gif)
 
-代码中 `presentationDetents` 跟随参数是一个集合，示例中设置为 `[.large, .height(300)]` ，所以gif演示中，可以做到两段滑动，分别处于300和全屏状态。
+代码中 `presentationDetents` 跟随参数是一个集合，示例中设置为 `[.large, .height(300)]` ，所以 gif 演示中，可以做到两段滑动，分别处于 300 和全屏状态。
 
 说完 iOS 上的各种跳转，让我们看看 iPad 上特有的一些组件。
 
 > NavigationSplitView
 
-以前做过iPad适配的小伙伴应该对这个 Split 关键字并不陌生，提供了一个列表的分屏展示能力，在 UIKit 与之对应的组件有 `UISplitViewController`，而在 SwiftUI 的 AppKit 中有 `HSplitView` 。
-现在 iPad 设备中，SwiftUI终于为我们提供了类似的Components。
+以前做过 iPad 适配的小伙伴应该对这个 Split 关键字并不陌生，提供了一个列表的分屏展示能力，在 UIKit 与之对应的组件有 `UISplitViewController`，而在 SwiftUI 的 AppKit 中有 `HSplitView` 。
+现在 iPad 设备中，SwiftUI 终于为我们提供了类似的 Components。
 这里不过多介绍了，直接上代码和图例。
 ![NavigationSplitView](./images/navigationSplitView.png)
 
@@ -245,7 +246,7 @@ struct PartyPlanner: App {
 }
 ```
 
-示例中Window可以使用快捷键 Command + 0 单独唤醒，设置了默认尺寸与位置。
+示例中 Window 可以使用快捷键 Command + 0 单独唤醒，设置了默认尺寸与位置。
 其使用场景更适合作为一个独立且较小的辅助来窗口使用。
 如果对于 Scene 和 window 有兴趣，可以参考我们的另一片文章
 [将多窗口引入 SwiftUI 应用](https://xiaozhuanlan.com/topic/3529016874)
@@ -278,10 +279,10 @@ struct PartyPlanner: App {
 
 刚刚我们介绍了一些跳转与窗口等， 接下来介绍一下对视图控制的提升。
 
->  Advanced controls 高阶控制
+> Advanced controls 高阶控制
 
 3.1 Form
-SwiftUI中的 `Form` 增加了新的style，当然 `Form` 会自动适配 iOS/iPadOS/macOS。
+SwiftUI 中的 `Form` 增加了新的 style，当然 `Form` 会自动适配 iOS/iPadOS/macOS。
 
 ```swift
 Form {
@@ -321,7 +322,7 @@ TextField("Description", text: $description, axis: .vertical)
 ![image](./images/linelimit.png)
 这是使用 `LazyVGrid` 创建的 `View` , 每一个 Item 包含一个色块，一个标题和一段副标题，同时为副标题 `Text` 增加了浅橙色背景。
 可见左侧截图中黑色框范围内，出现了 Item 没有对齐的现象，原因在于副标题文本长度的不确定。
-而右侧使用 `lineLimit(2...2)` 将行数锁定为2行来优雅简单的解决这个问题。
+而右侧使用 `lineLimit(2...2)` 将行数锁定为 2 行来优雅简单的解决这个问题。
 如果是 iOS16 之前，就需要使用类似如下的代码思路来解决。
 
 ```swift
@@ -404,7 +405,7 @@ var body: some View {
 右侧截图与左侧截图相比，只是多了一行 `.toggleStyle(.button)`。
 除此之外 `Menu`/`Picker` 也新增了多种 `style`， 接下来我们继续看看其他控件，`Stepper`。
 
-`Stepper` 新增 `format` 能力， 支持 number / 百分比等13种类型。
+`Stepper` 新增 `format` 能力， 支持 number / 百分比等 13 种类型。
 且自动适配 macOS 支持数字填写，iOS 为 +- 按钮，watchOS 也有对应适配。
 
 ```swift
@@ -501,7 +502,7 @@ Gallery( ... )
 ![image](./images/share.png)
 
 图中介绍了相同代码，在 iOS / watchOS/ macOS 中所呈现的不同形态。
-分享是相互的，可以将数据向外分享，自然也可以从外部向App传递，与之对应的便是 `dropDestination` 来接受外部传入的数据，默认支持 `String, Data, URL, Attributed String, Image` 等类型的数据。
+分享是相互的，可以将数据向外分享，自然也可以从外部向 App 传递，与之对应的便是 `dropDestination` 来接受外部传入的数据，默认支持 `String, Data, URL, Attributed String, Image` 等类型的数据。
 
 ```swift
 Gallery( ... )
@@ -553,7 +554,7 @@ struct CalendarIcon: View {
 说完图像，我们最后说说布局。
 
 > Grid / Layout / ViewThatFits / AnyLayout
- 
+
 目前 SwiftUI 的瀑布流布局， 仅仅有 `LazyVGrid` 与 `LazyHGrid`, 无法随意的控制瀑布流中的每个元素大小/位置等。过去自定义 `UICollectionViewFlowLayout` 的一些布局效果/动画效果，几乎全部丧失。
 
 好在今年一切都有了变化，我们先来介绍新的 `Grid`。
@@ -574,10 +575,9 @@ var body: some View {
     }
 }
 ```
-
 ![image](./images/layout.png)
 可以查看到代码中，任务头像与名字的 cell（NameHeadline），占用两列cell宽度。
-日历占用一个cell（CalendarIcon）宽度，四种符号占用一个cell（SymbolGrid）的空间。
+日历占用一个 cell（CalendarIcon）宽度，四种符号占用一个cell（SymbolGrid）的空间。
 这种大小不相同布局，过去 `LazyV/HGrid` 过去便无法直接做到，现在只需要几行就可以优雅设置，实在是太棒了。
 
 如果有更复杂的需求，还可以自定义 `Layout`，与过去重写 `UICollectionFlowLayout` 比较接近, 遵守 `Layout` 协议， 提供每个元素所在位置，并且根据协议提供的子试图来返回父视图所需空间即可完成。
@@ -586,7 +586,6 @@ var body: some View {
 如果想要手动控制/切换布局，Apple 还提供了 AnyLayout 来进行支持动画的切换。
 本文作为介绍文章就不一一详细介绍了。
 
-其他 Layout 相关可以参考我们介绍布局的详细文章。
-[在 SwiftUI 中组合各种自定义布局](https://xiaozhuanlan.com/topic/1507368249)
+其他 Layout 相关可以参考我们介绍布局的详细文章，[在 SwiftUI 中组合各种自定义布局](https://xiaozhuanlan.com/topic/1507368249)。
 
 后续内容请持续关注我们，感谢大家的耐心阅读。
