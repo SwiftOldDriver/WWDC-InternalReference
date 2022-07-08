@@ -8,6 +8,7 @@ session_ids: [10052]
 
 今天很荣幸与大家分享 WWDC22 的 What's New in SwiftUI Session。
 一起来看看今年又有哪些更新呢？在开始之前先让我们回忆一下 **去年的更新内容**。
+
 1. SafeArea 内容，新增了 `.safeAreaInset` 来以某个 View 作为 safeArea。
 2. List 增强， 包括 `.refreshable` 的下拉刷新能力， `searchable` 的搜索能力 `.swipeActions` 的 row 侧滑功能，以及一些小的 UI 调整，比如支持 `.listRowSeparator` 隐藏等。
 3. Toobar 的增强，可以自定义 SwiftIUI 导航栏 BarItem，自定义依附于键盘顶端的 view 等。
@@ -34,7 +35,7 @@ session_ids: [10052]
 ![Charts Images](./images/chartall.png)
 上图看到的这些效果是 WWDC22，Apple 在介绍 Charts 时候所展示的效果，有没有很酷炫。
 在 iOS16 以前当我们需要绘制图表的时候，开源图表库使用最多是 25.6k Star 的 danielgindi/Charts 。
-支持常用的大部分图表，使用时候主要注意点在于 xAsix 与 yAsix 坐标设置，iOS 部分使用 CoreGraphics 进行绘制，Android与iOS两套代码具有相同的 API，很强大与便捷。
+支持常用的大部分图表，使用时候主要注意点在于 xAsix 与 yAsix 坐标设置，iOS 部分使用 CoreGraphics 进行绘制，Android 与 iOS 两套代码具有相同的 API，很强大与便捷。
 可惜对于 Accessibility 的支持有限，Dynamic Type 与 VoiceOver 等处理也非常复杂，这点还是 Apple 原生的 SwiftUI Chart 更胜一筹。
 加上目前海外 App，例如我司 App 主要所在的美国市场，有政策要求必须支持 Accessibility，相信未来 SwiftUI Chart 对有海外需求的小伙伴也是有非常大的帮助的
   
@@ -351,9 +352,9 @@ var body: some View {
 如图所示
 ![image](./images/datePicker.png)
 
-日期选择代码和逻辑比较简答，便不过多介绍，我们继续来看一下好玩的新东西，我姑且翻译成 ‘状态聚合’（ Mixed-state ）。
-这个功能可以将多种相同类型的 `View` 进行组合，统一管理.
-我们以 `Toggle` 为例，创建四个 `Toogle`, 而后进行 ‘状态聚合’。 
+日期选择代码和逻辑比较简答，便不过多介绍，我们继续来看一下好玩的新东西，我姑且翻译成 ‘状态聚合’(Mixed-state)。
+这个功能可以将多种相同类型的 `View` 进行组合，统一管理。
+我们以 `Toggle` 为例，创建四个 `Toogle`, 而后进行 ‘状态聚合’。
 
 ```swift
 DisclosureGroup {
@@ -457,7 +458,7 @@ var body: some View {
 支持与 `List` 类似的 `searchable` modifier， 甚至更强大。
 
 除此之外还有些 `Toobar` 的更新，我们简单介绍一下。
-iOS16之前的 `.toobar` 提供了自定义导航栏左右按钮，以及键盘顶部跟随等选项, 为我们提供了很多便捷， 今年在此基础上进一步加强，不过更多在 iPad 上。
+iOS16 之前的 `.toobar` 提供了自定义导航栏左右按钮，以及键盘顶部跟随等选项, 为我们提供了很多便捷， 今年在此基础上进一步加强，不过更多在 iPad 上。
 
 ```swift
 Table(attendees, selection: $selection) {
@@ -576,8 +577,8 @@ var body: some View {
 }
 ```
 ![image](./images/layout.png)
-可以查看到代码中，任务头像与名字的 cell（NameHeadline），占用两列cell宽度。
-日历占用一个 cell（CalendarIcon）宽度，四种符号占用一个cell（SymbolGrid）的空间。
+可以查看到代码中，任务头像与名字的 cell (NameHeadline)，占用两列 cell 宽度。
+日历占用一个 cell（CalendarIcon）宽度，四种符号占用一个 cell (SymbolGrid) 的空间。
 这种大小不相同布局，过去 `LazyV/HGrid` 过去便无法直接做到，现在只需要几行就可以优雅设置，实在是太棒了。
 
 如果有更复杂的需求，还可以自定义 `Layout`，与过去重写 `UICollectionFlowLayout` 比较接近, 遵守 `Layout` 协议， 提供每个元素所在位置，并且根据协议提供的子试图来返回父视图所需空间即可完成。
@@ -586,6 +587,7 @@ var body: some View {
 如果想要手动控制/切换布局，Apple 还提供了 AnyLayout 来进行支持动画的切换。
 本文作为介绍文章就不一一详细介绍了。
 
-其他 Layout 相关可以参考我们介绍布局的详细文章，[在 SwiftUI 中组合各种自定义布局](https://xiaozhuanlan.com/topic/1507368249)。
+其他 Layout 相关可以参考我们介绍布局的详细文章。
+[在 SwiftUI 中组合各种自定义布局](https://xiaozhuanlan.com/topic/1507368249)
 
 后续内容请持续关注我们，感谢大家的耐心阅读。
