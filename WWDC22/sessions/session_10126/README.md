@@ -129,7 +129,13 @@ if (configuration.videoFormat.isVideoHDRSupported){
 session.run(configuration)
 ```
 
-因为目前只有不做 binning 操作（non-binned）的 videoFormat 才支持 HDR，也就是说只有在 4K 模式下才支持开启 HDR，正常模式下调用 isVideoHDRSupported 会返回 false。另外开启 HDR 会有性能影响，所以要按需开启。
+按照苹果官方的说法，目前只有不做 binning 操作（non-binned）的 videoFormat 才支持 HDR，而默认情况下使用的 videoFormat 详细信息如下：
+
+```swift
+// 'vide'/'420f' 1920x1440, { 1- 60 fps}, HRSI:2016x1512, fov:66.488, binned, max zoom:94.50 (upscales @1.05), AF System:2, ISO:32.0-3072.0, SS:0.000020-1.000000, supports wide color, supports multicam
+```
+
+为旧格式，已做 binning 操作，所以不支持开启 HDR。如果想要使用支持 HDR 的 videoFormat，可遍历 ARWorldTrackingConfiguration 类的 supportedVideoFormats 属性（可参考下一小节最后的配图），然后调用 videoFormat.isVideoHDRSupported 判断是否支持 HDR（在 iOS16 中新增加的 videoFormat 基本都支持）。另外开启 HDR 会有性能影响，要按需开启。
 
 #### （2）高分辨率背景图像
 
@@ -164,7 +170,13 @@ H = 3024
 
 ![](images/ARKit6-6.png)
 
-可以看到最后一条显示，分辨率为 4K，帧率为 30，可支持的最大分辨率为 4224x2376，支持 HDR，也就是说在 4K 模式下可以获取高分辨率图像以及开启 HDR。
+对图中信息进行归类后，分为三类：
+
+- （1）第 1-6 条，1 组 1440p、1 组 1080p、1 组 720p，每组都重复 1 次，重复原因猜测可能是为了以后添加 120fps 格式。由于是旧有格式，且标明 binned ，所以不支持 HDR 和高分辨率图像模式；  
+- （2）第 7-10 条，分别为 1440p 30fps、1080p 30fps、720p 30fps、720p 60fps，这些非 4K 分辨率格式是新增加的，可支持 HDR 和高分辨率图像模式。由于不同设备性能规格不同，所以这一类中不同设备会支持不同数量的格式；  
+- （3）第 11 条，为 4K 30fps，支持 HDR 和高分辨率图像模式  
+
+读者可以在具体场景中，选择不同的格式。
 
 #### （3）配置 AVCaptureDevice
 
@@ -748,7 +760,7 @@ open var sceneDepth: ARDepthData? { get }
 open var smoothedSceneDepth: ARDepthData? { get }
 ```
 
-场景信息是对 capturedImage 进行一系列分析处理后，生成的与当前环境相关的信息，lightEstimate 表示环境光照条件，rawFeaturePoints 为点云，也就是特征点，前面 Object Scan 的结果就是一组特征点。capturedDepthData 和 capturedDepthDataTimestamp 属性是原深感相机捕捉到的深度信息以及相应的时间戳，也就是说只有在进行面部跟踪时可用，如果没有开启面部跟踪时则属性为nil，适用于前置摄像头，更新频率为15Hz。
+场景信息是对 capturedImage 进行一系列分析处理后，生成的与当前环境相关的信息，lightEstimate 表示环境光照条件，rawFeaturePoints 为点云，也就是特征点，前面 Object Scan 的结果就是一组特征点。capturedDepthData 和 capturedDepthDataTimestamp 属性是原深感相机捕捉到的深度信息以及相应的时间戳，也就是说只有在进行面部跟踪时可用，如果没有开启面部跟踪时则属性为 nil，适用于前置摄像头，更新频率为 15Hz。
 
 最后的 sceneDepth 和 smoothedSceneDepth 属性表示场景深度信息，依赖于 LiDAR 传感器。由于是在 2020 年发布的 iPhone 12 Pro 设备上才开始搭载 LiDAR 传感器，所以只能在 iOS14 及以上系统调用。ARDepthData 可以比之前更精确的预估环境深度数据，而且还增加了场景几何（Scene geometry），可以提供周围环境的拓扑图，同时还提供了对深度数据（ARDepthData）访问的 API。
 
@@ -1120,17 +1132,17 @@ class ViewController: UIViewController
 }
 ```
 
-RealityKit 在 WWDC2019 发布第一个版本后，接着在 WWDC2020、WWDC2021 分别更新了 1.5、2.0 版本，其中 1.5 版本新增了 Video Materials，允许将视频用作 RealityKit 中的材料，另外会使用 LiDAR 传感器进行场景理解，并改进了渲染调试，其余和 ARKit4 相关，就是面部跟踪适配更多设备、增加位置锚点；在 2.0 版本中优化了动画和材质，增加角色控制器以及对shader的支持，可以自定义 ECS，并且在运行时可以生成资源。
+RealityKit 在 WWDC2019 发布第一个版本后，接着在 WWDC2020、WWDC2021 分别更新了 1.5、2.0 版本，其中 1.5 版本新增了 Video Materials，允许将视频用作 RealityKit 中的材料，另外会使用 LiDAR 传感器进行场景理解，并改进了渲染调试，其余和 ARKit4 相关，就是面部跟踪适配更多设备、增加位置锚点；在 2.0 版本中优化了动画和材质，增加角色控制器以及对 shader 的支持，可以自定义 ECS，并且在运行时可以生成资源。
 
 ## 参考链接（推荐阅读）
 
-1、[CMOS 摄像头的 Skipping 和 Binning 模式](https://blog.csdn.net/lz0499/article/details/105890600)    
-2、[35mm 等效焦距](https://en.wikipedia.org/wiki/35_mm_equivalent_focal_length)    
-3、[What’s New in ARKit 2](https://developer.apple.com/videos/play/wwdc2018/602/)    
-4、[Introducing ARKit 3](https://developer.apple.com/videos/play/wwdc2019/604/)    
-5、[Explore ARKit 4](https://developer.apple.com/videos/play/wwdc2020/10611/)    
-6、[Explore ARKit 5](https://developer.apple.com/videos/play/wwdc2021/10073/)    
-7、[What's new in RealityKit](https://developer.apple.com/videos/play/wwdc2020/10612)    
-8、[Dive into RealityKit 2](https://developer.apple.com/videos/play/wwdc2021/10074/)    
-9、[Interacting with App Clip Codes in AR](https://developer.apple.com/documentation/app_clips/interacting_with_app_clip_codes_in_ar)    
-10、[WWDC20 10174 - App Clips 探索之旅](https://xiaozhuanlan.com/topic/4063519872)    
+1、[CMOS 摄像头的 Skipping 和 Binning 模式](https://blog.csdn.net/lz0499/article/details/105890600)  
+2、[35mm 等效焦距](https://en.wikipedia.org/wiki/35_mm_equivalent_focal_length)  
+3、[What’s New in ARKit 2](https://developer.apple.com/videos/play/wwdc2018/602/)  
+4、[Introducing ARKit 3](https://developer.apple.com/videos/play/wwdc2019/604/)  
+5、[Explore ARKit 4](https://developer.apple.com/videos/play/wwdc2020/10611/)  
+6、[Explore ARKit 5](https://developer.apple.com/videos/play/wwdc2021/10073/)  
+7、[What's new in RealityKit](https://developer.apple.com/videos/play/wwdc2020/10612)  
+8、[Dive into RealityKit 2](https://developer.apple.com/videos/play/wwdc2021/10074/)  
+9、[Interacting with App Clip Codes in AR](https://developer.apple.com/documentation/app_clips/interacting_with_app_clip_codes_in_ar)  
+10、[WWDC20 10174 - App Clips 探索之旅](https://xiaozhuanlan.com/topic/4063519872)  
