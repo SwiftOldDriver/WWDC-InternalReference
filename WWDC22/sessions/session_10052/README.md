@@ -576,6 +576,7 @@ var body: some View {
     }
 }
 ```
+
 ![image](./images/layout.png)
 可以查看到代码中，任务头像与名字的 cell (NameHeadline)，占用两列 cell 宽度。
 日历占用一个 cell（CalendarIcon）宽度，四种符号占用一个 cell (SymbolGrid) 的空间。
