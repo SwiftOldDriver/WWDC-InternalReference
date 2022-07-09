@@ -46,8 +46,6 @@ Rectangle()
     }
 ```
 
-另外，功能上也有些局限，比如没法支持多种类型的内容拖拽到我们的 app，比如第一个例子里，`onDrag` 只支持提供一个 `NSItemProvider`。
-
 为了解决这些问题，Apple 推出全新了 `Core Transferable` 框架。
 
 ## 概览
@@ -143,7 +141,7 @@ public struct CodableRepresentation<Item, Encoder, Decoder> : TransferRepresenta
 
 我们知道，当在两个不同的应用程序之间发送共享内容的时候，本质上是在传递二进制数据，因此，除了要提供发送内容与二进制数据相互转换的方法之外，还需要提供二进制数据对应的内容类型，这样接收方才能知道它们实际获得的是什么。
 
-UTType 就是用来描述数据类型的标识，它实际上是统一类型标识符（Uniform Type Identifiers, UTI）的封装。UTI 可以用来描述文件类型、内存中数据的类型或者其他实体的类型。UTI 的声明类似于继承的关系，比如下图中的 `public.jpeg` 也是属于图片类型 `public.image` 的一种。系统已经预知了大量常见的文件和数据类型，比如文本、图片、各种不同格式音视频，具体的可以查看这个[文档](https://developer.apple.com/documentation/uniformtypeidentifiers/uttype/system_declared_uniform_type_identifiers)。关于更多 UTI 的介绍，可以看[这里](https://developer.apple.com/videos/play/tech-talks/10696)。
+UTType 就是用来描述数据类型的标识，它实际上是统一类型标识符（Uniform Type Identifiers, UTI）的封装。UTI 可以用来描述文件类型、内存中数据的类型或者其他实体的类型。UTI 的声明类似于继承的关系，比如下图中的 `public.jpeg` 也是属于图片类型 `public.image` 的一种。系统已经预置了大量常见的文件和数据类型，比如文本、图片、各种不同格式音视频，具体的可以查看这个[文档](https://developer.apple.com/documentation/uniformtypeidentifiers/uttype/system_declared_uniform_type_identifiers)。关于更多 UTI 的介绍，可以看[这里](https://developer.apple.com/videos/play/tech-talks/10696)。
 
 ![](images/uttype.png)
 
@@ -158,6 +156,7 @@ struct Profile: Codable {
     var video: URL?
     var portrait: URL?
 }
+```
 
 我们来给它创建一个自定义的 UTI，首先在 Info.plist 创建自定义标识符的声明：
 
@@ -185,7 +184,7 @@ extension Profile: Transferable {
 
 现在 Profile 就支持了 `Transferable`。
 
-## `DataRepresentation`
+### `DataRepresentation`
 
 如果我们有一堆 Profile 需要归档成 CSV，那么我们可以用 `DataRepresentation`，只需要提供从 data 解析和生成 data 的方法：
 
@@ -206,7 +205,7 @@ extension ProfilesArchive: Transferable {
 }
 ```
 
-## `FileRepresentation`
+### `FileRepresentation`
 
 对于内存占用较大的数据，我们可以通过文件来共享，只需要给定文件内容的标识符，以及文件的路径：
 
@@ -224,7 +223,7 @@ struct Video: Transferable {
 }
 ```
 
-## `ProxyRepresentation`
+### `ProxyRepresentation`
 
 `ProxyRepresentation` 是用来把某个现有（已支持 Transferable 的）类型作为当前类型的一个 representation，比如上面的 `Profile`，有些复制粘贴的地方不支持这个 UTType，我们可以加一个表示文本类型的 `ProxyRepresentation`：
 
