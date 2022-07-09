@@ -235,13 +235,13 @@ open class MKMapItem: NSObject {
 
 只需要三个步骤就可以支持这个新功能，如下：
 
-1.设置 MKMapView 的 selectableMapFeatures 属性，指定哪些特征类型可被用户选择。
+第一步，设置 MKMapView 的 selectableMapFeatures 属性，指定哪些特征类型可被用户选择。
 
 ```Swift
 mapView. selectableMapFeatures = [. pointsOfInterest]
 ```
 
-2.实现 MKMapView 委托代理 MKMapViewDelegate 来处理选择事件，即 func mapView(_: MKMapView,viewFor annotation: MKAnnotation) -> MKAnnotationView? 方法  和 func mapView(_: MKMapView, didSelect annotation: MKAnnotation) 方法。
+第二步，实现 MKMapView 委托代理 MKMapViewDelegate 来处理选择事件，即 func mapView(_: MKMapView,viewFor annotation: MKAnnotation) -> MKAnnotationView? 方法  和 func mapView(_: MKMapView, didSelect annotation: MKAnnotation) 方法。
 
 ```Swift
 // 定义可选地图特征大头针样式
@@ -265,7 +265,7 @@ func mapView(_: MKMapView, didDeselect annotation: MKAnnotation) {
 }
 ```
 
-3.把 MKMapFeatureAnnotation 实例作为 init 参数传递给 MKMapItemRequest 实例，通过 MKMapItemRequest 获取用户界面中显示的额外地点信息。
+第三步，把 MKMapFeatureAnnotation 实例作为 init 参数传递给 MKMapItemRequest 实例，通过 MKMapItemRequest 获取用户界面中显示的额外地点信息。
 
 ```Swift
 func mapView(_: MKMapView, didDeselect annotation: MKAnnotation) {
