@@ -27,7 +27,7 @@ session_ids: [10049]
 - 增强模块间的间隔，提高更强的安全保证
 - 提高应用的容错能力
 
-进程间通信分类主要分为`同步 IPC` 和`异步 IPC`。简单来说，同步 IPC 是指它的 IPC 操作会阻塞进程，知道该操作完成，这种方式典型的问题就是并发的处理。而异步 IPC 是指它的 IPC 操作是非阻塞的，进程只要发起一次操作即可返回，而不需要等待其完成，这种方式解决了同步中的并发问题。通常来说，大部分操作系统都会同时具备这两种 IPC，以满足不同的需求。基于上述理论，下面来分别对 WebView 的同步和异步做简单说明：
+进程间通信分类主要分为`同步 IPC` 和`异步 IPC`。简单来说，同步 IPC 是指它的 IPC 操作会阻塞进程，直到该操作完成，这种方式典型的问题就是并发的处理。而异步 IPC 是指它的 IPC 操作是非阻塞的，进程只要发起一次操作即可返回，而不需要等待其完成，这种方式解决了同步中的并发问题。通常来说，大部分操作系统都会同时具备这两种 IPC，以满足不同的需求。基于上述理论，下面来分别对 WebView 的同步和异步做简单说明：
 
 - 在使用 UIWebView 时，它和 App 处于同一个进程，加载页面所占的内存被计算为 App 内存的一部分。当 App 超过了系统分配的内存时，由于 UIWebView 的方法是 同步的，且处于同一个进程中，该进程会被阻塞，导致 App 被操作系统 Crash 掉，虽然我们可以监听系统的通知防止 App 被系统杀掉，但也会出现通知不够及时，或者来不及通知的情况，这就是 UIWebView 的弊端。
 - 对于 WKWebView，与 UIWebVIew 最大的变化就是多进程模型（即多进程组件）。当 WKWebVIew 在运行时，会从 App 内存中分离内存到单独的进程中，其核心模块运行在独立的进程中，与 App 进程保持独立。当 Web 的内存超过了系统分配给 WKWebView 的内存时，会导致 WKWebView 浏览器崩溃白屏，但 App 不会 Crash，此时 App 会收到系统通知，我们可以尝试去重新加载页面。
@@ -398,15 +398,23 @@ WKContentRuleListStore.default().compileContentRuleList(forIdentifier: "ContentB
 
 ## 允许三方浏览器远程调试 Web （ Remote Web Inspector ）
 
-在这个功能之前，Apple 只允许在 Safari 中调试 App 中的内嵌 H5 页面。但在 iOS 16 中，您可以使用第三方浏览器在 debug 模式下，无需添加任何代码或更改任何代码就可调试 Web 页面，调试流程与 Safari 一样。相比之前单一的调试 Web 方式，这次增加了开发者更多的选择性，以及为跨端调试提供便利。
+如果您的应用具备 Web 浏览器权限，可以像 iOS 中的 Safari一样，开启 Web Inspector ，然后在 macOS Safari 的开发模式下调试 三方浏览器中的 Web 页面。
 
-> 注：Safari 调试内嵌 H5 必须在 debug 模式下进行，release 环境下无法进行调试
+在这个功能之前，苹果只允许 iOS 设备中自带的 Safari 在 Release 模式下，可以在 macOS 中调试，如下所示。
+![Web 调试窗口图示](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.10/img/wwdc_session_10049/session_10049_28.png)
+
+现在相当于给三方浏览器也开放了这个权限，使三方浏览器的发布版本调试变得更为便利。简单来说，就是在 iOS 16 之前， App如果想要调试 Web，只能在 Debug 模式下进行，而在 iOS 16 之后，我们的 App 如果具备浏览器权限，无论是 Debug 还是 Release 模式下，都可以调试 Web 页面了。
+
+> 注：
+> 1. MacOS 中的 Safari 调试内嵌 H5 必须在 debug 模式下进行，release 环境下无法进行调试。
+> 2. 苹果移动设备自动的 Safari 应用，可以随时在 macOS 中调试。
+> 3. 关于如何获取浏览器权限，这个目前官方并未说明，如果有这方面需要的朋友，建议可以联系 Apple 的工程师进行了解。
 
 **演示**
 
-> 下面是以 Safari 浏览器调试 Web 页面为例。
+> 下面是以 MacOS Safari 浏览器调试 iOS 设备 Safari 应用打开的 Web 页面为例。
 
-如果您的 App 中有内嵌 H5 页面，您可以通过 macOS 中的 Safari 调试 App 中的 Web 页面，其操作步骤如下：
+macOS 调试 Web 页面的操作步骤如下：
 
 - 首先在 iOS 设备中开启 Web Inspector（Web 检查器），路径为：`设置 - Safari - 高级 - Web Inspector`，如下所示：
 ![iOS 设备开启 Web 调试](https://cdn.jsdelivr.net/gh/chenjialin1016/cdn@v2.3/img/wwdc_session_10049/session_10049_21.jpg)
@@ -427,4 +435,4 @@ WKContentRuleListStore.default().compileContentRuleList(forIdentifier: "ContentB
 1. Web content interaction：新增了 3 种交互方式，分别是 full screen、20 种新增的 CSS 视口单位以及查找交互功能；
 2. Content blocking：新增了特定 URL 特定规则的拦截场景；
 3. Encrypted media：可以像在 macOS 中一样在 iPadOS App 中加密媒体资源；
-4. Remote Web Inspector：通过开启 Web 检查器，实现在第三方浏览器中调试 App 内嵌的 Web页面。
+4. Remote Web Inspector：通过在三方浏览器中开启 Web 检查器，实现 Release 环境下通过 macOS 中调试三方浏览器的 Web页面。
