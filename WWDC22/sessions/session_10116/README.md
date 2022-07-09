@@ -18,7 +18,7 @@ session_ids: [10116]
 
 `CKTool JS` 对于业务基于 `CloudKit` 的开发团队来说能够降低操作成本，并提供了拓展后台功能的可能性，建议仔细品读，`Apple` 也提供了示例代码，文末有贴上，有需要可以自取。
 
-本次 `WWDC` 还有其他关于 `CloudKit` 的更新内容可以移步 [WWDC22 10115/10119 - Optimize your use of Core Data and CloudKit / 优化 CoreData & CloudKit 实现](../session_10119/README.md)，其中也有涉及到 CloudKit 控制台的一些更新，建议阅读。
+本次 `WWDC` 还有其他关于 `CloudKit` 的更新内容可以移步 [WWDC22 10115/10119 - Optimize your use of Core Data and CloudKit / 优化 CoreData & CloudKit 实现](https://xiaozhuanlan.com/topic/5821964073)，其中也有涉及到 CloudKit 控制台的一些更新，建议阅读。
 
 ## 一、 介绍
 
@@ -42,21 +42,23 @@ session_ids: [10116]
 
 ![](images/004-readwrite.png)
 
-通过 `CKTool JS` 可以使用其 ID 或通过查询条件获取现有记录。也可以创建新记录更新记录。`CKTool JS` 为 `TypeScript` 提供了严格的类型定义。这些类型定义启用了编译检查，并可在支持的 `IDE` 中进行代码补全，让编辑 `CKTool JS` 代码更容易。
+通过 `CKTool JS` 可以使用 `recordName` 查询特定记录，或者通过 `查询条件` 批量查询。同时也可以创建与更新记录。`CKTool JS` 为 `TypeScript` 提供了严格的类型定义。这些类型定义启用了编译检查，并可在支持的 `IDE` 中进行代码补全，让编辑 `CKTool JS` 代码更容易。
 
 ### 1.4 npm 支持
 
 `CKTool JS` 支持了对 `Node.js` 和浏览器的支持。`CKTool JS` 作为 `npm` 包进行分发，可以轻易的在 `JavaScript` 项目中集成。
 
-这些 `package` 是以 `@apple/cltool.*` 开头的。这里的核心依赖库是 `@apple/cltool.database`。同时，为例与 `iCloud` 通讯，根据平台不同可选用 `@apple/cktool.target.nodejs`　和 `@apple/cktool.target.browser`。
+这些 `package` 是以 `@apple/cltool.*` 开头的。这里的核心依赖库是 `@apple/cltool.database`。同时，为了与 `iCloud` 通讯，根据平台不同可选用 `@apple/cktool.target.nodejs`　或 `@apple/cktool.target.browser`。
 
-`@apple/cltool.database` 依赖了另外三个核心库 `@apple/cktool.core`、`@apple/cktool.api.base`、`@apple/cktool.api.database`。
+`@apple/cltool.database` 依赖了另外三个核心库 `@apple/cktool.core`、`@apple/cktool.api.base`、`@apple/cktool.api.database`。具体结构如下图所示：
 
 ![](images/005-npm.png)
 
 ### 1.5 访问授权
 
-`CKTool JS` 要与 `iCloud` 通讯，首先需要授权。根据你需要的具体操作，你可能需要不同类型的授权：`Management Token` 或者 `User Token`。这两个 `Token` 都是从 `CloudKit 控制台`获取的。
+`CKTool JS` 要与 `iCloud` 通讯，首先需要授权。根据你需要的具体操作，你可能需要不同类型的授权：`Management Token` 或者 `User Token`。这两个 `Token` 都是从 `CloudKit 控制台`获取的。具体 `Token` 区别如下：
+
+![](images/014-tokens.jpg)
 
 * Management Token
   * 用于访问管理操作，并仅限于开发团队和用户。
@@ -64,9 +66,7 @@ session_ids: [10116]
 * User Token
   * 仅限于开发团队和特定容器，允许访问这些容器中的私有用户数据。
 
-![](images/014-tokens.jpg)
-
-> 要了解如何获取这些授权令牌，请查看[WWDC21 - Automate CloudKit tests with cktool and declarative schema](https://developer.apple.com/videos/play/wwdc2021/10118)。
+> 要了解如何获取这些授权 `Token`，请查看[WWDC21 - Automate CloudKit tests with cktool and declarative schema](https://developer.apple.com/videos/play/wwdc2021/10118)。
 
 ## 二、 配置 CKTool JS
 
@@ -76,11 +76,11 @@ session_ids: [10116]
 
 ![](images/006-schema.png)
 
-例如这里以国家和货币为例该怎么去设计 `RecordType` 呢？
+例如这里以国家和货币为例该怎么去设计 `RecordType` 呢？下图是 `Countries` 与 `Coins` 各自的 `RecordType`：
 
 ![](images/007-countrycoins.png)
 
-并将 `Countries` 与 `Coins` 通过 `isoCode - nation` 的对应关系绑定起来。
+同时货币与国家是存在关联关系的，为了描述这种关系，这里我们可以通过将国家编码 `isoCode` 存储在 `Coins` 的 `country` 字段中，使 `Countries` 与 `Coins` 形成如下图所示的关联关系：
 
 ![](images/008-relationship.png)
 
@@ -92,7 +92,7 @@ session_ids: [10116]
 
 ### 2.2 Container
 
-`Schema` 决定了数据存储的结构，这些数据存储的地方就是 `Container`。每个 `Container` 都有一个唯一的 ID 并且是与 `Developer Team` 绑定的。和我们平时开发分测试生产环境一样，`Container` 也分为了 `Development` 和 `Production` 环境。在 `Development` 环境中完成了 `Schema` 的设计调试，就可以将 `Schema` 发布到 `Producti` 环境了。
+`Schema` 决定了数据存储的结构，这些数据存储的地方就是 `Container`。每个 `Container` 都有一个唯一的 ID 并且是与 `Developer Team` 绑定的。和我们平时开发分测试生产环境一样，`Container` 也分为了 `Development` 和 `Production` 环境。在 `Development` 环境中完成了 `Schema` 的设计调试，就可以将 `Schema` 发布到 `Production` 环境了。
 
 ### 2.3 配置信息
 
@@ -133,7 +133,7 @@ const { createConfiguration } = require("@apple/cktool.target.nodejs");
 const { PromisesApi } = require("@apple/cktool.database");
 
 const configuration = createConfiguration();
-// 将 configuration 和 前面填写的令牌数据传给 API 对象
+// 将 configuration 和 前面填写的 Token 数据传给 API 对象
 const api = new PromisesApi({
     "configuration": configuration,
     "security": security
@@ -146,7 +146,7 @@ const api = new PromisesApi({
 
 ![](images/011-manageyourschema.png)
 
-在应用程序中，存储例如 2007 年发行的硬币之的信息。这枚硬币由铜和镍组成，价值 1/10 美元。在考虑了如何存储这些数据之后，决定将有关硬币成分的信息数据独立出来，即将硬币的铜百分比和镍的百分比分别存储在不同的 `Record` 中。
+在应用程序中，存储例如 2007 年发行的硬币之的信息。这枚硬币由铜和镍组成，价值 0.10 美元。在考虑了如何存储这些数据之后，决定将有关硬币成分的信息数据独立出来，即将硬币的铜百分比和镍的百分比分别存储在不同的 `Record` 中。
 
 ![](images/012-coinschema.png)
 
@@ -162,7 +162,7 @@ const api = new PromisesApi({
 
 ### 3.2 导入导出 Schema File
 
-`CKTool JS` 提供了 `exportSchema` 和 `importSchema` 方法来执行 `Schema File` 的导入导出操作。通过 `exportSchema` 可以下载保存当前 `Schema` 结构，通过 `importSchema` 可以将新的 `Schema` 结构上传到 `CloudKit`。
+`CKTool JS` 提供了 `exportSchema` 和 `importSchema` 方法来执行 `Schema File` 的导入导出操作。通过 `exportSchema` 可以导出当前 `Schema` 结构，通过 `importSchema` 可以将新的 `Schema` 结构上传到 `CloudKit`。
 
 ![](images/013-importexportschema.png)
 
@@ -394,7 +394,7 @@ await api.deleteRecord({
 >  
 > [Sample code](https://github.com/apple/sample-cloudkit-tooling)
 >  
-> [WWDC22 10115/10119 - Optimize your use of Core Data and CloudKit / 优化 CoreData & CloudKit 实现](../session_10119/README.md)
+> [WWDC22 10115/10119 - Optimize your use of Core Data and CloudKit / 优化 CoreData & CloudKit 实现](https://xiaozhuanlan.com/topic/5821964073)
 >  
 > [WWDC21 - Automate CloudKit tests with cktool and declarative schema](https://developer.apple.com/videos/play/wwdc2021/10118)
 >  
