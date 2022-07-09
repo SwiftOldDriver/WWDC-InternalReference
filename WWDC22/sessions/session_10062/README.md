@@ -46,6 +46,8 @@ Rectangle()
     }
 ```
 
+当然，你也可以让 object 自己去实现 `NSItemProviderReading` 和 `NSItemProviderWriting` 来支持不同类型的内容，但还是非常麻烦，你不得不处理 Data 和各种类型的转换。
+
 为了解决这些问题，Apple 推出全新了 `Core Transferable` 框架。
 
 ## 概览
