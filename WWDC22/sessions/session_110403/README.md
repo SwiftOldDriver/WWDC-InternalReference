@@ -241,14 +241,17 @@ func download(_ download: BADownload, finishedWithFileURL fileURL: URL) {
 2. `APP` 在后台时 `Extension` 会在特定场景被唤醒执行下载任务；
 3. 如果 `APP` 已经在前台运行，可以将任务改为前台执行，确保相关资源可以更快的被下载；
 4. 当出现 `APP` 和 `Extension` 同时访问资源时请使用互斥 `API`
-## 五、与On-Demand Resources的区别
+
+## 五、与 On-Demand Resources 的区别
 
 ODR（On-Demand Resources）是苹果在 WWDC2015 推出的动态加载资源的技术，目的是为了减少 APP 包大小，开发者可以将一部分资源放在苹果服务器，用户打开 APP 进入某个页面时会触发资源下载，常见的应用场景有：游戏关卡、相机应用的贴纸、滤镜等。
 
 与 ODR 的区别在于：
+
 1. ODR 需要用户在进入 APP 的某个页面后才能触发下载，用户仍然需要等待，BA 可以在后台静默下载，下载成功后用户无需等待；
 2. ODR 的资源上传到 AppStore，与开发者现有的资源管理流程不兼容，开发者需要对资源管理流程进行改造，而 BA 支持开发者现有的资源管理流程，资源无需上传到 AppStore；
 3. BA 会被系统周期性的触发来检查资源是否有更新，而 ODR 则不具备这个能力；
+
 ## 六、推荐阅读
 
 > [WWDC21: Accelerate networking with HTTP/3 and QUIC](https://developer.apple.com/videos/play/wwdc2021/10094)
