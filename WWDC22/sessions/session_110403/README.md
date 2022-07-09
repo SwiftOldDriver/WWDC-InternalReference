@@ -31,7 +31,7 @@ session_ids: [110403]
 
 需要注意的是，`Extension` 的执行时间非常短，如果下载任务不能快速执行，系统可能会终止 `Extension` 的运行。另外 `Extension` 执行的频率与 `APP` 的使用情况相关，如果一个 `APP` 经常被使用，那对应的 `Extension` 也将会被系统频繁执行，反之亦然。
 
-通过 `BA` 框架能够保证 `APP` 所需的资源在 `APP` 启动前都已经下载完毕，下面让我们来看下如何在 `APP` 中使用 `BA` 框架。
+通过使用 `BA` 框架可以在 `APP` 启动前下载 `APP` 运行所需的资源，下面通过代码让我们来看看如何在 `APP` 中使用 `BA` 框架。
 
 ## 二、如何在应用中使用 Background Assets 框架
 
@@ -141,6 +141,16 @@ public protocol BADownloadManagerDelegate : NSObjectProtocol {
 }
 ```
 
+### 2.3 异常处理
+
+#### 2.3.1 下载失败
+
+如果下载失败，此时 `delegate` 中的 `download:failedWithError:` 方法会被触发，开发者可以在回调方法中进行异常处理。
+
+### 2.3.2 下载过程中用户打开 APP
+
+如果 `Extension` 正在后台下载资源，此时用户打开了 `APP`，`Extension` 的执行将会被中断，`APP` 进入前台后需要检查当前是否有 `BA` 任务在执行，如发现有则调用 `startForegroundDownload` 将任务转为前台下载。切换为前台下载动作是在 `APP` 启动完成后，不会影响 `APP` 的首次启动速度。
+
 ## 三、快速了解 Extension 提供的能力
 
 接下来我们来看看 `BA` 框架引入了的 `APP Extension` 具有的能力：
@@ -231,8 +241,15 @@ func download(_ download: BADownload, finishedWithFileURL fileURL: URL) {
 2. `APP` 在后台时 `Extension` 会在特定场景被唤醒执行下载任务；
 3. 如果 `APP` 已经在前台运行，可以将任务改为前台执行，确保相关资源可以更快的被下载；
 4. 当出现 `APP` 和 `Extension` 同时访问资源时请使用互斥 `API`
+## 五、与On-Demand Resources的区别
 
-## 五、推荐阅读
+ODR（On-Demand Resources）是苹果在 WWDC2015 推出的动态加载资源的技术，目的是为了减少 APP 包大小，开发者可以将一部分资源放在苹果服务器，用户打开 APP 进入某个页面时会触发资源下载，常见的应用场景有：游戏关卡、相机应用的贴纸、滤镜等。
+
+与 ODR 的区别在于：
+1. ODR 需要用户在进入 APP 的某个页面后才能触发下载，用户仍然需要等待，BA 可以在后台静默下载，下载成功后用户无需等待；
+2. ODR 的资源上传到 AppStore，与开发者现有的资源管理流程不兼容，开发者需要对资源管理流程进行改造，而 BA 支持开发者现有的资源管理流程，资源无需上传到 AppStore；
+3. BA 会被系统周期性的触发来检查资源是否有更新，而 ODR 则不具备这个能力；
+## 六、推荐阅读
 
 > [WWDC21: Accelerate networking with HTTP/3 and QUIC](https://developer.apple.com/videos/play/wwdc2021/10094)
 >  
