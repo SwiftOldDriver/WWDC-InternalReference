@@ -6,6 +6,8 @@
 
 たこ，目前就职于网易游戏，负责云游戏项目 iOS 技术团队。
 
+老驴，老司机技术社区核心成员，旅美开发者。
+
 ## 不超过 120 个字的文章简介
 
 本文将帮助开发者如何在 Unity 应用或游戏中快速集成 Apple 的一些原生功能插件，以提升作品的体验。本次 WWDC ， Apple 为我们带来了六个基于 Unity 版本的插件：Apple.Core、Game Center、Game Controller、Accessibility、Core Haptics 和 PHASE。我们将分别介绍它们的功能，以及如何快速编译、导入到开发者的项目中。文末，还给出了使用这些插件的一些场景以及注意点。
