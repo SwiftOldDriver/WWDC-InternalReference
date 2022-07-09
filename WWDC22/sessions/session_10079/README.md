@@ -8,9 +8,7 @@ session_ids: [10079]
 
 > 作者： Nicola，就职于探探，iOS 开发者。国际化语音房活动开发。
 >
-> 审核：
->
-> ……
+> 审核：Damien，就职于字节跳动，目前负责 TikTok 隐私和安全相关的工作。
 
 ![dns_banner_0](./images/dns_banner_0.png)
 
