@@ -8,7 +8,7 @@ session_ids: [10018]
 
 > 作者: LeonardoLu，WWDC21 Swift Student Challenge Winner，就职于字节飞书音视频会议团队。
 >
-> 审核者: anotheren（刘栋），老司机周报编辑，就职于丁香园 iOS 团队，Swift 老司机。
+> 审核者: anotheren（刘栋），老司机技术社区核心成员，就职于丁香园 iOS 团队，Swift 老司机。
 
 ## 内容概述
 

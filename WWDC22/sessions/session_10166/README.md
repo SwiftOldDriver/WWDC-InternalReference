@@ -89,7 +89,7 @@ session_ids: [10166]
 
 调用这个方法将会有一个系统权限提示框出现在 App 里。
 
-![](images/permission.jpg)
+![](https://tva1.sinaimg.cn/large/e6c9d24ely1h40r2ab310j20j70imgm0.jpg)
 
 这是一次性提示。系统将记住用户的选择，并且不会再次提示，除非卸载并重新安装 App。
 
@@ -120,7 +120,7 @@ if (@available(iOS 14, *)) {
 
 从 WWDC 2020 开始，开发者在提交 App 时，还需要声明 App 将使用什么数据来追踪，而这些描述会显示在 App 的隐私营养标签（Privacy Nutrition Label）上。隐私营养标签（下称：隐私标签），类似于食物上的营养标签，展示的是 App 在用户追踪时所需信息的描述。
 
-![](./images/label.png)
+![](https://tva1.sinaimg.cn/large/e6c9d24ely1h40r2bhgbsj21sx0u0mzf.jpg)
 
 #### 如何创建隐私标签
 
@@ -130,7 +130,7 @@ if (@available(iOS 14, *)) {
 
 开发者可以在任何时候更新隐私标签，并且不需要 App 发布新版本。苹果官方的建议是在改变 App 中数据使用的方式时，需要确保隐私标签是最新的。常见的场景有，在 App 中添加了新功能、接入了新的第三方 SDK，或收集了新的数据等等。比如，IP 地址可以用于多种目的，包括作为标识符或用来推断用户的大致位置。如果需要使用 IP 地址来进行位置分析，那么就需要在隐私标签中声明位置这一项。
 
-![](./images/data_collection.png)
+![](https://tva1.sinaimg.cn/large/e6c9d24ely1h40r2bz4rhj212t0rnq4x.jpg)
 
 ## 注意事项
 

@@ -6,6 +6,14 @@ session_ids: [10043]
 
 本文基于 session [10043](https://developer.apple.com/videos/play/wwdc2022/10043/) 、[10044](https://developer.apple.com/videos/play/wwdc2022/10044/) 、[110404](https://developer.apple.com/videos/play/wwdc2022/110404/) 整理。
 
+> 作者：茗，目前就职于字节跳动剪映专业版，负责商业化技术相关工作。
+>
+> 审核：
+>
+> 黄骋志（橙汁），老司机技术社区核心成员，现于西瓜视频负责稳定性 OOM/Watchdog 相关工作。
+>
+> 王浙剑（Damonwong），老司机技术社区负责人、WWDC22 内参主理人，目前就职于阿里巴巴。
+
 ## 前言
 
 本文包含 4 个内容：

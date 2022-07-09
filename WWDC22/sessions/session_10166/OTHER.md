@@ -12,4 +12,4 @@ Damien，就职于字节跳动，目前负责 TikTok 隐私和安全相关的工
 
 ## 公众号/小专栏图文头图
 
-![](images/banner.jpg)
+![](https://tva1.sinaimg.cn/large/e6c9d24ely1h40r2ceok2j21tu0u0757.jpg)

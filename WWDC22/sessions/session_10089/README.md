@@ -10,7 +10,7 @@ session_ids: [10089]
 >
 > 作者：Jimmy（曹鉴津），iOS 开发者，就职于金山办公，目前参与 WPS Office iOS 端的业务开发。
 >
-> 编辑：士土 Edmond 木，对 CocoaPods 有一点了解，目前对 Bazel 和 Swift 比较感兴趣。[Github Page](https://looseyi.github.io)
+> 审核：士土 Edmond 木，对 CocoaPods 有一点了解，目前对 Bazel 和 Swift 比较感兴趣。[Github Page](https://looseyi.github.io)
 
 - 文章大纲如下图所示：
 

@@ -1,15 +1,23 @@
 ---
-session_ids: [110349]
+session_ids: [110349,110348]
 
 ---
 
-# Session 110349/348 Swift Playground 指北
+# Session 110349/110348 Swift Playground 指北
+
+本文基于 [Session 110349](https://developer.apple.com/videos/play/wwdc2022/110349/)、[Session 110348](https://developer.apple.com/videos/play/wwdc2022/110348/) 梳理
 
 > 作者信息：
 >
 > [PJHubs（PJ）](https://github.com/windstormeye)：WWDC19 Scholarship Winner，独立开发者，就职于字节跳动。
 >
 > [Cyanichord（Cyan）](https://github.com/Mintshec)：WWDC22 Swift Student Challenge Winner，海外留学中。
+>
+> 审核：
+>
+> 四娘，老司机技术社区核心成员
+>
+> 王浙剑（Damonwong），老司机技术社区负责人、WWDC22 内参主理人，目前就职于阿里巴巴。
 >
 > 导读：
 >
