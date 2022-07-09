@@ -3,9 +3,15 @@ session_ids: [110345]
 ---
 # WWDC22 110345 - 使用 Endpoint Security 保护 Mac 安全
 
+本文基于 [Session 110345](https://developer.apple.com/videos/play/wwdc2022/110345/) 梳理。
+
 > 作者：抛瓦，坐标北京，iOS 挖掘机
 >
-> 审核：Damien，就职于字节跳动，目前负责 TikTok 隐私和安全相关的工作。
+> 审核：
+>
+> Damien，就职于字节跳动，目前负责 TikTok 隐私和安全相关的工作。
+>
+> 王浙剑（Damonwong），老司机技术社区负责人、《WWDC22 内参》主理人，目前就职于阿里巴巴。
 
 ## 你的设备安全么
 
