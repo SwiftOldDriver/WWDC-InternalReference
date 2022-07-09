@@ -151,11 +151,11 @@ public protocol BADownloadManagerDelegate : NSObjectProtocol {
 
 ### 2.3 异常处理
 
-#### 2.3.1 下载失败
+* 下载失败
 
 如果下载失败，此时 `delegate` 中的 `download:failedWithError:` 方法会被触发，开发者可以在回调方法中进行异常处理。
 
-### 2.3.2 下载过程中用户打开 APP
+* 下载过程中用户打开 APP
 
 如果 `Extension` 正在后台下载资源，此时用户打开了 `APP`，`Extension` 的执行将会被中断，`APP` 进入前台后需要检查当前是否有 `BA` 任务在执行，如发现有则调用 `startForegroundDownload` 将任务转为前台下载。切换为前台下载动作是在 `APP` 启动完成后，不会影响 `APP` 的首次启动速度。
 
