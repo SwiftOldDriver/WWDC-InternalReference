@@ -114,10 +114,10 @@ struct Wheat {
 struct Farm {
   func feed(_ animal: Cow) {
     let alfalfa = Hay.grow()
-	  let hay = alfalfa.harvest()
+    let hay = alfalfa.harvest()
     animal.eat(hay)
   }
-	
+
   func feed(_ animal: Horse) {
     let root = Carrot.grow()
     let carrot = root.harvest()
@@ -620,13 +620,13 @@ struct Farm {
   var hungryAnimals: some Collection <any Animal> {
     animals.filter(\.isHungry)
   }
-  
+
   func feed(_ animal: some Animal) {
     let crop = type(of: animal).Feed.grow()
     let produce = crop.harvest()
     animal.eat(produce)
   }
-	
+
   func feedAll(_ animals: [any Animal]) {
     for animal in animals {
       feed(animal)
