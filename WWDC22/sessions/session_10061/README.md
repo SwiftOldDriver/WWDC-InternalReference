@@ -14,7 +14,7 @@ session_ids: [10061]
 >
 > 水水，前字节跳动影像团队 iOS 开发，独立负责 SwiftUI 项目在业务侧落地，目前即将前往美国读研。热衷于思考构建高质量 iOS 架构，对关于 Swift 一切新鲜事物感兴趣，常年混迹于声明式 UI 和响应式编程范式。3 年 SwiftUI 实战编程老鸟。  
 >
-> 王浙剑（Damonwong），老司机技术社区负责人、《WWDC22 内参》主理人，目前就职于阿里巴巴。
+> 王浙剑（Damonwong），老司机技术社区负责人、WWDC22 内参主理人，目前就职于阿里巴巴。
 
 > 注意： 阅读本文之前需要具有 SwiftUI 基础，并且对 macOS 平台特性有所了解； 更多基础知识请参考 [WWDC20 - App essentials in SwiftUI](https://xiaozhuanlan.com/topic/6438270915)， [WWDC20 - Build document-based apps in SwiftUI](https://xiaozhuanlan.com/topic/6745310982)， [WWDC21 - 通过 SwiftUI 构建优秀的 Mac App](https://xiaozhuanlan.com/topic/5389016427)。
 
