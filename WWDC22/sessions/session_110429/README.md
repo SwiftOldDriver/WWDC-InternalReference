@@ -170,12 +170,12 @@ output 所支持的 format 类型并不是固定的，它取决于关联的 AVCa
 
 理想的输出像素格式取决于你的 app 要如何处理从 output 接收到的 pixel buffer，以及你的 app 本身的具体需求。其实并没有准确的方案来告诉我们需要如何选择，但我们可以通过思考以下几个例子来学习如何选择。
 
-- Example 1: 假如你需要通过 app 来捕获画面，获取 pixel buffers，然后把它们喂给机器学习的模型。而该模型正需要未压缩的 BGRA 的像素格式。那么通过指定 pixel format 为 BGRA 的格式，可以在前置步骤就处理好像素格式的转换，提高数据集预处理的效率。
+**Example 1**: 假如你需要通过 app 来捕获画面，获取 pixel buffers，然后把它们喂给机器学习的模型。而该模型正需要未压缩的 BGRA 的像素格式。那么通过指定 pixel format 为 BGRA 的格式，可以在前置步骤就处理好像素格式的转换，提高数据集预处理的效率。
 
-- Example 2: 假如你想通过 app 来拍摄视频，并且需要使用 AVAssetWriter 来导出视频文件。如果你的 AVAssetWriter 配置的编码格式为 hevc ，那么选择双平面 YpCbCr（ bi-planar YpCbCr）的像素格式是很合适的。AVAssetWriter 可以直接拿这种像素格式的数据作为输入，而不需要多余的转换步骤。另外，如果你的 app 所运行的 device 支持压缩的 pixel format，那么选择有损压缩 (Lossy) 的 YpCbCr 类型，还能够节省更多的内存带宽。
+**Example 2**: 假如你想通过 app 来拍摄视频，并且需要使用 AVAssetWriter 来导出视频文件。如果你的 AVAssetWriter 配置的编码格式为 hevc ，那么选择双平面 YpCbCr（ bi-planar YpCbCr）的像素格式是很合适的。AVAssetWriter 可以直接拿这种像素格式的数据作为输入，而不需要多余的转换步骤。另外，如果你的 app 所运行的 device 支持压缩的 pixel format，那么选择有损压缩 (Lossy) 的 YpCbCr 类型，还能够节省更多的内存带宽。
 我们看到了上面的 pixel format 中有无损压缩(Lossless)、有损压缩(Lossy)、未压缩这样三类格式。如果你的 device 是支持压缩的 pixel format 的，那么你可以选择使用 Lossy 的类型，同时节省更多的内存占用。选择使用 Lossy、Lossless 或者未压缩的格式，在图像质量上其实没有什么区别。因为在 device 支持的情况下，AVCapture 内部使用的就是 Lossy 的格式。在 Lossy 的格式下，大部分图片还是无损压缩的，只有少数的图片是有损压缩，但至少在视觉上看起来仍然是无损的。
   
-- Example 3: 假如你想通过 app 来拍摄视频，并将获取到的 pixel buffer 提供给 Metal 来处理图像数据，从而来实现一些视频特效的效果。通常我们会在视频采集的时候设置 pixel format 为 BGRA 的格式，然后在 Metal 的 shader 中基于 BGRA 的像素格式来做图像处理。但这种情况下，更合适的处理方式应该是将 Metal 中基于 BGRA 的算法修改为基于 YUV 类像素格式的算法。这样我们就可以通过继续修改 output 的 pixel format 为同样的 YUV 类像素格式，比如 '420v'，优化掉相机数据采集后的 BGRA 格式转换步骤，从而提高渲染性能。
+**Example 3**: 假如你想通过 app 来拍摄视频，并将获取到的 pixel buffer 提供给 Metal 来处理图像数据，从而来实现一些视频特效的效果。通常我们会在视频采集的时候设置 pixel format 为 BGRA 的格式，然后在 Metal 的 shader 中基于 BGRA 的像素格式来做图像处理。但这种情况下，更合适的处理方式应该是将 Metal 中基于 BGRA 的算法修改为基于 YUV 类像素格式的算法。这样我们就可以通过继续修改 output 的 pixel format 为同样的 YUV 类像素格式，比如 '420v'，优化掉相机数据采集后的 BGRA 格式转换步骤，从而提高渲染性能。
 
 ## iPadOS 多任务模式下使用相机
 
