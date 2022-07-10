@@ -1,9 +1,6 @@
-```
 ---
 session_ids: [110367]
-
 ---
-```
 
 # Session 110367 - 使用 Concept 简化 C++ 模版
 
