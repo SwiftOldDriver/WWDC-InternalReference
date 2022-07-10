@@ -23,7 +23,7 @@ session_ids: [10137]
 Swift Charts 是基于 SwiftUI 的苹果设计的图表框架，提供一种简洁的声明式的 API 用于实现各式图表；
 如下图所示从简单的柱状图与饼图到复杂的向量图和热力图；Swift Chart 都可少量代码实现；
 ![image](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/image.png)
-在 iOS16 系统的自带 App 中，例如股票 Stock 、Health 健康等 App 的图表展示与交互是基于 Swift Charts 实现的；
+在 iOS16 系统的自带 App 中，例如股票 Stock 、 Health 健康等 App 的图表展示与交互是基于 Swift Charts 实现的；
 ![image](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/image1.png)
 
 接下来我们结合一个具体的例子，来逐步了结  Swift Charts 的使用，这个例子是：
