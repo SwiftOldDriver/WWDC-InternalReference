@@ -181,11 +181,11 @@ Label("Heart", systemImage: "heart")
 
 要实现这样的效果，意味着每个 symbol 的底层逻辑并不是一张张图片，而是由一组组的路径构成，这也是为什么在当你想要自定义一个属于自己的 symbol 的时候，官方要求你用封闭路径 + 填充效果去完成一个符号，而不是使用一条简单路径 + 路径描边（stroke）来完成一个符号。
 
-> 更多关于如何制作一个 symbol 的内容，请移步 [WWDC21内参：定制属于你的 Symbols](https://xiaozhuanlan.com/topic/4807632591)。
+> 更多关于如何制作一个 symbol 的内容，请移步 [WWDC 21 内参：定制属于你的 Symbols](https://xiaozhuanlan.com/topic/4807632591)。
 
 ![3x9](images/3x9.png)
 
-除了字重和比例之外，SF Symbols 还在很多方面进行了努力来方便开发者的工作，例如：符号的变体、不同语言下符号的本地化、符号的无障碍化等，关于这些内容，以及其它由于篇幅原因未在本文讨论的细节问题，请移步 [WWDC21内参：SF Symbols 使用指南](https://xiaozhuanlan.com/topic/9214865730)。
+除了字重和比例之外，SF Symbols 还在很多方面进行了努力来方便开发者的工作，例如：符号的变体、不同语言下符号的本地化、符号的无障碍化等，关于这些内容，以及其它由于篇幅原因未在本文讨论的细节问题，请移步 [WWDC 21 内参：SF Symbols 使用指南](https://xiaozhuanlan.com/topic/9214865730)。
 
 ## 总结
 
@@ -197,8 +197,8 @@ Label("Heart", systemImage: "heart")
 
 * [[ WWDC 22 ] What's new in SF Symbols 4](https://developer.apple.com/videos/play/wwdc2022/10157)
 * [[ WWDC 22 ] Adopt Variable Color in SF Symbols](https://developer.apple.com/videos/play/wwdc2022/10158)
-* [[ WWDC 21 ] 内参：SF Symbols 使用指南](https://xiaozhuanlan.com/topic/9214865730)
-* [[ WWDC 21 ] 内参：定制属于你的 Symbols](https://xiaozhuanlan.com/topic/4807632591)
+* [[ WWDC 21 内参 ] SF Symbols 使用指南](https://xiaozhuanlan.com/topic/9214865730)
+* [[ WWDC 21 内参 ] 定制属于你的 Symbols](https://xiaozhuanlan.com/topic/4807632591)
 * [[ Human Interface Guidelines ] SF Symbols](https://developer.apple.com/design/human-interface-guidelines/sf-symbols/overview/)
 * [[ Developer ] SF Symbols](https://developer.apple.com/sf-symbols/)
 
