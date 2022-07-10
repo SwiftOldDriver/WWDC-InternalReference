@@ -211,4 +211,3 @@ Label("Heart", systemImage: "heart")
 * [[ WWDC 21 ] Create custom symbols](https://developer.apple.com/videos/play/wwdc2021/10250)
 * [[ WWDC 20 ] SF Symbols 2](https://developer.apple.com/videos/play/wwdc2020/10207)
 * [[ WWDC 19 ] Introducing SF Symbols](https://developer.apple.com/videos/play/wwdc2019/206)
-
