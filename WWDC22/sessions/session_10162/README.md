@@ -9,14 +9,18 @@ session_ids: [10162]
 > 作者：yunwill，iOS 开发
 >
 > 审核：
+>
+> たこ，网易游戏，云游戏 iOS 技术负责人。
+>
+> 老驴，老司机周报编辑，码农。
 
 ## 前言
 
-**Metal**，是苹果主推的面向底层的图形编程接口，基于自家的硬件优化，支持出色的性能并降低开销。时隔 5 年，Metal 3 发布，必然带来一些新的特性，其中之一就是`网格着色器（Mesh Shaders）`。网格着色器其实并不是新产物，此前 NVDIA、AMD、Intel 也都支持类似功能的着色器。
+**Metal**，是苹果主推的面向底层的图形编程接口，基于自家的硬件优化，支持出色的性能并降低开销。时隔 5 年，Metal 3 发布，必然带来一些新的特性，其中之一就是`网格着色器（Mesh Shaders）`。网格着色器其实并不是新鲜产物，此前 NVDIA、AMD、Intel 也都支持类似功能的着色器。
 
-> 注意：
+>  注意：
 >
-> **Mesh Shaders 其实是指`Object Shader`和`Mesh Shader`。**
+> **Mesh Shaders 其实是指 `Object Shader` 和 `Mesh Shader`。**
 
 **网格渲染管线**，由 GPU 驱动（GPU-driven）的新一代几何渲染管线，类似于 compute kernel，其中包括：
 
@@ -177,7 +181,7 @@ void myMeshShader(triangle_mesh_t outputMesh,
 
 #### 继续设置渲染管线描述
 
-继续使用上面定义的渲染管线描述，设置`meshFunction`、`maxTotalThreadsPerMeshThreadgroup`、`fragmentFunction`。
+继续使用上面定义的渲染管线描述，设置 `meshFunction`、`maxTotalThreadsPerMeshThreadgroup`、`fragmentFunction`。
 
 ```swift
 meshPipelineDesc.meshFunction = meshFunc
@@ -224,7 +228,7 @@ encoder.endEncoding()
 
 **网格片段（Meshlet）**是由网格（Mesh）模型分割出的颗粒度更小的片段。网格渲染管线可以有效处理和渲染大量的几何体，并且通过对 Meshlet 颗粒度划分，可以实现`更高效`和`细粒度`的剔除。
 
-如图所示，我们要剔除矩形外的`黑白`部分，只保留矩形内的`彩色`部分：
+如图所示，我们要剔除不可见`虚线`部分，即剔除相机所见范围外的几何体：
 
 ![](./images/meshlets.png)
 
@@ -232,7 +236,7 @@ encoder.endEncoding()
 
 主要流程：
 
-- 视锥体剔除（相机所见范围外的物体直接剔除）
+- 视锥体剔除
 - 层次细节选择（近处的物体加载高精度模型，越远的物体选择加载越低精度模型）
 - 编码
 - 进入渲染流程，最后生成图像
@@ -245,18 +249,24 @@ encoder.endEncoding()
 
 主要流程：
 
-- 对象着色器阶段，经过视锥体剔除、细节层次选择，输出 payload 数据，即一系列网格片段 ID（Meshlet IDs）
+- 对象着色器阶段，经过视锥体剔除、细节层次选择，输出 `payload` 数据，即一系列`网格片段 ID`（Meshlet IDs）。
+
+  其中主要的**`剔除`**过程如下：
+
+  1. 将场景模型划分成对象网格，此过程可以按照具体需求自定义，比如我们可以将当前例子的场景模型划分为 4 个对象网格：
+
+  ![](./images/object_grid.png)
+
+  2. 使用视锥体确定不可见的网格片段，剔除不可见的网格片段。比如其中的足球形网格和三角形网格，虚线处的网格片段不在视锥体内，将会被剔除。
+
+  ![](./images/meshlet_culling.png)
+
 - 网格着色器阶段，经过编码，输出 `metal::mesh` 类型数据到光栅化器
 - 渲染，生成最后图像
 
 ![](./images/meshlet_culling_pipeline.png)
 
-新的渲染管线由 GPU 驱动渲染，并行处理能力比 CPU 强很多，而且避免了缓存中间绘制命令，效率比传统渲染管线高。下面重点讲述下其中的`剔除`过程：
-
-- 将场景模型划分成对象网格，这个过程完由你决定
-- 将每个对象网格划分颗粒度更小的网格片段，其中不可见的网格片段将会被剔除，后续也不会再处理
-
-![](./images/meshlet_culling.png)
+新的渲染管线由 GPU 驱动渲染，并行处理能力比 CPU 强很多，而且避免了缓存中间绘制命令，效率比传统渲染管线**高**。
 
 ## 一些限制
 
@@ -267,20 +277,21 @@ encoder.endEncoding()
 
 ### 网格着色器
 
-- 输出数据（metal::mesh，下同）最多支持 256 个顶点
+- 输出数据（`metal::mesh`，下同）最多支持 256 个顶点
 - 输出数据最多支持 512 个图元
 - 输出数据不超过 16KB
 
 ### 新管线运行设备要求
 
 - macOS：`Mac2/Apple7+`
-  - iMac 2015 及以后机型
-  - MacBook Pro 2016 及以后机型
-  - MacBook 2016 及以后机型
-  - iMac Pro 2017 及以后机型
-  - M1 / M2 系列电脑
+  - iMac 2017+
+  - MacBook Pro 2017+
+  - MacBook 2017+
+  - iMac Pro 2017+
+  - Macbook Air 2018+
+  - Mac mini 2018+
 - iOS：`Apple7+`
-  - A14 及以上，即 iPhone 12 及以后手机
+  - iPhone 12+
   - M1 系列 iPad
 
 ## 总结
