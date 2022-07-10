@@ -46,23 +46,23 @@ public protocol Hashable : Equatable {}
 
 ```swift
 struct Cow {
-func eat(_ food: Hay) {}
+  func eat(_ food: Hay) {}
 }
 
 struct Hay {
-	static func grow() -> Alfalfa {}
+  static func grow() -> Alfalfa {}
 }
 
 struct Alfalfa {
-	func harvest() -> Hay {}
+  func harvest() -> Hay {}
 }
 
 struct Farm {
-	func feed(_ animal: Cow) {
-		let alfalfa = Hay.grow()
-		let hay = alfalfa.harvest()
-		animal.eat(hay)
-	}
+  func feed(_ animal: Cow) {
+    let alfalfa = Hay.grow()
+    let hay = alfalfa.harvest()
+    animal.eat(hay)
+  }
 }
 ```
 
@@ -76,59 +76,59 @@ struct Farm {
 
 ```swift
 struct Cow {
-	func eat(_ food: Hay) {}
+  func eat(_ food: Hay) {}
 }
 
 struct Hay {
-	static func grow() -> Alfalfa {}
+  static func grow() -> Alfalfa {}
 }
 
 struct Alfalfa {
-	func harvest() -> Hay {}
+  func harvest() -> Hay {}
 }
 
 struct Horse {
-	func eat(_ food: Carrot) {}
+  func eat(_ food: Carrot) {}
 }
 
 struct Carrot {
-	static func grow() -> Root {}
+  static func grow() -> Root {}
 }
 
 struct Root {
-	func harvest() -> Carrot {}
+  func harvest() -> Carrot {}
 }
 
 struct Chicken {
-	func eat(_ food: Grain) {}
+  func eat(_ food: Grain) {}
 }
 
 struct Grain {
-	static func grow() -> Wheat {}
+  static func grow() -> Wheat {}
 }
 
 struct Wheat {
-	func harvest() -> Grain {}
+  func harvest() -> Grain {}
 }
 
 struct Farm {
-	func feed(_ animal: Cow) {
-		let alfalfa = Hay.grow()
-		let hay = alfalfa.harvest()
-		animal.eat(hay)
-	}
+  func feed(_ animal: Cow) {
+    let alfalfa = Hay.grow()
+	  let hay = alfalfa.harvest()
+    animal.eat(hay)
+  }
 	
-	func feed(_ animal: Horse) {
-		let root = Carrot.grow()
-		let carrot = root.harvest()
-		animal.eat(carrot)
-	}
-	
-	func feed(_ animal: Chicken) {
-		let wheat = Grain.grow()
-		let grain = wheat.harvest()
-		animal.eat(grain)
-	}
+  func feed(_ animal: Horse) {
+    let root = Carrot.grow()
+    let carrot = root.harvest()
+    animal.eat(carrot)
+  }
+
+  func feed(_ animal: Chicken) {
+    let wheat = Grain.grow()
+    let grain = wheat.harvest()
+    animal.eat(grain)
+  }
 }
 ```
 
@@ -146,19 +146,19 @@ struct Farm {
 
 ```swift
 class Animal {
-	func eat(_ food: ???) { fatalError("Subclass must implement 'eat'") }
+  func eat(_ food: ???) { fatalError("Subclass must implement 'eat'") }
 }
 
 class Cow: Animal {
-	override func eat(_ food: Hay) {}
+  override func eat(_ food: Hay) {}
 }
 
 class Horse: Animal {
-	override func eat(_ food: Carrot) {}
+  override func eat(_ food: Carrot) {}
 }
 
 class Chicken: Animal {
-	override eat(_ food: Grain) {}
+  override eat(_ food: Grain) {}
 }
 ```
 
@@ -174,25 +174,25 @@ class Chicken: Animal {
 
 ```swift
 class Animal {
-	func eat(_ food: Any) { fatalError("Subclass must implement 'eat'") }
+  func eat(_ food: Any) { fatalError("Subclass must implement 'eat'") }
 }
 
 class Cow: Animal {
-	override func eat(_ food: Any) {
-		guard let food = food as? Hay else { fatalError("Cow cannot eat \(food)") }
-	}
+  override func eat(_ food: Any) {
+    guard let food = food as? Hay else { fatalError("Cow cannot eat \(food)") }
+  }
 }
 
 class Horse: Animal {
-	override func eat(_ food: Any) {
-		guard let food = food as? Carrot else { fatalError("Horse cannot eat \(food)") }
-	}
+  override func eat(_ food: Any) {
+    guard let food = food as? Carrot else { fatalError("Horse cannot eat \(food)") }
+  }
 }
 
 class Chicken: Animal {
-	override eat(_ food: Any) {
-		guard let food = food as? Grain else { fatalError("Chicken cannot eat \(food)") }
-	}
+  override eat(_ food: Any) {
+    guard let food = food as? Grain else { fatalError("Chicken cannot eat \(food)") }
+  }
 }
 ```
 
@@ -204,19 +204,19 @@ class Chicken: Animal {
 
 ```swift
 class Animal<Food> {
-	func eat(_ food: Food) { fatalError("Subclass must implement 'eat'") }
+  func eat(_ food: Food) { fatalError("Subclass must implement 'eat'") }
 }
 
 class Cow: Animal<Hay> {
-	override func eat(_ food: Hay) {}
+  override func eat(_ food: Hay) {}
 }
 
 class Horse: Animal<Carrot> {
-	override func eat(_ food: Carrot) {}
+  override func eat(_ food: Carrot) {}
 }
 
 class Chicken: Animal<Grain> {
-	override eat(_ food: Grain) {}
+  override eat(_ food: Grain) {}
 }
 ```
 
@@ -226,19 +226,19 @@ class Chicken: Animal<Grain> {
 
 ```swift
 class Animal<Food, Habitat, Commodity> {
-	func eat(_ food: Food) { fatalError("Subclass must implement 'eat'") }
+  func eat(_ food: Food) { fatalError("Subclass must implement 'eat'") }
 }
 
 class Cow: Animal<Hay, Barn, Milk> {
-	override func eat(_ food: Hay) {}
+  override func eat(_ food: Hay) {}
 }
 
 class Horse: Animal<Carrot, Stable, Never> {
-	override func eat(_ food: Carrot) {}
+  override func eat(_ food: Carrot) {}
 }
 
 class Chicken: Animal<Grain, Coop, Egg> {
-	override eat(_ food: Grain) {}
+  override eat(_ food: Grain) {}
 }
 ```
 
@@ -266,20 +266,20 @@ class Chicken: Animal<Grain, Coop, Egg> {
 
 ```swift
 protocol Animal {
-	associatedtype Feed: AnimalFeed
-	func eat(_ food: Feed)
+  associatedtype Feed: AnimalFeed
+  func eat(_ food: Feed)
 }
 
 struct Cow: Animal {
-	func eat(_ food: Hay) {}
+  func eat(_ food: Hay) {}
 }
 
 struct Horse: Animal {
-	func eat(_ food: Carrot) {}
+  func eat(_ food: Carrot) {}
 }
 
 struct Chicken: Animal {
-	func eat(_ food: Grain) {}
+  func eat(_ food: Grain) {}
 }
 ```
 
@@ -295,7 +295,7 @@ struct Chicken: Animal {
 
 ```swift
 struct Farm {
-	func feed(_ animal: ???) {}
+  func feed(_ animal: ???) {}
 }
 ```
 
@@ -319,7 +319,7 @@ func feed<A>(_ animal: A) where A: Animal {}
 我们可以使用 `some` 关键字来修饰 `feed(animal:)` 方法中的 `animal` 参数来简化前面提出的问题。
 
 ```swift
-	func feed(_ animal: some Animal) {}
+func feed(_ animal: some Animal) {}
 ```
 
 `some` 正如它的字面含义那样，某一个，意味着这里的 `animal` 参数它是某一种动物，可以是奶牛，可以是马，也可以是鸡。我不关心它具体是什么，只要是某一种动物就行。
@@ -327,7 +327,7 @@ func feed<A>(_ animal: A) where A: Animal {}
 如果你写过 Swift 代码，对 `some` 一定不会陌生。SwiftUI 中 `View` 的 `body` 属性，返回值类型就是用 `some` 修饰的。
 
 ```swift
-	var body: some View {}
+var body: some View {}
 ```
 
 不透明，顾名思义，就是别人看不到内部的细节，用在这里，就意味着别人看不到这个实例具体的类型。
@@ -355,26 +355,26 @@ func feed<A>(_ animal: A) where A: Animal {}
 
 ```swift
 protocol Animal {
-	associatedtype Feed: AnimalFeed
-	func eat(_ food: Feed)
+  associatedtype Feed: AnimalFeed
+  func eat(_ food: Feed)
 }
 
 protocol AnimalFeed {
-	associatedtype CropType: Crop
-	static func grow() -> CropType
+  associatedtype CropType: Crop
+  static func grow() -> CropType
 }
 
 protocol Crop {
-	associatedtype Feed: AnimalFeed
-	func harvest() -> Feed
+  associatedtype Feed: AnimalFeed
+  func harvest() -> Feed
 }
 
 struct Farm {
-	func feed(_ animal: some Animal) {
-		let crop = type(of: animal).Feed.grow()
-		let produce = crop.harvest()
-		animal.eat(produce)
-	}
+  func feed(_ animal: some Animal) {
+    let crop = type(of: animal).Feed.grow()
+    let produce = crop.harvest()
+    animal.eat(produce)
+  }
 }
 ```
 
@@ -472,16 +472,16 @@ isHungry
 
 ```swift
 protocol Animal {
-	associatedtype CommodityType: Food
-	func produce() -> CommodityType
+  associatedtype CommodityType: Food
+  func produce() -> CommodityType
 }
 
 struct Chicken: Animal {
-	func produce() -> Egg {}
+  func produce() -> Egg {}
 }
 
 struct Cow: Animal {
-	func produce() -> Milk {}
+  func produce() -> Milk {}
 }
 
 protocol Food {}
@@ -491,13 +491,13 @@ struct Egg: Food {}
 struct Milk: Food {}
 
 struct Farm {
-	var animals: [any Animal]
-	
-	func produceCommodities() -> [any Food] {
-		return animals.map { animal in
-			animal.produce()
-		}
-	}
+  var animals: [any Animal]
+
+  func produceCommodities() -> [any Food] {
+    return animals.map { animal in
+      animal.produce()
+    }
+  }
 }
 ```
 
