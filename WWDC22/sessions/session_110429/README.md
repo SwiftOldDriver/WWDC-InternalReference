@@ -37,7 +37,7 @@ session_ids: [110429]
 
 如图 9 号标记位所示的就是激光雷达扫描仪(LiDAR Scanner)。LiDAR 的主要作用就是测距，它的原理是 ToF(Time of Flight)，即通过连续发射经过调制的特定频率的光脉冲(一般为不可见光)到被观测物体上，然后计算光脉冲投射到物体并反射回手机的这段飞行时间来得到手机与物体之间的距离。在 12 Pro/Pro Max、13 Pro/Pro Max、iPad Pro（11 英寸第二代、12.9 英寸第四代）都会配备激光雷达扫描仪。
 
-更多关于 ToF 原理的介绍可以参考文档 [ToF技术是什么](https://zhuanlan.zhihu.com/p/51218791)。
+更多关于 ToF 原理的介绍可以参考文档 [ToF 技术是什么](https://zhuanlan.zhihu.com/p/51218791)。
 
 ### 深度数据
 
@@ -128,7 +128,6 @@ FaceDriven AF/AE 相关 API 仅两个属性，如下图所示：
 
 通常我们认为 "人" 是相机拍摄的主体对象，因此 Face-driven AF/AE 很适合用于拍照/摄像 App 或者视频会议的场景中，在自动对焦/曝光的模式中自动启动，保证人脸作为相机拍摄主体，优化拍摄效果。当然，如果你的目的是拍摄风景，为了防止在该模式下相机自动对焦到不经意出现的路人脸上，也可以提前通过设置将该功能给关闭掉。
 
-
 ## Advanced Streaming
 
 ### What's New In Streaming
@@ -213,7 +212,7 @@ var isMultitaskingCameraAccessSupported: Bool { get }
 
 #### 采用画中画进行视频通话
 
-AVFoundation 自 iOS 14 开始就支持了画中画的功能。当用户开启画中画时，你的 app 将会缩小到屏幕的一角，用户就可以在主界面使用其他的 app。在 iOS 16 之前，我们需要 [com.apple.developer.avfoundation.multitasking-camera-access](https://developer.apple.com/contact/request/multitasking-camera-access/) 授权才能在 PiP 模式下使用摄像头，比如 Zoom 就获得了苹果的授权可以使用该能力。在 iOS 16 之后，PiP 模式下需要使用摄像头的能力也可以通过使用 `.isMultitaskingCameraAccessEnabled ` 来开启了。
+AVFoundation 自 iOS 14 开始就支持了画中画的功能。当用户开启画中画时，你的 app 将会缩小到屏幕的一角，用户就可以在主界面使用其他的 app。在 iOS 16 之前，我们需要 [com.apple.developer.avfoundation.multitasking-camera-access](https://developer.apple.com/contact/request/multitasking-camera-access/) 授权才能在 PiP 模式下使用摄像头，比如 Zoom 就获得了苹果的授权可以使用该能力。在 iOS 16 之后，PiP 模式下需要使用摄像头的能力也可以通过使用 `.isMultitaskingCameraAccessEnabled` 来开启了。
 
 ![pip](./images/pip.png)
 
