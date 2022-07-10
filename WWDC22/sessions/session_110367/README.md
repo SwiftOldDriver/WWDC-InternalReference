@@ -44,24 +44,24 @@ func mySwap<T>(_ a: inout T, _ b: inout T) {
 
 1. 检查模版函数定义是否正确，比如函数中是否有未定义符号等。
 
-```c++
-template <class T>
-void mySwap(T& a, T& b) {
-    undefineFunc(); // 如果没有对应函数定义，就会报错
-   //...
-}
-```
+    ```c++
+    template <class T>
+    void mySwap(T& a, T& b) {
+        undefineFunc(); // 如果没有对应函数定义，就会报错
+        //...
+    }
+    ```
 
 2. 检查模版函数调用语句，比如类型参数是否合法等。
 
-```c++
-template<class T>
-bool isOdd(T x) {
-    return x % 2 == 1;
-}
-
-isOdd(1.1); // 传入不支持比较类型，就会报错
-```
+    ```c++
+    template<class T>
+    bool isOdd(T x) {
+        return x % 2 == 1;
+    }
+    
+    isOdd(1.1); // 传入不支持比较类型，就会报错
+    ```
 
 而第二个检查，正是 C++ 模版编程一大痛点，使用已定义的模版函数或者类时，需要了解实现才能清楚传入的参数类型有哪些隐性约束，不然则可能遇到编译期抛出的错误，在代码复杂的情况下，这种编译错误会变得难以排查。
 
@@ -396,29 +396,30 @@ constexpr const std::array<Color, 3> colorPalette = {
 
 虽然 `consexpr` 是 C++11 就引入的特性，但 C++20 对 `constexpr` 也做了不少改进：
 
-1. 大量标准库的容器类和算法进行了 `constexpr` 标注，这让自定义函数常量表达式化可能性提高了不少。 Xcode14 也支持了不少 C++20 标准库的 `constexpr` 优化： ![](./images/7.png)
+1. 大量标准库的容器类和算法进行了 `constexpr` 标注，这让自定义函数常量表达式化可能性提高了不少。 Xcode14 也支持了不少 C++20 标准库的 `constexpr` 优化： 
+    ![](./images/7.png)
 
 2. `consteval` 关键字加入。以往的 `constexpr` 关键字标注的函数，像上面例子 1 一样，是可能随着传入参数或者返回值使用的情况导致变为普通函数的，这就导致了可能会返回类型和定义类型不匹配问题：
 
-   ```c++
-   // 例子 1
-   constexpr int test(int value) {
-       return value;
-   }
-   int b = 1;
-   constexpr int b1 = test(b); // 参数是普通变量，返回值被常量表达式使用，无法优化且因为类型不匹配，编译报错
-   ```
+    ```c++
+    // 例子 1
+    constexpr int test(int value) {
+        return value;
+    }
+    int b = 1;
+    constexpr int b1 = test(b); // 参数是普通变量，返回值被常量表达式使用，无法优化且因为类型不匹配，编译报错
+    ```
 
-   虽然这样大多数情况是利大于弊的，可以让函数同时支持两种类型返回，按需优化。但是少数情况下希望定义确定能优化的函数时就没有办法了。所以 C++20 引入了 `consteval` 关键字用于这种情况，来表明函数只能在编译期计算，做更严格的检查，这时候就不能变成普通函数使用了。
+    虽然这样大多数情况是利大于弊的，可以让函数同时支持两种类型返回，按需优化。但是少数情况下希望定义确定能优化的函数时就没有办法了。所以 C++20 引入了 `consteval` 关键字用于这种情况，来表明函数只能在编译期计算，做更严格的检查，这时候就不能变成普通函数使用了。
 
-   ```c++
-   consteval int test(int value) {
-       return value;
-   }
-   
-   int b = 1;
-   int b2 = test(b); // 编译报错，参数必须得是常量表达式    
-   ```
+    ```c++
+    consteval int test(int value) {
+        return value;
+    }
+      
+    int b = 1;
+    int b2 = test(b); // 编译报错，参数必须得是常量表达式    
+    ```
 
 ## 总结
 
