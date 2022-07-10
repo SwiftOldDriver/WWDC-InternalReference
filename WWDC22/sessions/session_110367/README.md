@@ -396,7 +396,7 @@ constexpr const std::array<Color, 3> colorPalette = {
 
 虽然 `consexpr` 是 C++11 就引入的特性，但 C++20 对 `constexpr` 也做了不少改进：
 
-1. 大量标准库的容器类和算法进行了 `constexpr` 标注，这让自定义函数常量表达式化可能性提高了不少。 Xcode14 也支持了不少 C++20 标准库的 `constexpr` 优化： 
+1. 大量标准库的容器类和算法进行了 `constexpr` 标注，这让自定义函数常量表达式化可能性提高了不少。 Xcode14 也支持了不少 C++20 标准库的 `constexpr` 优化：
     ![](./images/7.png)
 
 2. `consteval` 关键字加入。以往的 `constexpr` 关键字标注的函数，像上面例子 1 一样，是可能随着传入参数或者返回值使用的情况导致变为普通函数的，这就导致了可能会返回类型和定义类型不匹配问题：
