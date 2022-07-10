@@ -116,7 +116,7 @@ void objectShader(object_data CurvePayload *payloadOutput [[payload]],
 
 #### 设置渲染管线描述
 
-通过 MTLMeshRenderPipelineDescriptor 初始化渲染管线描述，包括`objectFunction`、`payloadMemoryLength`、`maxTotalThreadsPerObjectThreadgroup`。
+通过 MTLMeshRenderPipelineDescriptor 初始化渲染管线描述，包括 `objectFunction`、`payloadMemoryLength`、`maxTotalThreadsPerObjectThreadgroup`。
 
 > 有关 MTLMeshRenderPipelineDescriptor 的其它属性，可参考这个[官方文档](https://developer.apple.com/documentation/metal/mtlmeshrenderpipelinedescriptor)
 
@@ -129,17 +129,17 @@ meshPipelineDesc.maxTotalThreadsPerObjectThreadgroup = kHairsPerBlock
 
 ![](./images/object_shader.png)
 
-其中`object_data`就是 payload 数据，如图所示，4 根头发会生成 2 X 2 的网格
+其中 `object_data` 就是 payload 数据，如图所示，4 根头发会生成 2 X 2 的网格
 
 ### 网格着色器阶段
 
-接收上个阶段输出的 payload 数据，输出`metal::mesh`类型的数据到光栅化器。
+接收上个阶段输出的 payload 数据，输出 `metal::mesh` 类型的数据到光栅化器。
 
 这个阶段的处理速度**非常快**，可以将更多的处理放到此阶段。
 
 #### 定义输出数据
 
-根据需要定义`metal::mesh`类型的内置结构体数据，包括顶点数据、图元数据、网格拓扑等。
+根据需要定义 `metal::mesh` 类型的内置结构体数据，包括顶点数据、图元数据、网格拓扑等。
 
 ``` c++
 struct VertexData    { float4 position [[position]]; };
