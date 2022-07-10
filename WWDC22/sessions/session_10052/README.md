@@ -4,7 +4,7 @@ session_ids: [10052]
 
 # Session 10052 - What's New In SwiftUI
 
-本文基于[Session 10052](https://developer.apple.com/videos/play/wwdc2022/10052/)梳理.
+本文基于 [Session 10052](https://developer.apple.com/videos/play/wwdc2022/10052/) 梳理.
 
 今天很荣幸与大家分享 WWDC22 的 What's New in SwiftUI Session。
 一起来看看今年又有哪些更新呢？在开始之前先让我们回忆一下 **去年的更新内容**。
@@ -33,11 +33,11 @@ session_ids: [10052]
 ## 首先是介绍一下重头戏 SwiftChart
 
 ![Charts Images](./images/chartall.png)
-上图看到的这些效果是 WWDC22，Apple 在介绍 Charts 时候所展示的效果，有没有很酷炫。
-在 iOS16 以前当我们需要绘制图表的时候，开源图表库使用最多是 25.6k Star 的 danielgindi/Charts 。
-支持常用的大部分图表，使用时候主要注意点在于 xAsix 与 yAsix 坐标设置，iOS 部分使用 CoreGraphics 进行绘制，Android 与 iOS 两套代码具有相同的 API，很强大与便捷。
-可惜对于 Accessibility 的支持有限，Dynamic Type 与 VoiceOver 等处理也非常复杂，这点还是 Apple 原生的 SwiftUI Chart 更胜一筹。
-加上目前海外 App，例如我司 App 主要所在的美国市场，有政策要求必须支持 Accessibility，相信未来 SwiftUI Chart 对有海外需求的小伙伴也是有非常大的帮助的
+上图看到的这些效果是 Apple 在 WWDC22 上介绍 Charts 时所展示的效果，是不是很酷炫？  
+在 iOS16 以前当我们需要绘制图表的时候，很可能会使用开源的图表库。其中当属具有 25.6k Stars 的 danielgindi/Charts 最为流行。  
+danielgindi/Charts 能支持大部分常用的图表， 而且同时为 Android 与 iOS 提供相同的 API，功能非常强大与便捷。其中iOS 部分使用 CoreGraphics 进行绘制，在使用的时候需要注意 xAsix 与 yAsix 坐标的设置。  
+可惜对于 Accessibility 的支持有限，Dynamic Type 与 VoiceOver 等处理也非常复杂，这点还是 Apple 原生的 SwiftUI Chart 更胜一筹。  
+加上目前海外 App，例如我司 App 主要所在的美国市场，有政策要求必须支持 Accessibility，相信未来 SwiftUI Chart 对有海外需求的小伙伴也是有非常大的帮助的。  
   
 今天先进行一些简单实用介绍，比如常见的柱状图/折线图/基准线等。
 
@@ -111,7 +111,7 @@ Chart(date.source) { source in
 [Hello Swift Charts](https://developer.apple.com/videos/play/wwdc2022/10136/)
 [SwiftCharts: Raise the bar](https://developer.apple.com/videos/play/wwdc2022/10137/)
 
-介绍完 SwiftUI Charts， 让我们一起看看 SwiftUI 对导航栏和窗口进行的 API 更新。
+介绍完 Swift Charts， 让我们一起看看 SwiftUI 对导航栏和窗口进行的 API 更新。
 
 ## Navigation and windows
 
@@ -119,8 +119,8 @@ SwiftUI 刚推出时候，导航栏使用的是 `NavigationView` 与 `Navigation
 
 很快跳转下一层级所使用的 `NavigationButton` 就被 `NavigationLink` 所替代， 在 iOS15 中，返回页面所使用的 `\.presentationMode` 也被 `\.dismiss` 替代， 而在今年导航栏 `NavigationView` 也会被 `NavigationStack` 的替代。
 
-不过这些只是 API 的改变，还是只能逐级页面跳转，我们无法方便操作导航栏堆栈，比如跳转多级页面后，直接返回中间的某一级别页面。
-今年这个功能它来了～
+不过这些只是 API 的改变，还是只能逐级页面跳转，我们还是无法方便操作导航栏堆栈，比如跳转多级页面后，直接返回中间的某一级别页面等操作还是异常的困难。
+今年苹果终于解决这些导航问题了，下面一起看看有那些重大的更新。
 
 > NavigationStack
 
@@ -130,7 +130,7 @@ SwiftUI 刚推出时候，导航栏使用的是 `NavigationView` 与 `Navigation
 
 ```swift
 NavigationStack {
-    List(foodItem) { item in
+    List(foodItems) { item in
         NavigationLink(value: item) {
             Label(item.title, image: item.icon)
         }
@@ -148,7 +148,7 @@ NavigationStack {
 ```swift
 @State private var selectedItems: [FoodItem] = []
 NavigationStack(path: $selectedItems) {
-    List(foodItem) { item in
+    List(foodItems) { item in
         NavigationLink(value: item) {
             Label(item.title, image: item.icon)
         }
@@ -181,7 +181,7 @@ struct FoodDetailView: View {
 ```
 
 二级页面只有一个 `Text` 文本，当点击文本时候，操作 `path` 数组即可做到代码注释所述功能，这也得益于 `@Binding` 与一级页面 `@State` 的数据绑定。
-关于 navigation 详细内容可以参照 WWDC: [The SwiftUI cookbook for navigation](https://developer.apple.com/videos/play/wwdc2022/10054/)
+关于 navigation 详细内容可以参照 小专栏: [SwiftUI 新导航方案](https://xiaozhuanlan.com/topic/7841259603)
 
 既然说完了导航跳转，那就不得不也要提一下模态弹出页面的跳转方式。
 
