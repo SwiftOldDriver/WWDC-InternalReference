@@ -136,7 +136,7 @@ session_ids: [10082]
 ![organizer_hang_reports](images/session_organizer_hang_reports.png)
 
 例如上图所示，我们观察到 Hangs Reports 的问题列表中最顶部的问题占了该版本卡顿问题的 21%，问题相当严重。我们可以尝试解决该问题，选中该问题并展开查看具体的堆栈信息，最终可以推断出该问题是因为在主线程同步读取磁盘文件而引起阻塞。这里补充说明下上述堆栈信息是经过符号化后的结果，具体只要用户在 App 上传到 App Store 时一并上传符号信息，报告中的堆栈信息就能自动符号化了。
-除了 Xcode Organizer 本身提供的可视化分析工具之外，它也支持第三方开发者通过 App Store Connect REST API 获取应用的卡顿报告数据，以方便开发者将卡顿分析集成到自己内部的分析系统中并做额外分析。（具体观看 WWDC20 视频 [Identify trends with the Power and Performance API](https://developer.apple.com/videos/play/wwdc2020/10057) 的介绍）
+除了 Xcode Organizer 本身提供的可视化分析工具之外，它也支持第三方开发者通过 App Store Connect REST API 获取应用的卡顿报告数据，以方便开发者将卡顿分析集成到自己内部的分析系统中并做额外分析。（具体可参考往期[WWDC20 10057 - Identify trends with the Power and Performance API](https://xiaozhuanlan.com/topic/2036175489)的介绍）
 另外在进行排查和治理现有问题时，做好线上防劣化监控其实也同样重要，Apple 建议开发者到 Organizer 的 Regressions 中开启版本性能指标劣化通知，当版本卡顿率突然上涨时就能收到劣化通知，并根据相应问题及时做出调整。具体可观看 Apple 去年 WWDC21 视频 [Diagnose Power and Performance regressions in your app](https://developer.apple.com/videos/play/wwdc2021/10087) 介绍
 
 ![session_hang_regression](images/session_hang_regression.png)
