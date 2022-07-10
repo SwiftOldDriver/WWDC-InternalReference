@@ -84,12 +84,21 @@ Text(verbatim: "A")
 
 ```swift
 //Swift Code
-NSLocalizedString("Order", comment: "")
+//value会被用在找不到对应 key 的翻译的时候，如果此时 value 会空，则会返回 key
+NSLocalizedString("Order", value: "", comment: "")
 ```
 
 ```swift
 //Swift Code, iOS 15.0+
+//iOS 15 的新方法中没有 value 这一参数，这要求 localized 参数需要尽量能直接表示原文的含义才行，否则在遗漏翻译 value 时此 key 会露出。并且此流程中
+//翻译同学拿到的源文案也会是这个值。
 String(localized: "Order", comment:"xxxxx")
+
+//Swift Code, iOS 16.0+
+//iOS 16 新增了 defaultValue 参数，解放了 localized 的含义，使得 localized 可以变得更描述性，而在 defaultValue 中填充原文。类似 
+//NSLocalizedString 中的 value
+String(localized: "Order.A", defaultValue: "Order", comment:"xxxxx")
+String(localized: "Order.B", defaultValue: "Order", comment:"xxxxx")
 ```
 
 另外还有直接在 StoryBoard 和 xib 中填充字符串。
@@ -274,6 +283,36 @@ return String(localized: "EXPECTED_RAINFALL",
 
 ![](./images/width_autolayout.png)
 
+SwiftUI 今年新出了 Grid 来更好的进行这种类型的布局。
+
+```swift
+struct WeatherTestView: View {
+    var rows: [Row]
+    var body: some View {
+        Grid(alignment: .leading) {
+            ForEach(rows) { row in
+                GridRow {
+                    Text(row.dayOfWeek)
+                    
+                    Image(systemName: row.weatherCondition)
+                        .symbolRenderingMode(.multicolor)
+                    
+                    Text(row.minimumTemperature)
+                        .gridColumnAlignment(.trailing)
+                    
+                    Capsule().fill(Color.orange).frame(height: 4)
+                    
+                    Text(row.maximumTemperature)
+                }
+                .foregroundColor(.white)
+            }
+        }
+    }
+}
+```
+
+非 SwiftUI 选手还是老老实实在 UIKit 里活用 `setContentCompressionResistancePriority` 等 autolayout 的特性来处理类似布局吧。
+
 ### 行数自适应
 
 遇到本地化文案过长的情况，应该避免直接截断文案，更推荐使用换行的方式进行处理。
@@ -282,7 +321,7 @@ return String(localized: "EXPECTED_RAINFALL",
 
 ### 更多样化的布局
 
-当空间过小，无法满足本地化的诉求时，也可以考虑更灵活地调整布局。如下图所示，一行四列的按钮可以改为二行二列的结构来满足文案的完整露出。在 SwiftUI 中可以通过`ViewThatFits`来简单的做到这点，不过 UIKit 内就没那么容易实现就是了。像这类优化并不是一个强求的点，开发者们可以按照自己的能力选择性的适配。
+当空间过小，无法满足本地化的诉求时，也可以考虑更灵活地调整布局。如下图所示，一行四列的按钮可以改为二行二列的结构来满足文案的完整露出。在 SwiftUI 中今年开始可以通过`ViewThatFits`来简单的做到这点，不过 UIKit 内就没那么容易实现就是了，需要通过 UICollectionView 手动处理行数。像这类优化并不是一个强求的点，开发者们可以按照自己的能力选择性的适配。
 
 ![](./images/view_that_fits.png)
 
