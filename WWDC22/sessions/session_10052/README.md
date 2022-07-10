@@ -30,14 +30,14 @@ session_ids: [10052]
 
 ---
 
-## 首先是介绍一下重头戏 SwiftChart
+## 首先是介绍一下重头戏 Swift Chart
 
 ![Charts Images](./images/chartall.png)
 上图看到的这些效果是 Apple 在 WWDC22 上介绍 Charts 时所展示的效果，是不是很酷炫？  
 在 iOS16 以前当我们需要绘制图表的时候，很可能会使用开源的图表库。其中当属具有 25.6k Stars 的 danielgindi/Charts 最为流行。  
 danielgindi/Charts 能支持大部分常用的图表， 而且同时为 Android 与 iOS 提供相同的 API，功能非常强大与便捷。其中 iOS 部分使用 CoreGraphics 进行绘制，在使用的时候需要注意 xAsix 与 yAsix 坐标的设置。  
-可惜对于 Accessibility 的支持有限，Dynamic Type 与 VoiceOver 等处理也非常复杂，这点还是 Apple 原生的 SwiftUI Chart 更胜一筹。  
-加上目前海外 App，例如我司 App 主要所在的美国市场，有政策要求必须支持 Accessibility，相信未来 SwiftUI Chart 对有海外需求的小伙伴也是有非常大的帮助的。  
+可惜 danielgindi/Charts 对于 Accessibility 的支持有限，Dynamic Type 与 VoiceOver 等处理也非常复杂。从这点来看，Apple 原生的 SwiftUI Chart 还是更胜一筹。  
+这一点对做海外市场的 App 尤为重要。例如我司的 App 主要所在的美国市场，要求必须支持 Accessibility。相信 SwiftUI Chart 对做海外市场的小伙伴也会有非常大的帮助。
   
 今天先进行一些简单实用介绍，比如常见的柱状图/折线图/基准线等。
 
@@ -60,7 +60,7 @@ Chart(partyTasksRemaining) { task in
         x: .value("date", unit: .day),
         y: .value("Task Remaining", task.remainingCount)
     )
-    .foregroundStyle(byL .value("Category", task.category))
+    .foregroundStyle(by: .value("Category", task.category))
 }
 ```
 
@@ -100,7 +100,7 @@ Chart(date.source) { source in
 
 ---
 
-上面是使用过原生 API 在 10 行左右即可实现的效果，对开发者真的非常友好，苹果之前在 iOS 内置的 Health app 中苹果开始大量使用图表，而现在开放成为开发者使用的 framework。
+上面是使用过原生 API 在 10 行左右即可实现的效果，对开发者真的非常友好。苹果之前在 iOS 内置的 Health app 中开始大量使用图表，而现在把它开放成 framework 提供给所有开发者使用。
 
 这很 Apple，会借鉴很多开源库，了解解决开发者的需求。
 比如早期 Apple 借鉴而推出的 UICollectionView，以及随着 Swift 推出的 Codable 等等，现在都在 iOS 开发领域抢夺了很多开源库的份额。
@@ -109,6 +109,7 @@ Chart(date.source) { source in
 心急的小伙伴可以先查看 WWDC 以下两个 Session 的视频提前了解。
 
 [Hello Swift Charts](https://developer.apple.com/videos/play/wwdc2022/10136/)
+
 [SwiftCharts: Raise the bar](https://developer.apple.com/videos/play/wwdc2022/10137/)
 
 介绍完 Swift Charts， 让我们一起看看 SwiftUI 对导航栏和窗口进行的 API 更新。
@@ -272,7 +273,7 @@ struct PartyPlanner: App {
 
 需要额外提一下的地方是， MenuBarExtra 可以独立运行， 也就是说 App 可以不唤醒 WindowGroup 的时候使用。甚至代码中根本不需要 WindowGroup 的情况下也可以独立运行。
 
-说了这么多，SwiftUI 对于跨平台的支持真是不遗余力，各位小伙伴要不要考虑在公司为技术发言为自己发言，将自己的 App 做成跨平台项目？
+说了这么多，SwiftUI 对于跨平台的支持真是不遗余力，各位小伙伴要不要考虑在公司技术讨论的时候为自己发言，将自己的 App 做成跨平台项目呢？
 
 关于这方面的 Xcode 支持，可以参照以下视频，也可以持续关注我们后续相关专题更新。
 [What's new in Xcode](https://developer.apple.com/videos/play/wwdc2022/110427/)
@@ -308,7 +309,7 @@ Form {
 ![image](./images/formStyleGroup.png)
 图中可以看出，`formstyle` 对于 `Form` 的影响，这个例子中使用 `.grouped` 更加合适。
 
-除了 `Form` 的提升，作为最常用的 `Test` / `TextField` 也有些提升，属于很细节很重要的变化。让我们一起来看看 `lineLimit` 的提升。
+除了 `Form` 的提升，作为最常用的 `Text` / `TextField` 也有些提升，属于很细节很重要的变化。让我们一起来看看 `lineLimit` 的提升。
 
 ```swift
 Text("Hello World")
@@ -488,7 +489,7 @@ Table(attendees, selection: $selection) {
 
 ## Sharing
 
-新推出了 `ShareLink` API，来使用系统的分享功能，与 UIKit 中的 UIActivityViewController 所提供的能力类似，现在可以在 SwiftUI 中使用 `ShareLink` 来做了， 同时可以自动在多平台以不同的 UI 进行适配。
+苹果新推出了 `ShareLink` API，来使用系统的分享功能，这与 UIKit 中的 UIActivityViewController 所提供的能力类似。 而且 SwiftUI 的`ShareLink` 可以为多个平台的 UI 自动适配。
 
 ```swift
 Gallery( ... )
@@ -503,7 +504,7 @@ Gallery( ... )
 ![image](./images/share.png)
 
 图中介绍了相同代码，在 iOS / watchOS/ macOS 中所呈现的不同形态。
-分享是相互的，可以将数据向外分享，自然也可以从外部向 App 传递，与之对应的便是 `dropDestination` 来接受外部传入的数据，默认支持 `String, Data, URL, Attributed String, Image` 等类型的数据。
+分享是相互的，可以将数据向外分享，自然也可以从外部向 App 传递，与之对应的便是 `dropDestination` 来接受外部传入的数据，默认支持 `String`, `Data`, `URL`, `Attributed String` 以及 `Image` 等类型的数据。
 
 ```swift
 Gallery( ... )
@@ -527,7 +528,7 @@ Gallery( ... )
 SF Symbol 现在拥有 4000+ 的图标，可以和 Apple 的文字系统无缝集成，可以跟随 Dynamic Type 进行无损的放大缩小， 我们一些常用的图标，箭头，形状，天气，健康，媒体等均内置与系统中。
 ![image](./images/sfSymbol.png)
 SF Symbol 有 Mac 版 App，需要的小伙伴可以自行[下载](https://developer.apple.com/sf-symbols/)。
-在系统中使用 SF Symbol 只需要 使用 `Image(systemName: "SF Symbol Name")` 即可。
+在系统中使用 SF Symbol 只需要使用 `Image(systemName: "SF Symbol Name")` 即可。
 而今年对 SF Symbol 新增了阴影效果与渐变效果，代码如下。
 
 ```swift
