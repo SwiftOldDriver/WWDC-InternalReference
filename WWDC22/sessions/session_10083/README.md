@@ -113,18 +113,18 @@ BGProcessingTask 是苹果在 iOS 13 推出的 API。iOS 13 之后苹果对 Back
 
 通过 BGProcessingTask 我们可以将能够在后台运行的非实时性任务交由系统在指定的时机完成。例如：在充电的时候进行数据库清理、数据备份、机器学习等等。那如何使用这个功能呢？系统提供了 2 个 API：
 
-1. 通过传入 APP identifier 来发起后台任务
+1. 通过传入 APP identifier 来发起后台任务。
 
-```
-init(identifier: String)
-```
+   ```
+   init(identifier: String)
+   ```
 
 2. 设置相关属性（如 requiresExternalPower、requiresNetworkConnectivity）来指定任务执行的条件。
 
-```
-var requiresExternalPower: Bool { get set }
-var requiresNetworkConnectivity: Bool { get set }
-```
+   ```
+   var requiresExternalPower: Bool { get set }
+   var requiresNetworkConnectivity: Bool { get set }
+   ```
 
 通过设置 requiresExternalPower 和 requiresNetworkConnectivity 可以告诉系统 BGProcessingTask 的触发时机是否需要连接电源和是否需要网络连接。BGProcessingTask 真正的执行时机是与用户的行为有关联的，如果用户一直不使用我们的 APP，那么可能在很长的时间里 BGProcessingTask 都得不到执行。
 
