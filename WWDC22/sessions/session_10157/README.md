@@ -4,9 +4,9 @@ session_ids: [10157]
 
 # SF Symbols 4 使用指南
 
->  作者：Mim0sa，iOS 开发者，`iOS 摸鱼周报` 联合编辑，掘金主页：[Mim0sa](https://juejin.cn/user/1433418892590136)，云吸猫/狗爱好者。
+> 作者：Mim0sa，iOS 开发者，`iOS 摸鱼周报` 联合编辑，掘金主页：[Mim0sa](https://juejin.cn/user/1433418892590136)，云吸猫/狗爱好者。
 >
->  审核：
+> 审核：
 
 本文基于 WWDC 2022 [Session 10157](https://developer.apple.com/videos/play/wwdc2022/10157/) 和 [Session 10158](https://developer.apple.com/videos/play/wwdc2022/10158/) 梳理，为了更方便没有 SF Symbols 经验的读者理解，也将往年的 SF Symbols 相关内容一并整理。本文从 SF Symbols 4 的新特性切入，讨论 SF Symbols 这款由系统字体支持的符号库有哪些优点以及该如何使用。在这次 WWDC 2022 中，除了符号的数量的增加到了 4000+ 之外，还有自动渲染模式、可变符号等新特性推出，让 SF Symbols 这把利器变得又更加趁手和锋利了。
 
@@ -49,7 +49,7 @@ imageView.tintColor = .systemBlue
 
 // SwiftUI
 Image(systemName: "thermometer.sun.fill")
-	.foregroundStyle(.blue)
+    .foregroundStyle(.blue)
 ```
 
 #### 分层模式 Hierarchical
@@ -68,8 +68,8 @@ imageView.preferredSymbolConfiguration = config
 
 // SwiftUI
 Image(systemName: "thermometer.sun.fill")
-	.foregroundStyle(.gray)
-	.symbolRenderingMode(.hierarchical)
+    .foregroundStyle(.gray)
+    .symbolRenderingMode(.hierarchical)
 ```
 
 #### 调色盘模式 Palette
@@ -84,7 +84,7 @@ imageView.preferredSymbolConfiguration = config
 
 // SwiftUI
 Image(systemName: "thermometer.sun.fill")
-	.foregroundStyle(.lightGray, .cyan, .teal)
+    .foregroundStyle(.lightGray, .cyan, .teal)
 ```
 
 #### 多色模式 Muticolor
@@ -98,7 +98,7 @@ imageView.preferredSymbolConfiguration = .preferringMulticolor()
 
 // SwiftUI
 Image(systemName: "thermometer.sun.fill")
-	.symbolRenderingMode(.multicolor)
+    .symbolRenderingMode(.multicolor)
 ```
 
 #### 自动渲染模式 Automatic
@@ -173,8 +173,8 @@ imageView.preferredSymbolConfiguration = config
 
 // SwiftUI
 Label("Heart", systemImage: "heart")
-	.imageScale(.large)
-	.font(.system(size: 20, weight: .semibold))
+    .imageScale(.large)
+    .font(.system(size: 20, weight: .semibold))
 ```
 
 符号的字重和文本的字重原理相同，都是通过加粗线条来增加字重。但 SF Symbols 的三种比例尺寸并不是单纯的对符号进行缩放。如果你仔细观察，会发现对于同一个字重，但是不同比例的符号来说，他们线条的粗细是一样的，但是对符号的整体进行了扩充和延展，以应对不一样的使用环境。
@@ -197,8 +197,8 @@ Label("Heart", systemImage: "heart")
 
 * [[ WWDC 22 ] What's new in SF Symbols 4](https://developer.apple.com/videos/play/wwdc2022/10157)
 * [[ WWDC 22 ] Adopt Variable Color in SF Symbols](https://developer.apple.com/videos/play/wwdc2022/10158)
-* [[ WWDC 21 内参 ] SF Symbols 使用指南](https://xiaozhuanlan.com/topic/9214865730)
-* [[ WWDC 21 内参 ] 定制属于你的 Symbols](https://xiaozhuanlan.com/topic/4807632591)
+* [[ WWDC 21 ] 内参：SF Symbols 使用指南](https://xiaozhuanlan.com/topic/9214865730)
+* [[ WWDC 21 ] 内参：定制属于你的 Symbols](https://xiaozhuanlan.com/topic/4807632591)
 * [[ Human Interface Guidelines ] SF Symbols](https://developer.apple.com/design/human-interface-guidelines/sf-symbols/overview/)
 * [[ Developer ] SF Symbols](https://developer.apple.com/sf-symbols/)
 
