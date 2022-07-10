@@ -35,7 +35,7 @@ session_ids: [10052]
 ![Charts Images](./images/chartall.png)
 上图看到的这些效果是 Apple 在 WWDC22 上介绍 Charts 时所展示的效果，是不是很酷炫？  
 在 iOS16 以前当我们需要绘制图表的时候，很可能会使用开源的图表库。其中当属具有 25.6k Stars 的 danielgindi/Charts 最为流行。  
-danielgindi/Charts 能支持大部分常用的图表， 而且同时为 Android 与 iOS 提供相同的 API，功能非常强大与便捷。其中iOS 部分使用 CoreGraphics 进行绘制，在使用的时候需要注意 xAsix 与 yAsix 坐标的设置。  
+danielgindi/Charts 能支持大部分常用的图表， 而且同时为 Android 与 iOS 提供相同的 API，功能非常强大与便捷。其中 iOS 部分使用 CoreGraphics 进行绘制，在使用的时候需要注意 xAsix 与 yAsix 坐标的设置。  
 可惜对于 Accessibility 的支持有限，Dynamic Type 与 VoiceOver 等处理也非常复杂，这点还是 Apple 原生的 SwiftUI Chart 更胜一筹。  
 加上目前海外 App，例如我司 App 主要所在的美国市场，有政策要求必须支持 Accessibility，相信未来 SwiftUI Chart 对有海外需求的小伙伴也是有非常大的帮助的。  
   
@@ -224,10 +224,10 @@ struct FoodDetailView: View {
 
 说了这么多都是 iOS 和 iPadOS 上的内容，接下来我们看看 macOS 的多 window 更新。
 
-> macOS 独立 window 支持
+> macOS 独立 Window 支持
 
 之前使用 SwiftUI 来构建程序主页面时候，一般来说使用 `WindowGroup` ，可以生成多个窗口以允许对应用程序的数据进行不同的透视。
-今年新增了 `Window` 容器，为 Mac 的 app 声明一个唯一的窗口，切支持快捷键打开，同时为其提供了较多的 modifier，例如默认大小/位置/可调整大小等等。
+今年新增了 `Window` 容器，为 Mac 的 app 声明一个唯一的窗口，并支持快捷键打开，同时为其提供了较多的 modifier，例如默认大小/位置/可调整大小等等。
 示例代码如下。
 
 ```swift
@@ -248,11 +248,11 @@ struct PartyPlanner: App {
 ```
 
 示例中 Window 可以使用快捷键 Command + 0 单独唤醒，设置了默认尺寸与位置。
-其使用场景更适合作为一个独立且较小的辅助来窗口使用。
+其使用场景更适合作为一个独立且较小的辅助窗口来使用。
 如果对于 Scene 和 window 有兴趣，可以参考我们的另一片文章
 [将多窗口引入 SwiftUI 应用](https://xiaozhuanlan.com/topic/3529016874)
 
-当然 macOS 的更新不止于此，SwiftUI 的能力也不限于一个平台，比如上段代码中的 `BudgetView` , 自定义的 SwiftUI View，也可以在不修改代码的情况下，跨平台的支持 iOS / iPadOS 等。
+当然 macOS 的更新不止于此，SwiftUI 的能力也不限于一个平台，比如上段代码中的 `BudgetView` , 作为一个自定义的 SwiftUI View，也可以在不修改代码的情况下，来支持 iOS / iPadOS 等不同平台。
 
 macOS 除了新增独立辅助窗口外，也新增了 Menubar 组件，可以展示在系统桌面右上角的位置  `MenuBarExtra`。
 话不多说，上代码～
@@ -270,7 +270,7 @@ struct PartyPlanner: App {
 
 ![image](./images/macMenubar.png)
 
-需要额外提一下的地方是， MenuBarExtra 可以独立运行， 也就是说 App 可以不唤醒 WindowGroup 甚至没有 代码中没有 WindowGroup ，而独立运行。
+需要额外提一下的地方是， MenuBarExtra 可以独立运行， 也就是说 App 可以不唤醒 WindowGroup 的时候使用。甚至代码中根本不需要 WindowGroup 的情况下也可以独立运行。
 
 说了这么多，SwiftUI 对于跨平台的支持真是不遗余力，各位小伙伴要不要考虑在公司为技术发言为自己发言，将自己的 App 做成跨平台项目？
 
@@ -556,7 +556,7 @@ struct CalendarIcon: View {
 
 > Grid / Layout / ViewThatFits / AnyLayout
 
-目前 SwiftUI 的瀑布流布局， 仅仅有 `LazyVGrid` 与 `LazyHGrid`, 无法随意的控制瀑布流中的每个元素大小/位置等。过去自定义 `UICollectionViewFlowLayout` 的一些布局效果/动画效果，几乎全部丧失。
+以前当我们使用 SwiftUI 进行瀑布流布局多时候，大都使用 `LazyVGrid` 与 `LazyHGrid`。可是它们无法随意的控制瀑布流中的每个元素大小和位置。几乎丧失以前在 UIKit 中自定义 `UICollectionViewFlowLayout` 的布局和动画效果。
 
 好在今年一切都有了变化，我们先来介绍新的 `Grid`。
 
@@ -580,12 +580,12 @@ var body: some View {
 ![image](./images/layout.png)
 可以查看到代码中，任务头像与名字的 cell (NameHeadline)，占用两列 cell 宽度。
 日历占用一个 cell（CalendarIcon）宽度，四种符号占用一个 cell (SymbolGrid) 的空间。
-这种大小不相同布局，过去 `LazyV/HGrid` 过去便无法直接做到，现在只需要几行就可以优雅设置，实在是太棒了。
+这种大小不相同布局，过去的 `LazyV/HGrid` 是无法直接做到。现在只需要几行就可以优雅设置，实在是太棒了。
 
-如果有更复杂的需求，还可以自定义 `Layout`，与过去重写 `UICollectionFlowLayout` 比较接近, 遵守 `Layout` 协议， 提供每个元素所在位置，并且根据协议提供的子试图来返回父视图所需空间即可完成。
+如果有更复杂的需求，还可以自定义 `Layout`，与过去重写 `UICollectionFlowLayout` 比较接近, 遵守 `Layout` 协议， 提供每个元素所在位置，并且根据协议提供的子视图来返回父视图所需空间即可完成。
 
-而新的 ViewThatFits API, 就更有趣了，可以根据设备尺寸来自动代码中预设的布局方式。
-如果想要手动控制/切换布局，Apple 还提供了 AnyLayout 来进行支持动画的切换。
+而新的 ViewThatFits API 就更有趣了，可以根据设备尺寸来自动代码中预设的布局方式。
+如果想要手动控制或者切换布局，Apple 还提供了 AnyLayout 来进行支持动画的切换。
 本文作为介绍文章就不一一详细介绍了。
 
 其他 Layout 相关可以参考我们介绍布局的详细文章。
