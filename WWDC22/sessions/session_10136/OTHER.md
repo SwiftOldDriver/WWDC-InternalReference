@@ -1,6 +1,6 @@
 ## 个人介绍
 
-米广，现就职于 Crypto 行业，从事 iOS 与 Flutter 研发工作。
+米广，就职于 Crypto 行业，从事 iOS 与 Flutter 研发工作。
 
 ## 审核介绍
 
@@ -12,4 +12,4 @@
 
 ## 公众号/小专栏图文头图
 
-![](assets/16574313303134.jpg)
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16574609710153.jpg)
