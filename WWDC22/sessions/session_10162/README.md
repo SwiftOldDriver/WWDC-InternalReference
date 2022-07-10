@@ -18,7 +18,7 @@ session_ids: [10162]
 
 **Metal**，是苹果主推的面向底层的图形编程接口，基于自家的硬件优化，支持出色的性能并降低开销。时隔 5 年，Metal 3 发布，必然带来一些新的特性，其中之一就是`网格着色器（Mesh Shaders）`。网格着色器其实并不是新鲜产物，此前 NVDIA、AMD、Intel 也都支持类似功能的着色器。
 
->  注意：
+> 注意：
 >
 > **Mesh Shaders 其实是指 `Object Shader` 和 `Mesh Shader`。**
 
