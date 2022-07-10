@@ -1,323 +1,264 @@
----
-session_ids: [110427]
----
-
-# WWDC22 110427 - What's new in Xcode
-
-本文基于 [Session 110427](https://developer.apple.com/videos/play/wwdc2022/110427/) 梳理
-
-> 作者：Chafferer，现就职于米哈游平台组，从事米哈游 iOS SDK 的研发工作
->
-> 审核：红纸 iOS 打杂人员，老司机技术社区核心成员，目前就职手淘
-
-> **注：因为文章撰写时，Xcode 14 还处于 Beta 阶段，后续如有功能上的新增或者改进，我们将会更新本文内容。此外，由于本文内容较多，读者可以根据目录所示内容挑选感兴趣的内容阅读**
-
-- [WWDC22 110427 - What's new in Xcode](#wwdc22-110427---whats-new-in-xcode)
-  - [Xcode 优化提升](#xcode-优化提升)
-    - [体积优化](#体积优化)
-    - [编译速度优化](#编译速度优化)
-    - [测试速度优化](#测试速度优化)
-    - [更快地发布 macOS 应用程序](#更快地发布-macos-应用程序)
-    - [xib、storyBoard 优化](#xibstoryboard-优化)
-  - [开发者效率提升](#开发者效率提升)
-    - [SwiftUI 预览](#swiftui-预览)
-    - [高效编码](#高效编码)
-    - [编译时间可视化](#编译时间可视化)
-    - [多平台](#多平台)
-    - [调试](#调试)
-    - [Swift Package](#swift-package)
-  - [其他新增功能](#其他新增功能)
-    - [本地化](#本地化)
-    - [设备选择器](#设备选择器)
-    - [Feedback](#feedback)
-    - [Hangs](#hangs)
-    - [资源目录](#资源目录)
-    - [文档](#文档)
-    - [构建系统](#构建系统)
-  - [开发者需要注意的点](#开发者需要注意的点)
-    - [构建系统](#构建系统-1)
-    - [预览](#预览)
-    - [Xcode Server](#xcode-server)
-    - [Swift](#swift)
-  - [总结](#总结)
-  - [参考链接](#参考链接)
+# Swift Charts
 
-相信作为 iOS 开发同学 Xcode 大家肯定不会陌生，我们日常开发中无时无刻不跟 Xcode 打交道。提起 Xcode 往往我们第一反应就是大，是的 Xcode 太大了，动则 10G+，下载安装下可能半天时间就过去了。此外 Xcode 的代码提示也不够智能，看看隔壁家的 JetBrains 全家桶再看看我们，只能默默叹气：苹果啥时候能跟进下。别急，现在这些痛点在 Xcode 14 中都得到了很好地解决，是的，那些你想要的优化或者功能，它终于来了，下面就让我们看看 Xcode 14 到底有哪些令人振奋的更新：
+本文章基于 WWDC22 中 4 个关于 Swift Charts 的 Session而进行创作：
+ 
+[Session 10136 - Hello Swift Charts](https://developer.apple.com/videos/play/wwdc2022/10136/)
+[Session 10137 - Swift Charts: Raise the bar](https://developer.apple.com/videos/play/wwdc2022/10137/)
+[Session 110340 - Design an effective chart](https://developer.apple.com/videos/play/wwdc2022/110340)
+[Session 110342 - Design app experiences with charts](https://developer.apple.com/videos/play/wwdc2022/110342/)
+建议您在阅读本文章时，对 SwiftUI 的声明式语法有所了解；这里是一个 [SwiftUI 快速上手](https://developer.apple.com/tutorials/swiftui/creating-and-combining-views)
+本文将会让大家基于 Swift Charts API 实现从简单到复杂的图表，同时了解一些优质图表的设计体验要素；
+Swift Charts 是基于 SwiftUI 的苹果设计的图表框架，提供一种简洁的声明式的 API 用于实现各式图表；
+如下图所示从简单的柱状图与饼图到复杂的向量图和热力图；Swift Chart 都帮助你可以用简洁的代码实现；
+![image](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/image.png)
 
-我将从 Xcode 本身的性能优化提升、新功能对开发者效率上的提升、其他新增功能以及本次更新开发者需要注意的点这几个角度出发，详细说明 Xcode 14 都更新了什么，首先让我们用一张图总结
+在 iOS16 系统的自带 App 中，例如股票 Stock 、Health健康等 App 的图表展示与交互是基于 Swift Charts 实现的；
+![image](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/image1.png)
 
-![](./images/pic1.png)
+接下来我们结合一个具体的例子，来逐步了结  Swift Charts 的使用，这个例子是：
+一对搭档运营了一个煎饼餐车，他们提供各式煎饼，例如美式煎饼、墨西哥塔克、中式煎饼果子等 6 种煎饼类型；这对搭档的煎饼餐车，有时会停在库比提诺经营，有时会停在旧金山街头经营；
+![image](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/image2.png)
 
-## Xcode 优化提升
 
-### 体积优化
+首先我们先实现一个最简单的 Chart 
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568392541047.jpg)
+这个 Chart 中只包含一个数据项 BarChart
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16567519275527.jpg)
 
-相信大家苦于 Xcode 下载安装慢已经很久了，以 Xcode 13 为例，安装包大小 10G+，往往下载安装半天时间就过去了，比较影响我们的开发效率。针对这个痛点，本次 Xcode 更新做了相应的优化：默认内置安装 iOS 和 macOS 平台，诸如 watchOS 和 tvOS 平台是可选的安装项目，在你第一次启动 Xcode 或者以后要用到的时候选择性安装，因此，Xcode 14 的安装包大小减小了约 30%，能够大大提升下载以及安装速度
-![](./images/pic2.png)
 
-### 编译速度优化
+正如大家看到的 Chart 充当容器的角色，其中的数据项 Marks 作为内容填充在 Chart 中，上面的例子中只有一个 BarMark，我们试着把煎饼车的过去 30 天的所有类型煎饼销售数量都展示出来；
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568393069672.jpg)
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568393319544.jpg)
 
-为了提升编译速度，Xcode 14 做了大量优化（尤其是对 Swift 编译的优化），用一句话总结就是：Xcode 14 在编译的过程中尽可能并行处理，将原本串行的流程尽量并行化
 
-我们先来看下原来的构建流程是怎样的（以 Swift 应用程序为例），一个简化的 Swift 应用程序构建流程大致有以下几个步骤：
+实现以上代码后，大家可以发现，柱状图的大小、标注标签、坐标的尺度、乃至图表的颜色都自动化选择，Swift Charts API 的一个关键优势就在这里，能够基于 Mark 数据的内容和 SwiftUI 上下文，自动化协调图表中的各种因素，以达到更美观的呈现；Swift Charts 自动支持 Accessibility 的 Voice Over 等各种辅助功能；
 
-- 编译 Swift 源码
-- 生成 Swift Module
-- 编译应用程序资源文件
-- 链接完成构建
-  ![](./images/gif5.gif)
+这个煎饼餐车有时停在库比提诺营业，有时停在旧金山营业，那么我们针对这两地，过去一周的煎饼售卖数据来制作两个图表，第一个图表包括一个 SegmentPicker ，能够切换地址来查看煎饼销售数据；
+SwiftUI 的代码非常的简洁，我们在这里直接初始化旧金山和库比提诺的销售数据；基于 Picker 尝试生成一个折线图；
 
-优化后，整个构建路径缩短为：
-![](./images/gif6.gif)
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568388908445.jpg)
 
-对应的优化方案总结如下：
-![](./images/pic20.png)
 
-- 并行处理代码 & 资源文件：打开每个 target 的 Build Phases，我们可以看到有很多编译相关的配置，编译的时候，Xcode 会根据 Build Phases 中配置的顺序处理，比如往往会先编译源码然后再拷贝资源文件，实际上这两个过程并没有关联性，拷贝资源文件这个操作并不需要源码编译后的产物作为输入，因此编译源码和拷贝资源文件可以优化成并行处理：
-  ![](./images/gif10.gif)
-- 并行执行脚本：Build Phases 中有个 Run Script 的配置项，在 Xcode 14 之前，不管这些脚本是否有依赖，Xcode 默认都是执行完一个脚本再去执行另一个，有些脚本执行会比较耗时。在 Xcode 14 中，允许开启并行执行脚本，我们可以在 Build Settings 中配置 `FUSE_BUILD_SCRIPT_PHASES` 为 `YES` 开启（⚠️ **需要注意脚本与脚本之间有依赖关系的情况，此时不能盲目开启并行脚本处理，苹果提供了沙箱执行脚本机制来解决脚本依赖的 case**，可以参考 [session 110364](https://developer.apple.com/videos/play/wwdc2022/110364/)）：
-  ![](./images/gif11.gif)
-- 针对 Swift 的优化
-  - 集成构建系统和 [Swift Driver](https://github.com/apple/swift-driver)：在 Xcode 14 中，苹果将构建系统和编译器的集成度发挥到了极致，这一点在 Swift 中尤为突出，在 Xcode 14 之前，构建系统和 Swift Driver（处理 Swift 源码的编译、生成 Swift Module，进行链接等）是分开的，在 Xcode 14 中，构建系统和 Swift Driver 集成到了一起，Xcode 作为调度器管理所有的 Swift 任务，这样就能避免一些不必要的开销，这一步也是能够提前生成 Swift Module 的前置条件：
-  ![](./images/gif12.gif)
-  - 提前生成 Swift Module：这里我们看一个 case，有两个 Swift Target A 和 B，假设 A 依赖 B，那么 A 就需要等 B 编译完成生成 Swift Module 后才开始编译，在 Xcode 14 中，A 无需等待 B 完全编译完就可以生成 Swift Module（有点类似 C 系语言的 header 文件，知道了暴露的接口，无需等待与之对应的源文件完全编译）：
-  ![](./images/gif13.gif)
-  ![](./images/gif14.gif)
-  - 提前链接：之前所述是编译源码的时候可以并行执行的优化，那么对于生成最终产物之前的链接部分，Xcode 14 又做了哪些优化呢？针对 Swift 的链接部分，苹果也做到了并行处理，达到了提前链接的效果，这是有点让人不可思议的，因为编译可以做到并行处理，但是链接是很难做到并行的，苹果到了链接依赖，不直接依赖 target A 的链接产物，而是依赖 target A 的 Module 产物，但是**这么做是有条件的，需要是纯 Swift 的 target，而且要求必须是动态链接的**，可以在 Build Settings 中通过配置 `Eager Linking` 为 `YES` 打开该功能：
-  ![](./images/gif15.gif)
+![Screen Recording 2022-07-02 at 20.42.29 -1-](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/screen-recording-20220702-at-204229-1.gif)
 
-Xcode 14 将链接速度提升了 2 倍，整体编译速度提升了 25%（这主要得益于 Xcode 14 充分利用了多核并行处理能力）如果你的工程以 Swift 为主或者是纯 Swift，可以对比下 Xcode 13 和 Xcode 14 的构建速度，相信使用 Xcode 14 会有很可观的构建速度提升
+结合上面的例子，大家会发现 Swift Charts 的 API 提供非常的简洁的图表元素遍历的能力；其中的核心是 Mark 和 Mark 对应的 Property；
+Swift Charts 一共提供了 8 种 Marks，如下图所示，这些 Mark 的具体效果用途广泛；每个 Mark 都可以控制 X 与 Y 坐标、颜色等样式、节点样式与大小、线条样式等属性控制。与此同时，你也可以实现自定义的 Mark 和属性，Swift Charts 提供了扩展的能力；
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16567666214536.jpg)
 
-![](./images/pic11.png)
-![](./images/pic12.png)
 
-> Tips:
-> 更多关于并行构建可以参考：[Session 110364 - Demystify parallelization in Xcode builds](https://developer.apple.com/videos/play/wwdc2022/110364/)
-> 更多关于链接优化可以参考：[Session 110362 - Link fast: Improve build and launch times](https://developer.apple.com/videos/play/wwdc2022/110362/)
-> 更推荐阅读 WWDC22 相关文章哟：[快速链接：优化构建和启动耗时](https://xiaozhuanlan.com/topic/1509638472)
+Swift Charts 的和新目标是为了实现数据可视化和数据交互，与此同时还支持辅助功能、本地化、暗黑模式、自动布局、泛型、跨平台与动画；
+接下来我们就特定单个的 Chart 并结合实际的例子 来深入了解一些 API 和效果的实现；
+关于三个方面：
+- 标记和组成
+    - 声明式语法
+    - 丰富的自定义选项
+- 使用标记属性绘制数据
+- 自定义
 
-### 测试速度优化
+在 Swift Charts 中 Mark 就是展示的单个数据项，以我们刚刚煎饼的柱状图为例，每一个柱状条就是一个 Mark ，在这个图表中一共有六个 Mark
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568468120383.jpg)
 
-Xcode 14 同样使用并行技术来优化测试速度，Xcode 14 消除了 targets 和测试类之间调度的依赖性，从而进一步提升了测试流程的并行性：
-![](./images/gif16.gif)
+每一个 Mark 都有丰富的 Property 来控制其表现样式；基于刚刚的数据，假设我们；
+比如我们想要同时显示两个图表，只需在 Chart 中插入两个 Mark 即可，在切换不同样式的 Mark 时，也非常简单，请看下面的例子
+刚才我们使用 Picker 来切换图表，现在我们在单个图表中展示两个地方煎饼餐车的销售数据；我们通过两层 For 循环来构建包含两组数据的图表，在默认情况下会如下呈现
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568532359551.jpg)
 
-我们可以在 test plan 编辑器中选择 `Tests`，然后单击 `Options` 打开并行选项：
-![](./images/gif17.gif)
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568532380586.jpg)
+此时的图表没有像我们想象中的，按照库比提诺和旧金山分为两组数据；要想按组呈现只需要控制 Chart 的 forgroundStyle 属性，并传入 Value 告知 Chart 需要以城市来区分这两组数据；新增代码如下
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568537842502.jpg)
 
-打开并行测试后， Xcode 14 能最高减少 30% 的测试时间
-![](./images/pic14.png)
+此时大家可以看到库比提诺和旧金山的数据分组展示了，但是他们在单个 Bar 上堆叠起来；
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568530356370.jpg)
 
-> Tips:
-> 更多关于提高测试速度和可靠性可以参考：[Session 110361 - Author fast and reliable tests for Xcode Cloud](https://developer.apple.com/videos/play/wwdc2022/110361/)
+这里我想要按照城市区分，分为两个 Bar 条来展示，就此我们只需要告诉 Chart 的 position 属性，以城市区分
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568538307928.jpg)
 
-### 更快地发布 macOS 应用程序
+我们可以得到如下的效果；
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568530530754.jpg)
+如果我想看看折线图，只需要把 BarMark 变更为 LineMark 就可以得到一个折线图（这里保留了 Chart 的 foregroundStyle 属性）
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568539067138.jpg)
 
-Xcode 14 对公证速度做了优化，能提升 4 倍的公证速度，这使得发布 macOS 应用程序在 Xcode 14 中更快
-![](./images/pic15.png)
 
-### xib、storyBoard 优化
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568530685320.jpg)
+如果想给这个折线图增加一个曲线的润色和数据点的标记，只需为单个 LineMark 控制 interpolationMether 和 symbol 属性
 
-如果你是独立开发者，使用 xib 或者 storyBoard 相比纯代码会给你的项目带来不小的效率上的提升，但是一旦我们的项目变得比较复杂，storyBoard 就会变得大而臃肿，这时候，打开 storyBoard 或者是进行一些修改都会变得十分卡顿，可能拖移一下就会卡好久，这不仅影响了我们的开发效率，甚至会影响到我们的心情
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568539581477.jpg)
 
-Xcode 14 针对 Interface Builder App 做了优化，Xcode 14 中画布的编辑操作是渐进式的，并且会对我们正在查看的场景进行优先级排序（异步渲染），因此，即使在巨大且复杂的 storyBoard 中，Xcode 14 也能够及时响应我们的每一步操作。得益于此优化，在 Xcode 14 中，打开相关 nib 文件速度提升了 50%，在设备栏中切换 iPhone、iPad 速度提升了 30%，喜大普奔
-![](./images/pic16.png)
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568530833700.jpg)
 
-## 开发者效率提升
+上面介绍了折线图 LineMark 和柱状图 BarMark，Swift Charts 还支持以下类型的 Mark ，包括柱状、折线、点图、区域图、规则曲线、矩形图；你可以结合多种 Mark 来实现更复杂的图表实现；
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568540392986.jpg)
 
-### SwiftUI 预览
+想要组合展示，只需要在同个 Chart 内填充不同的 Mark ，比如想要实现一个最大值最小值组成面积区域的面积图，同时组合平均值曲线图，只需要简单实现 AreaMark 和 LineMark 即可
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568554956402.jpg)
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568554991899.jpg)
+或者想要实现一个最大值最小值的柱状图，叠加展示平均值的值（这个数据展示方式在健康应用内有很多应用）
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568555033474.jpg)
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568555053548.jpg)
 
-在 Xcode 11 中，苹果引入了 SwiftUI，使得 iOS 原生开发可以像 ReactNative 开发一样，能及时预览自己编写的代码的效果，比如修改一个 Label 的文字颜色，我们可以在预览界面实时查看代码变更对界面产生的效果
+在 Health App 中我们经常会看到平均值，针对上述界面实现平均值展示，只需新增一个 RuleMark，代码如下图所示；注意此时为其他 Mark 设置了灰色半透明的样式属性；（此处针对 BarMark和 RectangleMark 进行了折叠）
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16569872542214.jpg)
 
-此次 Xcode 更新，苹果针对 SwiftUI 也做了不少优化和改进，下面就让我们一起看看：
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16569872770578.jpg)
 
-- 默认交互式预览：能够迅速响应改变
-  ![](./images/gif1.gif)
-- 预览界面新增变体按钮（**下面这些预览都无需新增 code**）：
-  - 深浅主题预览：可以快速预览界面在 Light 和 Dark mode 下的样子
-  ![](./images/pic3.png)
-  - 方向预览：可以预览不同方向下界面的样子（对于一些可能涉及到横竖屏切换的应用，该功能会很实用）
-  ![](./imagepic4.png)
-  - 文字大小预览：可以预览不同的文字大小的展示效果
-  ![](./images/pic5.png)
 
-### 高效编码
 
-Xcode 14 的代码提示更加智能，下面我们用一个 Swift Demo 来演示下：假设我们有个 People 类，People 中有 name、age、height 三个属性
+ Swift Charts 支持三种类型数据作为值
+ - 数据型（各种整型、浮点等数值）
+ - 名义型（各种字符串）
+ - 时间型（各种日期与时间类型的数值）
+ 
+ 
+ 针对每种 Mark ，通用的常见属性包括 x、y、前台样式、线条样式、节点样式、节点尺寸；
+ 
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16569877967090.jpg)
 
-```Swift
-class People {
-    var name: String
-    var age: Int
-    var height: Double
-}
-```
 
-我们现在为这个类添加一个 init 方法：当我们在 Xcode 14 中键入 init 时，Xcode 14 会弹出相关的代码提示，我们敲击回车后会发现 Xcode 14 帮我们完成了所有的初始化操作，这将会大大节省我们的时间：
-![](./images/gif2.gif)
+x 和 y 支持上面提到的三种数据类型；每个 Mark 都会有 x 和 y 两个属性，你可以对调这两个属性的值来展示不同的图表效果；
+上面所提到的例子，我们依赖自动化控制坐标轴与具体颜色，接下来我们聊聊如何自定义坐标轴、数据项和图表的自定义以及图表的交互等细节；
+之前的例子里 Y 坐标都是自动由 Swift Charts 控制的，他们默认为 0-300 之间，假设我想要固定0-200 的 Y 坐标轴区间，我可以通过 chartYScale 来控制，注意这个属性是 Chart 所有的，如下：
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16569919487851.jpg)
+简单的改变坐标轴的区间，只需要一行代码
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16569920394434.jpg)
 
-如果初始化方法中有默认值：假设 `People` 的 init 方法中 `age` 的初始值为 26，这时候 Xcode 14 中的代码提示会通过斜体来告诉我们，`age` 是有默认值的：
-![](./images/pic6.png)
+如下图所示图表维度的自定义，主要包括坐标轴、注解和图形区域三部分
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16569928728212.jpg)
 
-敲回车后，我们发现，这时候是不会有 `age` 参数的，`age` 会使用默认值，如果我们需要传入 `age` 参数，可以键入 `age`，这时候代码会让我们传入 `age` 参数，会使用我们传入的 `age` 的值
-![](./images/pic7.png)
+接下来我们从坐标轴和注解着手，结合煎饼餐车例子来看看 Swift Charts 的便利
+默认情况下，我们煎饼餐车 12 月数据展示时，囿于屏幕宽度；![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570180564015.jpg)
 
-这个功能很有用，因为在一些场合下，我们只需要聚焦我们想要配置的参数，通过这种代码提示，我们可以轻松办到，比如我想给分割线加上一个最大的宽度，我们只需键入 `framemaxw`， Xcode 就能自动生成我们想要的代码，这也能节省我们一定的时间：
-![](./images/gif3.gif)
+Swift Chart 会按照季度来展示时间的 X 轴
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570180605931.jpg)
 
-当一个功能比较复杂时，其对应的实现函数会很长，这时候不是很方便阅读代码，Xcode 14 提供了一个新功能，当滚动浏览时，**Xcode 14 会将代码结构的元素固定到编辑器的顶部**：
-![](./images/gif4.gif)
+假如我们想要按照月份来展示 X 轴，我们可以结合 chartXAxis 属性和 AxisMarks 
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570191162464.jpg)
+最终效果会如下呈现，我们会发现全拼月份名称无法完整展示，基本都是缩略状态
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570192024840.jpg)
 
-有时候我们写的方法会被多方调用，当我们 debug 或者想看看代码的改动影响时，就需要查看方法的被调用情况，之前 Xcode 提供了查看 Caller 的入口，十分好用。在 Xcode 14 中，苹果重新设计了 Caller 的 UI，我们可以更直观的看到一个方法的调用方列表，当光标移动到某个具体的调用时，下方会展现出其代码所在的具体位置：
-![](./images/pic8.png)
+采取月份缩写的方式更符合当前尺寸的设备，针对坐标轴，有 GridLine 网格线、Tick 坐标轴交叉标记、ValueLabel 值文本标签三个属性控制；这三个属性可能字面比较难理解，上图
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570228494336.jpg)
 
-此外，Xcode 14 也提供了一个文件模板，用于为 iOS 应用程序选择触控替代方案：我们可以使用触控替代方法在带有 Apple 芯片的 Mac 上与应用程序交互，比如按住 Option 键可将触控板用作虚拟触摸屏
-要启用这项功能，选择 File -> New File -> iOS -> Resource -> Touch Alternatives，这时候会生成 com.apple.uikit.inputalternatives.plist 文件，我们只需要配置该文件即可
-![](./images/pic9.png)
+三行代码，分别定义了绿色网格线、红色较差标记和按季度显示的季度 X 轴值标签；
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570240032357.jpg)
+具体效果如图
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570240653016.jpg)
 
-针对 Swift，Xcode 14 还提供了其他的一些优化：
+当然你也可以对 Y 轴进行类似的自定义；甚至直接隐藏 X 与 Y 轴（在有限可视区区域时，隐藏坐标轴的图表是一种简洁明了的数据展现形式，比如在桌面小组件股票中，就没有坐标轴）
 
-- 添加了对 Swift 正则表达式的语法高亮和编辑支持：现在我们可以通过 Editor -> Refactoring -> Convert to Regex Builder 将正则表达式文字转换为与其等效的正则表达式构建器，在正则表达式中移动光标时，会突出显示正则表达式的封闭子结构
-  ![](./images/pic10.png)
-- 在 Swift 代码中提供了 if case 语句的代码片段补全
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570257263141.jpg)
 
-### 编译时间可视化
 
-随着项目的不断增大，编译耗时也会以肉眼可见的速度增加，这时候我们往往会进行编译耗时优化，那么该怎么优化，或者说需要针对哪些部分做优化，这就需要了解在整个编译过程中，各个部分的耗时，找到相应的瓶颈进行优化。那么如何统计各部分编译耗时呢，目前，Xcode 在编译的过程中会显示各个任务的耗时，我们可以使用诸如 `XCLogParser` 之类的工具来系统的进行统计，但是需要我们手动安装工具，流程也略复杂，有一定学习成本
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570256994042.jpg)
 
-现在，Xcode 14 中已经集成了 timeLine 功能，通过对编译 timeLine 的查看，我们可以很直观的了解到整个构建流程各个任务的耗时大小、串行阻塞、并行数量等信息，有了这些信息，我们就可以做些点对点的优化，这将大大降低我们的优化成本
-![](./images/pic13.png)
+上面我们了解了坐标轴与注解的自定义方法，接下来我们看看图形绘制区域的自定义方法，直接上例子
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570271109305.jpg)
 
-我们可以进入到编译日志页面，选中右上角 `Assistant` 就能看到某次构建的时间线（可以查看历史的构建）
+我们交换了 X 和 Y 轴的值，并通过 plotStyle 设置了 Bar 为红色，粉红色背景，粉红色边框，高度 45 Pt
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570271419653.jpg)
 
-> Tips:
-> 更多关于编译时间可视化可以参考：[Session 110364 - Demystify parallelization in Xcode builds](https://developer.apple.com/videos/play/wwdc2022/110364/)
+我们还可以通过 ChartProxy 来获取特定值的坐标信息，以及特定坐标对应的值；
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570299752857.jpg)
 
-### 多平台
+在这段代码中，通过监听 LineMark 的 Chart Proxy 来获取用户图表选择区域，同时在图表中根据选择起止时间展示了一个 RectangleMark ；这实际是健康 App 中一种图表交互
+![Screen Recording 2022-07-05 at 22.07.02 -1-](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/screen-recording-20220705-at-220702-1.gif)
 
-Xcode 14 专为多平台而生，现在，我们可以使用单一的 target 来定义我们的应用程序以及需要支持的平台，这样我们只需要处理每个平台特殊的配置而不必保持设置和文件间的同步
 
-Xcode 14 中，单一的 SwiftUI 界面，在 iOS、iPadOS、macOS 和 Apple tvOS 上均可使用，这样我们的代码在易于维护的同时也可以达到利用每个平台的独特功能的目的
-![](./images/pic17.png)
+至此我们通过实际代码和效果展示，带大家了解了绘制 iOS 内置 App 的几种图表展示效果，建议大家在使用 Swift Chart 和 SwiftUI 绘制图表时，可以基于 API 和「直觉」来完成非常简洁的代码；
 
-> Tips:
-> 更多关于使用 Xcode 构建多平台 App 参考：[Session 110371 - Use Xcode to develop a multiplatform app](https://developer.apple.com/videos/play/wwdc2022/110371/)
-> 更推荐阅读 WWDC22 内参相关文章哟：[使用 Xcode 进行多平台开发的那些事](https://xiaozhuanlan.com/topic/8549720316)
+接下来我们来聊一些苹果设计团队对于数据与图表展现的一些指南，各位可以与自己团队的设计师分享这些指南
+还是结合我们的煎饼餐车，餐车老版，当然可以通过表格或文本的形式来读取自己的数据，但像下面这样的数据呈现形式不够直观，
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570719470935.jpg)
 
-### 调试
+从三个维度结合来讨论图表应用：
+1、什么时候应该使用图表
+2、如何使用图表
+3、图表的实际设计逻辑
 
-- 内存调试器增强：在 Xcode 14 之前，苹果就提供了内存调试器，通过对内存调试器的使用，我们很容易发现应用程序中的内存泄露。现在 Xcode 14 对此调试器做了增强，可以显示内存图中的所有传入和传出引用，这样我们可以更容易了解到内存泄露的原因。此外，在 Xcode 14 中，还可以获取对象所占内存的总数，这样我们就更容易发现一些大内存的对象，可以针对此做些优化，避免一些 OOM 情况的发生
-  ![](./images/gif7.gif)
-- 在 Xcode 14 中，LLDB 可以显示命令执行的进度，以便发现耗时较长的操作，便于优化
-- 在 Xcode 14 中，可以使用 `xcrun crashlog <path/to/crash>` 来调用 LLDB 的崩溃日志脚本
-- 在 Xcode 14 中，当我们调试应用程序时，线程性能检查器会在问题导航器和源代码编辑器中显示运行时的性能问题，我们可以在应用程序 target 的 Run Scheme 中打开线程性能检查器来开启此功能
-- LLDB 为 Swift 新增了一个命令：`swift-healthcheck`，当我们发现某个 Swift 表达式不生效的时候，我们可以使用这个命令，它可以直接访问 Swift 编译器进行诊断
-- 新的启动日志：Xcode 14 中展示了一个新的启动日志，这个日志中会包含 Xcode 在 app 安装、启动和调试阶段的各项操作
-  
-### Swift Package
+1、 什么时候使用图表：
+图表可以视觉化展现数据的「变化」「比例」「比较」
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571703727329.jpg)
 
-现在可以在 Xcode 14 中使用 Swift Package 命令行插件来对 Xcode 进行扩展（比如使用 Swift lint 或者是 Swift 代码格式化插件）我们可以在项目导航器中直接使用相关插件
 
-我们可以选择命令应用的目标，以及将自定义参数传递给插件。如果命令指示它需要写入包的源文件，Xcode 会请求许可并让您在运行插件之前检查插件的源代码
+例如在前述煎饼餐车的例子里，诸如「最近销售数据」「热销煎饼类型」「不同停车位置与时间的数据」都是值得向用户呈现的关键数据；
+在 App 中，重要的需要让用户关注的数据，推荐以图表方式展现；这就是第一个问题「什么时候使用图表？」的参考答案。
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571706391315.jpg)
 
-Xcode 14 为 Swift Package 插件提供了 XcodeProjectPlugin API，扩展了 Swift Package Manager 的 PackagePlugin API。使用这个 API，插件可以获得 Xcode 项目结构的简化信息，这让 Xcode 插件可以在项目中使用此 API
+2、如何使用图表
+以之前煎饼餐车的月销售数据为例，当我们使用条形图来呈现数据时，辅助以数据的描述与结论作为文字，可以为用户直观感受数据变化并获取数据波动的结论；
+因此「对图表辅助加以描述」是一种推荐的图表用法
 
-当我们的项目不断变大的时候，可能会存在 Swift Module 重名的情况，之前我们只能通过修改源码的方式，解决重名冲突。现在，在 Xcode 14 中，package manifest 文件新增了 `moduleAliases`，允许我们在不修改源码的情况下通过该字段指定唯一模块名的方式解决重名模块冲突问题：
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571708457717.jpg)
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571707060470.jpg)
 
-```swift
-  targets: [
-  .executableTarget(
-    name: "App",
-    dependencies: [
-     .product(name: "Game",
-              package: "swift-game",
-              moduleAliases: ["Utils": "GameUtils"]),
-     .product(name: "Utils",
-              package: "swift-draw"),
-   ])
- ]
-```
+再比如在上述条形图中，我们可以把不同数据进行组合呈现，这可以呈现更具象的对比信息
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571712629155.jpg)
 
-上述代码中，swift-game 为了避免和 swift-draw 的 Utils 重名被重命名为 GameUtils，如果应用程序想要使用 swift-game 中的 Utils，那么就需要直接 `import GameUtils`，需要注意的是：**只有纯 Swift Module 且不是二进制文件才能使用 `moduleAliases` 重命名**
+而在一些面积较小的场景中，可以使用极简风格的静态图表，不包含坐标轴等信息
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571714109374.jpg)
 
-> Tips: 更多关于 Swift Package 插件参考
-> [Session 110359 - Meet Swift Package plugins](https://developer.apple.com/videos/play/wwdc2022/110359/)
-> [Session 110401 - Create Swift Package plugins](https://developer.apple.com/videos/play/wwdc2022/110401/)
+在大一些的具体图表场景中，使用一些用户点击的交互，也可以让用户更全面的了解图表中的信息；与此同时，无论是大的还是小的图表，都应该激进的减少图表复杂度，因为图表本身就是为了直观的呈现数据，太过复杂就回导致用户难以获取主要信息；
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571716223955.jpg)
 
-## 其他新增功能
+综上，在图表中增加描述性内容，提供可交互的图表与激进的降低图表复杂度，是使用图表的三个建议性原则；
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571717862344.jpg)
 
-### 本地化
+3、图表的设计系统
 
-在 Xcode 14 中，可以像本地化应用程序一样本地化 Swift 包资源（可以设置 Swift 包资源的默认本地化资源）Xcode 14 为工作区中包含的所有项目和 Swift 包生成单个本地化目录，我们可以使用 `xcodebuild -importLocalizations` 和 `xcodebuild -exportLocalizations` 来导出或导入 Swift 包
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571721108382.jpg)
+在 App 内使用一套风格匹配的图表呈现样式，比如在 App 内统一使用风格、宽度、颜色、倒角等设计样式相似的柱状图和线图，同时避免引入过多样式的图表；
+与此同时，不同图表之间也需要有一些区别，以便用户不会混淆内容；
+不同类型数据和结论应考虑用不同图表样式呈现；
+下面还是以煎饼餐车为例，该 App 内设计风格一致而和谐的图表系统；
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571728644561.jpg)
+上面讲了图表设计的三个建议原则；
 
->Tips:
-> 更多关于本地化参考：[Session 110110 - Building global apps: Localization by example](https://developer.apple.com/videos/play/wwdc2022/10110/)
+接下来我们聊聊 「Session 110340 Design an effective chart 设计高效清晰的图表」中的内容，我们仍以煎饼餐车为例，本节着重关注在图表呈现效率上（煎饼餐车的日销售数据图表），具体而言是三个方面：
+- Focused 清晰明确的
+- Approachable 易于理解的
+- Accessible 完善的辅助功能支持
 
-### 设备选择器
+煎饼餐车销量数据中，图形、范围、值、最大最小值等维度都可以向用户传达不同不同的信息，但单个的类型数据的图表传达的意义是有限的，不应在单个图表中堆叠很多类型不同的 Mark；
 
-为了运行我们的应用程序，我们需要选择一个设备，现在 Xcode 14 针对设备选择做了些优化：我们可以通过筛选来过滤想要运行的设备，最近选择的设备也会显示在设备选择器的最上方以方便我们选择:
-![](./images/gif8.gif)
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571740814846.jpg)
 
-### Feedback
+在图表中单个数据项的 Mark 、图表的坐标轴 Axes、文字描述 Description、交互 Interaction和颜色 Color 决定了图表的呈现效果；下面针对这 5 个维度，围绕高效图表，给出一些设计建议；
 
-Xcode 14 在 Organizer（window -> Organizer）中新增了 Feedback，以便我们根据反馈改进应用程序。通过 Feedback，我们不仅能了解到应用程序在用户设备上的表现，还可以通过 Feedback 展示的其他诸如测试人员和设备之类的信息，排查反馈的问题。如果我们需要更多的信息，可以直接点击 `email` 测试人员按钮，给相关测试人员发送邮件（Feedback 主要针对 testFlight 用户）
-![](./images/pic18.png)
+比如在选择 Mark 类型时，点图更适合与拨动幅度较小的数据，拨动幅度大时，选择点图呈现会较为混乱；这种情况可以考虑使用线图
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571744240018.jpg)
 
-### Hangs
+但当数据中混有 0 的值时，线图的呈现也不够美观，这种情况，使用柱状图是更优雅的呈现方式；
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571745785588.jpg)
 
-Xcode 14 提供了应用卡顿的检测机制 Hangs，通过 Hangs 可以了解 App Store 上应用的卡顿情况。之前我们监控卡顿需要自行写相关代码实现（一般是在子线程监控 RunLoop 的 BeforeSource0 和 AfterWaiting 或者通过 ping 主线程实现，然后抓取堆栈上报）成本都比较高，现在 Xcode 14 集成了卡顿检测功能，我们只需要进入 Hangs 列表，查看当前 Hangs 比较严重的代码的堆栈，进行相应的优化即可
-![](./images/pic19.png)
+Swift Charts API 较为完美的支持了辅助功能，这里就不展开叙述了，有需要的可以参考辅助功能的相关 Session，如
+WWDC21 - Bring accessibility to charts in your app 
 
-> Tips:
-> 更多关于 hangs 参考：[Session 10082 - Track down hangs with Xcode and on-device detection](https://developer.apple.com/videos/play/wwdc2022/10082/)
+接下来我们聊聊坐标轴；坐标轴的设计可以让图表区间和数据对比显而易见，比如煎饼餐车日销量图表中，坐标轴只需标注起止日期，就可以轻细传达 30 天的意思；而纵坐标中，设置最高销量值为坐标轴最大值，会有效利用图表的纵向区域和并发挥对比功能（让对比更加明显）；
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16573595368403.jpg)
+在设置中电池的例子中，由于电池电量只会是 0% - 100% ，设置 100% 为坐标轴最大值是一个常识，如果设置为其他值，只会让用户困惑；
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16573596660504.jpg)
+在运动 App 中，基于用户每天的步数的实际值而设置纵坐标，可以充分利用图表区域，比如下面两个分别是 3000 和 1500 步；
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16573598624294.jpg)
 
-### 资源目录
+坐标轴上还有网格线和对应的值标签，网格线可以提供区间与值的关系，但过多或过少都不好，具体需要结合实际而言；比如下面的销量表格，纵向 3 条网格线和日期按照周数来区分，是一个较好的分割逻辑；
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16573601167043.jpg)
 
-在 Xcode 14 中，可以使用一张 1024X1024 的图片充当应用程序的图标，Xcode 会自动对图片应用的目标调整大小：
-拖入 1024X1024 的图片 & 设置 Single Size
-![](./images/gif9.gif)
+接下来我们来聊聊图表中的描述性元素；以煎饼餐车为例，在月度销售数据中，添加合适的「结论性描述」，可以更直观的传达数据的结论；
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16573603028602.jpg)
 
-此外，可以将 Finder 中的图像直接粘贴到资源目录大纲中，双击图像可以打开文件面板并选择要替换的资源图片
+在天气 App 中，就采用了这种「结论性描述」的策略
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16573607982416.jpg)
 
-### 文档
+接下来我们讲讲图表的交互 Interaction，在健康 App 中，几乎所有的图表都可以进行交互，以查看不同维度数据，或是查看单项 Mark 的值；结合煎饼餐车例子，我们可以为单个 Mark 数据项添加交互标签；具体实现方法在前文有所提及
 
-Xcode 14 中的 Swift-DocC 现在支持为 Objective-C 和 C API 构建文档
+。![Screen Recording 2022-07-09 at 18.04.31 -1-](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/screen-recording-20220709-at-180431-1.gif)
 
-Xcode 14 生成的 Swift-DocC 文档网站包括一个导航侧边栏，以便浏览和过滤文档。生成的 Swift-DocC 文档默认与现有的大多数托管服务兼容（比如 GitHub Pages）
+最后一个议题：图表的颜色；图表的颜色可以用来强调内容；传递特定语境中的意思（股票的红涨绿跌）；合适的颜色组合，看上去和谐也可以平衡视觉效果；深浅颜色组合配合系统的浅色与深色主题；下面是一些例子；
 
-### 构建系统
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16573621277023.jpg)
 
-- 在 Xcode 14 中，创建新的 C++ 工程，默认使用 C++20（C++20 引入了诸如模块、协程等新特性）
-- Xcode 14 中提供了一个新的辅助工具 timeLine，通过 timeLine，可以帮助识别构建上的性能问题
-- Xcode 14 中构建系统和 Swift Driver 进行了整合，构建系统现在可以和 Swift Driver 并行执行
-- Xcode 14 对 Swift 框架和动态库提供了提前链接的能力，启用此项能力后，可以增加 Xcode 构建中的并行性，提升构建效率
+综上，在设计一个高效图表时，需要尽量实现清晰明确、易于理解和完善的辅助功能支持；为了实现这些目标，可以从单个数据项、坐标轴、描述、交互和颜色五个方面着手；下图是一些优秀设计范例
 
-## 开发者需要注意的点
-
-### 构建系统
-- bitcode 被废弃：苹果在 WWDC15 的时候引入了 bitcode，在 Xcode 7 中添加了二进制嵌入 bitcode 的功能，并且默认开启 bitcode。bitcode 是一种中间代码（IR）包含 bitcode 的应用程序会在 App Store 上编译和链接，bitcode 允许苹果在后期对我们的应用程序的二进制文件进行优化。现在，在 Xcode 14 中 bitcode 被废除，**iOS、tvOS 以及 watchOS 应用程序默认将不再支持 bitcode**，在未来的 Xcode 版本中，bitcode 将被移除。目前，我们仍然可以下载之前提交的包含 bitcode 代码的调试符号（Debug Symbols）
-- 旧版的构建系统已经被删除
-- 不再支持构建 armv7、armv7s 以及 i386 架构的 iOS 项目
-  - armv7、armv7s：ARM 指令集，真机 32 位 CPU 需要该指令集，早于 iPhone 5s 的机型使用
-  - i386：inrel 指令集，模拟器 32 位 CPU 需要该指令集
-  - 由此可见，Xcode 14 将彻底不再支持 32 位的 CPU，我们知道 64 位的 CPU 比 32 位的 CPU 有更大的寻址空间，32 位 CPU 的最大寻址空间为 2^32，即最多可以使用 4GB 的内存，而 64 位 CPU 的最大寻址空间为 2^64 次方，我们可以认为其可用的内存是无限大的，可以充分使用内存资源。此外，64 位比 32 位更充分发挥 CPU 的多核性能，因此执行效率更高。苹果一直迈在时代的前沿（ARM 也官宣 2023 年起，ARM 将不再支持 32 位），早在 iOS 11，就要求所有商家的 App 必须支持 64 位，因此这废弃支持 32 位也不足为奇了
-- 不再支持构建部署目标早于 macOS 10.13（High Sierra）、iOS 11、tvOS 11 以及 watchOS 4 的应用程序
-
-### 预览
-
-删除对 macOS 小组件以及 Mac Catalyst 构建的 app 预览的支持，可以使用 macOS WidgetKit 模拟器替代
-
-### Xcode Server
-
-不再支持 Xcode Server
-
-### Swift
-
-Xcode 13 中提供了一个 Swift 编译选项 `ptimize Object Lifetimes`，配置了该选项后，可以缩短 Swift 对象的生命周期，达到更高效地使用内存的目的。Xcode 14 中，该配置会失效，因为 Xcode 14 会持续优化对象的生命周期
-
-## 总结
-
-Xcode 14 更新了不少内容，苹果开发者这次真正从其他开发者的角度出发，挖掘开发者们日常开发的痛点，并且提出相应的优化方案：更小的体积、更智能好用的代码不全，更快的构建速度，更多贴心的小功能，用三个词总结下的话就是：`更小` `更快` `更强`，大家已经迫不及待想要尝试使用 Xcode 14 了吧，相信体积更小，编译速度更快的 Xcode 14 一定能给大家日常的开发工作带来不少效率上的提升
-
-## 参考链接
-[xcode-build-parallelization](https://dengweijun.com/wwdc22-xcode-build-parallelization)
-[Xcode 14 Beta 2 Release Notes](https://developer.apple.com/documentation/Xcode-Release-Notes/xcode-14-release-notes)
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16573622635582.jpg)
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16573623506043.jpg)
+(http://oss-cn-hangzhou.aliyuncs.com/2022/07/10/16573623506043.jpg)
+(http://oss-cn-hangzhou.aliyuncs.com/2022/07/10/16573623506043.jpg)
