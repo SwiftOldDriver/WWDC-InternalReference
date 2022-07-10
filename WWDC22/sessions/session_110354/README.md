@@ -12,7 +12,7 @@ session_ids: [110354]
 >
 > 四娘，老司机技术社区核心成员
 >
-> 王浙剑（Damonwong），老司机技术社区负责人、《WWDC22 内参》主理人，目前就职于阿里巴巴。
+> 王浙剑（Damonwong），老司机技术社区负责人、WWDC22 内参主理人，目前就职于阿里巴巴。
 
 
 Swift 一直致力于让编程变得更简单，并以此为目标不断地进行迭代。Swift 的发展历程如下图所示：
@@ -83,7 +83,7 @@ let package = Package(
 
 ### 协议一致性检查性能
 
-Swift 5.7 之前，iOS App 启动时进行协议一致性检查大概需要 4s 左右。每次 App 启动都要重新进行协议一致性检查，这导致协议越多，耗时就越久。Swift 5.7 会对计算结果进行缓存，可以提高运行时协议一致性检查的性能，缩短 App 启动时长。如果想要了解更多可以参考 [Improve app size and runtime performance](https://developer.apple.com/videos/play/wwdc2022/110363/)。
+Swift 5.7 之前，iOS App 启动时进行协议一致性检查最长需要 4s 左右。每次 App 启动都要重新进行协议一致性检查，这导致协议越多，耗时就越久。Swift 5.7 会对计算结果进行缓存，可以提高运行时协议一致性检查的性能，缩短 App 启动时长。如果想要了解更多可以参考 [Improve app size and runtime performance](https://developer.apple.com/videos/play/wwdc2022/110363/)。
 
 ## Swift 并发模型
 

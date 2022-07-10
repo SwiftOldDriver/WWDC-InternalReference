@@ -15,7 +15,7 @@ session_ids: [10002]
 >
 > Cyandev，目前就职于抖音基础技术团队，研发流程方向全栈工程师，在 Swift、大前端领域有比较丰富的经验。
 >
-> 王浙剑（Damonwong），老司机技术社区负责人、《WWDC22 内参》主理人，目前就职于阿里巴巴。
+> 王浙剑（Damonwong），老司机技术社区负责人、WWDC22 内参主理人，目前就职于阿里巴巴。
 
 ![banner](./images/banner.png)
 
