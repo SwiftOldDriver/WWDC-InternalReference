@@ -446,4 +446,4 @@ callerAcceptsOptimizedReturn(const void *ra)
 
 - 通过减少 retain 和 release 底层汇编代码指令的大小，你可以获得额外的 2% 包大小减少的优化。
 
-最后，阅读完本文之后，如果你想深挖底层实现的细节可以观看 [WWDC22 - Link fast: Improve build and launch time](https://developer.apple.com/videos/play/wwdc2022/110362/) 来更加全面和深入的了解静态链接、动态链接的前世今生以及各自的特点和 Apple 带来的极致优化。
+最后，阅读完本文之后，如果你想深挖底层实现的细节可以观看 [WWDC22 - Link fast: Improve build and launch time](https://xiaozhuanlan.com/topic/1509638472) 来更加全面和深入的了解静态链接、动态链接的前世今生以及各自的特点和 Apple 带来的极致优化。
