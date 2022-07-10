@@ -339,46 +339,39 @@ var body: some View {}
 
 #### 方法参数位置
 
+>  开始这一节前，我们先明确一个关联类型的名称，`Feed` 与 `FeedType` 在下文中代表同一个关联类型，由于出自不同的视频，导致出现了两个代表同一含义的关联类型名称。
+
 除了修饰方法返回值位置的类型，`some` 还可以用在其他位置上。
 
-![some_parameter_position](./images/some_parameter_position.png)
+![some_parameter_position_new](./images/some_parameter_position_new.png)
 
 用 `some` 关键字修饰方法参数位置的类型是 Swift 5.7 新增的特性，参数的具体类型是由调用方法的外部提供的，内部对其一无所知。
 
-在完成农场的 `feed(animal:)` 方法前，我们先来补全 `AnimalFeed` 协议吧。
+在完成农场的 `feed(animal:)` 方法前，我们先来补全 `AnimalFeed` 和 `Crop` 协议吧。
 
 `AnimalFeed` 是食物协议，它有一个关联类型 `CropType`，是收获当前食物所对应的植物类型。还有一个静态方法 `grow() -> CropType`，是通过种植对应的植物可以收获当前食物的行为。
 
-`Crop` 是植物协议，它有一个关联类型 `Feed`，是当前植物产出的一种可以给动物喂食用的食物。还有一个 `harvest() -> Feed` 方法，是通过种植当前植物可以收获食物的行为。
+`Crop` 是植物协议，它有一个关联类型 `FeedType`，是当前植物产出的一种可以给动物喂食用的食物。还有一个 `harvest() -> FeedType` 方法，是通过种植当前植物可以收获食物的行为。
 
-在 `feed(animal:)` 方法中，通过 `animal` 的类型可以确定它的关联类型 `Feed`，也就是当前动物进食的食物类型，进而可以调用其叫做 `grow() -> CropType` 的静态方法，种植对应的植物，然后调用这种植物的 `harvest()` 方法来收获对应的食物，最后将其喂给动物吃。
+在 `feed(animal:)` 方法中，通过 `animal` 的类型可以确定它的关联类型 `FeedType`，也就是当前动物进食的食物类型，进而可以调用其叫做 `grow() -> CropType` 的静态方法，种植对应的植物，然后调用这种植物的 `harvest()` 方法来收获对应的食物，最后将其喂给动物吃。
 
-```swift
-protocol Animal {
-  associatedtype Feed: AnimalFeed
-  func eat(_ food: Feed)
-}
+但是这里报错了，因为 `harvest() -> FeedType` 方法的返回值类型是 `(some Animal).FeedType.CropType.FeedType` ，但是 `eat(food:)` 方法所期待的参数类型应该是 `(some Animal).FeedType`，这中间多了一层从 `FeedType.CropType.FeedType` 到 `FeedType` 的关联类型的转换，怎样才能消除这层转换呢？或者如果 `FeedType.CropType.FeedType` 中的两个 `FeedType` 是同一个类型就好了。
 
-protocol AnimalFeed {
-  associatedtype CropType: Crop
-  static func grow() -> CropType
-}
+![some_parameter_position_implement](./images/some_parameter_position_implement.png)
 
-protocol Crop {
-  associatedtype Feed: AnimalFeed
-  func harvest() -> Feed
-}
+事实上，它们本来就是同一个类型。对于同一种动物来讲，它们所吃的食物是相同的，而收获这种食物的植物也相同，但是我们声明的协议中并没有将这层关系表达出来。
 
-struct Farm {
-  func feed(_ animal: some Animal) {
-    let crop = type(of: animal).Feed.grow()
-    let produce = crop.harvest()
-    animal.eat(produce)
-  }
-}
-```
+我们再来观察下这两个协议，有没有发现，它们互为对方的关联类型。
 
-这一系列方法的调用有一个大前提，就是虽然方法内部对 `some Animal` 的类型是未知的，但是编译器知道，因为在调用方法传入 `animal` 实参时，编译器对其类型已经了然于胸了。
+![some_parameter_position](./images/some_parameter_position.png)
+
+这里，只需对二者的关联类型各加一个限制条件即可。`AnimalFeed` 协议的关联类型 `CropType`，它的关联类型 `FeedType` 并不是其他任意的类型，而是遵循 `AnimalFeed` 协议的这个类型本身，`Crop` 同理。
+
+![some_parameter_position_where](./images/some_parameter_position_where.png)
+
+大功告成了。
+
+这一系列方法的调用有一个大前提，如本节开头处所说，虽然方法内部对 `some Animal` 的类型是未知的，但是编译器知道，因为在调用方法传入 `animal` 实参时，编译器对其类型已经了然于胸了。
 
 静态多态的好处再一次体现出来了，如果我们在调用 `animal.eat(food:)` 方法时，传入了错误的食物类型，编译器就会报错。因为它不仅知道 `animal` 的类型，还对它与其他类型之间的关系一清二楚，这些关系就声明在 `Animal` 协议中。
 
@@ -438,17 +431,7 @@ isHungry
 
 ![any_parameter_position_wrong](./images/any_parameter_position_wrong.png)
 
-我们有两种方法可以解决这个问题。
-
-
-##### 限制关系
-
-添加限制关系：
-
-
-##### 用 some
-
-另一种方法是，换个类型没有被擦除的方法去调用，比如 `feed(food:)`。
+那我们换个类型没有被擦除的方法调用如何？比如 `feed(food:)`，在 `feed(food:)` 方法中，`food` 参数类型是用 `some` 修饰的，这就解决了类型擦除带来的问题。
 
 虽然 `any Animal` 与 `some Animal` 是不同类型的 `Animal`，但是编译器可以将 `any` 修饰的类型实例“拆包”为 `some` 修饰的类型实例。你可以把“拆包”理解为打开盒子，并把其中的值取出来。
 
@@ -457,8 +440,6 @@ isHungry
 通过对 `any Animal` 拆包，我们完成了 `feedAll(animals:)` 方法的实现。
 
 ![any_parameter_position_unbox_some](./images/any_parameter_position_unbox_some.png)
-
-
 
 #### 方法返回值位置
 
