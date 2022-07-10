@@ -312,9 +312,9 @@ func feed<A>(_ animal: A) where A: Animal {}
 
 但是这么写有点繁琐，你看第二行中，`A` 出现了三次。
 
-### 不透明类型
+### 不透明类型 some
 
-下面，将正式进入我们今天的主题，使用不透明类型设计泛型与协议中的接口。
+下面，将正式进入我们今天的主题。
 
 我们可以使用 `some` 关键字来修饰 `feed(animal:)` 方法中的 `animal` 参数来简化前面提出的问题。
 
@@ -371,7 +371,7 @@ var body: some View {}
 
 大功告成了。
 
-这一系列方法的调用有一个大前提，如本节开头处所说，虽然方法内部对 `some Animal` 的类型是未知的，但是编译器知道，因为在调用方法传入 `animal` 实参时，编译器对其类型已经了然于胸了。
+这一系列方法的调用有一个大前提，如本节开头处所说，方法内部对 `some Animal` 的类型是未知的，但是编译器知道，因为在调用方法传入 `animal` 实参时，编译器对其类型已经了然于胸了。
 
 静态多态的好处再一次体现出来了，如果我们在调用 `animal.eat(food:)` 方法时，传入了错误的食物类型，编译器就会报错。因为它不仅知道 `animal` 的类型，还对它与其他类型之间的关系一清二楚，这些关系就声明在 `Animal` 协议中。
 
@@ -381,7 +381,7 @@ var body: some View {}
 
 isHungry
 
-### 存在类型
+### 存在类型 any
 
 光有一个 `feed(animal:)` 方法我还不满足，如果农场的动物种类逐渐多起来，岂不是要对每种动物都手动调用一次 `feed(animal:)` 方法吗？有什么办法可以一次性给动物集体喂食呢？
 
@@ -484,8 +484,124 @@ struct Farm {
 
 ![any_result_position](./images/any_result_position.png)
 
-upper bound
-
 ### some & any 比较
 
+最后，我们来讨论一下 `some` 与 `any` 的区别，以及在不同场景下该如何选择。
+
+`some` 会固定其修饰的类型，调用时可以完整访问到其遵循协议的方法与协议的关联类型。
+
+`any` 会进行类型擦除，可以用来存储不同元素类型的集合。
+
+在通常情况下，可以直接使用 `some` 来修饰类型，除非需要表示任意类型时，再换成 `any` 即可。
+
 ![some&any](./images/some&any.png)
+
+## 完整代码
+
+今天的农场之旅到这里就结束了，我们在农场里养了不同类型的动物，有奶牛、鸡和马，不仅可以单独喂养一种动物，还做到了同时给多种不同的动物喂食，除此之外，我们还收获了不同动物的农产品，有牛奶和鸡蛋。
+
+是不是收获颇丰呀？
+
+```swift
+protocol Animal {
+  associatedtype Feed: AnimalFeed
+  associatedtype CommodityType: Food
+  func eat(_ food: Feed)
+  func produce() -> CommodityType
+}
+
+struct Cow: Animal {
+  func eat(_ food: Hay) {}
+  func produce() -> Milk {
+    Milk()
+  }
+}
+
+struct Chicken: Animal {
+  func eat(_ food: Grain) {}
+  func produce() -> Egg {
+    Egg()
+  }
+}
+
+struct Horse: Animal {
+  func eat(_ food: Carrot) {}
+}
+
+protocol AnimalFeed {
+  associatedtype CropType: Crop where CropType.Feed == Self
+  static func grow() -> CropType
+}
+
+struct Hay: AnimalFeed {
+  static func grow() -> Alfalfa {
+    Alfalfa()
+  }
+}
+
+struct Carrot: AnimalFeed {
+  static func grow() -> Root {
+    Root()
+  }
+}
+
+struct Grain: AnimalFeed {
+  static func grow() -> Wheat {
+    Wheat()
+  }
+}
+
+protocol Crop {
+  associatedtype Feed: AnimalFeed where Feed.CropType == Self
+  func harvest() -> Feed
+}
+
+struct Alfalfa: Crop {
+  func harvest() -> Hay {
+    Hay()
+  }
+}
+
+struct Wheat: Crop {
+  func harvest() -> Grain {
+    Grain()
+  }
+}
+
+struct Root: Crop {
+  func harvest() -> Carrot {
+    Carrot()
+  }
+}
+
+protocol Food {}
+
+struct Milk: Food {}
+
+struct Egg: Food {}
+
+struct Farm {
+  var animals: [any Animal]
+
+  func feed(_ animal: some Animal) {
+    let crop = type(of: animal).Feed.grow()
+    let produce = crop.harvest()
+    animal.eat(produce)
+  }
+	
+  func feedAll(_ animals: [any Animal]) {
+    for animal in animals {
+      feed(animal)
+    }
+  }
+
+  func produceCommodities() -> [any Food] {
+    return animals.map { animal in
+      animal.produce()
+    }
+  }
+}
+```
+
+
+
