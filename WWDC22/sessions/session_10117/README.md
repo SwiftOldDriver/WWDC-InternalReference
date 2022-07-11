@@ -5,7 +5,7 @@ session_ids: [10117]
 ## WWDC22 10117 - Experience improvement of "walkie-talkie" / “对讲机”的体验提升
 
 ## 前言
-本文主要是通过分析业内 app 中“对讲机”这类产品的功能痛点，结合 [Session 10117：Enhance voice communication with Push to Talk](https://developer.apple.com/videos/play/wwdc2022/10117/) 的内容，分析 iOS 16 如何帮助我们解决这些痛点实现更好的“对讲机”，最后讲述了 PushToTalk.framework 的如何集成、代码上如何使用，以及开发要点。
+本文主要是通过分析业内 app 中“对讲机”这类产品的功能痛点，结合 [Session 10117：Enhance voice communication with Push to Talk](https://developer.apple.com/videos/play/wwdc2022/10117/) 的内容，解析了 iOS 16 在解决这些痛点时的新增技术要点，并结合这些技术升级了“对讲机”的技术方案，最后讲述了 PushToTalk.framework 的如何集成、代码上如何使用，以及开发要点。
 
 本文基于  [Session 10117：Enhance voice communication with Push to Talk](https://developer.apple.com/videos/play/wwdc2022/10117/) 整理
 
