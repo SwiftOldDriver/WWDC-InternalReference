@@ -1,7 +1,7 @@
 
 ## 封面图
 
-![cover](https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_cover.png.gif)
+![cover](https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_cover.png)
 
 
 ---
