@@ -1,7 +1,7 @@
 # WWDC22 10117 - Experience improvement of "walkie-talkie" / “对讲机”的体验提升
 
 ## 前言
-本文主要是通过分析业内 app 中“对讲机”这类产品的功能痛点，结合 Session 10117：Enhance voice communication with Push to Talk 的内容，分析 iOS 16 如何帮助我们解决这些痛点实现更好的“对讲机”，最后讲述了 PushToTalk.framework 的如何集成、代码上如何使用，以及开发要点。
+本文主要是通过分析业内 app 中“对讲机”这类产品的功能痛点，结合 [Session 10117：Enhance voice communication with Push to Talk](https://developer.apple.com/videos/play/wwdc2022/10117/) 的内容，分析 iOS 16 如何帮助我们解决这些痛点实现更好的“对讲机”，最后讲述了 PushToTalk.framework 的如何集成、代码上如何使用，以及开发要点。
 
 本文基于  Session 10117：Enhance voice communication with Push to Talk 整理
 
@@ -119,7 +119,7 @@ iOS 16 系统增加了对“channel”生命周期的维护，通过 PushToTalk.
 
 我们上面实现“对讲机”的方案中，“语音会议”保证了充分的实时性，但是它需要长期的心跳保活，后台期间长期占用着音频设备，通过 audio unit 进行录音和播放，Audio Session 一直处于活跃（active）状态，而音频相关的录制和播放线程通常都是音视频类 app 的消耗 CPU 大户。
 
-但是从 Session 10117：Enhance voice communication with Push to Talk 的内容，我们能看苹果在在节能方面的良苦用心：苹果期望的不是一个长期在后台存活着的“语音会议”，苹果提供的是一个在后台期间挂起，仅依靠APNs能短暂活起来接收、订阅、解码、播放语音消息，然后再挂起这样一个最佳实践，而这个最佳实践的另一个关键技术，就是系统接管了 Audio Session。
+但是从 [Session 10117：Enhance voice communication with Push to Talk](https://developer.apple.com/videos/play/wwdc2022/10117/) 的内容，我们能看苹果在在节能方面的良苦用心：苹果期望的不是一个长期在后台存活着的“语音会议”，苹果提供的是一个在后台期间挂起，仅依靠APNs能短暂活起来接收、订阅、解码、播放语音消息，然后再挂起这样一个最佳实践，而这个最佳实践的另一个关键技术，就是系统接管了 Audio Session。
 
 通过对 Audio Session 的接管，我们app不需要管理 Audio Session 的生命周期，系统将给与其合适的优先级，并在适当的时机激活和挂起，从而实现更好地节省能耗。当我们 app 处于后台，
     ○ 当我们发送语音消息时，我们点击唤起系统录制UI时，系统将激活 Audio Session，我们通过 audio unit 可以录制语音，录制结束，系统将挂起 Audio Session；
