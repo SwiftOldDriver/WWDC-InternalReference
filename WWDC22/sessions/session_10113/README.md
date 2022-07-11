@@ -438,7 +438,7 @@ let edrResult = f.outputImage
 
 1. 避免使用将 RGB 限制在 0～1 的函数
 
-![10114-05-using-cifilters-with-edr-custom-CIKernels-1](./images/10114-05-using-cifilters-with-edr-custom-CIKernels-1.png)
+   ![10114-05-using-cifilters-with-edr-custom-CIKernels-1](./images/10114-05-using-cifilters-with-edr-custom-CIKernels-1.png)
 
 2. 不要使用可能让 alpha > 1 的函数，因为即使 RGB 值可以超出 0 到 1 的范围，但 alpha 值仍必须介于 0 和 1 之间，否则会在混合或显示图像时出现未定义的行为。
 
@@ -452,7 +452,7 @@ let edrResult = f.outputImage
 
 2. 使用 AVKit 和 AVFoundation：使用高层级 AVKit 和 AVFoundation 框架直接播放 HDR 视频。
 
-![110565-01-introduce](./images/110565-01-introduce.png)
+   ![110565-01-introduce](./images/110565-01-introduce.png)
 
 3. 使用 CoreVideo 和 Metal：通过 Core Video 的 DisplayLink 实时访问解码的视频帧，通过 CoreImage Filters 或 Metal Shader 添加颜色管理、视觉效果等，最后用 Metal 进行渲染。
 
