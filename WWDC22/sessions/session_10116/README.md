@@ -378,7 +378,7 @@ await api.deleteRecord({
 });
 ```
 
-## CKTool JS 的意义
+## 总结
 
 长久以来，在基于 `CloudKit` 进行开发的时候，我们都需要直接使用开发者账号登录 `CloudKit` 控制台进行人工操作。这种方式对于流程自动化较强的团队来说并不高效。现在 `CKTool JS` 带来了自动化的能力，完全能够集成到自有开发后台中进行进行开发管理。
 
@@ -386,7 +386,15 @@ await api.deleteRecord({
 
 此次推出的 `CKTool JS` 对于业务基于 `CloudKit` 的开发团队来说无疑是一个非常棒的效率工具。
 
-### 推荐阅读
+### 更多可能性
+
+`CKTool JS` 提供了将 `CloudKit` 环境配置、数据读写功能集成到后台的能力，因此在一定程度上能够解放苹果生态对 `CloudKit` 的禁锢，我们有可能将 `CloudKit` 作为一个低成本的云存储服务来使用。例如我们基于 `CKTool JS` 建立了数据后台，在 `Public` 存储空间存放一些公开数据，客户端（不局限于 `iOS`）就可以通过服务端接口与数据后台进行数据来往，实现更加复杂的业务逻辑，灵活拓展产品形态。简单的结构如下图所示：
+
+![](images/015-more.png)
+
+`CKTool JS` 是一个工具属性的新框架，如果大家对于它的使用场景有什么好想法的话也欢迎交流。
+
+## 推荐阅读
 
 > [Automating CloudKit Development](https://developer.apple.com/icloud/cloudkit/automating/)
 >  
