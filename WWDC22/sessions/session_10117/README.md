@@ -331,17 +331,20 @@ channel 的生命周期内，如果发生一些状态变化，需要通过相关
 ### 处理干扰
 音视频通话场景，可能存在多种被打扰或打扰其他 app 的情况，需要特别处理，否则将影响用户体验：
 1. 传输过程中，AVAudioSession 可能被其他源打断，例如 pstn 电话或者 FaceTime 通话，这时需要处理一下这类打断：
+```
 // interruption addObserver
 [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(audioSessionWasInterrupted:)
                                                  name:AVAudioSessionInterruptionNotification
                                                object:sessionInstance];
+```
 例如当播放被系统电话打断时，我们可以暂停播放，并在打断恢复之后，恢复播放。
 
 2. 当 app 中存在多个模块使用，可能其他模块对 AVAudioSession 的设置不符合规范要求时，导致我们播放时，使用了错误的 catagory 或 mode，此时我们可以监听 AVAudioSession 的相关通知，感知 AVAudioSession 的错误配置：
+```
 // AVAudioSessionRouteChangeNotification  addObserver
 [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleRouteChangeNotification:) name:AVAudioSessionRouteChangeNotification object:nil];
-
+```
 3. 当系统的音频服务被重置的时候，如果你需要对这种情况作出处理，需要监听AVAudioSessionMediaServicesWereResetNotification通知来处理，需要是实现以下操作
 
 处理孤立的音频对象（如播放器，录音机，转换器或音频队列）并创建新的音频对象
