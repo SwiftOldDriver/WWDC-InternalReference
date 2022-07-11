@@ -7,7 +7,7 @@ session_ids: [10117]
 ## 前言
 本文主要是通过分析业内 app 中“对讲机”这类产品的功能痛点，结合 [Session 10117：Enhance voice communication with Push to Talk](https://developer.apple.com/videos/play/wwdc2022/10117/) 的内容，分析 iOS 16 如何帮助我们解决这些痛点实现更好的“对讲机”，最后讲述了 PushToTalk.framework 的如何集成、代码上如何使用，以及开发要点。
 
-本文基于  Session 10117：Enhance voice communication with Push to Talk 整理
+本文基于  [Session 10117：Enhance voice communication with Push to Talk](https://developer.apple.com/videos/play/wwdc2022/10117/) 整理
 
 > 作者：Luoke，钉钉音视频 iOS 端开发，专注于 iOS 端音视频领域
 > 
@@ -430,18 +430,18 @@ channel 的生命周期内，如果发生一些状态变化，需要通过相关
 -----
 ## 参考文献
 
-[1]:http://yunxin.163.com/blog/buildclubhouse/
+ - http://yunxin.163.com/blog/buildclubhouse/
 
-[2]:https://developer.aliyun.com/article/781827
+ - https://developer.aliyun.com/article/781827
 
-[3]:https://developer.apple.com/library/archive/documentation/Audio/Conceptual/AudioSessionProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40007875-CH1-SW1
+ - https://developer.apple.com/library/archive/documentation/Audio/Conceptual/AudioSessionProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40007875-CH1-SW1
 
-[4]:https://developer.apple.com/videos/play/wwdc2022/110339/
+ - https://developer.apple.com/videos/play/wwdc2022/110339/
 
-[5]:https://developer.apple.com/videos/play/wwdc2021/10094/
+ - https://developer.apple.com/videos/play/wwdc2021/10094/
 
-[6]:https://developer.apple.com/videos/play/wwdc2019/707/
+ - https://developer.apple.com/videos/play/wwdc2019/707/
 
-[7]:https://developer.apple.com/videos/play/wwdc2019/417
+ - https://developer.apple.com/videos/play/wwdc2019/417
 
-[8]:https://xie.infoq.cn/article/2cc7b6df1d2b26bfc02bd8a6f
+ - https://xie.infoq.cn/article/2cc7b6df1d2b26bfc02bd8a6f
