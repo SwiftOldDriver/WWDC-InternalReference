@@ -327,7 +327,6 @@ channel 的生命周期内，如果发生一些状态变化，需要通过相关
           forChannelUUID:(NSUUID *)channelUUID 
        completionHandler:(void (^)(NSError *))completionHandler;
 
-## 其他注意点
 ### 处理干扰
 音视频通话场景，可能存在多种被打扰或打扰其他 app 的情况，需要特别处理，否则将影响用户体验：
 1. 传输过程中，AVAudioSession 可能被其他源打断，例如 pstn 电话或者 FaceTime 通话，这时需要处理一下这类打断：
@@ -348,7 +347,12 @@ channel 的生命周期内，如果发生一些状态变化，需要通过相关
 
 重置正在跟踪的所有内部音频状态，包括所有属性 AVAudioSession
 
-适当时，AVAudioSession使用该setActive:error:方法重新激活实例
+适当时，AVAudioSession 使用该setActive:error:方法重新激活实例
+
+减少对其他 app 的侵扰
+当我们的“对讲机”收到语音消息准备播放时，需要确保不影响其他 app 的播放，例如其他音乐类 app 正在播放歌曲，在我们 app 在后台准备启动并播放语音时，需要检查 AVAudioSession 的 secondaryAudioShouldBeSilencedHint 属性，判断是否有 其他 app 在播放，如果有，并且这个 app 是 nonmixable 类型的catagory ，我们的 app 尽量不在此时播放语音消息。当我们的 app 在前台时，需要监听相关通知 AVAudioSessionSilenceSecondaryAudioHintNotification 来做类似的响应。
+
+## 其他注意点
 
 ### 优化重连
 对于网络断开需要重连的情况，可以考虑使用 Network.framework 和 QUIC 来提高下次重建网络时的速度。
