@@ -424,7 +424,7 @@ channel 的生命周期内，如果发生一些状态变化，需要通过相关
 
 
 -----
-##参考文献
+## 参考文献
 
 [1]:http://yunxin.163.com/blog/buildclubhouse/
 
