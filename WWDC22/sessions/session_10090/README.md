@@ -2,11 +2,7 @@
 session_ids: [10090]
 ---
 
-# WWDC22 10090 - What's new in TextKit and text views
-
-> 作者：岚遥，目前就职于淘宝技术，主要负责跨平台动态化框架 DinamicX
->
-> 审核：
+# WWDC22 10090 - TextKit 2 新特性解读及适配方案
 
 文本一直都是页面呈现和用户交互的核心元素，本文将首先简短介绍 TextKit 2 的核心设计思路，着重介绍 TextKit 2 的新特性及如何适配 TextKit 2。全文共分为 3 个部分：
 第一部分是对 iOS 上文本系统发展的回顾，TextKit 的核心设计原则，以及 TextKit 2 针对于 TextKit 的主要优化。
