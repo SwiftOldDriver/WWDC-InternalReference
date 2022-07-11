@@ -17,8 +17,11 @@
 
 ● 另外一个大家都在用的“对讲机”业务，就是微信的“共享实时位置”：我们在下图中共享位置的地图页面中，点击下面按钮，就可以发言，对方就能实时听到，而没人发言时，是没有声音播放的。
 
-<img src="https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_clubhouse.jpeg" width = "50%" height = "800" alt="" align=left />
-<img src="https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_wechat.JPG" width = "50%" height = "800" alt="" align=right />
+<figure class="half">
+    <img src="https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_clubhouse.jpeg">
+    <img src="https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_wechat.JPG">
+</figure>
+
 
 
 
