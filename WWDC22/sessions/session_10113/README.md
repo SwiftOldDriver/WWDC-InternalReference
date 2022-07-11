@@ -241,6 +241,7 @@ let edrMetaData = CAEDRMetadata.hdr10(displayInfo: displayData,
 - EDR 效果：即提升了图片整体亮度，最亮部分的细节也保留了
 
 > 扩展阅读：对 HDR 和 EDR 感兴趣的同学，可以进一步观看如下两个 session：
+>
 > - [WWDC20 10009 Edit and play back HDR video with AVFoundation](https://developer.apple.com/videos/play/wwdc2020/10009/)
 > - [WWDC21 10161 Explore HDR rendering with EDR](https://developer.apple.com/videos/play/wwdc2021/10161)
 
@@ -593,13 +594,13 @@ statusObserver = videoPlayerItem.observe(\.status,
 @objc func displayLinkCopyPixelBuffers(link: CADisplayLink) 
 {
   let currentTime = videoPlayerItemOutput.itemTime(forHostTime: CACurrentMediaTime())
-	
+ 
   if videoPlayerItemOutput.hasNewPixelBuffer(forItemTime: currentTime)
   {
       if let buffer 
       = videoPlayerItemOutput.copyPixelBuffer(forItemTime: currentTime, 
-	                                          itemTimeForDisplay: nil) 
-	  {
+                                           itemTimeForDisplay: nil) 
+   {
         //...
      }
  }
@@ -616,13 +617,13 @@ statusObserver = videoPlayerItem.observe(\.status,
 @objc func displayLinkCopyPixelBuffers(link: CADisplayLink) 
 {
   let currentTime = videoPlayerItemOutput.itemTime(forHostTime: CACurrentMediaTime())
-	
+ 
   if videoPlayerItemOutput.hasNewPixelBuffer(forItemTime: currentTime)
   {
       if let buffer 
       = videoPlayerItemOutput.copyPixelBuffer(forItemTime: currentTime, 
-	                                          itemTimeForDisplay: nil) 
-	  {
+                                           itemTimeForDisplay: nil) 
+   {
         let image = CIImage(cvPixelBuffer: buffer)
 
         let filter = CIFilter.sepiaTone()
