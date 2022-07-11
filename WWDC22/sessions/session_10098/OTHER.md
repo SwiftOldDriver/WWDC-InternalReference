@@ -12,4 +12,4 @@
 
 ## 公众号/小专栏图文头图
 
-![image-20220703204011899](assets/image-20220703204011899.png)
+![banner](assets/banner2.png)
