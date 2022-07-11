@@ -1,9 +1,8 @@
 
 ## 封面图
 
-<div align=center>
-<img src="https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_cover.png.gif" width="60%"/>
-</div>
+![cover](https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_cover.png.gif)
+
 
 ---
 ## 作者介绍
