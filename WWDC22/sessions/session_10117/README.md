@@ -16,8 +16,8 @@
 ● 你是否还记得 2021年，一款名为“ClubHouse”的 app 爆红全球，马斯克（下图中的红短裤头像）、张小龙等各路大V争相体验，邀请码一码难求，其实“ClubHouse”就是一种“对讲机”形式的业务：发言之前，主持人先邀请上台，想发言就按解除静音开始发言，结束发言就静音；
 
 ● 另外一个大家都在用的“对讲机”业务，就是微信的“共享实时位置”：我们在下图中共享位置的地图页面中，点击下面按钮，就可以发言，对方就能实时听到，而没人发言时，是没有声音播放的。
-![](https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_clubhouse.jpeg#pic_left "clubhouse")
-![](https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_wechat.JPG#pic_right "WeChat")
+![](https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_clubhouse.jpeg#pic_left "clubhouse" width=300)
+![](https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_wechat.JPG#pic_right "WeChat" width=300)
                     
 
 
