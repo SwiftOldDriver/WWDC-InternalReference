@@ -4,6 +4,7 @@
 本文主要是通过分析业内 app 中“对讲机”这类产品的功能痛点，结合 Session 10117：Enhance voice communication with Push to Talk 的内容，分析 iOS 16 如何帮助我们解决这些痛点实现更好的“对讲机”，最后讲述了 PushToTalk.framework 的如何集成、代码上如何使用，以及开发要点。
 
 本文基于  Session 10117：Enhance voice communication with Push to Talk 整理
+
 作者：Luoke，钉钉音视频 iOS 端开发，专注于 iOS 端音视频领域
 
 审核：
@@ -15,7 +16,8 @@
 ● 你是否还记得 2021年，一款名为“ClubHouse”的 app 爆红全球，马斯克（下图中的红短裤头像）、张小龙等各路大V争相体验，邀请码一码难求，其实“ClubHouse”就是一种“对讲机”形式的业务：发言之前，主持人先邀请上台，想发言就按解除静音开始发言，结束发言就静音；
 
 ● 另外一个大家都在用的“对讲机”业务，就是微信的“共享实时位置”：我们在下图中共享位置的地图页面中，点击下面按钮，就可以发言，对方就能实时听到，而没人发言时，是没有声音播放的。
-
+![](https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_clubhouse.jpeg "clubhouse")
+![](https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_wechat.JPG "WeChat")
                     
 
 
