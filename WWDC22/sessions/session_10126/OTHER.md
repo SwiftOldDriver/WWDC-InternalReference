@@ -4,7 +4,7 @@
 
 ## 审核介绍
 
-苹果 API 搬运工，爱写文章的 ARKit 开发者。专栏《ARKit 与计算几何》，《Metal Shader 快速使用入门》
+苹果 API 搬运工，爱写文章的 ARKit 开发者。专栏[《ARKit 与计算几何》](https://xiaozhuanlan.com/computationalgeometry)，[《Metal Shader 快速使用入门》](https://xiaozhuanlan.com/metalforbeginner)
 
 ## 不超过 120 个字的文章简介
 
