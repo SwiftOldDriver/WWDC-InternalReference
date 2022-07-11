@@ -190,8 +190,9 @@ Push to talk 新增 framework 名为 PushToTalk.framework，在 Xcode 中 import
 - 增加后台模式中的 VoIP 的 capability，如下图；
 
 - 增加后台模式中的 Push to talk 的 capability，此选项为 Xcode14 新增，Xcode 14 beta1 上面的配置如下图；
-
-
+<div align=center>
+<img src="https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_xcode_ptt.png" width="40%"/>
+</div>
 
 ## 代码实现
 iOS 16 新增的 PushToTalk.framework， 主要通过新增类 PTChannelManager 来管理 channel，提供 channel 生命周期相关的 API，如 join、leave、发送音频、接收音频等，并通过新增协议 PTChannelManagerDelegate 来通知我们 channel 生命周期变化或者接口调用成功与否，同时提供了注册 Push to talk 相关 APNs 相关的接口来支持后台期间收到相关推送通知。
@@ -381,7 +382,12 @@ channel 的生命周期内，如果发生一些状态变化，需要通过相关
 
 
 参考链接
+
 http://yunxin.163.com/blog/buildclubhouse/
 https://developer.aliyun.com/article/781827
 https://developer.apple.com/library/archive/documentation/Audio/Conceptual/AudioSessionProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40007875-CH1-SW1
 
+https://developer.apple.com/videos/play/wwdc2022/110339/
+https://developer.apple.com/videos/play/wwdc2021/10094/
+https://developer.apple.com/videos/play/wwdc2019/707/
+https://developer.apple.com/videos/play/wwdc2019/417
