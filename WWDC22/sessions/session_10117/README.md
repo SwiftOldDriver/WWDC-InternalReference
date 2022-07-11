@@ -147,6 +147,7 @@ didDeactivateAudioSession:(AVAudioSession *)audioSession;
 ```
 通过系统对 Audio Session 的合理调度，我们可以尽可能地减少对音频设备的占用，较小 CPU 消耗，从而减少电量消耗和发热。
 
+
 ### 新技术方案
 
 结合 iOS 16 在 APNs、系统 UI、接管 Audio Session、维护 channel 生命周期等方面的支持，我们还需要对技术方案进行改造：在原方案基础上，通过改造在线方式、支持多种消息通知方式，端到端支持音频编码、解码、打包、解析、传输工作（在传输通道上，苹果只提供APNs用于消息的通知，而不包含具体的流媒体流），从而升级为低功耗、高可靠、易交互的新方案。
@@ -155,6 +156,7 @@ didDeactivateAudioSession:(AVAudioSession *)audioSession;
 <div align=center>
 <img src="https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_flow.png" width="80%"/>
 </div>
+
 
 
 1. 改造在线方式
@@ -166,9 +168,7 @@ didDeactivateAudioSession:(AVAudioSession *)audioSession;
 
 
 2. 多种消息通知方式
-这里的消息通知，主要是指服务端广播消息通知客户端。我们根据新增的 APNs 增加支持在后台期间的消息通知，包含会议状态变化和会中语音消息。而这部分通知需要服务端根据前文 APNs 类型说明，开发增加新的 post 请求。
-
-  当服务端推送通知给客户端时，涉及到两种交互：
+这里的消息通知，主要是指服务端广播消息通知客户端。我们根据新增的 APNs 增加支持在后台期间的消息通知，包含会议状态变化和会中语音消息。而这部分通知需要服务端根据前文 APNs 类型说明，开发增加新的 post 请求。当服务端推送通知给客户端时，涉及到两种交互：
 
 - 当 iPhone 用户 A 启动录制并开始推流时，将与媒体服务器交互，见图中流程4；
 
@@ -195,6 +195,7 @@ didDeactivateAudioSession:(AVAudioSession *)audioSession;
 
 另外还有会议状态变化类通知，需要根据通知具体内容，更新会议，例如 channel 创建、channel 销毁、某个成员被踢出 channel 等。
 
+-----
 ## 配置Xcode
 Push to talk 新增 framework 名为 PushToTalk.framework，在 Xcode 中 import这个 framework 之前需要先配置一下：
 
@@ -208,9 +209,10 @@ Push to talk 新增 framework 名为 PushToTalk.framework，在 Xcode 中 import
 
 - 增加后台模式中的 Push to talk 的 capability，此选项为 Xcode14 新增，Xcode 14 beta1 上面的配置如下图；
 <div align=center>
-<img src="https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_xcode_ptt.png" width="40%"/>
+<img src="https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_xcode_ptt.png" width="70%"/>
 </div>
 
+-----
 ## 代码实现
 iOS 16 新增的 PushToTalk.framework， 主要通过新增类 PTChannelManager 来管理 channel，提供 channel 生命周期相关的 API，如 join、leave、发送音频、接收音频等，并通过新增协议 PTChannelManagerDelegate 来通知我们 channel 生命周期变化或者接口调用成功与否，同时提供了注册 Push to talk 相关 APNs 相关的接口来支持后台期间收到相关推送通知。
 
@@ -400,6 +402,7 @@ channel 的生命周期内，如果发生一些状态变化，需要通过相关
 减少对其他 app 的侵扰
 当我们的“对讲机”收到语音消息准备播放时，需要确保不影响其他 app 的播放，例如其他音乐类 app 正在播放歌曲，在我们 app 在后台准备启动并播放语音时，需要检查 AVAudioSession 的 secondaryAudioShouldBeSilencedHint 属性，判断是否有 其他 app 在播放，如果有，并且这个 app 是 nonmixable 类型的catagory ，我们的 app 尽量不在此时播放语音消息。当我们的 app 在前台时，需要监听相关通知 AVAudioSessionSilenceSecondaryAudioHintNotification 来做类似的响应。
 
+-----
 ## 其他注意点
 
 ### 优化重连
@@ -409,6 +412,7 @@ channel 的生命周期内，如果发生一些状态变化，需要通过相关
 系统提供了内置的声音效果来提示用户麦克风的可用和不可用，我们不要再针对这些事件增加声音效果了。
 
 
+-----
 参考链接
 
 http://yunxin.163.com/blog/buildclubhouse/
