@@ -364,3 +364,5 @@ channel 的生命周期内，如果发生一些状态变化，需要通过相关
 参考链接
 http://yunxin.163.com/blog/buildclubhouse/
 https://developer.aliyun.com/article/781827
+https://developer.apple.com/library/archive/documentation/Audio/Conceptual/AudioSessionProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40007875-CH1-SW1
+
