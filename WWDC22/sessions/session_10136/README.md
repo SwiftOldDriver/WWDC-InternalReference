@@ -20,80 +20,81 @@ session_ids: [10137]
 > 
 
 本文将会让大家基于 Swift Charts API 实现从简单到复杂的图表，同时了解一些优质图表的设计体验要素；
-Swift Charts 是基于 SwiftUI 的苹果设计的图表框架，提供一种简洁的声明式的 API 用于实现各式图表；
-如下图所示从简单的柱状图与饼图到复杂的向量图和热力图；Swift Chart 都可少量代码实现；
+Swift Charts 是基于 SwiftUI 的图表框架，提供一种简洁的声明式的 API 用于实现各种样式的图表；
+如下图所示，从简单的柱状图与饼图到复杂的向量图和热力图，Swift Chart 都可以少量代码实现；
 ![image](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/image.png)
-在 iOS16 系统的自带 App 中，例如股票 Stock 、 Health 健康等 App 的图表展示与交互是基于 Swift Charts 实现的；
+在 iOS16 系统的自带 App 中，例如股票 Stock 、健康 Health 等 App 的图表展示与交互是基于 Swift Charts 实现的；
 ![image](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/image1.png)
 
-接下来我们结合一个具体的例子，来逐步了结  Swift Charts 的使用，这个例子是：
-一对搭档运营了一个煎饼餐车，他们提供各式煎饼，例如美式煎饼、墨西哥塔克、中式煎饼果子等 6 种煎饼类型；这对搭档的煎饼餐车，有时会停在库比提诺小镇经营，有时会停在旧金山街头经营；
+接下来我们结合一个具体的例子，来逐步了解 Swift Charts 的使用，这个例子是：
+一对搭档运营了一个煎饼餐车，他们提供各式煎饼，包括了美式煎饼、墨西哥塔克、中式煎饼果子等 6 种煎饼类型；煎饼餐车有时会停在库比提诺小镇经营，有时会停在旧金山街头经营；
 ![image](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/image2.png)
-首先我们先实现一个最简单的 Chart
+首先我们实现一个最简单的 Chart
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568392541047.jpg)
 这个 Chart 中只包含一个数据项 BarChart
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16567519275527.jpg)
-正如大家看到的 Chart 充当容器的角色，其中的数据项 Marks 作为内容填充在 Chart 中，上面的例子中只有一个 BarMark，我们试着把煎饼车的过去 30 天的所有类型煎饼销售数量都展示出来；
+正如大家看到的 Chart 充当容器的角色，其中的数据项 Mark 作为数据内容填充在 Chart 中，上面的例子中只有一个 BarMark ；
+接下来我们试着把煎饼车过去 30 天内所有类型煎饼销售数量，按照煎饼类型都展示出来；
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568393069672.jpg)
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568393319544.jpg)
-实现以上代码后，大家可以发现，柱状图的大小、标注标签、坐标的尺度、乃至图表的颜色都自动化选择，Swift Charts API 的一个关键优势就在这里，能够基于 Mark 数据的内容和 SwiftUI 上下文，自动化协调图表中的各种因素，以达到更美观的呈现；Swift Charts 自动支持 Accessibility 的 Voice Over 等各种辅助功能；
+实现以上代码后，大家可以发现，柱状图的大小、标注标签、坐标的尺度、乃至图表的颜色都自动实现了，Swift Charts API 的一个关键优势就在这里，能够基于 Mark 数据的内容和 SwiftUI 上下文，自动化协调图表中的各种因素，以更美观的呈现；Swift Charts 自动支持 Accessibility 的 Voice Over 等各种辅助功能；
 
-这个煎饼餐车有时停在库比提诺营业，有时停在旧金山营业，那么我们针对这两地，过去一周的煎饼售卖数据来制作两个图表，第一个图表包括一个 Segment Picker ，能够切换地址来查看煎饼销售数据；
-SwiftUI 的代码非常的简洁，我们在这里直接初始化旧金山和库比提诺的销售数据；基于 Picker 尝试生成一个折线图；
+这个煎饼餐车有时停在库比提诺营业，有时停在旧金山营业；基于过去一周的煎饼售卖数据，按照经营地分组来制作两个图表，并使用 Segment Picker 来切换两个图表；
+SwiftUI 的代码非常的简洁，我们在这里直接 mock 生成旧金山和库比提诺的销售数据；基于 Picker 尝试生成一个折线图；代码如下
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568388908445.jpg)
 ![Screen Recording 2022-07-02 at 20.42.29 -1-](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/screen-recording-20220702-at-204229-1.gif)
 
-结合上面的例子，大家会发现 Swift Charts 的 API 提供非常的简洁的图表元素遍历的能力；其中的核心是 Mark 和 Mark 对应的 Property；
-Swift Charts 一共提供了 8 种 Marks，如下图所示，这些 Mark 的具体效果用途广泛；每个 Mark 都可以控制 X 与 Y 坐标、颜色等样式、节点样式与大小、线条样式等属性控制。与此同时，你也可以实现自定义的 Mark 和属性，Swift Charts 提供了扩展的能力；上面的例子带我们简单了解了 Swift Charts 的能力；
+结合上面的例子，大家会发现 Swift Charts 的 API 提供非常的简洁的图表元素遍历的能力；其中的核心是 Mark 和 Mark 对应的 Property 属性；
+Swift Charts 一共提供了 8 种 Mark ，如下图所示，这些 Mark 的具体效果用途广泛；每个 Mark 都可以通过属性控制 X 与 Y 坐标、颜色、节点、大小、线条点样式。
+与此同时，Swift Charts 提供了扩展的能力，你也可以实现自定义的 Mark 和与之对应的属性；
+上面的例子带我们简单了解了 Swift Charts 的能力；
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16567666214536.jpg)
-Swift Charts 的和新目标是为了实现数据可视化和数据交互，与此同时还支持辅助功能、本地化、暗黑模式、自动布局、泛型、跨平台与动画；
-接下来我们就特定单个的 Chart 并结合实际的例子 来深入了解一些 API 和效果的实现；
-关于三个方面：
+Swift Charts 的核心目标是为了实现数据可视化，与此同时也支持了数据交互、辅助功能、本地化、暗黑模式、自动布局、泛型、跨平台与图表动画等能力；
+接下来我们就特定单个的 Chart 并结合煎饼餐车的例子，来深入了解一些 Swift Charts API 的实现与控制；以下实例主要关于三个方面：
 
-- 标记和组成
+- 图表的标记和组成
   - 声明式语法
   - 丰富的自定义选项
-- 使用标记属性绘制数据
-- 自定义
+- 使用合适的标记属性来展示数据
+- 图表自定义
 
 ## 标记 Mark 与其元素
 
-在 Swift Charts 中 Mark 就是展示的单个数据项，以我们刚刚煎饼的柱状图为例，每一个柱状条就是一个 Mark ，在这个图表中一共有六个 Mark
+在 Swift Charts 中 Mark 就是展示的单个数据值项，以我们刚刚煎饼的柱状图为例，每一个柱状条就是一个 Mark ，在这个图表中一共有六个 Mark
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568468120383.jpg)
 
-每一个 Mark 都有丰富的 Property 来控制其表现样式；基于刚刚的数据，假设我们；
-比如我们想要同时显示两个图表，只需在 Chart 中插入两个 Mark 即可，在切换不同样式的 Mark 时，也非常简单，请看下面的例子
-刚才我们使用 Picker 来切换图表，现在我们在单个图表中展示两个地方煎饼餐车的销售数据；我们通过两层 For 循环来构建包含两组数据的图表，在默认情况下会如下呈现
+每一个 Mark 都有丰富的 Property 来控制其表现样式；
+比如我们想要同时显示两个图表，只需在 Chart 中插入两个 Mark 即可；直接变更 Mark 类型就可以切换 Mark 样式，请看下面的例子：
+刚才我们使用 Picker 来切换图表，我们把两个图表合二为一，我们通过两层 For 循环来构建包含两组数据的图表，
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568532359551.jpg)
 
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568532380586.jpg)
-此时的图表没有像我们想象中的，按照库比提诺和旧金山分为两组数据；要想按组呈现只需要控制 Chart 的 forgroundStyle 属性，并传入 Value 告知 Chart 需要以城市来区分这两组数据；新增代码如下
+此时的图表没有像我们想象中的，按照库比提诺和旧金山分为两组数据；要想按组呈现只需要控制 Chart 的 forgroundStyle 属性，并传入 Value 告知 Chart 需要以城市来区分这两组数据；代码如下
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568537842502.jpg)
 
 此时大家可以看到库比提诺和旧金山的数据分组展示了，但是他们在单个 Bar 上堆叠起来；
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568530356370.jpg)
 
-这里我想要按照城市区分，分为两个 Bar 条来展示，就此我们只需要告诉 Chart 的 position 属性，以城市区分
+如需按照城市区分两个图表，分为两个 Bar 条来展示，就此我们只需要控制 Chart 的 position 属性，，具体代码和效果如下
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568538307928.jpg)
 
-我们可以得到如下的效果；
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568530530754.jpg)
-如果我想看看折线图，只需要把 BarMark 变更为 LineMark 就可以得到一个折线图（这里保留了 Chart 的 foregroundStyle 属性）
+如果我想看看折线图，只需要把 BarMark 变更为 LineMark 就可以得到一个折线图（这里保留了 Chart 的 foregroundStyle 属性），具体代码和效果如下
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568539067138.jpg)
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568530685320.jpg)
-如果想给这个折线图增加一个曲线的润色和数据点的标记，只需为单个 LineMark 控制 interpolationMether 和 symbol 属性
+如果想给这个折线图增加一个曲线的润色和数据点的标记符号，只需为单个 LineMark 控制 interpolationMether 和 symbol 属性，具体代码和效果如下
 
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568539581477.jpg)
 
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568530833700.jpg)
 
-上面介绍了折线图 LineMark 和柱状图 BarMark，Swift Charts 还支持以下类型的 Mark ，包括柱状、折线、点图、区域图、规则曲线、矩形图；你可以结合多种 Mark 来实现更复杂的图表实现；
+上面简单介绍了折线图 LineMark 和柱状图 BarMark 的使用，Swift Charts 还支持以下类型的 Mark ，包括柱状、折线、点图、区域图、规则曲线、矩形图等；你可以结合多种 Mark 的组合展示来实现更复杂图表逻辑；
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568540392986.jpg)
 
-想要组合展示，只需要在同个 Chart 内填充不同的 Mark ，比如想要实现一个最大值最小值组成面积区域的面积图，同时组合平均值曲线图，只需要简单实现 AreaMark 和 LineMark 即可
+想要组合展示，只需要在同个 Chart 内填充不同类型的 Mark ，比如想要实现一个最大值最小值组成的矩形区域，同时组合平均值曲线图，只需要简单实现 AreaMark 和 LineMark 即可，，具体代码和效果如下
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568554956402.jpg)
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568554991899.jpg)
-或者想要实现一个最大值最小值的柱状图，叠加展示平均值的值（这个数据展示方式在健康应用内有很多应用）
+或者想要实现一个最大值最小值的柱状图，同时叠加展示平均值的值（这个数据展示方式在健康应用内有很多应用），具体代码和效果如下
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568555033474.jpg)
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16568555053548.jpg)
 
@@ -109,29 +110,27 @@ Swift Charts 支持三种类型数据作为值
 针对每种 Mark ，通用的常见属性包括 x 、y 、前台样式、线条样式、节点样式、节点尺寸；
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16569877967090.jpg)
 x 和 y 支持上面提到的三种数据类型；每个 Mark 都会有 x 和 y 两个属性，你可以对调这两个属性的值来展示不同的图表效果；
-上面所提到的例子，我们依赖自动化控制坐标轴与具体颜色，接下来我们聊聊如何自定义坐标轴、数据项和图表的自定义以及图表的交互等细节；
-之前的例子里 Y 坐标都是自动由 Swift Charts 控制的，他们默认为 0-300 之间，假设我想要固定 0-200 的 Y 坐标轴区间，我可以通过 chartYScale 来控制，注意这个属性是 Chart 所有的，如下：
+上面的例子，大部分使用默认的颜色和坐标轴，接下来我们聊聊如何自定义坐标轴、数据项和交互等细节；
+之前的例子里 Y 坐标都是自动由 Swift Charts 控制的，他们默认为 0-300 之间，假设我想要固定 0-200 的 Y 坐标轴区间，我可以通过 chartYScale 来控制，注意这个属性是 Chart 所有的，具体代码和效果如下
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16569919487851.jpg)
 简单的改变坐标轴的区间，只需要一行代码
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16569920394434.jpg)
 
-如下图所示图表维度的自定义，主要包括坐标轴、注解和图形区域三部分
+如下图所示，图表维度的自定义，主要包括坐标轴、注解和图形区域三部分
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16569928728212.jpg)
 
-接下来我们从坐标轴和注解着手，结合煎饼餐车例子来看看 Swift Charts 的便利
-默认情况下，我们煎饼餐车 12 月数据展示时，囿于屏幕宽度；![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570180564015.jpg)
-
-Swift Chart 会按照季度来展示时间的 X 轴
+接下来先从 Axes 坐标轴和 Legend 注解着手，结合之前煎饼餐车例子来进一步了解 Swift Charts 的自定义能力
+默认情况下，在展示煎饼餐车 12 个月的销售数据时，囿于屏幕宽度，Swift Chart 会按照季度来展示时间的 X 轴
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570180564015.jpg)
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570180605931.jpg)
 假如我们想要按照月份来展示 X 轴，我们可以结合 chartXAxis 属性和 AxisMarks；
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570191162464.jpg)
 最终效果会如下呈现，我们会发现全拼月份名称无法完整展示，基本都是缩略状态
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570192024840.jpg)
-
-采取月份缩写的方式更符合当前尺寸的设备，针对坐标轴，有 GridLine 网格线、Tick 坐标轴交叉标记、ValueLabel 值文本标签三个属性控制；这三个属性可能字面比较难理解，上图
+因此采取月份缩写的方式更符合手机尺寸的设备，针对坐标轴，有 GridLine 网格线、Tick 坐标轴交叉标记、ValueLabel 值文本标签三个属性控制；这三个属性可能字面比较难理解，上图
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570228494336.jpg)
 
-三行代码，分别定义了绿色网格线、红色较差标记和按季度显示的季度 X 轴值标签；
+三行代码，分别定义了绿色网格线、红色交叉标记和按季度显示的季度 X 轴值标签；
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570240032357.jpg)
 具体效果如图
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570240653016.jpg)
@@ -140,20 +139,18 @@ Swift Chart 会按照季度来展示时间的 X 轴
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570257263141.jpg)
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570256994042.jpg)
 
-上面我们了解了坐标轴与注解的自定义方法，接下来我们看看图形绘制区域的自定义方法，直接上例子
+上面了解了坐标轴与注解的自定义方法，接下来看看图形绘制区域的自定义方法，直接上例子
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570271109305.jpg)
 
-我们交换了 X 和 Y 轴的值，并通过 plotStyle 设置了 Bar 为红色，粉红色背景，粉红色边框，高度 45 Pt
-![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570271419653.jpg)
-
-我们还可以通过 ChartProxy 来获取特定值的坐标信息，以及特定坐标对应的值；
-![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570299752857.jpg)
-
+我们交换了 X 和 Y 轴的值，并通过 plotStyle 设置了 Bar 条为红色，背景为粉红色，图表边框为红色
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/11/16575159826985.jpg)
+我们还可以通过 ChartProxy 来获取特定数据值的坐标信息，以及特定坐标对应的数据值；进而我们可以跟踪用户对于图表的操作点击事件，直接上代码；
 在这段代码中，通过监听 LineMark 的 Chart Proxy 来获取用户图表选择区域，同时在图表中根据选择起止时间展示了一个 RectangleMark ；这实际是健康 App 中一种图表交互
+![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570299752857.jpg)
 ![Screen Recording 2022-07-05 at 22.07.02 -1-](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/screen-recording-20220705-at-220702-1.gif)
-至此我们通过实际代码和效果展示，带大家了解了绘制 iOS 内置 App 的几种图表展示效果，建议大家在使用 Swift Chart 和 SwiftUI 绘制图表时，可以基于 API 和「直觉」来完成非常简洁的代码；
-接下来我们来聊一些苹果设计团队对于数据与图表展现的一些指南，各位可以与自己团队的设计师分享这些指南
-还是结合我们的煎饼餐车，餐车老版，当然可以通过表格或文本的形式来读取自己的数据，但像下面这样的数据呈现形式不够直观，
+综上，通过各种实例绘制了几种图表，建议大家在使用 Swift Chart 和 SwiftUI 绘制图表时，可以基于 API 和「直觉」来完成非常简洁的代码；
+接下来来聊一些苹果设计团队对于数据与图表展现的一些体验要素指南，各位可以与自己团队的设计师分享这些指南；
+还是结合我们的煎饼餐车，当然老板可以通过表格或文本的形式来读取自己的数据，但像下面这样的销售数据呈现形式不够直观，
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16570719470935.jpg)
 从三个维度结合来讨论图表应用：
 
@@ -165,25 +162,25 @@ Swift Chart 会按照季度来展示时间的 X 轴
 
 图表可以视觉化展现数据的「变化」「比例」「比较」
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571703727329.jpg)
-例如在前述煎饼餐车的例子里，诸如「最近销售数据」「热销煎饼类型」「不同停车位置与时间的数据」都是值得向用户呈现的关键数据；
-在 App 中，重要的需要让用户关注的数据，推荐以图表方式展现；这就是第一个问题「什么时候使用图表？」的参考答案。
+例如在前述煎饼餐车的例子里，诸如「最近销售数据」「热销煎饼类型」「不同停车位置与时间的数据」都是关键销售数据；
+在 App 中，重要的需要让用户关注的复杂数据，推荐以图表方式展现；这就是第一个问题「什么时候使用图表？」的参考答案。
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571706391315.jpg)
 
 ### 2、如何使用图表
 
-以之前煎饼餐车的月销售数据为例，当我们使用条形图来呈现数据时，辅助以数据的描述与结论作为文字，可以为用户直观感受数据变化并获取数据波动的结论；
+当我们使用条形图来呈现月销售数据时，辅助以数据的描述与结论作为文字标签，可以让用户直观的感受数据的变化，同时了解数据的概括性结论；
 因此「对图表辅助加以描述」是一种推荐的图表用法
 
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571708457717.jpg)
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571707060470.jpg)
 
-再比如在上述条形图中，我们可以把不同数据进行组合呈现，这可以呈现更具象的对比信息
+再比如在上述条形图中，我们可以把不同数据进行组合呈现，这可以呈现更具象的对比信息，如下图，按照不同维度来对比展示销售数据
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571712629155.jpg)
 
 而在一些面积较小的场景中，可以使用极简风格的静态图表，不包含坐标轴等信息
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571714109374.jpg)
 
-在大一些的具体图表场景中，使用一些用户点击的交互，也可以让用户更全面的了解图表中的信息；与此同时，无论是大的还是小的图表，都应该激进的减少图表复杂度，因为图表本身就是为了直观的呈现数据，太过复杂就回导致用户难以获取主要信息；
+在大一些的具体图表场景中，使用一些用户可点击的交互，也可以让用户更全面的了解图表中的信息；与此同时，无论是大的还是小的图表，都应该激进的减少图表复杂度，因为图表本身就是为了直观的呈现数据，太过复杂就回导致用户难以获取主要信息，违背了使用图表呈现数据的「简洁」的目的；
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571716223955.jpg)
 
 综上，在图表中增加描述性内容，提供可交互的图表与激进的降低图表复杂度，是使用图表的三个建议性原则；
@@ -192,7 +189,7 @@ Swift Chart 会按照季度来展示时间的 X 轴
 ### 3、图表的设计系统
 
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571721108382.jpg)
-在 App 内使用一套风格匹配的图表呈现样式，比如在 App 内统一使用风格、宽度、颜色、倒角等设计样式相似的柱状图和线图，同时避免引入过多样式的图表；
+在 App 内使用一套风格匹配的图表呈现样式，比如在 App 内统一使用风格、宽度、颜色、倒角等设计样式相似的柱状图和线图，同时避免引入过多类型样式的图表；
 与此同时，不同图表之间也需要有一些区别，以便用户不会混淆内容；
 不同类型数据和结论应考虑用不同图表样式呈现；
 下面还是以煎饼餐车为例，该 App 内设计风格一致而和谐的图表系统；
@@ -220,12 +217,11 @@ Swift Chart 会按照季度来展示时间的 X 轴
 但当数据中混有 0 的值时，线图的呈现也不够美观，这种情况，使用柱状图是更优雅的呈现方式；
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16571745785588.jpg)
 
-Swift Charts API 较为完美的支持了辅助功能，这里就不展开叙述了，有需要的可以参考辅助功能的相关 Session，如
-WWDC21 - Bring accessibility to charts in your app；
+Swift Charts API 较为完美的支持了辅助功能，这里就不展开叙述了，有需要的可以参考辅助功能的相关 WWDC21 Session - Bring accessibility to charts in your app；
 
 ### 2、坐标轴 Axes
 
-接下来我们聊聊坐标轴；坐标轴的设计可以让图表区间和数据对比显而易见，比如煎饼餐车日销量图表中，坐标轴只需标注起止日期，就可以轻细传达 30 天的意思；而纵坐标中，设置最高销量值为坐标轴最大值，会有效利用图表的纵向区域和并发挥对比功能（让对比更加明显）；
+接下来聊聊坐标轴；坐标轴的设计可以让图表区间和数据对比显而易见，比如煎饼餐车日销量图表中，坐标轴只需标注起止日期，就可以轻松传达 30 天的时间跨度；而纵坐标中，设置最高销量值为坐标轴最大值，会有效利用图表的纵向区域和并发挥对比功能（让对比更加明显）；
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16573595368403.jpg)
 在设置中电池的例子中，由于电池电量只会是 0% - 100% ，设置 100% 为坐标轴最大值是一个常识，如果设置为其他值，只会让用户困惑；
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16573596660504.jpg)
@@ -237,7 +233,7 @@ WWDC21 - Bring accessibility to charts in your app；
 
 ### 3、描述性文字
 
-接下来我们来聊聊图表中的描述性元素；以煎饼餐车为例，在月度销售数据中，添加合适的「结论性描述」，可以更直观的传达数据的结论；
+接下来来聊聊图表中的描述性元素；以煎饼餐车为例，在月度销售数据中，添加合适的「结论性描述」，可以更直观的传达数据的结论；
 ![](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/16573603028602.jpg)
 
 在天气 App 中，就采用了这种「结论性描述」的策略
@@ -245,7 +241,7 @@ WWDC21 - Bring accessibility to charts in your app；
 
 ### 4、图表的交互
 
-接下来我们讲讲图表的交互 Interaction，在健康 App 中，几乎所有的图表都可以进行交互，以查看不同维度数据，或是查看单项 Mark 的值；结合煎饼餐车例子，我们可以为单个 Mark 数据项添加交互标签；具体实现方法在前文有所提及
+接下来讲讲图表的交互 Interaction，在健康 App 中，几乎所有的图表都可以进行交互，以查看不同维度数据，或是查看单项 Mark 的值；结合煎饼餐车例子，我们可以为单个 Mark 数据项添加交互标签；具体实现方法在前文有所提及
 
 。![Screen Recording 2022-07-09 at 18.04.31 -1-](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/screen-recording-20220709-at-180431-1.gif)
 
