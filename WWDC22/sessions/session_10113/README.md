@@ -13,7 +13,7 @@ session_ids: [10113, 10114, 110565]
 
 苹果在产品体验上总是追求极致，图像显示领域也是如此，2019 年苹果上市了支持 HDR 的 [Pro Display XDR](https://www.apple.com/pro-display-xdr/) 显示屏，2021 年 WWDC 苹果给不支持 HDR 的 Mac 带来了 HDR 的 [“支持”](https://developer.apple.com/videos/play/wwdc2021/10161)，今年苹果给不支持 HDR 的 iOS 也带来了 HDR 的“支持” -- iOS EDR 渲染技术。
 
-本文主要讲述「在 iOS 上探索 EDR」，本文整体内容大致如下：
+本文主要讲述「在 iOS 上探索 EDR」，整体内容大致如下：
 
 ![10113-00-overview](./images/10113-00-overview.png)
 
@@ -21,21 +21,25 @@ session_ids: [10113, 10114, 110565]
 
 ### EDR 概述
 
-在图像显示中，用动态范围表示图像的亮暗程度。**SDR（Standard Dynamic Range）是标准动态范围，只能表示 0～1 范围的亮度**，0 代表黑，1 代表白。**HDR（High Dynamic Range）是高动态范围，能表示大于 1 的部分，意味着能更大范围地表示图像的亮暗细节，更好地还原真实世界**。
+**SDR、HDR 与 EDR**  
 
-**EDR（Extened Dynamic Range）是扩展动态范围，是 Apple 的 HDR 渲染技术和像素表示技术，会根据设备本身的亮度范围，扩展表示亮度大于 1 的部分**。在 EDR 渲染中：
+在图像显示中，用动态范围表示图像的亮暗程度。**SDR（Standard Dynamic Range）** 是标准动态范围，只能表示 0～1 范围的亮度，0 代表黑，1 代表白。**HDR（High Dynamic Range）** 是高动态范围，能表示大于 1 的部分，意味着能更大范围地表示图像的亮暗细节，更好地还原真实世界。
+
+**EDR（Extended Dynamic Range）** 是扩展动态范围，是 Apple 的 HDR 渲染技术和像素表示技术，会根据设备本身的亮度范围，扩展表示亮度大于 1 的部分。在 EDR 渲染中：
 
 - SDR 能渲染，会被映射到 0～1 的范围。
 - 1 到当前 EDR headroom 也能渲染。
 - 超过当前 EDR headroom 的部分不能渲染，会截掉。
 
-![10113-01-edr-overview](./images/10113-01-edr-overview.jpeg) ![10113-02-edr-overview](./images/10113-02-edr-overview.jpeg)
+![10113-01-edr-overview](./images/10113-01-edr-overview.JPG)
+
+**EDR headroom**  
 
 不难发现，EDR 表示范围很大程度上取决于 headroom，那么什么是 headroom 呢？headroom 约等于 **显示屏峰值亮度** 除以 **SDR 亮度**。
 
 ![10113-03-edr-hearroom-general](./images/10113-03-edr-hearroom-general.png)
 
-更高的 headroom 能表示更亮的内容，但 headroom 是动态的，当 SDR 亮度进行发生变化时，headroom 也会发生变化。在不同的观看环境里，使用者会更改当前的显示屏亮度，那么此时 SDR 亮度就会发生变化，headroom 也会变化。
+更高的 headroom 能表示更亮的内容，但 headroom 是动态的，当 SDR 亮度发生变化时，headroom 也会发生变化。在不同的观看环境里，使用者会更改当前的显示屏亮度，那么此时 SDR 亮度就会发生变化，headroom 也会变化。
 
 另外，不同设备因为亮度峰值不同，EDR headroom 也是不同的，下图罗列了一些常见设备的 EDR headroom：
 
@@ -57,17 +61,17 @@ session_ids: [10113, 10114, 110565]
 
 - SDK 峰值亮度被固定在 100 尼特，HDR 峰值亮度被固定在 1000 尼特，因此有 10 倍的 EDR headroom。
 - 禁用 HDR 色调映射，提供一对一的媒体显示映射。
-- 禁用所有为适应环境的动态显示调整，如原彩显示、自动亮度和夜览，而是允许用户手动精细校准白点。
+- 禁用所有为适应环境而发生的显示屏动态调整，如原彩显示、自动亮度和夜览等模式，而是允许用户手动精细校准白点。
 
 使用参考模式，显示器将产生完全符合各自规格描述的颜色，适合专业的工作流，目前 [LumaFusion](https://luma-touch.com/lumafusion-for-ios-2/?gclid=EAIaIQobChMIpN_LhoDv-AIVEplmAh1ccg9bEAAYASAAEgKhwfD_BwE) 已经支持了参考模式。
 
-参考模式目前主要支持五种最常见的 HDR 和 SDR 视频格式（如下图），提供跨媒体类型的一致参考结果，任何不支持的格式都将按默认显示模式一样去进行颜色管理。另外，与 macOS 上的参考预设不同，参考模式是一个单独的开关，在「设置」的「显示与亮度」中。
+参考模式目前主要支持五种最常见的 HDR 和 SDR 视频格式（如下图），为跨媒体类型提供一致性的参考结果，任何不支持的格式都将按默认显示模式去进行颜色管理。另外，与 macOS 上的参考预设不同，参考模式是一个单独的开关，在「设置」的「显示与亮度」中。
 
 ![10113-05-reference-mode-supported-formats](./images/10113-05-reference-mode-supported-formats.png)
 
 **Sidecar 与参考模式**
 
-[Sidecar](https://support.apple.com/en-us/HT210380) 是一种允许用户将 iPad 作为辅助显示器的技术。随着参考模式的引入，Sidecar 将支持参考级 SDR 和 HDR 内容，专业内容创作者可以将他们的 iPad Pro 作为 Apple silicon Mac 的辅助参考显示器。在参考模式下，在 Sidecar 上渲染的内容，将为所有与 iOS 相同的视频格式提供参考结果。
+[Sidecar](https://support.apple.com/en-us/HT210380) 是一种允许用户将 iPad 作为辅助显示器的技术。随着参考模式的引入，Sidecar 将支持参考级 SDR 和 HDR 内容，专业内容创作者可以将他们的 iPad Pro 作为 Apple silicon Mac 的辅助参考显示器。在参考模式下，Sidecar 上渲染的内容，将为 iOS 上相同视频格式的渲染提供参考结果。
 
 ![10113-06-reference-mode-sidecar](./images/10113-06-reference-mode-sidecar.png)
 
@@ -244,6 +248,24 @@ let edrMetaData = CAEDRMetadata.hdr10(displayInfo: displayData,
 >
 > - [WWDC20 10009 Edit and play back HDR video with AVFoundation](https://developer.apple.com/videos/play/wwdc2020/10009/)
 > - [WWDC21 10161 Explore HDR rendering with EDR](https://developer.apple.com/videos/play/wwdc2021/10161)
+
+### 小结
+
+1. SDR、HDR 与 EDR 三者区别：SDR 是标准动态范围，HDR 是高动态范围，EDR 是 Apple 的 HDR 渲染技术和像素表示技术，让不支持 HDR 的设备“支持” HDR。
+2. EDR API 现在已经支持 iOS 和 iPadOS，并且增加了参考模式（Reference Mode），在 Sidecar 上也支持 EDR 渲染，对专业工作者提供了更好的帮助。
+3. 读取 HDR图像主要分为四步：
+   1. 从 HDR 图像中创建 CGImage
+   2. 绘制到浮点位图 context 中
+   3. 创建浮点纹理
+   4. 将 EDR 位图加载到纹理中
+4. 适配 EDR 主要分为两个步骤：
+   1. 使用 CAMetalLayer，并将 wantsExtendedDynamicRangeContent 设置为 true。
+   2. 使用支持的像素格式和颜色空间（像素格式和颜色空间需要结合选择，需要选择支持 EDR 的，否则会被裁剪降级成 SDR）
+5. EDR headroom 决定 EDR 表示范围（即亮暗程度），headroom 约等于显示屏峰值亮度除以 SDR 亮度。可以通过 `potentialEDRHeadroom` 和 `currentEDRHeadroom` API 对潜在 headroom 和当前 headroom 的进行查询。
+6. 使用内置的色调映射（tone-mapping）一般分为三个步骤：
+   1. 检查平台是否支持色调映射。
+   2. 实例化 EDR 元数据，但是不同颜色空间使用的不同构造器。
+   3. 将 EDR 元数据应用于图层。
 
 ## 借助 Core Image、Metal 和 SwiftUI 显示 EDR 内容
 
@@ -454,7 +476,7 @@ let edrResult = f.outputImage
 
    ![110565-01-introduce](./images/110565-01-introduce.png)
 
-3. 使用 CoreVideo 和 Metal：通过 Core Video 的 DisplayLink 实时访问解码的视频帧，通过 CoreImage Filters 或 Metal Shader 添加颜色管理、视觉效果等，最后用 Metal 进行渲染。
+3. 使用 Core Video 和 Metal：通过 Core Video 的 DisplayLink 实时访问解码的视频帧，通过 Core Image Filters 或 Metal Shader 添加颜色管理、视觉效果等，最后用 Metal 进行渲染。
 
 ![110565-02-introduce](./images/110565-02-introduce.png)
 
@@ -464,11 +486,11 @@ Apple EDR 视频框架从上到下被分为 AVKit、AVFoundation、Core Video、
 
 ![110565-03-video-frameworks](./images/110565-03-video-frameworks.png)
 
-- AVKit 是高层级的框架，可以创建媒体播放的用户界面，包括传输控件、章节导航、画中画支持以及字幕和隐藏字幕的显示。AVKit 可以将 HDR 内容作为 EDR 播放，我们通过 AVPlayerViewController 来实现。
+- AVKit 是高层级的框架，可以创建媒体播放的用户界面，包括传输控件、章节导航、画中画支持以及字幕的显示。AVKit 可以将 HDR 内容作为 EDR 播放，我们通过 AVPlayerViewController 来实现。
   
 - AVFoundation 是功能齐全的音视频框架，可以轻松播放、创建和编辑 QuickTime 电影和 MPEG 4 文件，播放 HLS 流，并在我们的应用程序中构建强大的媒体功能。在这一层，我们可以通过 AVPlayer 和 AVPlayerLayer 来实现音视频功能。
   
-- Core Video 是一个为数字视频提供流水线模型的框架，使我们更容易访问和操作单个帧，而无需担心数据类型之间的转换或显示同步。在这一层，我们将通过 DisplayLink、CVPixelBuffer、CoreImage、CVMetalTextureCache 和 Metal 的使用来实现播放处理。
+- Core Video 是一个为数字视频提供流水线模型的框架，使我们更容易访问和操作单个帧，而无需担心数据类型之间的转换或显示同步。在这一层，我们将通过 DisplayLink、CVPixelBuffer、Core Image、CVMetalTextureCache 和 Metal 的使用来实现播放实时处理。
 
 - Video Toolbox 是一个低层级的框架，提供对硬件编码器和解码器的直接访问。它提供视频压缩和解压缩服务，以及存储在 Core Video 像素缓冲区中的光栅图像格式之间的转换服务。在一层，我们可以使用 VTDecompressionSession 这个功能强大的低级接口，有兴趣的同学可以进一步研究。
 
@@ -510,19 +532,19 @@ self.view.layer.addSublayer(playerLayer)
 player.play()
 ```
 
-### 使用 CoreVideo 和 Metal
+### 使用 Core Video 和 Metal
 
-使用 AVKit 和 AVFoundation 可以很简单地实现播放 HDR 视频，但是很多应用有更复杂的需求，比如有颜色分级等图像处理的诉求，那么我们就需要使用 CoreVideo 和 Metal 来解决了。
+使用 AVKit 和 AVFoundation 可以很简单地实现播放 HDR 视频，但是很多应用有更复杂的需求，比如有颜色分级等图像处理的诉求，那么我们就需要使用 Core Video 和 Metal 来解决了。
 
 ![110565-06-core-video-real-time-effects-pipeline-all](./images/110565-06-core-video-real-time-effects-pipeline-all.png)
 
-使用 CoreVideo 和 Metal 工作流程一般是这样的：从 AVPlayer 获取解码的视频帧，实时使用 Core Image Filter 或 Metal Shader，并将结果呈现为 EDR。总结下来大致分为三个步骤：
+使用 Core Video 和 Metal 工作流程一般是这样的：从 AVPlayer 获取解码的视频帧，实时使用 Core Image Filter 或 Metal Shader，并将结果呈现为 EDR。总结下来大致分为三个步骤：
 
 1. 使用 CAMetalLayer 开启 EDR 渲染能力。
 2. 从 AVPlayer 获取解码的视频帧。
 3. 实时使用 Core Image Filter 或 Metal Shader 进行图像处理，最终通过 Metal 渲染成 EDR。
 
-第一步，使用 CAMetalLayer 开启 EDR 渲染能力。
+**第一步，使用 CAMetalLayer 开启 EDR 渲染能力**
 
 使用 CAMetalLayer，并将其 wantsExtendedDynamicRangeContent 设置为 true，然后使用支持的像素格式和颜色空间，代码实现如下：
 
@@ -538,7 +560,7 @@ layer.pixelFormat = MTLPixelFormatRGBA16Float
 layer.colorspace = kCGColorSpaceExtendedLinearDisplayP3
 ```
 
-第二步，从 AVPlayer 获取解码的视频帧。
+**第二步，从 AVPlayer 获取解码的视频帧**
 
 ![110565-07-core-video-real-time-effects-pipeline](./images/110565-07-core-video-real-time-effects-pipeline.png)
 
@@ -607,7 +629,7 @@ statusObserver = videoPlayerItem.observe(\.status,
 }
 ```
 
-第三步，实时使用 Core Image Filter 或 Metal Shader 进行图像处理，最终通过 Metal 渲染成 EDR。
+**第三步，实时使用 Core Image Filter 或 Metal Shader 进行图像处理，最终通过 Metal 渲染成 EDR**
 
 不难看出，这一步有两种实现方式，一种通过 Core Image Filter 实现，一种通过 Metal Shader 实现。
 
@@ -698,9 +720,11 @@ let texture = CVMetalTextureGetTexture(cvTexture)
 
 ## 总结
 
-最后，我们来总结下全文的大致内容。
+最后，我们来总结下全文的大致内容：
 
-1. EDR（Extened Dynamic Range）是扩展动态范围，是 Apple 的 HDR 渲染技术和像素表示技术，能更好地表示图像的亮暗细节。
-2. EDR API 现在支持 iOS 和 iPadOS 了，并且增加了参考模式（Reference Mode），在 Sidecar 上也支持 EDR 渲染，对专业工作者提供了更好的帮助。
+1. EDR（Extended Dynamic Range）是扩展动态范围，是 Apple 的 HDR 渲染技术和像素表示技术，能更好地表示图像的亮暗细节。
+2. EDR API 现在已经支持 iOS 和 iPadOS，并且增加了参考模式（Reference Mode），在 Sidecar 上也支持 EDR 渲染，对专业工作者提供了更好的帮助。
 3. 借助 Core Image、Metal 和 SwiftUI 可以很好地显示 EDR 内容，并且可以使用内置的 CIFilters 创建和修改 EDR 内容。
-4. 利用 AVFoundation 和 Metal 都可以在 EDR 中显示 HDR 视频。使用 AVKit 和 AVFoundation 框架可以直接播放 HDR 视频。使用 CoreVideo 和 Metal 实时处理显示 EDR 内容，通过 Core Video 的 DisplayLink 实时访问解码的视频帧，再通过 CoreImage Filters 或 Metal Shader 添加颜色管理、视觉效果等，最后用 Metal 进行渲染。
+4. 利用 AVFoundation 和 Metal 都可以在 EDR 中显示 HDR 视频。
+   - 使用 AVKit 和 AVFoundation 框架可以直接播放 HDR 视频。
+   - 使用 Core Video 和 Metal 可以实时处理显示 EDR 内容，通过 Core Video 的 DisplayLink 实时访问解码的视频帧，再通过 Core Image Filters 或 Metal Shader 添加颜色管理、视觉效果等，最后用 Metal 进行渲染。
