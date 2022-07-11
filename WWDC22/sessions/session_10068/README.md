@@ -384,7 +384,7 @@ return cell
 
 [苹果文档](https://developer.apple.com/documentation/SwiftUI/UIHostingConfiguration)
 
-### UIDevice改动
+### UIDevice 改动
 
 1. 为了防止用户被标记， UIDevice.name 现在不再返回用户自定义的设备名称，而是设备的型号名称。如果想要获取用户自定义的设备名称，现在需要用户授权才可以。
 
