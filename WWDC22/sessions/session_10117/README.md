@@ -19,7 +19,7 @@
 
 
 <center class="half">
-    <img src="https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_clubhouse.jpeg"  width="45%" height="50%"><img src="https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_wechat.JPG"  width="45%" height="50%">
+    <img src="https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_clubhouse.jpeg"  width="40%" height="40%"><img src="https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_wechat.JPG"  width="40%" height="40%">
 </center>
 
 
