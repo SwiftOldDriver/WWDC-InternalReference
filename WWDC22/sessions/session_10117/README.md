@@ -125,12 +125,13 @@ iOS 16 系统增加了对“channel”生命周期的维护，通过 PushToTalk.
     ○ 当我们接收到语音消息时，系统将自动激活 Audio Session，从而我们可以将音频消息播放出来；
 
 系统在接管Audio Session时，会通过代理方法将相关事件同步给我们：
+```
 - (void)channelManager:(PTChannelManager *)channelManager 
 didActivateAudioSession:(AVAudioSession *)audioSession;
 
 - (void)channelManager:(PTChannelManager *)channelManager 
 didDeactivateAudioSession:(AVAudioSession *)audioSession;
-
+```
 通过系统对 Audio Session 的合理调度，我们可以尽可能地减少对音频设备的占用，较小 CPU 消耗，从而减少电量消耗和发热。
 
 ### 新技术方案
