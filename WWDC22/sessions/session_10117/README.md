@@ -385,6 +385,7 @@ channel 的生命周期内，如果发生一些状态变化，需要通过相关
 <img src="https://github.com/SwiftOldDriver/WWDC22/blob/sesion_10117/sessions/session_10117/images/wwdc_audiosession_airport.png" width="70%"/>
 </div>
 音视频通话场景，可能存在多种被打扰或打扰其他 app 的情况，就像一个繁忙的机场，总有很多飞机到达需要降落机场，可能还有突发情况需要协调避让，当正常的流程收到干扰时，需要特别处理，否则将影响用户体验：
+
 1. 传输过程中，AVAudioSession 可能被其他源打断，打断时，我们的 AVAudioSession 将暂时被挂起，例如 pstn 电话或者 FaceTime 通话，这时需要处理一下这类打断：
 
 <div align=center>
@@ -405,16 +406,12 @@ channel 的生命周期内，如果发生一些状态变化，需要通过相关
 // AVAudioSessionRouteChangeNotification  addObserver
 [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleRouteChangeNotification:) name:AVAudioSessionRouteChangeNotification object:nil];
 ```
-3. 当系统的音频服务被重置的时候，如果你需要对这种情况作出处理，需要监听AVAudioSessionMediaServicesWereResetNotification通知来处理，需要是实现以下操作
+3. 当系统的音频服务被重置的时候，如果你需要对这种情况作出处理，需要监听 AVAudioSessionMediaServicesWereResetNotification 通知来处理，此时一般需要重新根据当前场景配置我们需要的 catagory 和 mode，并使用 setActive:error:方法重新激活 AVAudioSession 实例
 
-处理孤立的音频对象（如播放器，录音机，转换器或音频队列）并创建新的音频对象
-
-重置正在跟踪的所有内部音频状态，包括所有属性 AVAudioSession
-
-适当时，AVAudioSession 使用该 setActive:error:方法重新激活实例
-
-减少对其他 app 的侵扰
-当我们的“对讲机”收到语音消息准备播放时，需要确保不影响其他 app 的播放，例如其他音乐类 app 正在播放歌曲，在我们 app 在后台准备启动并播放语音时，需要检查 AVAudioSession 的 secondaryAudioShouldBeSilencedHint 属性，判断是否有 其他 app 在播放，如果有，并且这个 app 是 nonmixable 类型的catagory ，我们的 app 尽量不在此时播放语音消息。当我们的 app 在前台时，需要监听相关通知 AVAudioSessionSilenceSecondaryAudioHintNotification 来做类似的响应。
+4. 减少对其他 app 的侵扰
+当我们的“对讲机”收到语音消息准备播放时，需要确保不影响其他 app 的播放，例如其他音乐类 app 正在播放歌曲，
+ - 在我们 app 在后台准备启动并播放语音时，需要检查 AVAudioSession 的 secondaryAudioShouldBeSilencedHint 属性，判断是否有 其他 app 在播放，如果有，并且这个 app 是 nonmixable 类型的 catagory ，我们的 app 尽量不在此时播放语音消息；
+ - 当我们的 app 在前台时，需要监听相关通知 AVAudioSessionSilenceSecondaryAudioHintNotification 来做类似的响应。
 
 -----
 ## 其他注意点
