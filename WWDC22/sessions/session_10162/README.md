@@ -95,7 +95,7 @@ session_ids: [10162]
 
 #### 创建对象着色器
 
-将这片区域划分切片，其中每块切片代表一个对象线程组（threadgroup），每个线程组计算头发丝的数量，并且生成每根发丝的曲线控制点数据，也就是 payload 数据。注：`payload`数据完全自定义，后续传递给网格着色器。
+将这片区域划分切片，其中每块切片代表一个对象线程组（threadgroup），每个线程组计算头发丝的数量，并且生成每根发丝的曲线控制点数据，也就是 `payload` 数据。注：`payload`数据完全自定义，后续传递给网格着色器。
 
 > 有关线程和线程组的介绍，可参考这个[官方文档](https://developer.apple.com/documentation/metal/compute_passes/creating_threads_and_threadgroups)
 
@@ -129,11 +129,11 @@ meshPipelineDesc.maxTotalThreadsPerObjectThreadgroup = kHairsPerBlock
 
 ![](./images/object_shader.png)
 
-其中 `object_data` 就是 payload 数据，如图所示，4 根头发会生成 2 X 2 的网格
+其中 `object_data` 就是 `payload` 数据，如图所示，4 根头发会生成 2 X 2 的网格
 
 ### 网格着色器阶段
 
-接收上个阶段输出的 payload 数据，输出 `metal::mesh` 类型的数据到光栅化器。
+接收上个阶段输出的 `payload` 数据，输出 `metal::mesh` 类型的数据到光栅化器。
 
 这个阶段的处理速度**非常快**，可以将更多的处理放到此阶段。
 
@@ -228,45 +228,54 @@ encoder.endEncoding()
 
 **网格片段（Meshlet）**是由网格（Mesh）模型分割出的颗粒度更小的片段。网格渲染管线可以有效处理和渲染大量的几何体，并且通过对 Meshlet 颗粒度划分，可以实现`更高效`和`细粒度`的剔除。
 
-如图所示，我们要剔除不可见`虚线`部分，即剔除相机所见范围外的几何体：
+如图所示，我们要剔除不可见的`虚线`部分，最终渲染出矩形内的`彩色`图像。
 
 ![](./images/meshlets.png)
 
+下面，我们将对比`传统渲染管线`和`网格渲染管线`的主要渲染流程。
+
 ### 传统渲染管线
 
-主要流程：
+**主要流程：**
 
-- 视锥体剔除
+- 视锥体剔除（相机所见范围外的物体直接剔除）
 - 层次细节选择（近处的物体加载高精度模型，越远的物体选择加载越低精度模型）
 - 编码
 - 进入渲染流程，最后生成图像
 
-其中**Compute pass**阶段由 CPU 处理完成，CPU 并行能力相比 GPU 弱很多，而且还需要缓冲区存储中间绘制命令（Scene draw commands），所以整个过程不是特别高效。
+其中 **Compute pass** 阶段由 CPU 处理完成，CPU 并行能力相比 GPU 弱很多，而且还需要缓冲区存储中间绘制命令（Scene draw commands），所以整个过程不是特别高效。
 
 ![](./images/compute_culling.png)
 
 ### 网格渲染管线
 
-主要流程：
+**主要流程：**
 
-- 对象着色器阶段，经过视锥体剔除、细节层次选择，输出 `payload` 数据，即一系列`网格片段 ID`（Meshlet IDs）。
+- 将场景模型切片，每块切片代表一个对象网格，也就是一个线程组。
 
-  其中主要的**`剔除`**过程如下：
+  这个过程可以按照具体需求自定义，比如我们可以将当前例子的场景模型划分为 4 个对象网格：
 
-  1）将场景模型划分成对象网格，此过程可以按照具体需求自定义，比如我们可以将当前例子的场景模型划分为 4 个对象网格：
+![](./images/scene_objects.png)
 
-  ![](./images/object_grid.png)
+- 每一个对象网格，根据视锥体确定不可见范围内的网格片段，然后剔除，其余的网格片段经过细节层次选择，生成包含`三角形`数据的网格片段，其中每个网格片段组成了几何体的表面。最后，输出 `payload` 数据（Meshlet IDs）到网格着色器。
 
-  2）使用视锥体确定不可见的网格片段，剔除不可见的网格片段。比如其中的足球形网格和三角形网格，虚线处的网格片段不在视锥体内，将会被剔除。
+  比如当前例子中的足球形状网格和三角形状网格，虚线处的网格片段不在可见范围内，将会被剔除，只保留可见的网格片段：
 
-  ![](./images/meshlet_culling.png)
+![](./images/meshlet_culling.png)
 
-- 网格着色器阶段，经过编码，输出 `metal::mesh` 类型数据到光栅化器
-- 渲染，生成最后图像
+- 网格着色器接收 `payload` 数据，经过编码，输出 `metal::mesh` 类型数据到光栅化器。
+
+![](./images/mesh_rasterizer.png)
+
+- 渲染，生成最后图像。
+
+> 注意：
+>
+> 相对比传统渲染管线，不再需要经过`顶点着色器`处理，而是直接交给片元着色器处理。
 
 ![](./images/meshlet_culling_pipeline.png)
 
-新的渲染管线由 GPU 驱动渲染，并行处理能力比 CPU 强很多，而且避免了缓存中间绘制命令，效率比传统渲染管线**高**。
+总之，新的渲染管线由 GPU 驱动渲染，只使用一个编码器，并行处理能力比 CPU 强很多，而且避免了缓存中间绘制命令，效率比传统渲染管线**高**。
 
 ## 一些限制
 
@@ -296,7 +305,7 @@ encoder.endEncoding()
 
 ## 总结
 
-网格着色管线作为新的几何渲染管线，在处理巨大的几何模型（剔除）或者程序生成等方面，有更高的效率以及更大的灵活性，相信未来必定有很多应用使用此管线。最后，如果你对新的渲染管线感兴趣，不妨看一下官方的 Demo 。  
+网格渲染管线作为新的几何渲染管线，在处理巨大的几何模型（剔除）或者程序生成等方面，有着更高的效率以及更大的灵活性，相信未来必定有很多应用使用此管线。最后，如果你对新的渲染管线感兴趣，不妨看一下官方 Demo。  
 
 > 官方 Demo ：[Adjusting the level of detail using Metal mesh shaders](https://developer.apple.com/documentation/metal/metal_sample_code_library/adjusting_the_level_of_detail_using_metal_mesh_shaders)
 >
