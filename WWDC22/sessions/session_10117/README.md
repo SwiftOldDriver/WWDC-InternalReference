@@ -147,8 +147,8 @@ didDeactivateAudioSession:(AVAudioSession *)audioSession;
 ```
 通过系统对 Audio Session 的合理调度，我们可以尽可能地减少对音频设备的占用，较小 CPU 消耗，从而减少电量消耗和发热。
 
-
-
+<br/>
+<br/>
 ### 新技术方案
 
 结合 iOS 16 在 APNs、系统 UI、接管 Audio Session、维护 channel 生命周期等方面的支持，我们还需要对技术方案进行改造：在原方案基础上，通过改造在线方式、支持多种消息通知方式，端到端支持音频编码、解码、打包、解析、传输工作（在传输通道上，苹果只提供APNs用于消息的通知，而不包含具体的流媒体流），从而升级为低功耗、高可靠、易交互的新方案。
@@ -220,7 +220,7 @@ iOS 16 新增的 PushToTalk.framework， 主要通过新增类 PTChannelManager 
 ### 入会配置
 channel manager 通过初始化方法来创建，这个方法需要设置 channel 管理的代理和 channel 存储的代理。这个初始化方法是单例，多次调用都会返回同一个共享的实例，建议通过一个实例变量来持久化第一次生成的实例。
 
-
+<br/>
 - 启动后实例化
 
 需要在 app 启动时的 didFinishLaunchingWithOptions：代理方法中尽早初始化 channel manager；通过下面方法初始化，这个方法中需要设置管理 channel 的代理和持久化 channel 的代理：
@@ -229,17 +229,19 @@ channel manager 通过初始化方法来创建，这个方法需要设置 channe
 ```
 这个初始化方法返回的是单例，app 内共享的实例，建议通过实例变量持有一下；
 
-
+<br/>
 - 配置Audio Session
 
 配置 Audio Session 的 category 为 AVAudioSessionCategoryPlayAndRecord （一般会同时配置 mode 为 AVAudioSessionModeVoiceChat）
 
 
+<br/>
 - 创建channel
 
 如果多方参与通信的 channel 还没创建，需要由某个人先创建一个 channel，由服务端返回 channel 相关信息，包括 channel id等；
 
 
+<br/>
 - 配置 channel Description：
 
 PTChannelDescriptor 包含了 channel 的 id、image、name 信息，用于识别这个 channel
