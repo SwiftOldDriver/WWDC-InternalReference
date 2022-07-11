@@ -424,20 +424,20 @@ channel 的生命周期内，如果发生一些状态变化，需要通过相关
 
 
 -----
-参考链接
+##参考文献
 
-http://yunxin.163.com/blog/buildclubhouse/
+[1]:http://yunxin.163.com/blog/buildclubhouse/
 
-https://developer.aliyun.com/article/781827
+[2]:https://developer.aliyun.com/article/781827
 
-https://developer.apple.com/library/archive/documentation/Audio/Conceptual/AudioSessionProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40007875-CH1-SW1
+[3]:https://developer.apple.com/library/archive/documentation/Audio/Conceptual/AudioSessionProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40007875-CH1-SW1
 
-https://developer.apple.com/videos/play/wwdc2022/110339/
+[4]:https://developer.apple.com/videos/play/wwdc2022/110339/
 
-https://developer.apple.com/videos/play/wwdc2021/10094/
+[5]:https://developer.apple.com/videos/play/wwdc2021/10094/
 
-https://developer.apple.com/videos/play/wwdc2019/707/
+[6]:https://developer.apple.com/videos/play/wwdc2019/707/
 
-https://developer.apple.com/videos/play/wwdc2019/417
+[7]:https://developer.apple.com/videos/play/wwdc2019/417
 
-https://xie.infoq.cn/article/2cc7b6df1d2b26bfc02bd8a6f
+[8]:https://xie.infoq.cn/article/2cc7b6df1d2b26bfc02bd8a6f
