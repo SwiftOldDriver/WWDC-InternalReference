@@ -74,7 +74,7 @@ App Clip 诊断工具使用 App Clip Code、Safari、iMessage 来检查，它也
 
 > iCloud 是一个云端数据库。CloudKit 框架提供了在 App 和 iCloud 之间读取和存储数据的接口。开发者可以使用 CloudKit 将应用程序的现有数据存储在 iCloud 上，以便用户在各个设备上访问云端数据。
 
-在 iOS 16 之前，App Clip 是不支持 CloudKit的。如果开发者需要在远端持久化数据，需要服务器的支持，这对独立开发者来说不是一件好事。在我搜索 App Clip 与 CloudKit 资料的时候，在 Apple 开发者论坛上发现了一个挺有意思的帖子。这个帖子发布在 iOS 15 时期，标题是 [《App Clips 应该支持 CloudKit 以便访问 iCloud 公共数据》](https://developer.apple.com/forums/thread/658307)。
+在 iOS 16 之前，App Clip 是不支持 CloudKit 的。如果开发者要在远端持久化数据，就需要服务器的支持，这对独立开发者来说不是一件好事。在我搜索 App Clip 与 CloudKit 资料的时候，在 Apple 开发者论坛上发现了一个挺有意思的帖子。这个帖子发布在 iOS 15 时期，标题是 [《App Clips 应该支持 CloudKit 以便访问 iCloud 公共数据》](https://developer.apple.com/forums/thread/658307)。
 
 在 iOS 16，Apple 给了 App Clip 使用 CloudKit 接口的权限。现在 App Clip 也可以访问存储在 CloudKit 公共数据库中的数据和资源。开发者可以在 App Clip 中复用 App 的相关代码，来调用 CloudKit 接口。
 
@@ -116,6 +116,7 @@ if let title = record["Title"] as? String,
         print(“Fetched a food item from CloudKit: \(title) \(description)")
 }
 ```
+
 想了解更多关于 CloudKit 的细节，请参阅 [CloudKit 官方文档](https://developer.apple.com/documentation/cloudkit)。
 
 ## 钥匙串迁移
