@@ -105,7 +105,9 @@ session_ids: [10082]
 
 ### On-Device Detection
 
-前面讨论了可利用 Thread Performance Checker 和 Instruments 中的卡顿检测工具来帮助我们发现并定位问题，其实可以发现这两个工具都是线下的定位手段。虽然我们可能在开发阶段已经做足了相对完整的测试，并取得了较好的测试覆盖率，但是在后续的 Beta 测试阶段和线上发布阶段中也有可能会出现自己没考虑到的卡顿问题的路径。这时候用户设备都是无法连接到 Xcode 进行线下调试的，所以就非常依赖线上的工具进行定位问题。谈到线上工具，首先值得高兴的是今年 Apple 在 iOS 16 的开发者设置中引入了 Hang Detection（卡顿检测）功能，为 App 运行时提供实时的卡顿检测通知并诊断的能力，不过这只适用于由开发证书签名的以及通过 TestFlight 安装的应用。具体打开方式： Settings -> Developer -> Hang Detection，并切换 Enable Hang Detection 开关状态到开启状态。开启后可以看到以下三部分：
+前面讨论了可利用 Thread Performance Checker 和 Instruments 中的卡顿检测工具来帮助我们发现并定位问题，其实可以发现这两个工具都是线下的定位手段。虽然我们可能在开发阶段已经做足了相对完整的测试，并取得了较好的测试覆盖率，但是在后续的 Beta 测试阶段和线上发布阶段中也有可能会出现自己没考虑到的卡顿问题的路径。这时候用户设备都是无法连接到 Xcode 进行线下调试的，所以就非常依赖线上的工具进行定位问题。谈到线上工具，首先值得高兴的是今年 Apple 在 iOS 16 的开发者设置中引入了 Hang Detection（卡顿检测）功能，为 App 运行时提供实时的卡顿检测通知并诊断的能力，不过这只适用于由开发证书签名的以及通过 TestFlight 分发的应用，换言之就是该功能只能统计通过 Xcode 安装的 Debug 包和通过 TestFlight 安装的 Release 包，而通过 AppStore 安装的应用或企业包则不能被统计（笔者理解上这块应该是 iOS 系统内部针对应用的签名类型进行了限制，可参考：[漫谈 iOS 程序的证书和签名机制](https://segmentfault.com/a/1190000004144556)）。
+
+功能具体打开方式： Settings -> Developer -> Hang Detection，并切换 Enable Hang Detection 开关状态到开启状态。开启后可以看到以下三部分：
 
 - Hang Threshold：可设置卡断检测的阈值，目前只有 250ms、500ms、1000ms 和 2000ms 四个可选；
 - Monitored Apps：展示可监控的 App 列表；（注意：只展示由开发证书签名的和通过 TestFlight 安装的应用，企业证书签名无法适用）
