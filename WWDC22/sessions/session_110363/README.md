@@ -87,6 +87,89 @@ log(value: event)
 
 由于需要在 App 启动时会计算协议检查所需的 「元数据」，当代码中大量使用了协议之后，对启动时间的影响将不再是微乎其微，而有可能达到客观的数百毫秒级别。在真实世界的 App 中，计算「元数据」的耗时甚至会占到启动时间的一半。
 
+那么为什么 Swift 协议检查会有这样的性能问题呢？在 Swift 5.4 的更新文档中，Apple 就已经提到过针对 Swift 协议检查有过一次性能优化。
+
+> 在 Swift 5.4 中，运行时的协议一致性检查明显更快，这要归功于更快的哈希表实现来缓存以前的查找结果。特别是，这加快了常见的运行时 `as?` 和 `as!` 转换操作。
+>
+> -- [Swift 5.4 Release Notes](https://www.swift.org/blog/swift-5.4-released/)
+
+![App launch time visualization](./images/pic26.png)
+
+ 如 [The Surprising Cost of Protocol Conformances in Swift](https://medium.com/geekculture/the-surprising-cost-of-protocol-conformances-in-swift-dfa5db15ac0c) 一文中的截图所示，在 App 的启动过程中，swift_conformsToProtocol 所花费的时间已经达到了 100+ ms 的级别。众所周知，Apple 官方给出的建议启动时长是控制在 400 ms 以内。
+
+### 协议一致性检查底层解析
+
+对于协议一致性检查的底层实现，我们可以在 Swift 源码中得到答案。
+
+#### swift_conformsToProtocolImpl 
+
+我们来到 [ProtocolConformance.cpp](https://github.com/apple/swift/blob/main/stdlib/public/runtime/ProtocolConformance.cpp) 源文件中，然后定位到 swift_conformsToProtocolImpl 方法。
+
+```c++
+static const WitnessTable *
+swift_conformsToProtocolImpl(const Metadata *const type,
+                             const ProtocolDescriptor *protocol) {
+  const WitnessTable *table;
+  bool hasUninstantiatedSuperclass;
+
+  // First, try without instantiating any new superclasses. This avoids
+  // an infinite loop for cases like `class Sub: Super<Sub>`. In cases like
+  // that, the conformance must exist on the subclass (or at least somewhere
+  // in the chain before we get to an uninstantiated superclass) so this search
+  // will succeed without trying to instantiate Super while it's already being
+  // instantiated.=
+  std::tie(table, hasUninstantiatedSuperclass) =
+      swift_conformsToProtocolMaybeInstantiateSuperclasses(
+          type, protocol, false /*instantiateSuperclassMetadata*/);
+
+  // If no conformance was found, and there is an uninstantiated superclass that
+  // was not searched, then try the search again and instantiate all
+  // superclasses.
+  if (!table && hasUninstantiatedSuperclass)
+    std::tie(table, hasUninstantiatedSuperclass) =
+        swift_conformsToProtocolMaybeInstantiateSuperclasses(
+            type, protocol, true /*instantiateSuperclassMetadata*/);
+  return table;
+}
+```
+
+swift_conformsToProtocolImpl 函数的实现很容易理解，它接收两个参数，分别是一个类型字段 type 和一个协议描述符 protocol，返回 WitnessTable 类型的实例对象。
+
+* 声明 WitnessTable 类型的实例 table
+* 声明是否有未初始化的父类布尔值 hasUninstantiatedSuperclass
+* 先调用一次 swift_conformsToProtocolMaybeInstantiateSuperclasses 方法，传入 type 和 protocol，并在第三个参数传入 false 表示不去处初始化父类。根据代码中的注视我们不难看出，对于 `class Sub: Super<Sub>` 这种场景这里的 false 可以避免出现无限循环的情况。这里 swift_conformsToProtocolMaybeInstantiateSuperclasses 方法的调用会更新前面声明的两个变量 table 和 hasUninstantiatedSuperclass
+* 如果 table 不存在即说明还不能判定 type 是否遵循 protocol，同时如果 hasUninstantiatedSuperclass 为 false 即有未初始化的父类没有被搜索到，因此需要再次搜索一次并初始化所有的父类
+
+关于 WitnessTable 的定义可以参考 [Metadata.h](https://github.com/apple/swift/blob/main/include/swift/ABI/Metadata.h) 源文件。
+
+```c++
+/// A witness table for a protocol.
+///
+/// With the exception of the initial protocol conformance descriptor,
+/// the layout of a witness table is dependent on the protocol being
+/// represented.
+template <typename Runtime>
+class TargetWitnessTable {
+  /// The protocol conformance descriptor from which this witness table
+  /// was generated.
+  ConstTargetMetadataPointer<Runtime, TargetProtocolConformanceDescriptor>
+    Description;
+
+public:
+  const TargetProtocolConformanceDescriptor<Runtime> *getDescription() const {
+    return Description;
+  }
+};
+
+using WitnessTable = TargetWitnessTable<InProcess>;
+```
+
+#### swift_conformsToProtocolMaybeInstantiateSuperclasses
+
+
+
+
+
 ### Swift 协议检查优化方案
 
 那么问题来了，我们能不能提前计算好这些「元数据」呢？
