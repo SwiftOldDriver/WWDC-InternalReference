@@ -51,18 +51,21 @@ DocC 支持混编的 framework 与 App，新的文档页面左侧导航栏顶部
 
 ![docc-app-catelog](images/docc-app-catelog.png)
 
-```markdown
-# Getting Started with Sloths
+在 Documentation Catelog 中添加与 App 同名的 Slothy.md 文件并添加一下内容即可。
 
-Create a sloth and assign personality traits and abilities.
+```markdown
+// Slothy.md
+# ``Slothy``
+
+An app to create and care for custom sloths.
 
 ## Overview
 
-Sloths are complex creatures that require careful creation and a suitable habitat. After creating a sloth, you're responsible for feeding them, providing fulfilling activities, and giving them opportunities to exercise and rest. 
+Slothy is an iOS app that allows users to create and care for virtual sloths.
 
-Every sloth has a ``Sloth/name`` and ``Sloth/color-swift.property``. You can optionally provide a ``Sloth/power-swift.property`` if your sloth has special supernatural abilities.
+![An illustration displaying the UI for finding, creating, and taking care of a sloth in Slothy.](slothy.png)
 
-![A diagram with the five sloth power types: ice, fire, wind, lightning, and none.](slothPower.png)
+The Slothy app project contains views to present Slothy's user interface, and utilities to play sounds as the user interacts with the app.
 ```
 
 ![docc-app-article](images/docc-app-article.png)
@@ -89,7 +92,7 @@ Every sloth has a ``Sloth/name`` and ``Sloth/color-swift.property``. You can opt
 
 #### 发布
 
-DocC 刚发布的时候仅动态网站的发布，你需要导出 .doccarchive 文件，将其拷贝到服务器用于提供文件的目录，并在服务器上添加规则以重定向页面与资源的访问，详细内容可参考 WWDC21 session [Host and automate your DocC documentation](https://developer.apple.com/videos/play/wwdc2021/10236/)。操作繁琐暂且不提，开发者甚至无法直接将文档部署到像 Github Pages 这样有着相当一部分开源软件使用的静态网页上。DocC 刚发布不久就有开发者发出了[吐槽](https://www.jessesquires.com/blog/2021/06/29/apple-docc-great-but-useless-for-oss/)，官方也在社区中针对这一问题进行了实现[方案探讨](https://forums.swift.org/t/support-hosting-docc-archives-in-static-hosting-environments/53572)，并于 2021 年 12 月将实现合并入主分支。
+DocC 刚发布的时候仅支持动态网站的发布，你需要导出 .doccarchive 文件，将其拷贝到服务器用于提供文件的目录，并在服务器上添加规则以重定向页面与资源的访问，详细内容可参考 WWDC21 session [Host and automate your DocC documentation](https://developer.apple.com/videos/play/wwdc2021/10236/)。操作繁琐暂且不提，开发者甚至无法直接将文档部署到像 Github Pages 这样有着相当一部分开源软件使用的静态网页上。DocC 刚发布不久就有开发者发出了[吐槽](https://www.jessesquires.com/blog/2021/06/29/apple-docc-great-but-useless-for-oss/)，官方也在社区中针对这一问题进行了实现[方案探讨](https://forums.swift.org/t/support-hosting-docc-archives-in-static-hosting-environments/53572)，并于 2021 年 12 月将实现合并入主分支。
 
 通过 Xcode 14 导出的 .doccarchive 文件将兼容绝大部份 web 服务，只需要将 .doccarchive 中的文件直接拷贝到服务器用于提供文件的目录即可，大大提升了发布效率。以 SlothCreator 工程文档在 `https://slothy.example.com` 域名下的部署为例，将文件拷贝到服务器的根目录，即可通过 `域名 + /documentation/slothcreator` 访问文档，通过 `域名 + tutorials/slothcreator` 访问教程：
 
