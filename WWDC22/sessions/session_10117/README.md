@@ -125,8 +125,8 @@ iOS 16 系统增加了对“channel”生命周期的维护，通过 PushToTalk.
 
 通过对 Audio Session 的接管，我们 app 不需要管理 Audio Session 的生命周期，系统将给与其合适的优先级，并在适当的时机激活和挂起，从而实现更好地节省能耗。当我们 app 处于后台，
 
-- 当我们发送语音消息时，我们点击唤起系统录制UI时，系统将激活 Audio Session，我们通过 audio unit 可以录制语音，录制结束，系统将挂起 Audio Session；
-    
+- 当我们发送语音消息时，我们点击唤起系统录制 UI 时，系统将激活 Audio Session，我们通过 audio unit 可以录制语音，录制结束，系统将挂起 Audio Session；
+
 - 当我们接收到语音消息时，系统将自动激活 Audio Session，从而我们可以将音频消息播放出来；
 
 系统在接管 Audio Session 时，会通过代理方法将相关事件同步给我们：
