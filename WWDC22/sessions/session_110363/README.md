@@ -95,13 +95,13 @@ log(value: event)
 
 ![App launch time visualization](./images/pic26.png)
 
- 如 [The Surprising Cost of Protocol Conformances in Swift](https://medium.com/geekculture/the-surprising-cost-of-protocol-conformances-in-swift-dfa5db15ac0c) 一文中的截图所示，在 App 的启动过程中，swift_conformsToProtocol 所花费的时间已经达到了 100+ ms 的级别。众所周知，Apple 官方给出的建议启动时长是控制在 400 ms 以内。
+如 [The Surprising Cost of Protocol Conformances in Swift](https://medium.com/geekculture/the-surprising-cost-of-protocol-conformances-in-swift-dfa5db15ac0c) 一文中的截图所示，在 App 的启动过程中，swift_conformsToProtocol 所花费的时间已经达到了 100+ ms 的级别。众所周知，Apple 官方给出的建议启动时长是控制在 400 ms 以内。
 
 ### 协议一致性检查底层解析
 
 对于协议一致性检查的底层实现，我们可以在 Swift 源码中得到答案。
 
-#### swift_conformsToProtocolImpl 
+#### swift_conformsToProtocolImpl
 
 我们来到 [ProtocolConformance.cpp](https://github.com/apple/swift/blob/main/stdlib/public/runtime/ProtocolConformance.cpp) 源文件中，然后定位到 swift_conformsToProtocolImpl 方法。
 
@@ -135,10 +135,10 @@ swift_conformsToProtocolImpl(const Metadata *const type,
 
 swift_conformsToProtocolImpl 函数的实现很容易理解，它接收两个参数，分别是一个类型字段 type 和一个协议描述符 protocol，返回 WitnessTable 类型的实例对象。
 
-* 声明 WitnessTable 类型的实例 table
-* 声明是否有未初始化的父类布尔值 hasUninstantiatedSuperclass
-* 先调用一次 swift_conformsToProtocolMaybeInstantiateSuperclasses 方法，传入 type 和 protocol，并在第三个参数传入 false 表示不去处初始化父类。根据代码中的注视我们不难看出，对于 `class Sub: Super<Sub>` 这种场景这里的 false 可以避免出现无限循环的情况。这里 swift_conformsToProtocolMaybeInstantiateSuperclasses 方法的调用会更新前面声明的两个变量 table 和 hasUninstantiatedSuperclass
-* 如果 table 不存在即说明还不能判定 type 是否遵循 protocol，同时如果 hasUninstantiatedSuperclass 为 false 即有未初始化的父类没有被搜索到，因此需要再次搜索一次并初始化所有的父类
+- 声明 WitnessTable 类型的实例 table
+- 声明是否有未初始化的父类布尔值 hasUninstantiatedSuperclass
+- 先调用一次 swift_conformsToProtocolMaybeInstantiateSuperclasses 方法，传入 type 和 protocol，并在第三个参数传入 false 表示不去处初始化父类。根据代码中的注视我们不难看出，对于 `class Sub: Super<Sub>` 这种场景这里的 false 可以避免出现无限循环的情况。这里 swift_conformsToProtocolMaybeInstantiateSuperclasses 方法的调用会更新前面声明的两个变量 table 和 hasUninstantiatedSuperclass
+- 如果 table 不存在即说明还不能判定 type 是否遵循 protocol，同时如果 hasUninstantiatedSuperclass 为 false 即有未初始化的父类没有被搜索到，因此需要再次搜索一次并初始化所有的父类
 
 关于 WitnessTable 的定义可以参考 [Metadata.h](https://github.com/apple/swift/blob/main/include/swift/ABI/Metadata.h) 源文件。
 
@@ -165,10 +165,6 @@ using WitnessTable = TargetWitnessTable<InProcess>;
 ```
 
 #### swift_conformsToProtocolMaybeInstantiateSuperclasses
-
-
-
-
 
 ### Swift 协议检查优化方案
 
