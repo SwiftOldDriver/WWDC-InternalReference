@@ -34,9 +34,35 @@ session_ids: [10026]
 
 在 **iPhone** 上，实况文本需要配备 A12 仿生或更新的芯片，并更新到 **iOS 16**；在 **Mac** 上，并无 Intel/M 系列要求，仅需更新至 macOS 13。
 
+## 文本识别方案背景回顾
+从 VisionKit 被 Apple 在 iOS 13 引入之后，我们就可以尝试在 iOS 中实现文本识别、结构化数据的检测功能。那在 Vision 中，我们的文本是如何被识别出来的呢？
+首先，文本是什么？需要我们一步步来告诉程序：
+
+```swift 
+let requestHandler = VNImageRequestHandler(url: imageURL, options: [:])
+
+let request = VNDetectTextRectanglesRequest { (request, error) in
+    guard let observations = request.results as? [VNTextObservation] else { return }
+    // 遍历检测请求中获取到的区域数据
+    for currentObservation in observations {
+        for currentCharacterBox in currentObservation.characterBoxes! {
+            // TODO: 训练 CoreML 模型来识别符号
+            // TODO: 开始根据模型来识别
+            // TODO: 过滤出干扰的特征
+        }
+        // TODO: 把结果放到一个字符串中
+        // TODO: 纠正识别出来的词组
+    }
+}
+```
+
+通过读取图片内容的请求后，结果以数组存放给我们，然后我们需要将训练可以读取这些内容的 CoreML 模型，再接下来运行 CoreML 模型滤除不好的特征，把所有这些字符放到一个字符串中，然后修正结果，最终形成句子和单词。
+
+通过历史方案我们可以了解到文本要被识别出来大致要经过怎么样的流程。同时，我们也看到，虽然这样也能实现我们想要的文字识别效果，但十分不便利，对于想要集成文本识别的开发来说，门槛太高了。所幸，我们新版 **API** 大大简化了这个过程。
+
 ## API 初识
 
-实况文本的 **API** 构成主要有以下几个类：
+新引入的实况文本的 **API** 很简洁，它构成主要有以下几个类：
 
 - `ImageAnalyzer`：图片内容的分析器。
 - `ImageAnalysis`：分析图片后得到的分析结果，跨平台复用（平台无关）。
@@ -347,7 +373,7 @@ override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
 
 - [WWDC2021-10276: Use the camera for keyboard input in your app][use-the-camera-for-keyboard-input-in-your-app]
 
-## 扩展：文本输入时的实况文本功能
+## 扩展一：文本输入时的实况文本功能
 
 当我们的应用中有集成 `UITextField` 和 `UITextView` 这两个文本输入控件时，实况文本输入功能是默认值支持的。我们可以通过双击或者长按文本输入区域唤出它。当我们选择了使用实况文本功能，通过开启相机扫描周边环境的文本后，扫描的文本内容类型是可以配置的。它的配置方式是通过我们给文本输入控件限制内容类型来实现的。目前支持输入的内容如下图：
 
@@ -360,6 +386,8 @@ phoneTextField.autocorrectionType = .no
 
 addressTextField.textContentType = .fullStreetAddress
 ```
+
+## 扩展二：文本识别的工作原理
 
 ## AVKit
 
