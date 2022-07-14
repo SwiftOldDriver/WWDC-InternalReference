@@ -4,7 +4,7 @@ rgc，目前就职于华泰证券，负责客户端平台类能力建设。
 
 ## 审核介绍
 
-士土Edmond木, 对 CocoaPods 有一点了解，目前对 Bazel 和 Swift 比较感兴趣。[Github Page](https://looseyi.github.io)
+士土 Edmond 木, 对 CocoaPods 有一点了解，目前对 Bazel 和 Swift 比较感兴趣。[Github Page](https://looseyi.github.io)
 
 ## 不超过 120 个字的文章简介
 
