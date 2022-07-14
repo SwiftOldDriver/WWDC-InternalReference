@@ -389,6 +389,8 @@ addressTextField.textContentType = .fullStreetAddress
 
 ## 扩展二：文本识别的工作原理
 
+![live-text-work-rule][live-text-work-rule]
+
 ## AVKit
 
 `AVKit` 在新系统中也增加了实况文本支持，`AVPlayerView`（macOS） 和 `AVPlayerViewController`（iOS/tvOS）可以通过设置 `allowsVideoFrameAnalysis` 属性，在暂停的视频帧里自动进行实况文本处理，该功能是默认设置为 `true` 的。注意这个功能只能用在合法播放资源上。
@@ -428,3 +430,4 @@ let frame = playerLayer.currentlyDisplayedPixelBuffer() // AVPlayerLayer 的新 
 [WWDC2022-10025]: https://developer.apple.com/videos/play/wwdc2022/10025/
 [WWDC-xiaozhuanlan]: https://xiaozhuanlan.com/topic/8205316479
 [fps-hls]: https://developer.apple.com/streaming/fps/
+[live-text-work-rule]: ./images/live-text-work-rule.png
