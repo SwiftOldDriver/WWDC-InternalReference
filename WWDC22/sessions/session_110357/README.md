@@ -6,6 +6,14 @@ session_ids: [110357, 110358]
 
 本文基于 [Session 110357](https://developer.apple.com/videos/play/wwdc2022/110357) & [Session 110358](https://developer.apple.com/videos/play/wwdc2022/110358) 梳理
 
+> 作者：旷明，iOS Dev。GitHub: KeithBird  Twitter: @KeithBirdKTH
+>
+> 审核：
+>
+> 四娘，老司机技术社区核心成员
+>
+> 王浙剑（Damonwong），老司机技术社区负责人、WWDC22 内参主理人，目前就职于阿里巴巴。
+
 ## 缘起
 
 这一切从 Apple 默认采用 [Unicode 编码](https://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html)（unicode-correct-by-default）时就埋下了种子。再到 Swift 1.0 至 4.0 的进化之路上，String 对于是否遵循 Collection 协议反复横跳，事情已经开始不太对劲。

@@ -1,8 +1,12 @@
 ## 个人介绍
 
-作者：旷明，iOS Dev。GitHub: KeithBird  Twitter: @KeithBirdKTH
+旷明，iOS Dev。GitHub: KeithBird  Twitter: @KeithBirdKTH
 
 ## 审核介绍
+
+四娘，老司机技术社区核心成员
+
+王浙剑（Damonwong），老司机技术社区负责人、WWDC22 内参主理人，目前就职于阿里巴巴。
 
 ## 不超过 120 个字的文章简介
 

@@ -11,9 +11,11 @@ session_ids: [10002]
 >
 > 审核：
 >
-> 黄骋志，老司机周报编辑，现于西瓜视频负责稳定性 OOM/Watchdog 相关工作。
+> 黄骋志（橙汁），老司机技术社区核心成员，现于西瓜视频负责稳定性 OOM/Watchdog 相关工作。
 >
 > Cyandev，目前就职于抖音基础技术团队，研发流程方向全栈工程师，在 Swift、大前端领域有比较丰富的经验。
+>
+> 王浙剑（Damonwong），老司机技术社区负责人、WWDC22 内参主理人，目前就职于阿里巴巴。
 
 ![banner](./images/banner.png)
 
@@ -802,9 +804,9 @@ configuration.bootLoader = bootloader
 
 #### 配置 Linux 图形设备（显示器）
 
-在 `macOS 13 Ventura`， Apple 增加了对 `Virtio GPU 2D` 的支持，可以显示 Linux GUI 界面了。（macOS 11 和 12 支持 Linux CLI）
+在 `macOS 13 Ventura`，Apple 增加了对 `Virtio GPU 2D` 的支持，可以显示 Linux GUI 界面了。（macOS 11 和 12 支持 Linux CLI）
 
-> Virtio GPU 2D 是一个半虚拟化设备, 可以在 Host OS 里面显示出 Linux 的界面。Linux 把渲染的帧提供给 Virtualization 框架显示出来。
+> Virtio GPU 2D 是一个半虚拟化设备，可以在 Host OS 里面显示出 Linux 的界面。Linux 把渲染的帧提供给 Virtualization 框架显示出来。
 
 ```swift
 let graphicsDevice = VZVirtioGraphicsDeviceConfiguration()
@@ -823,7 +825,7 @@ configuration.graphicsDevices = [graphicsDevice]
 >
 > 基于 Intel 的 Mac 计算机，安装虚拟机时选择 Intel Linux 发行版，当然这就不需要通过 Rosetta 来转换了
 
-由于 Rosetta 翻译的速度很快, 所以 ARM Linux 执行 x86 程序会有出色的性能表现。
+由于 Rosetta 翻译的速度很快，所以 ARM Linux 执行 x86 程序会有出色的性能表现。
 
 ```swift
 let rosettaDirectoryShare = try! VZLinuxRosettaDirectoryShare()
@@ -833,7 +835,7 @@ directorySharingDevice.share = rosettaDirectoryShare
 configuration.directorySharingDevices = [directorySharingDevice]
 ```
 
-下面我们将 Rosetta 和 Linux 系统关联起来, 可以使用`update-binfmts`告诉系统使用 Rosetta 来处理任何的 x86_64 文件。
+下面我们将 Rosetta 和 Linux 系统关联起来，可以使用`update-binfmts`告诉系统使用 Rosetta 来处理任何的 x86_64 文件。
 
 ```shell
 mount -t virtiofs RosettaShare /mnt/Rosetta

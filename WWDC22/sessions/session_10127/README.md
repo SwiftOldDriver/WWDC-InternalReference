@@ -4,6 +4,8 @@ session_ids: [10127]
 
 # WWDC22 10127/10131 - 使用 RoomPlan 扫描创建参数化三维室内场景
 
+本文基于 [Session 10127](https://developer.apple.com/videos/play/wwdc2022/10127)、[Session 10131](https://developer.apple.com/videos/play/wwdc2022/10131) 梳理。
+
 > 作者：彪彪，WWDC 2022 学生挑战赛获奖者，第六届移动应用创新赛 AR 赛道第一名
 >
 > 审核：苹果 API 搬运工，爱写文章的 ARKit 开发者。专栏[《ARKit 与计算几何》](https://xiaozhuanlan.com/computationalgeometry)，[《Metal Shader 快速使用入门》](https://xiaozhuanlan.com/metalforbeginner)
