@@ -6,16 +6,17 @@ session_ids: [10066]
 
 本文基于 [Session 10066](https://developer.apple.com/videos/play/wwdc2022/10066/) 以及[Session 10104](https://developer.apple.com/videos/play/wwdc2022/10104/) 梳理。
 
-
 Metal 是 Apple 的高效低销图形计算 `API` 。它旨在以最快、最高效的方式驱动 `Apple` 产品背后强大的 `GPU`。它提供对 `GPU` 命令的线程或直接控制、支持显式着色器编译的丰富着色语言，以及有帮助调试和分析复杂应用程序和游戏的深度集成工具。
 自推出以来，`Metal` 着重于 `GPU` 驱动的渲染、机器学习和光线追踪添加了许多高级图形和计算功能。
 `Apple` 芯片为每台新 `Mac` 上令人难以置信的图形性能和效率铺平了道路，而 `Metal` 解锁了这些功能。今年，`Metal` 凭借 `Metal 3` 迈向了一个新的高度。
 `Metal 3` 是一组强大的新功能，可实现更高的性能和渲染质量，帮助您的应用和游戏运行得更快，看起来更棒。
 
 ## 功能
+
 ### 快速资源加载
-现代游戏和应用程序对资源加载有很高的要求，从文件中快速传输小的资源请求到用户的Metal 资源，对高质量视觉效果尤为关键，但是现有的存储 API 基本是为大型、批量请求而设计的。
-在 `Metal 3` 中，用户可以使用与图形和计算相同的显式多线程命令模型， 快速资源加载来应对许多小负载请求。每个请求都是一个命令，多个命令可以排队等待，异步提交。它会直接加载到 `Metal` 缓冲区和纹理中，无需额外步骤，从而节省开发工作量和传输时间。借助 Metal的 同步原语，开发者还可以轻松地在 `GPU` 操作和加载操作之间进行协调。
+
+现代游戏和应用程序对资源加载有很高的要求，从文件中快速传输小的资源请求到用户的 `Metal` 资源，对高质量视觉效果尤为关键，但是现有的存储 API 基本是为大型、批量请求而设计的。
+在 `Metal 3` 中，用户可以使用与图形和计算相同的显式多线程命令模型， 快速资源加载来应对许多小负载请求。每个请求都是一个命令，多个命令可以排队等待，异步提交。它会直接加载到 `Metal` 缓冲区和纹理中，无需额外步骤，从而节省开发工作量和传输时间。借助 `Metal` 的同步原语，开发者还可以轻松地在 `GPU` 操作和加载操作之间进行协调。
 纹理的流系统真正受益于快速资源加载，让我们来看一个例子。
 ![](./images/spare_texture_streaming1.png)
 
@@ -26,27 +27,37 @@ Metal 是 Apple 的高效低销图形计算 `API` 。它旨在以最快、最高
 ![](./images/spare_texture_streaming2.png)
 
 #### 游戏中资源加载的实例
+
 游戏通常会在首次启动或新关卡开始时显示加载屏幕，以便将游戏资源加载到内存中。随着玩家在关卡中移动，游戏会为场景加载更多资源。这个做法的缺点是当游戏向存储系统发出多个请求以预先加载资产时，玩家必须等待很长时间。此外，这些资产可能会占用大量内存。
 ![](./images/load_resources_upfront.png)
 下述方法可以改善这个体验：
+
 ##### 动态流式传输对象
+
 通过在玩家靠近对象时动态流式传输对象可以改善这种体验，游戏一开始只加载它需要的内容，然后随着玩家通过关卡逐渐流式传输其他资源。
 ![](./images/dynamically_stream_objects.png)[](./images/dynamically_stream_objects2.png)
 例如，游戏最初以较低的分辨率加载这个木板，但当玩家走向它时，游戏会加载更高分辨率的版本。这种方法减少了玩家在加载屏幕时的等待时间。
 
 ##### 降低颗粒度
+
 即使近距离播放，玩家仍可能在场景中看到低分辨率项目，因为加载高分辨率版本需要很长时间。解决此问题的一种方法是流式传输每个资源的较小部分。例如，游戏可以仅使用稀疏纹理加载场景的可见区域，而不是整个 `mip` 级别的。这大大减少了应用需要流式传输的数据量。
 使用这种方法，负载请求变小，但请求数量变多了。但这没关系，因为现代存储硬件可以一次运行多个加载请求。这意味着用户可以在不影响游戏玩法的情况下增加场景的分辨率和规模。除了发出大量的小负载请求外，我们还可以对负载请求进行优先级排序，以确保高优先级请求及时完成。
 
 下面将您展示 `Metal 3` 的快速资源加载如何帮助您做到这一点。
+
 #### 关键功能和 API
+
 快速资源加载是一种从存储中加载资源的异步 API。与现有的加载 API 不同，发出加载的线程不需要等待加载完成。加载操作同时执行以更好地利用更快存储的吞吐量。您可以批量加载操作以进一步最小化资源加载的开销。最后，使用 `Metal 3`，可以优先考虑加载操作以降低延迟。加载资源分为三个步骤：
+
 - 打开文件
 - 发出必要的加载命令
 - 将这些加载命令与渲染工作同步。
 
+下面将逐一介绍。
+
 1. 通过创建 `Metal` 文件句柄打开一个文件
 可以通过使用 `Metal`的设备单例创建文件句柄来打开现有文件。例如，此代码使用 `Metal` 设备实例通过使用文件路径 `URL` 调用其新的 `makeIOHandle` 方法来创建文件句柄。
+
 ```python
 var fileIOHandle: MTLIOPFileHandle!
 do {
@@ -55,6 +66,7 @@ do {
    print (error)
 }
 ```
+
 2. 通过创建 IO 命令队列和 IO 命令缓冲区来发出加载命令
 一旦有了文件句柄，就可以使用它来发出加载命令。
 这是应用程序中的一个典型场景，它执行加载操作并编码 `GPU` 工作。使用现有的加载 `API`，应用程序必须等待加载工作完成，然后才能对渲染工作进行编码。
@@ -64,13 +76,14 @@ do {
 这种并发执行的模型通过最大化吞吐量更好更快地利用了存储硬件。
 
 可以将三种类型的 IO 命令编码到命令缓冲区： 
+
 - loadTexture，加载到 Metal 纹理以进行纹理流式传输
 - loadBuffer，加载到 Metal 缓冲区以流式传输场景或几何数据
 - loadBytes，它加载到 CPU 可访问的内存。
 
-
 将加载命令编码到命令缓冲区以在队列上执行
 要创建队列，首先制作并配置一个 `IO` 命令队列描述符。默认情况下，队列是并发的，但也可以将它们设置为按顺序完全按顺序运行命令缓冲区。然后将队列描述符传递给 `Metal` 设备实例的 `makeIOCommandQueue` 方法。
+
 ```cpp
 // Create a Metal IO command queue
 let commandQueueDescriptor = MTLIOCommandQueueDescriptor()
@@ -84,6 +97,7 @@ do {
    print(error)
 }
 ```
+
 通过调用命令队列的 `makeCommandBuffer` 方法创建一个 `IO` 命令缓冲区。然后使用该命令缓冲区对加载纹理和缓冲区的加载命令进行编码。`Metal` 的验证层将在运行时捕获编码错误。加载命令使用之前创建的 `fileHandle` 实例。将加载命令添加到命令缓冲区后，通过调用命令缓冲区的提交方法将其提交到队列以执行。
 
 ```cpp
@@ -101,6 +115,7 @@ ioCommandBuffer.load(buffer, offset: 0, size: size,
 // Commit command buffer for execution
 ioCommandBuffer.commit()
 ```
+
 3. 同步加载和渲染
 
 应用程序通常在完成为该渲染加载资源后开始其渲染工作。但是使用快速资源加载的应用程序需要一种将 IO 命令队列与渲染命令队列同步的方法。这些队列可以与 `Metal` 共享事件同步。
@@ -299,58 +314,70 @@ Metal 3 中的快速资源加载引入了利用现代存储硬件的强大功能
 ![](./images/metalfx_timeline.png)
 
 虽然 `Retina` 分辨率提供了您希望应用和游戏利用的清晰细节，但生成所有这些像素也会影响性能。使用 `MetalFX Upscaling` ，您可以选择生成较低分辨率的像素，然后让框架以更低的成本生成高质量、高分辨率的图像，从而获得更高的帧率。
-`MetalFX` 是一个强大的框架，它使高性能、高质量的升级成为现实。要了解有关 `MetalFX Upscaling` 的更多信息，请查看Session" Boost performance with MetalFX Upscaling"。
+`MetalFX` 是一个强大的框架，它使高性能、高质量的升级成为现实。要了解有关 `MetalFX Upscaling` 的更多信息，请查看 Session" Boost performance with MetalFX Upscaling"。
 ### Mesh Shaders
-接下来是Metal 新的灵活几何管线：`Mesh Shaders`。 
+接下来是 `Metal` 新的灵活几何管线：`Mesh Shaders`。 
 传统的可编程图形管道让您可以在着色器中转换顶点，然后将其组装成图元，以便通过固定功能硬件进行光栅化。这对于大多数应用程序来说已经足够了，但是有的情况下（如剔除技术）需要访问整个原语。每个顶点也被独立读取、转换和输出。因此，您不能在绘制过程中添加顶点或图元。
 高级几何处理需要更大的灵活性。传统来说，这意味着在计算过程中对几何图形进行预处理。
 但这需要将可变数量的中间几何存储到设备内存中，这对用户来说很难预算。
 ![](./images/traditional_procedural_geometry.png)
-`Metal Mesh Shaders`引入了另一种几何处理管道，它用灵活的 2 阶段模型取代了传统的顶点阶段，并支持对几何图形进行分层处理。第一阶段分析整个对象以决定是否在第二阶段扩展、收缩或细化几何。它通过在渲染过程中提供计算能力来实现这一点，而不需要中间设备内存存储。Mesh Shaders非常适合执行GPU 驱动的剔除、LOD 选择和程序几何生成的应用程序。
+`Metal Mesh Shaders`引入了另一种几何处理管道，它用灵活的 2 阶段模型取代了传统的顶点阶段，并支持对几何图形进行分层处理。第一阶段分析整个对象以决定是否在第二阶段扩展、收缩或细化几何。它通过在渲染过程中提供计算能力来实现这一点，而不需要中间设备内存存储。Mesh Shaders 非常适合执行 GPU 驱动的剔除、LOD 选择和程序几何生成的应用程序。
 ![](./images/procedural_geometry_pipeline_with_mesh_shaders.png)
 
-在此示例中，计算过程会评估曲面，然后生成其几何图形。然后将该几何图形及其绘制命令写入设备内存以供稍后的渲染过程使用。由于 `high expansion factor` 和间接绘制的调用，预测所需的内存量变得十分困难。Mesh Shaders通过在渲染管道中内联运行两个类似计算的阶段来提高效率。
-Object阶段评估输入以确定需要生成多少网格。
-然后Mesh阶段生成实际的几何图形。这些网格被直接发送到光栅化器，绕过到设备内存的往返，以及对顶点处理的需要。
-网格着色器可让您为您的应用程序构建高效的程序几何、剔除和LODing 系统。
-要了解有关网格着色器的更多信息，请查看Session "Transform your geometry with Metal mesh shaders"
+在此示例中，计算过程会评估曲面，然后生成其几何图形。然后将该几何图形及其绘制命令写入设备内存以供稍后的渲染过程使用。由于 `high expansion factor` 和间接绘制的调用，预测所需的内存量变得十分困难。`Mesh Shaders` 通过在渲染管道中内联运行两个类似计算的阶段来提高效率。
+Object 阶段评估输入以确定需要生成多少网格。
+然后 `Mesh` 阶段生成实际的几何图形。这些网格被直接发送到光栅化器，绕过到设备内存的往返，以及对顶点处理的需要。
+网格着色器可让您为您的应用程序构建高效的程序几何、剔除和 `LODing` 系统。
+要了解有关网格着色器的更多信息，请查看 Session "Transform your geometry with Metal mesh shaders"
+
 ### 光线追踪管道
+
 `Metal` 还增加了对 GPU 驱动的光线追踪管道的支持，以进一步优化您的应用程序。
 让我们将 `Metal 3` 的光线追踪与之前可用的进行比较。
 
 ![](./images/optimized_ray_tracing.png)
 `Metal 3` 光线追踪可节省大量 CPU 和 GPU 时间。
 首先，加速结构的构建时间更短，使得有更多的 GPU 时间来绘制和追踪光线。其次，由于对光线追踪的新间接指令缓冲区的支持，诸如剔除之类的 CPU 操作可以转移到 GPU。
-最后，Metal 3 光线追踪支持直接访问原始数据，简化、优化了求交和着色。
-Metal 3 光线追踪将变得比以前更好、更强大。要了解有关光线追踪的更多信息，请前往Session" Maximize your Metal ray tracing performance"。
+最后，`Metal 3` 光线追踪支持直接访问原始数据，简化、优化了求交和着色。
+`Metal 3` 光线追踪将变得比以前更好、更强大。要了解有关光线追踪的更多信息，请前往 Session" Maximize your Metal ray tracing performance"。
+
 ### 机器学习
+
 现在，我将向您展示 Metal 3 如何加速机器学习推理和训练。
 Metal 3 在加速机器学习方面进行了重大改进，额外支持在 Mac 上加速网络训练，并对图形和媒体处理应用程序中的 ML 推理优化进行了重大优化。
+
 #### TensorFlow
+
 `TensorFlow` 是一种流行的机器学习框架，在 Mac 上通过 GPU 加速。
-最近发布的 Mac Studio 在 `M1 Ultra`上的训练相较于 CPU ，在各种网络上都提供了高达16 倍的加速。
+最近发布的 Mac Studio 在 `M1 Ultra`上的训练相较于 CPU ，在各种网络上都提供了高达 16 倍的加速。
 `Metal 3` 加速了许多新的 `TensorFlow` 操作。
 这意味着与 CPU 的同步更少，从而获得更高的可扩展性能。
+
 #### PyTorch
+
 `PyTorch` 是另一个非常流行的用于网络训练的 ML 框架，它最近使用 Metal 获得了 GPU 加速。
-在配备 `M1 Ultra` 的 `Mac Studio` 上，您可以获得显著优于CPU的训练加速。
-例如，训练 `BERT` 模型提速6.5倍，训练ResNet50提速8.5倍。
+在配备 `M1 Ultra` 的 `Mac Studio` 上，您可以获得显著优于 CPU 的训练加速。
+例如，训练 `BERT` 模型提速 6.5 倍，训练 `ResNet50` 提速 8.5 倍。
 Metal 优化了 Apple 芯片上的 ML 推理，以最大限度地提高性能。
 这对于基于 Metal 的高性能视频和图像处理应用程序尤其适用，例如 `BlackMagic Design`的 `DaVinci Resolve`。
 ![](./images/blackmagic_designs_aVinci_resolve.png)
 `DaVinci Resolve` 是一个专注于颜色分级的视频制作平台，在其工作流程中广泛使用 Metal 和机器学习。
 结果令人难以置信。借助 Metal 对加速机器学习的支持，`BlackMagic Design` 的编辑和调色工作流程以及基于 ML 的工具实现了显着的性能改进。
-要了解有关机器学习更新的更多信息，请前往Session "Accelerate machine learning with Metal"。
+要了解有关机器学习更新的更多信息，请前往 Session "Accelerate machine learning with Metal"。
+
 ### 硬件支持
+
 现在我们来看一看哪些硬件支持上述的 Metal 3 功能。
 所有现代 iOS、iPadOS 和 macOS 设备都支持 Metal 3，包括配备 A13 Bionic 或 M1 芯片或更新版本的 iPhone 和 iPad，以及所有 Apple 芯片 Mac 系统和配备最新 AMD 和 Intel GPU 的 Mac 系统。
 ![](./images/matal3_hardware_support.png)
 要确定给定设备是否支持 Metal 3，请使用 Metal 设备上的 supportsFamily 查询。
+
 ```c++
 if device.supportsFamily(.metal3){
      // My awesome Metal 3 renderer   
 }
 ```
+
 ### 开发者工具
 
 `Metal 3` 不仅包含功能，它还包括一套全面的高级开发工具，下面我们来介绍一部分。
@@ -362,7 +389,7 @@ if device.supportsFamily(.metal3){
 
 这只是对 `Xcode 14` 中的一些开发者工具更新的快速浏览。还有许多其他新功能，例如 `Dylib` 支持、新资源列表、着色器编辑器中的文件导航、自定义缓冲区查看器布局等等。
 
-要详细了解工具以及如何充分利用 `Metal 3` 的进步，请务必查看这些Session，它们将帮助您构建高级图形、游戏和专业应用程序。
+要详细了解工具以及如何充分利用 `Metal 3` 的进步，请查看这些 Session，它们将帮助您构建高级图形、游戏和专业应用程序。
 - Maximize your Metal ray tracing performance
 - Go bindless with Metal 3
 - Profile and optimize your game's memmory
