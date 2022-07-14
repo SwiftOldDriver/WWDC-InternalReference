@@ -35,10 +35,11 @@ session_ids: [10026]
 在 **iPhone** 上，实况文本需要配备 A12 仿生或更新的芯片，并更新到 **iOS 16**；在 **Mac** 上，并无 Intel/M 系列要求，仅需更新至 macOS 13。
 
 ## 文本识别方案背景回顾
+
 从 VisionKit 被 Apple 在 iOS 13 引入之后，我们就可以尝试在 iOS 中实现文本识别、结构化数据的检测功能。那在 Vision 中，我们的文本是如何被识别出来的呢？
 首先，文本是什么？需要我们一步步来告诉程序：
 
-```swift 
+```swift
 let requestHandler = VNImageRequestHandler(url: imageURL, options: [:])
 
 let request = VNDetectTextRectanglesRequest { (request, error) in
@@ -397,7 +398,6 @@ addressTextField.textContentType = .fullStreetAddress
 - 精确路径：是异步通过查找字符串或者句子来识别文本。用我们周知的神经网络引擎来识别文本，识别结果则通常是单词或句子。对自定义字体或者旋转后的字体识别效果更好，运行所需内存较大，它则适合延迟或者静态画面的识别场景。本文中的例子就是精确路径的识别方式。
 
 精确路径识别文字，要求有一个深度学习模型，所以会花费更多的时间来计算，但是读的内容更多，也更像是人类的阅读习惯。我们不逐个阅读，而以单词的为单位进行阅读，会让我们忽略个别的错别字，因为我们的大脑会对这些错误进行插补纠正，所以后面的两个阶段就是对输出的文本进行校正，接着生成结果。虽然整个过程是很复杂，但在设备上就可以离线完成，是不是很棒。
-
 
 ## AVKit
 
