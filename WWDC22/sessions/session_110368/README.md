@@ -16,7 +16,13 @@ session_ids: [110368]
 
 ### Objective-C 与 C API 的支持
 
-混编库的福音！其实这个功能去年 11 月就有社区开发者在 Swift Forums 中提出提案并实现了这一能力，Xcode 14 中内置的最新版 DocC 可以让我们很方便的享受这一特性。在此之前，Objective-C 的接口在文档编译完成后会被渲染成 Swift 格式，接口的注释也无法正常展示。
+来自 2021 年统计的国内外 top 100 的应用中，App 混编或纯 Swift 的占比分别是 91%（国外）与 58%（国内），数据来源 [Swift 2021 生态调研报告](https://www.sketchk.xyz/2021/04/21/Swift-2021/#国内外客户端的使用现状)。有赖于 Apple 推出越来越多 pure Swift 的接口以及 Swift ABI 的稳定，国内使用 Swift 的占比每年都在提升。
+
+![](images/docc-swift-app.png)
+
+即使如此，开源社区与国内外依然存在不少混编或纯 Objective 的库与应用，想要在短期内迁移到 Swift 几乎不可能，这意味着 DocC 这样好用的工具无法被使用，因此也不难理解社区中对 DocC 支持 Objective-C 呼声很高了。
+
+其实这个功能去年 11 月就有社区开发者在 Swift Forums 中提出提案并实现了这一能力，Xcode 14 中内置的最新版 DocC 可以让我们很方便的享受这一特性。在此之前，Objective-C 的接口在文档编译完成后会被渲染成 Swift 格式，接口的注释也无法正常展示。
 
 开源的 Swift 文档工具大体分为两种：
 
@@ -126,7 +132,9 @@ DocC 刚发布的时候仅支持动态网站的发布，你需要导出 .doccarc
 
 #### 自动部署
 
-对于 Swift Package 项目的文档发布，苹果提供了全新的 [SwiftDocCPlugin](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin)，通过几个简单的命令，便可完成文档的生成与预览。要使用 Swift-DocC 插件，需要将它添加到成为你 Swift Package 项目的依赖：
+去年，Xcode 提供了 `xcodebuild docbuild` 命令来解决 Swift 库文档的自动化生成问题，这个命令也能解决今年新增的混编或纯 Objective-C 库的文档自动化。
+
+对于 Swift Package 项目的文档发布，苹果更是提供了全新的 SPM 插件 [SwiftDocCPlugin](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin)，通过几个简单的命令，便可完成文档的生成与预览。要使用 Swift-DocC 插件，需要将它添加到成为你 Swift Package 项目的依赖：
 
 ```swift
 let package = Package(
@@ -143,7 +151,7 @@ let package = Package(
 
 在命令行执行 `swift package generate-documentation` 命令便可生成文档，执行 `swift package --disable-sandbox preview-documentation --target [target-name]` 命令便可起一个本地服务预览文档。
 
-对于 Xcode 工程来说，依然可以在命令行执行 `xcodebuild docbuild` 生成文档。
+在国内，绝大部份项目使用的 CocoaPods 却暂时没有跟上脚步，.docc 在最新的版本中会被当成是文件夹导致在 Xcode 中无法被正确识别。这个问题会在 1.12.0 版本中[被修正](https://github.com/CocoaPods/CocoaPods/pull/11438/files#diff-48e896df652b2501f6273da535c8613c530227a16358271160cc2ec590c2cb11)。目前来看想通过 CocoaPods 像 SwiftDocCPlugin 一样很方便的生成文档还有很长的路要走。
 
 ## 原理浅析
 
