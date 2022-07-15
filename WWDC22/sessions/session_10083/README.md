@@ -169,4 +169,4 @@ BGProcessingTask 是苹果在 iOS 13 推出的 API。iOS 13 之后苹果对 Back
 - 使用暗黑模式可以节省 display 相关的电量。
 - 合理设置刷新率可以节省一部分电量，我们需要 review 我们屏幕中的元素帧率设置是否合理。
 - 合理地使用后台任务，苹果提出了使用 Xocde、metrickit、Control Center 来检查 APP 的后台任务是否符合预期。其中 Control Center 中查看后台任务 APP 是 iOS 16 新增的功能。
-- 合理地划分推送任务，非紧急的事件使用低优先级推送。
+- 将推送任务按优先级加以区分，非紧急的事件使用低优先级推送。
