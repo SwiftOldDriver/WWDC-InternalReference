@@ -166,15 +166,155 @@ using WitnessTable = TargetWitnessTable<InProcess>;
 
 #### swift_conformsToProtocolMaybeInstantiateSuperclasses
 
+通过上面的代码，我们可以发现 Swift 协议一致性检查的核心逻辑是 swift_conformsToProtocolMaybeInstantiateSuperclasses 方法，限于篇幅就不再把完整代码贴出来了，感兴趣的读者可以去[一探究竟](https://github.com/apple/swift/blob/main/stdlib/public/runtime/ProtocolConformance.cpp)。
+
+![swift_conformsToProtocolMaybeInstantiateSuperclasses](./images/pic27.png)
+
+swift_conformsToProtocolMaybeInstantiateSuperclasses 主要有三条执行路径，分别是
+
+- findConformanceWithDyld
+
+  > /// Query dyld for a protocol conformance, if supported. The return
+  >
+  > /// value is a tuple consisting of the found witness table (if any), the found
+  >
+  > /// conformance descriptor (if any), and a bool that's true if a failure is
+  >
+  > /// definitive.
+
+  Swift Runtime 会先从 dyld 中查询协议一致性的数据。如果查找成功，会得到一个 witness table 和协议一致性描述符的元组以及一个查询是否失败的 bool 值。
+
+  - getDyldOnDiskConformance
+
+    在 getDyldOnDiskConformance 内部我们可以看到也有两种不同的策略
+
+    - 先查找磁盘缓存，如果没找到，再查找内存缓存
+    - 先查找内存缓存，如果没找到，再查找磁盘缓存
+
+    对应到代码层面，查找磁盘缓存的方法是 getDyldOnDiskConformance，查找内存缓存的方法是 getDyldSharedCacheConformance。
+
+    - getDyldOnDiskConformance
+
+      根据 foreignTypeIdentity 是否为空来调用 dyld 底层方法 `_dyld_find_foreign_type_protocol_conformance_on_disk` 和 `_dyld_find_protocol_conformance_on_disk`
+
+    - getDyldSharedCacheConformance
+
+      根据 foreignTypeIdentity 是否为空来调用 dyld 底层方法 `_dyld_find_foreign_type_protocol_conformance` 和 `_dyld_find_protocol_conformance`
+
+    虽然 `_dyld_find_protocol_conformance` 系列方法尚未开源，但是我们可以在 mac 的终端种运行 `nm /usr/lib/dyld | grep _dyld_find_protocol_conformance | c++filt` 命令来证实 dyld 中确实存在
+
+```bash
+> nm /usr/lib/dyld | grep _dyld_find_protocol_conformance | c++filt
+00037ed6 t dyld4::APIs::_dyld_find_protocol_conformance_on_disk(void const*, void const*, void const*, unsigned int)
+0006fd4a t dyld4::APIs::_dyld_find_protocol_conformance_on_disk(void const*, void const*, void const*, unsigned int) (.cold.1)
+0006fd75 t dyld4::APIs::_dyld_find_protocol_conformance_on_disk(void const*, void const*, void const*, unsigned int) (.cold.2)
+00037b48 t dyld4::APIs::_dyld_find_protocol_conformance(void const*, void const*, void const*) const
+0000000000039758 t dyld4::APIs::_dyld_find_protocol_conformance_on_disk(void const*, void const*, void const*, unsigned int)
+000000000007f413 t dyld4::APIs::_dyld_find_protocol_conformance_on_disk(void const*, void const*, void const*, unsigned int) (.cold.1)
+000000000007f436 t dyld4::APIs::_dyld_find_protocol_conformance_on_disk(void const*, void const*, void const*, unsigned int) (.cold.2)
+00000000000393d8 t dyld4::APIs::_dyld_find_protocol_conformance(void const*, void const*, void const*) const
+000000000003d36c t dyld4::APIs::_dyld_find_protocol_conformance_on_disk(void const*, void const*, void const*, unsigned int)
+0000000000077bc4 t dyld4::APIs::_dyld_find_protocol_conformance_on_disk(void const*, void const*, void const*, unsigned int) (.cold.1)
+0000000000077bec t dyld4::APIs::_dyld_find_protocol_conformance_on_disk(void const*, void const*, void const*, unsigned int) (.cold.2)
+000000000003cf98 t dyld4::APIs::_dyld_find_protocol_conformance(void const*, void const*, void const*) const
+```
+
+> 值得一提的是，在 iOS 15 的 Swift Runtime 中，findConformanceWithDyld 方法内部并没有 onDisk 方法簇的调用，也就是说 iOS 16 上有了 dyld 关于协议一致性的磁盘缓存。而 dyld 关于协议一致性的内存缓存也是在 Swift 5.4 才加入的。
+
+- searchInConformanceCache
+
+  > /// Search for a conformance descriptor in the ConformanceCache.
+  >
+  > /// First element of the return value is `true` if the result is authoritative
+  >
+  > /// i.e. the result is for the type itself and not a superclass. If `false`
+  >
+  > /// then we cached a conformance on a superclass, but that may be overridden.
+  >
+  > /// A return value of `{ false, nullptr }` indicates nothing was cached.
+
+  如果在 dyld 的磁盘和内存缓存中都没有找到协议一致性的数据，就会进入到第二个步骤 searchInConformanceCache 中。如果没有找到缓存，则返回 `{false, nullptr}` ，如果找到了并且刚好是要验证的 type 遵循了协议的话，返回的第一个参数就是 true，如果是 type 的父类上有协议一致性的缓存，则返回 false。
+
+  searchInConformanceCache 的逻辑不是很复杂，这里直接贴出具体的实现。
+
+  ```C++
+  static std::pair<bool, const WitnessTable *>
+  searchInConformanceCache(const Metadata *type,
+                           const ProtocolDescriptor *protocol,
+                           bool instantiateSuperclassMetadata) {
+    auto &C = Conformances.get();
+    auto origType = type;
+    auto snapshot = C.Cache.snapshot();
+
+    for (auto type : iterateMaybeIncompleteSuperclasses(
+             type, instantiateSuperclassMetadata)) {
+      if (auto *Value = snapshot.find(ConformanceCacheKey(type, protocol))) {
+        return {type == origType, Value->getWitnessTable()};
+      }
+    }
+
+    // We did not find a cache entry.
+    return {false, nullptr};
+  }
+
+  struct ConformanceState {
+    ConcurrentReadableHashMap<ConformanceCacheEntry> Cache;
+    ...
+  }
+  ```
+
+  可以看到，searchInConformanceCache 是直接在 Conformances 的 Cache 上进行的查询，而这里的 Cache 是一个 ConcurrentReadableHashMap 结构，这个结构来自于 Mike Ash 大神 的 [PR](https://github.com/apple/swift/pull/33487)，比之前的缓存方案快了 13 倍，其核心优势在于并行的读取而不用加锁。
+
+  ![ConcurrentReadableHashMap](./images/pic28.png)
+
+  值得一提的是，这里的缓存是在内存中的，每次启动 app 后都需要重新生成。你可以在 Xcode 中设置 `_ZN5swift25ConcurrentReadableHashMapIN12_GLOBAL__N_121ConformanceCacheEntryENS_11StaticMutexEE4findINS1_19ConformanceCacheKeyEEENSt3__14pairIPS2_jEERKT_NS4_12IndexStorageEmS9_` 符号断点来定位到这个 snapshop.find 方法。这个方法接收一个 ConformanceCacheKey 然后返回一个 ConformanceCacheEntry。
+
+  ```C++
+    struct ConformanceCacheKey {
+      const Metadata *Type;
+      const ProtocolDescriptor *Proto;
+
+      ConformanceCacheKey(const Metadata *type, const ProtocolDescriptor *proto)
+          : Type(type), Proto(proto) {
+        assert(type);
+      }
+
+      friend llvm::hash_code hash_value(const ConformanceCacheKey &key) {
+        return llvm::hash_combine(key.Type, key.Proto);
+      }
+    };
+  ```
+
+  通过上面的代码，我们可以分析得出 ConcurrentReadableHashMap 中存储的缓存的 key 是一个类型/协议对。对同一个协议不同类型的一致性检查并不会命中缓存。
+
+- Linear scan of conformances
+
+  线性扫描是最坏的情况，但是在为每个类型/协议对填充缓存之前这是必经的步骤。Swift 在创建了一个 Mach-O Section - `__TEXT.__swift5_proto` 来存储一系列的指针，这些指针指向了二进制中所有的协议一致性数据。每个类型/协议对都会生成一份协议一致性数据从而让 Runtime 来确定某个类型是否遵循了对应的协议。
+
+  > [MachO ConformanceSection](https://github.dev/apple/swift/blob/main/stdlib/public/runtime/ImageInspectionCommon)
+  >
+  > ```C++
+  > /// The Mach-O section name for the section containing protocol descriptor
+  > /// references. This lives within SEG_TEXT.
+  > #define MachOProtocolsSection "__swift5_protos"
+  > /// The Mach-O section name for the section containing protocol conformances.
+  > /// This lives within SEG_TEXT.
+  > #define MachOProtocolConformancesSection "__swift5_proto"
+  > ```
+
+  由于需要对所有加载的动态库需要做一层遍历，并且还要在每个动态库内部做一层协议一致性数据的扫描，因为时间复杂度就来到了 `O(n^2)` ，显然这对性能并不友好。
+
 ### Swift 协议检查优化方案
 
 那么问题来了，我们能不能提前计算好这些「元数据」呢？
 
-答案是可以的，基于 Swift 新的运行时，协议检查所需的「元数据」会在启动时用到的所有动态库加载之前，作为 dyld 启动闭包的一部分去提前计算出来。
+答案是可以的，基于 Swift 新的运行时，协议检查所需的「元数据」会在 dyld 加载启动时用到的所有动态库之前，作为 dyld 启动闭包的一部分去提前计算出来。
 
 > 关于 dyld 和启动闭包，感兴趣的读者可以参考 [Staic linking vs dyld3](https://blog.allegro.tech/2018/05/Static-linking-vs-dyld3.html)
 >
 > 同时，Apple 也有关于启动优化的专题 Session - [WWDC17 - App Startup Time: Past, Present and Future](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwj3ro6fgsn4AhWESGwGHfQEBMEQtwJ6BAgGEAI&url=https%3A%2F%2Fdeveloper.apple.com%2Fvideos%2Fplay%2Fwwdc2017%2F413&usg=AOvVaw0Kw9oW-BQQbgrxhPswQhrJ) (如果链接失效，可以下载 [WWDC App for macOS](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiw-NmHg8n4AhWrS2wGHXS2DCsQFnoECAcQAQ&url=https%3A%2F%2Fgithub.com%2Finsidegui%2FWWDC&usg=AOvVaw0BMsc4CmRW7ZlIdreuaFRA) 后搜索关键字观看)
+
+dyld3 后有了启动闭包的概念，启动闭包中预先处理了所有可能影响启动速度的 search path、@rpaths 和环境变量，然后分析 Mach-O 的 Header 和依赖，并完成了所有符号查找的工作。最后将这些结果创建成了一个启动闭包，最终通过启动闭包来达到启动提速的效果。
 
 最重要的是，这项优化不需要升级工程的最低部署版本，只需要 App 运行在 iOS 16、tvOS 16 或者是 watchOS 9 上就可以享受到 Swift 协议检查的优化，进而提升你的 App 启动速度。
 
