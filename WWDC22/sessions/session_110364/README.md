@@ -16,7 +16,7 @@ session_ids: [110364]
 
 ```Command+B```这个组合键相信大家都已经按下过无数次了，那么这个操作的背后，构建系统做些了什么？
 
-一个项目会包含很多源码文件，assets，构建设置（Build Setting），构建阶段（Build Phases）和其他配置等等，这些构成了一个项目描述。整个构建过程中会涉及一系列工具的调用。例如编译器，包括 Clang 和 Swift 编译器，会把 OC 和 Swift 的源码文件编译成 .o 文件。链接器，负责把所有 .o 文件链接在一起，最终形成一个可执行文件。这里可以看出，编译任务和链接任务之间是有依赖关系的，编译器的产物 .o 是链接器的输入文件。编译和链接只是整个构建过程的中一部分任务，其他的任务会有其他对应的工具，例如签名任务就是由 codesign 执行。构建系统的工作就是基于项目描述，确定有哪些任务，决定用哪些工具去执行任务，以及任务执行的顺序。
+一个项目会包含很多源码文件，资源文件（Assets），构建设置（Build Setting），构建阶段（Build Phases）和其他配置等等，这些构成了一个项目描述。整个构建过程中会涉及一系列工具的调用。例如编译器，包括 Clang 和 Swift 编译器，会把 OC 和 Swift 的源码文件编译成 .o 文件。链接器，负责把所有 .o 文件链接在一起，最终形成一个可执行文件。这里可以看出，编译任务和链接任务之间是有依赖关系的，编译器的产物 .o 是链接器的输入文件。编译和链接只是整个构建过程的中一部分任务，其他的任务会有其他对应的工具，例如签名任务就是由 codesign 执行。构建系统的工作就是基于项目描述，确定有哪些任务，决定用哪些工具去执行任务，以及任务执行的顺序。
 
 ### 构建有向图
 
@@ -34,7 +34,7 @@ session_ids: [110364]
 
 ### 构建关键路径
 
-上文提到构建系统关心的是任务之间的依赖关系。以包含多个 Target 的场景为例，不同颜色表示不同的 Target，其中任务可以代表编译，链接，处理 asset，复制文件等等。一个 App 包含了一个 App Extension 和一个 Framework，该场景展示了 App，APP Extension， Framework 的依赖关系，以及各自内部 A，B，C，D，E 任务的依赖关系。任务 B 和 C 依赖了任务 A，任务 D 和 E 依赖了任务 B。任务 A 被称为 任务 B 和 C 的上游，任务 D 和 E 被称为任务 B 的下游。
+上文提到构建系统关心的是任务之间的依赖关系。以包含多个 Target 的场景为例，不同颜色表示不同的 Target，其中任务可以代表编译，链接，处理资源文件，复制文件等等。一个 App 包含了一个 App Extension 和一个 Framework，该场景展示了 App，APP Extension， Framework 的依赖关系，以及各自内部 A，B，C，D，E 任务的依赖关系。任务 B 和 C 依赖了任务 A，任务 D 和 E 依赖了任务 B。任务 A 被称为 任务 B 和 C 的上游，任务 D 和 E 被称为任务 B 的下游。
 
 实际情况中，每个任务执行的时间不同，用长度表示该任务的执行时间。基于时间轴展示任务的执行顺序，图中 a 的高亮部分就是构建过程的关键路径，总时间就是由关键路径上的任务决定的（假设有足够的硬件资源）。b 部分是最后执行的顺序，空缺部分是由于任务阻塞其下游任务而产生的。
 
@@ -114,11 +114,11 @@ Swift 编译驱动程序是如何构建一个 Target 的？在 Release 配置中
 
 ![image-20220625230750203](images/image-20220625230750203.png)
 
-既然空闲时间是由于任务之间的依赖关系产生的，那么新的构建系统为了提高性能，减少 CPU 的空闲时间，就必然要从依赖关系入手去解决。上文提到 Target B 的开始必须在 Target A 完成之后，那么有没有办法让 Target B 提前开始构建 ？答案是肯定的，这就是接下来要介绍的两个优化点 emit-module 和 eager-linking，一个可以让 Target B 提前开始编译，一个可以让 Target B 提前开始链接。
+既然空闲时间是由于任务之间的依赖关系产生的，那么新的构建系统为了提高性能，减少 CPU 的空闲时间，就必然要从依赖关系入手去解决。上文提到 Target B 的开始必须在 Target A 完成之后，那么有没有办法让 Target B 提前开始构建 ？答案是肯定的，这就是接下来要介绍的两个优化点 emit-module-separately 和 eager-linking，一个可以让 Target B 提前开始编译，一个可以让 Target B 提前开始链接。
 
-### emit-module
+### emit-module-separately
 
-正如之前提到的，在 Xcode 14 之前模块产出是由各个编译子任务的结果合并而成。在 Xcode 14 和 Swift 5.7 中新增了 emit-module 独立任务，这个专门用来处理模块的生成，模块中的 .swiftmodule 文件只是公共接口的声明，并不需要完成所有文件的编译。这意味着 Target B 可以在 Target A 的 emit-module 任务完成，即 .swiftmodule 文件生成后开始编译，而无需等待 Target A 的其他编译任务。这样一来，就解决了下游 Target 的编译阻塞，减少了 空闲 CPU 的等待时间，提高了构建性能。
+正如之前提到的，在 Xcode 14 之前模块产出是由各个编译子任务的结果合并而成，即 emit-module 和 codegen 的过程是绑定在一起的。 在 Xcode 14 和 Swift 5.7 中新增了 emit-module-separately 任务，依赖于参数 [-experimental-emit-module-separately](https://github.com/apple/swift/blob/main/include/swift/Option/Options.td#L612)，这个专门用来处理 emit-module，但是不触发 codegen 的过程，从而节省了时间。模块中的 .swiftmodule 文件只是公共接口的声明，并不需要完成所有的编译过程。这意味着 Target B 可以在 Target A 的 emit-module-separately 任务完成，即 .swiftmodule 文件生成后开始编译，而无需等待 Target A 的其他编译任务。这样一来，就解决了下游 Target 的编译阻塞，减少了 空闲 CPU 的等待时间，提高了构建性能。
 
 ![image-20220710010728425](images/image-20220710010728425.png)
 
@@ -126,12 +126,12 @@ Swift 编译驱动程序是如何构建一个 Target 的？在 Release 配置中
 
 > 选项设置 Build Setting -- Eager Linking
 
-现在，让我们来看看构建系统在 Target 之间链接方面的优化。在前面的示例的基础上，每个 Target 添加了链接器任务，它们都位于构建的关键路径上。在之前的构建系统中，因为 Target B 依赖 Target A，所以 Target B 的链接任务必须等待 Target A 的 machO 产生并等待它自己的编译任务完成后才能运行。
+现在，让我们来看看构建系统在 Target 之间链接方面的优化。在前面的示例的基础上，每个 Target 添加了链接器任务，它们都位于构建的关键路径上。在之前的构建系统中，因为 Target B 依赖 Target A，所以 Target B 的链接任务必须等待 Target A 的 Mach-O 产生并等待它自己的编译任务完成后才能运行。
 
-新的构建系统新增了 Eager-link 编译选项。该特性开启后，构建系统会为纯 Swift 框架或者动态库生成一个 .tbd 文件， 允许 Target B 的链接任务可以依赖于 Target A 的 emit-module 任务生成的基于文本的动态库存根（.tbd），而不是等待 Target A 的 mach-O 文件生成。这个存根包含一个符号列表，这些符号将出现在生成的 machO 文件中。因此，Target B 可以在构建的早期开始链接，与 Target A 的链接并行运行，从而减少构建时间。
+新的构建系统新增了 Eager-link 编译选项。该特性开启后，构建系统会在 Target A 的 emit-module-separately 任务中依赖编译器参数[-embed-tbd-for-module](https://github.com/apple/swift/blob/main/include/swift/Option/Options.td#L355) ，生成一个 .tbd 文件，这个  .tbd 包含一个符号列表，这些符号将出现在生成的 Mach-O 文件中。Target B 可以基于 .tbd 进行动态库的链接，而不是等待 Target A 的 Mach-O 文件生成。因此，Target B 可以在构建的早期开始链接，与 Target A 的链接并行运行，从而减少构建时间。
 
 ![image-20220710012025485](images/image-20220710012025485.png)
 
 ## 总结
 
-总之，Xcode 构建系统是一个复杂的调度引擎，它试图通过并行构建过程中子任务，以提高构建性能。例如支持构建脚本并行，但同时脚本沙盒化的特性可以一定程度确保自定义构建脚本最大程度地并行和可靠。新版的 Xcode 和 Swift 也比以往更加融合，emit-module 和 eager-linking 有助于更高效的利用系统资源，执行构建任务。Target 之间的依赖关系，构建阶段的任务数量和复杂性，swift module 以及系统资源都是 Xcode 能够并行化和加速构建的因素。有了这些知识，再加上构建时间轴等强大的新工具，开发者可以很好地检查项目并深入了解构建过程。
+总之，Xcode 构建系统是一个复杂的调度引擎，它试图通过并行构建过程中子任务，以提高构建性能。例如支持构建脚本并行，但同时脚本沙盒化的特性可以一定程度确保自定义构建脚本最大程度地并行和可靠。新版的 Xcode 和 Swift 也比以往更加融合，emit-module-separately 和 eager-linking 有助于更高效的利用系统资源，执行构建任务。Target 之间的依赖关系，构建阶段的任务数量和复杂性，swift module 以及系统资源都是 Xcode 能够并行化和加速构建的因素。有了这些知识，再加上构建时间轴等强大的新工具，开发者可以很好地检查项目并深入了解构建过程。
