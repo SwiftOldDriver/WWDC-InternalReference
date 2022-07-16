@@ -263,7 +263,7 @@ let edrMetaData = CAEDRMetadata.hdr10(displayInfo: displayData,
 
 1. SDR、HDR 与 EDR 三者区别：SDR 是标准动态范围，HDR 是高动态范围，EDR 是 Apple 的 HDR 渲染和像素表示技术，让不支持 HDR 的设备“支持” HDR。
 2. EDR API 现在已经支持 iOS 和 iPadOS，并且增加了参考模式（Reference Mode），在 Sidecar 上也支持 EDR 渲染，对专业工作者提供了更好的帮助。
-3. 读取 HDR图像主要分为四步：
+3. 读取 HDR 图像主要分为四步：
    1. 从 HDR 图像中创建 CGImage
    2. 绘制到浮点位图 context 中
    3. 创建浮点纹理
