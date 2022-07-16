@@ -27,7 +27,7 @@ Toolbar 新增的改动概览：
 * 支持自定义 toolbar
 * 支持导航栏标题菜单栏
 
-##  Toolbar 新增的 API 
+## Toolbar 新增的 API
 
 ### ToolbarItemGroup
 
@@ -89,14 +89,14 @@ macOS 上的自定义 Toolbar 功能如今也来到了 iPadOS 上。但只有 `T
 效果如下：
 ![Untitled](./images/Untitled.gif)
 
-##  Navigation title 新增 API
+## Navigation title 新增 API
 
 iPadOS 16 也带来了对导航栏标题菜单的支持！
 ![wwdc-image-19-1](./images/wwdc-image-19-1.png)
 只要把绑定（Binding）属性传入对导航栏标题，就可以配合 `RenameButton` 来编辑导航栏的标题。但在 Xcode 14 Beta 2 上实际运行这个 API 时，Xcode 发出警告：
 
 > 'navigationTitle(_:actions:)' was deprecated in iOS 16.0: Use
-> ToolbarTitleActions in a toolbar modifier 
+> ToolbarTitleActions in a toolbar modifier
 > or the toolbarTitleActions modifier.
 
 所以，上图所示代码段应更新为：
@@ -116,3 +116,4 @@ iPadOS 16 也带来了对导航栏标题菜单的支持！
 ![](./images/wwdc-image-last.png)
 
 iPadOS 16 上对 toolbar 的改进，能有效地帮助用户提高生产力。再者，对 toolbar 良好的适配会使你的应用在 iPad 上与众不同。你的 toolbar 可以是 iPadOS 16 上的 toolbar！
+[EOF]
