@@ -33,7 +33,7 @@ session_ids: [10016]
 
 ![image-20220628204635307](./images/image-20220628204635307.png)
 上架 CarPlay 应用的审核非常严格，你的应用必须符合苹果对于 CarPlay 的应用定义才能通过审核，同时只能支持一种应用类型。这也是为了驾驶安全着想，例如上架一些游戏应用，就会非常影响驾驶安全。目前 iOS 支持了六种应用类型(图中左边三列)，并在 iOS 16 中提供了两种新的应用类型，加油和驾驶任务类型(最右边一列)，在新特性的一节我们会重点介绍。
-所以开发 CarPlay 应用我们要确认自己的 App 是否属于上述几种，确定后再前往 Apple 官网申请对应的 CarPlay 权限。只有拥有了CarPlay 权限才有资格进行测试和上架。。
+所以开发 CarPlay 应用我们要确认自己的 App 是否属于上述几种，确定后再前往 Apple 官网申请对应的 CarPlay 权限。只有拥有了 CarPlay 权限才有资格进行测试和上架。。
 参考文档：[申请 CarPlay 权限](https://developer.apple.com/documentation/carplay/requesting_carplay_entitlements?language=objc)
 
 ### 开发 CarPlay 应用
