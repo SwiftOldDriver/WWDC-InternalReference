@@ -260,12 +260,12 @@ let edrMetaData = CAEDRMetadata.hdr10(displayInfo: displayData,
 - EDR 效果：蓝天、白云、岩石、树木、湖面等所有元素在细节清晰的基础上，亮度都提升了，图片整体达到了更好的效果。
 
 > 扩展阅读
-> 
+>
 > 对 HDR 和 EDR 感兴趣的同学，可以进一步观看如下两个 session：
 >
 > - [WWDC20 10009 Edit and play back HDR video with AVFoundation](https://developer.apple.com/videos/play/wwdc2020/10009/)
 > - [WWDC21 10161 Explore HDR rendering with EDR](https://developer.apple.com/videos/play/wwdc2021/10161)
-> 
+>
 > 对 tone-mapping 算法演进感兴趣的同学，可以参考 [这篇文章](https://moontree.github.io/2020/08/30/tone-mapping/)
 
 ### 小结
