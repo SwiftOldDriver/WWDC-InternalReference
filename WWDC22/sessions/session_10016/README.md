@@ -28,18 +28,24 @@ session_ids: [10016]
 除此之外为了更方便大家理解对应的内容，我先简单介绍了下 CarPlay 的开发方式。
 
 ## 如何进行 CarPlay 开发
+
 ### 获取授权
+
 ![image-20220628204635307](./images/image-20220628204635307.png)
 上架 CarPlay 应用的审核非常严格，你的应用必须符合苹果对于 CarPlay 的应用定义才能通过审核，同时只能支持一种应用类型。这也是为了驾驶安全着想，例如上架一些游戏应用，就会非常影响驾驶安全。目前 iOS 支持了六种应用类型(图中左边三列)，并在 iOS 16 中提供了两种新的应用类型，加油和驾驶任务类型(最右边一列)，在新特性的一节我们会重点介绍。
 所以开发 CarPlay 应用我们要确认自己的 App 是否属于上述几种，确定后再前往 Apple 官网申请对应的 CarPlay 权限。只有拥有了CarPlay 权限才有资格进行测试和上架。。
 参考文档：[申请 CarPlay 权限](https://developer.apple.com/documentation/carplay/requesting_carplay_entitlements?language=objc)
 
 ### 开发 CarPlay 应用
-首先我们要明白CarPlay App 是附属于 iPhone App 的，它们是同一进程。如果是先启动了 CarPlay App，那么系统会在后台启动你的 iPhone App。
+
+首先我们要明白 CarPlay App 是附属于 iPhone App 的，它们是同一进程。如果是先启动了 CarPlay App，那么系统会在后台启动你的 iPhone App。
+
 - 如果杀死了 iPhone App 进程，那么 CarPlay App 就会关闭。
 - 如果关闭 CarPlay App ，iPhone App 进程不会被杀死。
 - 在 iOS 13 中，Apple 对 CarPlay 做了改进，CarPlay App 和 iPhone App 可以一个处于后台一个处于前台。而 iOS 13 之前 CarPlay App 和 iPhone App 是高度绑定的，只能共处前台或后台，用户体验不好。例如你在使用 CarPlay 导航时，手机将无法进行别的操作，否则会打断导航进程。
+
 可以理解为 CarPlay 应用和 App 应用实际是一个应用的两个形态（类似 Extension 这种）。所以我们开发 CarPlay 应用的时候就是在 App 工程中写代码。在这里会用到 iOS 13 的新特性 UIScene。
+
 ```swift
 <key>UIApplicationSceneManifest</key>
 <dict>
@@ -60,9 +66,10 @@ session_ids: [10016]
         </array>
     </dict>
 </dict>
-
 ```
+
 我们需要在 Info.plist 里声明一个新的 Scene 给 Carplay 使用。
+
 ```swift
 import CarPlay
 
@@ -85,6 +92,7 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
     }
 }
 ```
+
 然后使用模板(Template)生成对应的视图控制器显示内容，最后就像我们平时开发一样继续做逻辑处理即可。详细内容可以参考：[显示内容到 CarPlay](https://developer.apple.com/documentation/carplay/displaying_content_in_carplay?language=objc)
 在上面我们引入了模板的概念，这个在 CarPlay 应用开发过程中是极为重要的一个概念。
 
@@ -99,12 +107,13 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
 
 通过这种方式，一是方便了开发者来开发对应的 UI，另一个苹果也能更好的让你的 CarPlay 应用工作在各种不同形状的屏幕上。而缺点则是对应的 APP 视图类型会比较死板，被苹果限制的比较死。我认为这也是苹果想要的，CarPlay 是在驾驶过程中使用的，崇尚的是简洁、安全不干扰驾驶。通过模板可以很大程度上限制开发添加干扰驾驶者的功能操作。
 我们通过上述示例代码的模板给大家简单讲解下模板的作用
-```
+
+```swift
 let item = CPListItem(text: "Rubber Soul", detailText: "The Beatles")
 let section = CPListSection(items: [item])
 let listTemplate = CPListTemplate(title: "Albums", sections: [section])
-
 ```
+
 CPListTemplate 是列表类视图的模板，他就像 App 平时开发过程中的 UITableView。是应用最为广泛的场景，而在 CarPlay 开发中，我们无法像 TableView 一样灵活定制自己的 Cell。而是只能靠上述 CPListItem 的各种属性来展示 UI，例如上述就是给这个 Item 设置了标题和详细信息。因为开发方式比较固化，所以他提供了更多灵活的属性让你在一定范围内可以定制这个 Item，例如: 对应的 Item 是否在播放音乐(palying)、是否可点击(enabing)等等。
 可参考: [CPListItem](https://developer.apple.com/documentation/carplay/cplistitem?language=objc)
 
@@ -197,6 +206,7 @@ CPListTemplate 是列表类视图的模板，他就像 App 平时开发过程中
 汽车仪表盘的使用方式和 CarPlay 仪表盘的使用方式其实很像，都需要在 Plist 里面声明 key 以及在 SceneDelegate 中绘制视图。
 
 ```swift
+
 <dict>
     <!-- Indicate support for CarPlay dashboard -->
     <key>CPSupportsDashboardNavigationScene</key>
@@ -209,6 +219,7 @@ CPListTemplate 是列表类视图的模板，他就像 App 平时开发过程中
     <true/>
     ...
 <dict/>
+
 ```
 
 在 Info.plist 中声明最新的  `UIApplicationSupportsMultipleScenes`  和 `CPSupportsInstrumentClusterNavigationScene` 值为 True。
