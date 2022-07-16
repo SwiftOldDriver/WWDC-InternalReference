@@ -7,7 +7,12 @@ session_ids: [10113, 10114, 110565]
 本文章基于 [Session 10113](https://developer.apple.com/videos/play/wwdc2022/10113/)、[Session 10114](https://developer.apple.com/videos/play/wwdc2022/10114/)、[Session 110565](https://developer.apple.com/videos/play/wwdc2022/110565/) 梳理
 
 > 作者：Jimbaby，iOS 开发者，目前就职于字节跳动音乐团队
+> 
 > 审核：
+> 
+> Vong，iOS 开发者，擅长 App 性能调优，目前从事直播领域研发
+> 
+> 曾铭，老司机技术社区成员，就职于字节音乐团队
 
 ## 前言
 
@@ -23,9 +28,9 @@ session_ids: [10113, 10114, 110565]
 
 **SDR、HDR 与 EDR**  
 
-在图像显示中，用动态范围表示图像的亮暗程度。**SDR（Standard Dynamic Range）** 是标准动态范围，只能表示 0～1 范围的亮度，0 代表黑，1 代表白。**HDR（High Dynamic Range）** 是高动态范围，能表示大于 1 的部分，意味着能更大范围地表示图像的亮暗细节，更好地还原真实世界。
+在图像显示中，用动态范围表示图像的亮暗程度。**SDR（Standard Dynamic Range 标准动态范围）**，只能表示 0～1 范围的亮度，0 代表黑，1 代表白。**HDR（High Dynamic Range 高动态范围）**，能表示大于 1 的部分，意味着能更大范围地表示图像的亮暗细节，更好地还原真实世界。
 
-**EDR（Extended Dynamic Range）** 是扩展动态范围，是 Apple 的 HDR 渲染技术和像素表示技术，会根据设备本身的亮度范围，扩展表示亮度大于 1 的部分。在 EDR 渲染中：
+**EDR（Extended Dynamic Range 扩展动态范围）**，是 Apple 的 HDR 渲染和像素表示技术，会根据设备本身的亮度范围，扩展表示亮度大于 1 的部分。在 EDR 渲染中：
 
 - SDR 能渲染，会被映射到 0～1 的范围。
 - 1 到当前 EDR headroom 也能渲染。
@@ -55,7 +60,7 @@ session_ids: [10113, 10114, 110565]
 
 **参考模式（Reference Mode）**
 
-参考模式是一种新的显示模式，用于颜色关键型工作流程，为各种常见视频格式提供参考结果，例如颜色分级、编辑和内容审查，类似于 macOS 上的参考预设。
+参考模式是一种新的显示模式，用于对颜色处理要求比较高的工作流程，它会固定一些设置，屏蔽一些干扰因素，为各种常见视频提供更加客观可靠的参考结果，例如颜色分级、编辑和内容审查，这种模式类似于 macOS 上的参考预设。
 
 开启参考模式，将有以下特点：
 
@@ -141,7 +146,7 @@ layer.pixelFormat = MTLPixelFormatRGBA16Float
 layer.colorspace  = CGColorSpace(name: kCGColorSpaceExtendedLinearDisplayP3)
 ```
 
-像素格式和颜色空间需要结合选择，需要选择支持 EDR 的，否则会被裁剪降级成 SDR，具体组合可以参考下图：
+像素格式和颜色空间需要相互结合来支持 EDR，否则会被裁剪降级成 SDR，具体组合可以参考下图：
 
 ![10113-08-opting-into-edr-pixel-format-color-space](./images/10113-08-opting-into-edr-pixel-format-color-space.png)
 
@@ -190,6 +195,11 @@ func screenChangedEvent(_ notification: Notification?) {
 参考模式状态有以下四种类型
 
 ![10113-09-querying-headroom-on-iOS-notification](./images/10113-09-querying-headroom-on-iOS-notification.png)
+
+- `UIScreenReferenceDisplayModeStatusEnabled`：表示参考显示模式已经启用，并且能准确显示。
+- `UIScreenReferenceDisplayModeStatusLimited`：表示参考显示模式已经启用，但暂时无法实现。可能是由于热或功率限制。
+- `UIScreenReferenceDisplayModeStatusNotEnabled`：表示此显示器支持参考模式，但用户尚未启用。
+- `UIScreenReferenceDisplayModeStatusNotSupported`：表示此显示器不支持参考显示模式。
 
 ### 色调映射（tone-mapping）
 
@@ -240,9 +250,9 @@ let edrMetaData = CAEDRMetadata.hdr10(displayInfo: displayData,
 
 从上图不难发现 EDR 的强大效果：
 
-- SDR 原始效果：有图片细节，但整体偏暗
-- SDR 调大亮度的效果：虽然图片整体亮度提升了，但是最亮部分过曝了（即被裁剪了）
-- EDR 效果：即提升了图片整体亮度，最亮部分的细节也保留了
+- SDR 原始效果：蓝天、白云、岩石、树木、湖面等元素的细节都比较清晰，但图片整体偏暗。
+- SDR 调大亮度的效果：蓝天、岩石、树木、湖面等元素在细节清晰的基础上亮度提升了，但是白云的细节丢失了。
+- EDR 效果：蓝天、白云、岩石、树木、湖面等所有元素在细节清晰的基础上，亮度都提升了，图片整体达到了更好的效果。
 
 > 扩展阅读：对 HDR 和 EDR 感兴趣的同学，可以进一步观看如下两个 session：
 >
@@ -251,7 +261,7 @@ let edrMetaData = CAEDRMetadata.hdr10(displayInfo: displayData,
 
 ### 小结
 
-1. SDR、HDR 与 EDR 三者区别：SDR 是标准动态范围，HDR 是高动态范围，EDR 是 Apple 的 HDR 渲染技术和像素表示技术，让不支持 HDR 的设备“支持” HDR。
+1. SDR、HDR 与 EDR 三者区别：SDR 是标准动态范围，HDR 是高动态范围，EDR 是 Apple 的 HDR 渲染和像素表示技术，让不支持 HDR 的设备“支持” HDR。
 2. EDR API 现在已经支持 iOS 和 iPadOS，并且增加了参考模式（Reference Mode），在 Sidecar 上也支持 EDR 渲染，对专业工作者提供了更好的帮助。
 3. 读取 HDR图像主要分为四步：
    1. 从 HDR 图像中创建 CGImage
@@ -369,6 +379,10 @@ init(struct ContentView: View {
 }                                            
 ```
 
+实现效果如下图：
+
+![10114-coreimage-with-metal-swiftui-impl](./images/10114-coreimage-with-metal-swiftui-impl.gif)
+
 ### 添加 EDR headroom 的支持
 
 添加 EDR headroom 的支持，主要分为三个步骤：
@@ -409,11 +423,11 @@ imageProvider: { (time: CFTimeInterval, scaleFactor: CGFloat, headroom: CGFloat)
 
 Core Image 内置的 150 多个 filter 支持 EDR，比如 CIColorControls 和 CIExposureAdjust filter 可以改变带 EDR 图像的亮度、色调、饱和度和对比度。
 
-但也有不支持 EDR 的 filter，可以通过 Xcode QuickLook 查看，代码实现如何判断如下：
+但也有不支持 EDR 的 filter，可以通过 Xcode QuickLook 查看，下面代码演示了如何判断 filter 是否支持 EDR：
 
 ```Swift
 let f = CIFilter.colorControls()
-let categories = .attributes[kCIAttributeFilterCategories] as! Array‹String>
+let categories = f.attributes[kCIAttributeFilterCategories] as! Array<String>
 let isEDR = categories.contains (kCICategoryHighDynamicRange)
 ```
 
@@ -444,6 +458,10 @@ ripple.time = Float(fmod(time*0.25, 1.0))
 ripple.shadingImage = shading
 image = ripple.outputImage
 ```
+
+实现效果如下图：
+
+![10114-using-cifilters-with-edr-ripple](./images/10114-using-cifilters-with-edr-ripple.gif)
 
 接下来介绍一个非常受欢迎的 filter CIColorCubeWithColorSpace，它可以使用 EDR 色彩空间（例如 HLG 或 PQ），也可以设置新属性 extrapolate 为 true 后处理 EDR 图像，具体应用如下：
 
@@ -722,7 +740,7 @@ let texture = CVMetalTextureGetTexture(cvTexture)
 
 最后，我们来总结下全文的大致内容：
 
-1. EDR（Extended Dynamic Range）是扩展动态范围，是 Apple 的 HDR 渲染技术和像素表示技术，能更好地表示图像的亮暗细节。
+1. EDR（Extended Dynamic Range 扩展动态范围），是 Apple 的 HDR 渲染和像素表示技术，能更好地表示图像的亮暗细节。
 2. EDR API 现在已经支持 iOS 和 iPadOS，并且增加了参考模式（Reference Mode），在 Sidecar 上也支持 EDR 渲染，对专业工作者提供了更好的帮助。
 3. 借助 Core Image、Metal 和 SwiftUI 可以很好地显示 EDR 内容，并且可以使用内置的 CIFilters 创建和修改 EDR 内容。
 4. 利用 AVFoundation 和 Metal 都可以在 EDR 中显示 HDR 视频。
