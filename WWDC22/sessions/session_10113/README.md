@@ -28,7 +28,7 @@ session_ids: [10113, 10114, 110565]
 
 **SDR、HDR 与 EDR**  
 
-在图像显示中，用动态范围表示图像的亮暗程度。**SDR（Standard Dynamic Range 标准动态范围）**，只能表示 0～1 范围的亮度，0 代表黑，1 代表白。**HDR（High Dynamic Range 高动态范围）**，能表示大于 1 的部分，意味着能更大范围地表示图像的亮暗细节，更好地还原真实世界。
+在图像显示中，用动态范围表示图像的亮暗程度。**[SDR（Standard Dynamic Range 标准动态范围）](https://en.wikipedia.org/wiki/Standard-dynamic-range_video)**，只能表示 0～1 范围的亮度，0 代表黑，1 代表白。**[HDR（High Dynamic Range 高动态范围）](https://en.wikipedia.org/wiki/High_dynamic_range)**，能表示大于 1 的部分，意味着能更大范围地表示图像的亮暗细节，更好地还原真实世界。
 
 **EDR（Extended Dynamic Range 扩展动态范围）**，是 Apple 的 HDR 渲染和像素表示技术，会根据设备本身的亮度范围，扩展表示亮度大于 1 的部分。在 EDR 渲染中：
 
@@ -56,7 +56,7 @@ session_ids: [10113, 10114, 110565]
 
 - EDR API 现在支持 iOS 和 iPadOS 了
 - 新增参考模式（Reference Mode）
-- 在 Sidecar 上支持 EDR 渲染
+- 在 [Sidecar](https://support.apple.com/en-us/HT210380) 上支持 EDR 渲染
 
 **参考模式（Reference Mode）**
 
@@ -73,6 +73,9 @@ session_ids: [10113, 10114, 110565]
 参考模式目前主要支持五种最常见的 HDR 和 SDR 视频格式（如下图），为跨媒体类型提供一致性的参考结果，任何不支持的格式都将按默认显示模式去进行颜色管理。另外，与 macOS 上的参考预设不同，参考模式是一个单独的开关，在「设置」的「显示与亮度」中。
 
 ![10113-05-reference-mode-supported-formats](./images/10113-05-reference-mode-supported-formats.png)
+
+> [PQ（Perceptual Quantizer 感知量化器）](https://en.wikipedia.org/wiki/Perceptual_quantizer)：根据人类视觉系统的工作原理而设计的传递函数，最高可表示 10000 尼特的亮度，是 [Dolby Vision](https://en.wikipedia.org/wiki/Dolby_Vision)、[HDR10](https://en.wikipedia.org/wiki/HDR10) 等 HDR 视频格式的基础，不向下兼容 SDR。
+> [HLG（Hybrid Log-Gamma 混合对数伽玛）](https://en.wikipedia.org/wiki/Hybrid_log%E2%80%93gamma)：对信号值的上半部分使用对数曲线的传递函数，将亮度处理为相对值，允许更大的动态范围，兼容 SDR。
 
 **Sidecar 与参考模式**
 
@@ -203,6 +206,8 @@ func screenChangedEvent(_ notification: Notification?) {
 
 ### 色调映射（tone-mapping）
 
+色调映射（[tone-mapping](https://en.wikipedia.org/wiki/Tone_mapping)）是一种用于图像处理和计算机图形学的技术，将一组颜色映射到另一组颜色，以近似达到高动态范围图像的显示效果。
+
 上述中提到，有时我们可以用 `currentEDRHeadroom` 来查询当前 headroom，然后在内容显示之前，按我们自己的色调映射算法来调整最终渲染的内容。但大部分时候，其实我们可以使用系统内置的色调映射算法，使用内置的色调映射一般分为三个步骤：
 
 1. 检查平台是否支持色调映射。
@@ -254,10 +259,14 @@ let edrMetaData = CAEDRMetadata.hdr10(displayInfo: displayData,
 - SDR 调大亮度的效果：蓝天、岩石、树木、湖面等元素在细节清晰的基础上亮度提升了，但是白云的细节丢失了。
 - EDR 效果：蓝天、白云、岩石、树木、湖面等所有元素在细节清晰的基础上，亮度都提升了，图片整体达到了更好的效果。
 
-> 扩展阅读：对 HDR 和 EDR 感兴趣的同学，可以进一步观看如下两个 session：
+> 扩展阅读
+> 
+> 对 HDR 和 EDR 感兴趣的同学，可以进一步观看如下两个 session：
 >
 > - [WWDC20 10009 Edit and play back HDR video with AVFoundation](https://developer.apple.com/videos/play/wwdc2020/10009/)
 > - [WWDC21 10161 Explore HDR rendering with EDR](https://developer.apple.com/videos/play/wwdc2021/10161)
+> 
+> 对 tone-mapping 算法演进感兴趣的同学，可以参考 [这篇文章](https://moontree.github.io/2020/08/30/tone-mapping/)
 
 ### 小结
 
@@ -269,8 +278,8 @@ let edrMetaData = CAEDRMetadata.hdr10(displayInfo: displayData,
    3. 创建浮点纹理
    4. 将 EDR 位图加载到纹理中
 4. 适配 EDR 主要分为两个步骤：
-   1. 使用 CAMetalLayer，并将 wantsExtendedDynamicRangeContent 设置为 true。
-   2. 使用支持的像素格式和颜色空间（像素格式和颜色空间需要结合选择，需要选择支持 EDR 的，否则会被裁剪降级成 SDR）
+   1. 使用 CAMetalLayer，并将 `wantsExtendedDynamicRangeContent` 设置为 true。
+   2. 使用支持的像素格式和颜色空间（像素格式和颜色空间需要相互结合来支持 EDR，否则会被裁剪降级成 SDR）
 5. EDR headroom 决定 EDR 表示范围（即亮暗程度），headroom 约等于显示屏峰值亮度除以 SDR 亮度。可以通过 `potentialEDRHeadroom` 和 `currentEDRHeadroom` API 对潜在 headroom 和当前 headroom 的进行查询。
 6. 使用内置的色调映射（tone-mapping）一般分为三个步骤：
    1. 检查平台是否支持色调映射。
@@ -281,9 +290,9 @@ let edrMetaData = CAEDRMetadata.hdr10(displayInfo: displayData,
 
 我们先简单介绍下 EDR 内容的主要来源：
 
-- 一些可以存储用于 EDR 浮点值的文件格式，如 TIFF 和 OpenEXR。
+- 一些可以存储用于 EDR 浮点值的文件格式，如 [TIFF](https://en.wikipedia.org/wiki/TIFF) 和 [OpenEXR](https://en.wikipedia.org/wiki/OpenEXR)。
 - 从 HDR 视频文件中获取的帧。
-- ProRAW 图像文件。
+- [ProRAW](https://support.apple.com/en-us/HT211965) 图像文件。
 - Metal GPU 渲染的场景。
 
 本章节主要探索基于 Core Image 的 SwiftUI App 如何跨平台实现 EDR 渲染，整体分为三个部分：
@@ -387,7 +396,7 @@ init(struct ContentView: View {
 
 添加 EDR headroom 的支持，主要分为三个步骤：
 
-1. MTKView 初始化时， 将其 CAMetalLayer 的 wantsExtendedDynamicRangeContent 设置为 true，然后使用支持的像素格式和颜色空间。
+1. MTKView 初始化时， 将其 CAMetalLayer 的 `wantsExtendedDynamicRangeContent` 设置为 true，然后使用支持的像素格式和颜色空间。
 2. Renderer 渲染时，计算当前的 headroom，并在获取图像时将 headroom 传递给 ContentView。
 3. ContentView 使用 headroom 生成最终的图像。
 
@@ -421,7 +430,7 @@ imageProvider: { (time: CFTimeInterval, scaleFactor: CGFloat, headroom: CGFloat)
 
 ### 使用 CIFilters 创建和修改 EDR 内容
 
-Core Image 内置的 150 多个 filter 支持 EDR，比如 CIColorControls 和 CIExposureAdjust filter 可以改变带 EDR 图像的亮度、色调、饱和度和对比度。
+Core Image 内置的 150 多个 filter 支持 EDR，比如 [CIColorControls](https://developer.apple.com/documentation/coreimage/cicolorcontrols) 和 [CIExposureAdjust](https://developer.apple.com/documentation/coreimage/ciexposureadjust) filter 可以改变带 EDR 图像的亮度、色调、饱和度和对比度。
 
 但也有不支持 EDR 的 filter，可以通过 Xcode QuickLook 查看，下面代码演示了如何判断 filter 是否支持 EDR：
 
@@ -463,7 +472,7 @@ image = ripple.outputImage
 
 ![10114-using-cifilters-with-edr-ripple](./images/10114-using-cifilters-with-edr-ripple.gif)
 
-接下来介绍一个非常受欢迎的 filter CIColorCubeWithColorSpace，它可以使用 EDR 色彩空间（例如 HLG 或 PQ），也可以设置新属性 extrapolate 为 true 后处理 EDR 图像，具体应用如下：
+接下来介绍一个非常受欢迎的 filter [CIColorCubeWithColorSpace](https://developer.apple.com/documentation/coreimage/cicolorcubewithcolorspace)，它可以使用 EDR 色彩空间（例如 HLG 或 PQ），也可以设置新属性 `extrapolate` 为 true 后处理 EDR 图像，具体应用如下：
 
 ```Swift
 let f = CIFilter.colorCubeWithColorSpace()
@@ -474,7 +483,7 @@ f.inputImage = edrImage
 let edrResult = f.outputImage
 ```
 
-最后，我们介绍下创建自定义 CIKernel 的一些最佳实践：
+最后，我们介绍下创建自定义 [CIKernel](https://developer.apple.com/documentation/coreimage/cikernel) 的一些最佳实践：
 
 1. 避免使用将 RGB 限制在 0～1 的函数
 
@@ -506,7 +515,7 @@ Apple EDR 视频框架从上到下被分为 AVKit、AVFoundation、Core Video、
 
 - AVKit 是高层级的框架，可以创建媒体播放的用户界面，包括传输控件、章节导航、画中画支持以及字幕的显示。AVKit 可以将 HDR 内容作为 EDR 播放，我们通过 AVPlayerViewController 来实现。
   
-- AVFoundation 是功能齐全的音视频框架，可以轻松播放、创建和编辑 QuickTime 电影和 MPEG 4 文件，播放 HLS 流，并在我们的应用程序中构建强大的媒体功能。在这一层，我们可以通过 AVPlayer 和 AVPlayerLayer 来实现音视频功能。
+- AVFoundation 是功能齐全的音视频框架，可以轻松播放、创建和编辑 QuickTime 电影和 MPEG 4 文件，播放 [HLS](https://en.wikipedia.org/wiki/HTTP_Live_Streaming) 流，并在我们的应用程序中构建强大的媒体功能。在这一层，我们可以通过 AVPlayer 和 AVPlayerLayer 来实现音视频功能。
   
 - Core Video 是一个为数字视频提供流水线模型的框架，使我们更容易访问和操作单个帧，而无需担心数据类型之间的转换或显示同步。在这一层，我们将通过 DisplayLink、CVPixelBuffer、Core Image、CVMetalTextureCache 和 Metal 的使用来实现播放实时处理。
 
@@ -564,7 +573,7 @@ player.play()
 
 **第一步，使用 CAMetalLayer 开启 EDR 渲染能力**
 
-使用 CAMetalLayer，并将其 wantsExtendedDynamicRangeContent 设置为 true，然后使用支持的像素格式和颜色空间，代码实现如下：
+使用 CAMetalLayer，并将其 `wantsExtendedDynamicRangeContent` 设置为 true，然后使用支持的像素格式和颜色空间，代码实现如下：
 
 ```Swift
 // Opt into using EDR
@@ -680,7 +689,7 @@ statusObserver = videoPlayerItem.observe(\.status,
 
 使用 Metal Shader 处理和渲染 CVPixelBuffer 一般有两个路径：
 
-1. 将 CVPixelBuffer 转换为 MetalTexture。该过程一般是从 CVPixelBuffer 获取 IOSurface，创建一个 MetalTextureDescriptor，然后使用 `newTextureWithDescriptor` 从 MetalDevice 创建一个 MetalTexture。但是使用不当，纹理可能会被重复使用和过度绘制，这是比较危险的，另外并非所有 PixelBuffer 格式都由 MetalTexture 原生支持。由于这些复杂性，所以我们更推荐另一种方式。
+1. 将 CVPixelBuffer 转换为 MetalTexture。该过程一般是从 CVPixelBuffer 获取 [IOSurface](https://developer.apple.com/documentation/iosurface)，创建一个 MetalTextureDescriptor，然后使用 `newTextureWithDescriptor` 从 MetalDevice 创建一个 MetalTexture。但是使用不当，纹理可能会被重复使用和过度绘制，这是比较危险的，另外并非所有 PixelBuffer 格式都由 MetalTexture 原生支持。由于这些复杂性，所以我们更推荐另一种方式。
   
 2. 从 CVMetalTextureCache 中直接获取 MetalTexture。CVMetalTextureCache 是一种将 CVPixelBuffers 与 Metal 一起使用的直接而高效的方法，有如下特点：
    1. 可以直接从 CVMetalTextureCache 中获得 MetalTexture，而无需进一步转换。
@@ -746,3 +755,5 @@ let texture = CVMetalTextureGetTexture(cvTexture)
 4. 利用 AVFoundation 和 Metal 都可以在 EDR 中显示 HDR 视频。
    - 使用 AVKit 和 AVFoundation 框架可以直接播放 HDR 视频。
    - 使用 Core Video 和 Metal 可以实时处理显示 EDR 内容，通过 Core Video 的 DisplayLink 实时访问解码的视频帧，再通过 Core Image Filters 或 Metal Shader 添加颜色管理、视觉效果等，最后用 Metal 进行渲染。
+
+EDR 渲染技术会给 iOS 设备带来更棒的视觉体验，在不久的将来，相信会对我们的产品体验带来较大的影响。
