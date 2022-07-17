@@ -418,7 +418,8 @@ channel 的生命周期内，如果发生一些状态变化，需要通过相关
 ### 优化重连
 
 对于网络断开需要重连的情况，可以考虑使用 Network.framework 和 QUIC 来提高下次重建网络时的速度，这方面可以参考 WWDC 相关 session: [Accelerate networking with HTTP-3 and QUIC](https://developer.apple.com/videos/play/wwdc2021/10094)、[Reduce network delays for your app
-](https://developer.apple.com/videos/play/wwdc2021/10239)。
+](https://developer.apple.com/videos/play/wwdc2021/10239)、[Reduce networking delays for a more responsive app
+](https://developer.apple.com/videos/play/wwdc2022/10078)。
 
 ### 不需要自定义音效
 
