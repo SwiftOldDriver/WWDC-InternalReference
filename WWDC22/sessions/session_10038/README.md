@@ -307,8 +307,11 @@ SKAdNetwork 整个归因链路还是比较长的，测试和验证比较麻烦�
 
 [SKAdNetwork 官方文档](https://developer.apple.com/documentation/storekit/skadnetwork/)
 
+[APP 来源追踪方式（归因）](https://www.ichdata.com/app-traffic-source-tracking-method-for-ios.html)
+
+[iOS 广告归因](https://zhuanlan.zhihu.com/p/358829987)
+
 [How Many Ads Do We See A Day In 2022?](https://ppcprotect.com/blog/strategy/how-many-ads-do-we-see-a-day/)
 
-[APP来源追踪方式（归因）](https://www.ichdata.com/app-traffic-source-tracking-method-for-ios.html)
-
 [ATT opt-in rates](https://www.appsflyer.com/blog/trends-insights/att-opt-in-rates-higher/)
+
