@@ -8,6 +8,12 @@ session_ids: [10032]
 
 在 iOS 10，Apple 推出了 SiriKit ,我们可以通过 SiriKit 中的 INIntent 为 App 接入 Siri。如今，Apple 在 iOS 16 推出了 App Intent ,无论是语音唤起 Siri 的 shortcut、Spotlight、Shortcut app 还是 iOS 16 的新功能 [Focus Filter](https://developer.apple.com/videos/play/wwdc2022/10121/)。我们都可以通过实现 App Intent 接入到 App 中，快捷、自动化地使用 App 所提供的功能。
 
+> 苹果在 iOS 15 推出了专注模式， 打开特定的专注模式，可以设置在一个时间段内允许指定的 App 发出通知来避免打扰。 Focus Filter 则是 iOS 16 对专注模式的进一步增强。当启用某一个专注模式后，可以让适配此专注模式的 App 执行一些操作来过滤内容。比如日历 App ，可以在工作模式开启后只展示工作相关的日程，不再展示个人日程，减少工作时其他内容对自己的打扰。
+>
+> 专注模式下 App 需要用户设置的内容则通过 App Intent 暴露给系统， 供用户进行设置。
+>
+> [`SetFocusFilterIntent` ](https://developer.apple.com/documentation/appintents/setfocusfilterintent/)继承了 `AppIntent` , 是用来支持专注模式的特殊的 App Intent. 具体的实现内容指路 [WWDC22 Meet Focus filters](https://developer.apple.com/videos/play/wwdc2022/10121/).
+
 本文将以一个书单 App 为例来逐步深入介绍 App Intent 框架，这个 App 用来追踪用户正在读的书、想要读的书、已阅读的书（对应 App 的三个 Tab)。
 ![图片](./images/IMG_1.png)
 
