@@ -12,7 +12,7 @@ session_ids: [10032]
 >
 > 专注模式下 App 需要用户设置的内容则通过 App Intent 暴露给系统， 供用户进行设置。
 >
-> [`SetFocusFilterIntent` ](https://developer.apple.com/documentation/appintents/setfocusfilterintent/)继承了 `AppIntent` , 是用来支持专注模式的特殊的 App Intent. 具体的实现内容指路 [WWDC22 Meet Focus filters](https://developer.apple.com/videos/play/wwdc2022/10121/).
+> [`SetFocusFilterIntent`](https://developer.apple.com/documentation/appintents/setfocusfilterintent/)继承了 `AppIntent` , 是用来支持专注模式的特殊的 App Intent. 具体的实现内容指路 [WWDC22 Meet Focus filters](https://developer.apple.com/videos/play/wwdc2022/10121/).
 
 本文将以一个书单 App 为例来逐步深入介绍 App Intent 框架，这个 App 用来追踪用户正在读的书、想要读的书、已阅读的书（对应 App 的三个 Tab)。
 ![图片](./images/IMG_1.png)
