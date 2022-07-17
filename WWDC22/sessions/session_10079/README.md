@@ -14,7 +14,8 @@ session_ids: [10079]
 
 > 导读：
 >
-> - 本文分为 ：DNS 为什么不是安全的 、DNSSSEC 是什么 、应用如何支持 DNSSEC、DDR 对 DNS 进行加密
+> - 本文分为 ：DNS 的解析查询过程、出现哪些安全问题
+> - DNS 存在安全隐患的原因 、DNSSSEC 是什么 、应用如何支持 DNSSEC、DDR 对 DNS 进行加密
 > - 其他
 
 ## Improve DNS security for apps and servers
@@ -210,10 +211,6 @@ let connection = NWConnection(host: "www.example.org", port: .https, using: para
 
 使用 DNSSEC 对你的域名进行签名，并要求在您的应用中进行 DNSSEC 验证以验证您的 IP 地址。在您的网络上启用 DDR，以便客户端可以自动切换到加密 DNS 以更好的保护用户隐私。在需要更好的访问控制的企业中采用客户端身份验证。
 
-**DNSSEC**：域名系统安全扩展（**D**omain **N**ame **S**ystem **Sec**urity Extensions）是 IETF 对确保由域名系统（DNS）中提供的关于互联网协议 （IP）网络使用特定类型的信息规格套件。它是对 DNS 提供给 DNS 客户端（解析器）的 DNS 数据来源进行认证，并验证不存在性和校验数据完整性验证，但不提供机密性和可用性。
-
-**DDR**：Discovery of Designated Resolvers，可以自动检测现在用的 DNS resolver 是否支持 DNS over HTTPS 或者 DNS over TLS，如果有的话就直接升级到 DoH（DNS over HTTPS） 或者 DoT（DNS over TLS）。
-
 ### 六、参考
 
 ------
@@ -223,3 +220,7 @@ let connection = NWConnection(host: "www.example.org", port: .https, using: para
 - [https://juejin.cn/post/6844904148719124488](https://juejin.cn/post/6844904148719124488)
 - [https://juejin.cn/post/6844904131291774990](https://juejin.cn/post/6844904131291774990)
 - [https://blogs.cisco.com/networking/improving-dns-security-while-preserving-resiliency](https://blogs.cisco.com/networking/improving-dns-security-while-preserving-resiliency)
+
+**DNSSEC**：域名系统安全扩展（**D**omain **N**ame **S**ystem **Sec**urity Extensions）是 IETF 对确保由域名系统（DNS）中提供的关于互联网协议 （IP）网络使用特定类型的信息规格套件。它是对 DNS 提供给 DNS 客户端（解析器）的 DNS 数据来源进行认证，并验证不存在性和校验数据完整性验证，但不提供机密性和可用性。
+
+**DDR**：Discovery of Designated Resolvers，可以自动检测现在用的 DNS resolver 是否支持 DNS over HTTPS 或者 DNS over TLS，如果有的话就直接升级到 DoH（DNS over HTTPS） 或者 DoT（DNS over TLS）。
