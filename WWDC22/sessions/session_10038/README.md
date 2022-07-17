@@ -314,4 +314,3 @@ SKAdNetwork 整个归因链路还是比较长的，测试和验证比较麻烦�
 [How Many Ads Do We See A Day In 2022?](https://ppcprotect.com/blog/strategy/how-many-ads-do-we-see-a-day/)
 
 [ATT opt-in rates](https://www.appsflyer.com/blog/trends-insights/att-opt-in-rates-higher/)
-
