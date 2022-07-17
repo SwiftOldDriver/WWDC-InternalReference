@@ -213,3 +213,13 @@ let connection = NWConnection(host: "www.example.org", port: .https, using: para
 **DNSSEC**：域名系统安全扩展（**D**omain **N**ame **S**ystem **Sec**urity Extensions）是 IETF 对确保由域名系统（DNS）中提供的关于互联网协议 （IP）网络使用特定类型的信息规格套件。它是对 DNS 提供给 DNS 客户端（解析器）的 DNS 数据来源进行认证，并验证不存在性和校验数据完整性验证，但不提供机密性和可用性。
 
 **DDR**：Discovery of Designated Resolvers，可以自动检测现在用的 DNS resolver 是否支持 DNS over HTTPS 或者 DNS over TLS，如果有的话就直接升级到 DoH（DNS over HTTPS） 或者 DoT（DNS over TLS）。
+
+### 六、参考
+
+------
+
+- [https://developer.apple.com/videos/play/wwdc2020/10047](https://developer.apple.com/videos/play/wwdc2020/10047)
+- [https://blog.csdn.net/bangshao1989/article/details/121913780](https://blog.csdn.net/bangshao1989/article/details/121913780)
+- [https://juejin.cn/post/6844904148719124488](https://juejin.cn/post/6844904148719124488)
+- [https://juejin.cn/post/6844904131291774990](https://juejin.cn/post/6844904131291774990)
+- [https://blogs.cisco.com/networking/improving-dns-security-while-preserving-resiliency](https://blogs.cisco.com/networking/improving-dns-security-while-preserving-resiliency)
