@@ -116,4 +116,3 @@ iPadOS 16 也带来了对导航栏标题菜单的支持！
 ![](./images/wwdc-image-last.png)
 
 iPadOS 16 上对 toolbar 的改进，能有效地帮助用户提高生产力。再者，对 toolbar 良好的适配会使你的应用在 iPad 上与众不同。
-
