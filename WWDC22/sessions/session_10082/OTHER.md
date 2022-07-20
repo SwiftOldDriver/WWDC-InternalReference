@@ -14,4 +14,4 @@ Wilson，就职于字节跳动剪映团队，iOS 开发者。
 
 ## 公众号/小专栏图文头图
 
-![banner](images/banner.png)
+![](images/banner.png)
