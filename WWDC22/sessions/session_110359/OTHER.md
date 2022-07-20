@@ -14,4 +14,4 @@ Semyon，iOS 研发
 
 ## 公众号/小专栏图文头图
 
-![avatar](./images/pic1.jpg)
+![avatar](./images/pic1.jpeg)
