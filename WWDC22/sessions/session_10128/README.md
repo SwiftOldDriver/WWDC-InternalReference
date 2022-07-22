@@ -24,7 +24,7 @@ session_ids: [10128]
 
 本文主要分为两个部分：
 
-- 第一部分是 Object Capture 的相关介绍，包括简单的回顾，ARKit 相机相关增强与 Object Capture 相关的部分，以及最佳实践；
+- 第一部分是 Object Capture 的相关介绍，包括简单的回顾，ARKit 相机相关增强，以及最佳实践；
 - 第二部分则是从使用 Object Capture 到构建 AR App 的 demo。
 
 ## Object Capture 相关
