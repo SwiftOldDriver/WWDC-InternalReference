@@ -16,7 +16,9 @@ session_ids: [10128]
 
 ## 概览
 
-从你手边的现实物体（以及脑海中关于 AR 的 idea），到一个有趣的 AR App，需要经历什么过程？这个 session 也许能给出答案。以一个 AR 象棋游戏作为例子，演示者向我们展示了从获取现实物体的 3D 模型（使用 Object Capture），到构建 AR 应用的一个基本工作流。
+去年的 RealityKit 新增了 Object Capture，自定义 System，自定义 Shader 等大量功能，并给出了一个 [Demo](https://developer.apple.com/documentation/realitykit/building_an_immersive_experience_with_realitykit) 来演示这些功能。然而对于初学者来说，这些功能过于复杂，难以掌握。
+
+于是今年，苹果推出了一个简化版的 Demo，并介绍了苹果生态下 AR 工作流：从使用 Object Capture 创建现实物体的 3D 模型开始，到 USD 格式转换，再到 Xcode 中的 Swift 代码与 Shader 编写。麻雀虽小，五脏俱全，非常适合已经入门 RealityKit，想要进一步深入的开发者学习。
 
 ![workflow](images/workflow-diagram.png)  
 
