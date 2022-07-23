@@ -32,8 +32,8 @@ session_ids: [10016]
 ### 获取授权
 
 ![image-20220628204635307](./images/image-20220628204635307.png)
-上架 CarPlay 应用的审核非常严格，你的应用必须符合苹果对于 CarPlay 的应用定义才能通过审核，同时只能支持一种应用类型。这也是为了驾驶安全着想，例如上架一些游戏应用，就会非常影响驾驶安全。目前 iOS 支持了六种应用类型(图中左边三列)，并在 iOS 16 中提供了两种新的应用类型，加油和驾驶任务类型(最右边一列)，在新特性的一节我们会重点介绍。
-所以开发 CarPlay 应用我们要确认自己的 App 是否属于上述几种，确定后再前往 Apple 官网申请对应的 CarPlay 权限。只有拥有了 CarPlay 权限才有资格进行测试和上架。。
+上架 CarPlay 应用的审核非常严格，你的应用必须符合苹果对于 CarPlay 的应用定义才能通过审核，同时只能支持一种应用类型。这也是为了驾驶安全着想，例如上架一些游戏应用，就会非常影响驾驶安全。目前 iOS 支持了六种应用类型 (图中左边三列)，并在 iOS 16 中提供了两种新的应用类型，加油和驾驶任务类型 (最右边一列)，在新特性的一节我们会重点介绍。
+所以开发 CarPlay 应用我们要确认自己的 App 是否属于上述几种，确定后再前往 Apple 官网申请对应的 CarPlay 权限。只有拥有了 CarPlay 权限才有资格进行测试和上架。
 参考文档：[申请 CarPlay 权限](https://developer.apple.com/documentation/carplay/requesting_carplay_entitlements?language=objc)
 
 ### 开发 CarPlay 应用
@@ -44,7 +44,7 @@ session_ids: [10016]
 - 如果关闭 CarPlay App ，iPhone App 进程不会被杀死。
 - 在 iOS 13 中，Apple 对 CarPlay 做了改进，CarPlay App 和 iPhone App 可以一个处于后台一个处于前台。而 iOS 13 之前 CarPlay App 和 iPhone App 是高度绑定的，只能共处前台或后台，用户体验不好。例如你在使用 CarPlay 导航时，手机将无法进行别的操作，否则会打断导航进程。
 
-可以理解为 CarPlay 应用和 App 应用实际是一个应用的两个形态（类似 Extension 这种）。所以我们开发 CarPlay 应用的时候就是在 App 工程中写代码。在这里会用到 iOS 13 的新特性 UIScene。
+可以理解为 CarPlay 应用和 App 应用实际是一个应用的两个展示形态，CarPlay 的屏幕展示是依附于 App 实现的。所以我们开发 CarPlay 应用的时候就是在 App 工程中写代码。在这里会用到 iOS 13 的新特性 UIScene。
 
 ```swift
 <key>UIApplicationSceneManifest</key>
@@ -93,7 +93,7 @@ class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
 }
 ```
 
-然后使用模板(Template)生成对应的视图控制器显示内容，最后就像我们平时开发一样继续做逻辑处理即可。详细内容可以参考：[显示内容到 CarPlay](https://developer.apple.com/documentation/carplay/displaying_content_in_carplay?language=objc)
+然后使用模板 (Template) 生成对应的视图控制器显示内容，最后就像我们平时开发一样继续做逻辑处理即可。详细内容可以参考：[显示内容到 CarPlay](https://developer.apple.com/documentation/carplay/displaying_content_in_carplay?language=objc)
 在上面我们引入了模板的概念，这个在 CarPlay 应用开发过程中是极为重要的一个概念。
 
 ![image-20220628204507000](./images/image-20220628204507000.png)
@@ -114,7 +114,7 @@ let section = CPListSection(items: [item])
 let listTemplate = CPListTemplate(title: "Albums", sections: [section])
 ```
 
-CPListTemplate 是列表类视图的模板，他就像 App 平时开发过程中的 UITableView。是应用最为广泛的场景，而在 CarPlay 开发中，我们无法像 TableView 一样灵活定制自己的 Cell。而是只能靠上述 CPListItem 的各种属性来展示 UI，例如上述就是给这个 Item 设置了标题和详细信息。因为开发方式比较固化，所以他提供了更多灵活的属性让你在一定范围内可以定制这个 Item，例如: 对应的 Item 是否在播放音乐(palying)、是否可点击(enabing)等等。
+CPListTemplate 是列表类视图的模板，他就像 App 平时开发过程中的 UITableView。是应用最为广泛的场景，而在 CarPlay 开发中，我们无法像 TableView 一样灵活定制自己的 Cell。而是只能靠上述 CPListItem 的各种属性来展示 UI，例如上述就是给这个 Item 设置了标题和详细信息。因为开发方式比较固化，所以他提供了更多灵活的属性让你在一定范围内可以定制这个 Item，例如: 对应的 Item 是否在播放音乐 (palying)、是否可点击 (enabing) 等等。
 可参考: [CPListItem](https://developer.apple.com/documentation/carplay/cplistitem?language=objc)
 
 ## iOS 16 新特性
@@ -158,7 +158,7 @@ CPListTemplate 是列表类视图的模板，他就像 App 平时开发过程中
 
 ![image-20220628204942607](./images/image-20220628204942607.png)
 
-通过上述几个驾驶任务 APP 的描述，苹果引出了对于驾驶任务 App 的设计原则：
+通过上述几个驾驶任务 App 的描述，苹果引出了对于驾驶任务 App 的设计原则：
 
 1. 单屏类简单任务，能够几秒内完成。
 2. 不要用于和驾驶无关的任务。(文中还用这不是 The kitchen sink 来说明这个原则，大家有兴趣可以了解下这个梗😊)
@@ -175,7 +175,7 @@ CPListTemplate 是列表类视图的模板，他就像 App 平时开发过程中
 
 ![image-20220628205049488](./images/image-20220628205049488.png)
 
-下载方式不细节介绍了，大家可以去 [CarPlay 专栏](https://developer.apple.com/carplay/)下载使用。我们来看看为什么已经有 Xcode 模拟器和一辆车(假装你有）后，苹果还推出了这个 CarPlay 模拟器，它相对于前两种有什么优势。
+下载方式不细节介绍了，大家可以去 [CarPlay 专栏](https://developer.apple.com/carplay/)下载使用。我们来看看为什么已经有 Xcode 模拟器和一辆车 (假装你有）后，苹果还推出了这个 CarPlay 模拟器，它相对于前两种有什么优势。
 
 可以看到他是连接你的 iPhone 使用的，使用的是真实的 iPhone 环境，这可以测试很多真实场景，例如 App 声音和收音机声音的混合效果，这就是模拟器无法做到的。其次你可以不离开你的桌面就能进行测试，总不能发现个问题就去停车场连接测试。
 
@@ -183,7 +183,7 @@ CPListTemplate 是列表类视图的模板，他就像 App 平时开发过程中
 
 ![image-20220628205142132](./images/image-20220628205142132.png)
 
-打开模拟器，可以看到上面有很多按钮，除一些比较简单的功能，像是语音识别、电话模拟、浅/暗色主题切换、断开连接模拟。他还支持了模拟很多车都有旋钮操作(图中的上下左右功能），以及接下来重点阐述的高级配置功能。
+打开模拟器，可以看到上面有很多按钮，除一些比较简单的功能，像是语音识别、电话模拟、浅/暗色主题切换、断开连接模拟。他还支持了模拟很多车都有旋钮操作 (图中的上下左右功能），以及接下来重点阐述的高级配置功能。
 
 ![image-20220628205229808](./images/image-20220628205229808.png)
 
@@ -199,7 +199,7 @@ CPListTemplate 是列表类视图的模板，他就像 App 平时开发过程中
 
 ### 仪表盘视图
 
-在这里其实有两个仪表盘，一个是 CarPlay 的仪表盘(CarPlay Dashbord，类似 CarPlay 的 iPhone 主屏)，一个是汽车的仪表盘(Instrument Cluster)。而 CarPlay 仪表盘是已经支持 App 显示了，本次要讲的是在汽车仪表盘中展示我们的 App 内容。
+在这里其实有两个仪表盘，一个是 CarPlay 的仪表盘 (CarPlay Dashboard，类似 CarPlay 的 iPhone 主屏)，一个是汽车的仪表盘 (Instrument Cluster)。而 CarPlay 仪表盘是已经支持 App 显示了，本次要讲的是在汽车仪表盘中展示我们的 App 内容。
 
 ![image-20220628205517942](./images/image-20220628205517942.png)
 
@@ -254,4 +254,4 @@ extension TemplateApplicationSceneDelegate: CPTemplateApplicationInstrumentClust
 
 ## 总结
 
-本文除了 CarPlay 模拟器是有助我们开发应用的。剩下都是 CarPlay 的新能力介绍，对我个人来说，新的应用看起来是用途优先，但是从仪表盘展示功能可以看出苹果在这次更新中体现出了深度控制现有车机功能的野心，以后我们说不定不管什么车型(支持 CarPlay )都可以通过一块屏幕控制车机的所有功能。
+本文除了 CarPlay 模拟器是有助我们开发应用的。剩下都是 CarPlay 的新能力介绍，对我个人来说，新的应用看起来是用途优先，但是从仪表盘展示功能可以看出苹果在这次更新中体现出了深度控制现有车机功能的野心，以后我们说不定不管什么车型 (支持 CarPlay ) 都可以通过一块屏幕控制车机的所有功能。
