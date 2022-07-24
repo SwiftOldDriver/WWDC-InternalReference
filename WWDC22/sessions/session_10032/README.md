@@ -6,9 +6,13 @@ session_ids: [10032]
 
 本文基于 [Dive into App Intents](https://developer.apple.com/videos/play/wwdc2022/10032) 梳理
 
-在 iOS 10，Apple 推出了 SiriKit ,我们可以通过 SiriKit 中的 INIntent 为 App 接入 Siri。如今，Apple 在 iOS 16 推出了 App Intent ,无论是语音唤起 Siri 的 shortcut、Spotlight、Shortcut app 还是 iOS 16 的新功能 [Focus Filter](https://developer.apple.com/videos/play/wwdc2022/10121/)。我们都可以通过实现 App Intent 接入到 App 中，快捷、自动化地使用 App 所提供的功能。
+随着 iOS 的发展更新，App 已经不仅仅局限在用户手动点击打开来使用功能了。无论是自 iOS 10 推出的 Siri，还是后续 iOS 12 出现的 Shortcut，系统已经提供了各种入口供用户使用 App。用户甚至可以只通过系统级的服务使用 App 提供的功能而无需打开 App。
 
-> 苹果在 iOS 15 推出了专注模式， 打开特定的专注模式，可以设置在一个时间段内允许指定的 App 发出通知来避免打扰。 Focus Filter 则是 iOS 16 对专注模式的进一步增强。当启用某一个专注模式后，可以让适配此专注模式的 App 执行一些操作来过滤内容。比如日历 App ，可以在工作模式开启后只展示工作相关的日程，不再展示个人日程，减少工作时其他内容对自己的打扰。
+如今， Apple 在 iOS 16 推出了 App Intent 框架， 相对于之前为 App 实现不同 Extension 的开发方式，使用本框架可以用来统一实现扩展 App 的功能，以便于支持 Siri 、Spotlight、Shortcut app、 [Focus Filter](https://developer.apple.com/videos/play/wwdc2022/10121/) 等系统级服务。
+
+> 苹果在 iOS 15 推出了专注模式， 打开特定的专注模式，可以设置在一个时间段内允许指定的 App 发出通知来避免打扰。 Focus Filter 则是 iOS 16 对专注模式的进一步增强。当启用某一个专注模式后，可以让适配此专注模式的 App 执行一些操作来过滤内容。
+>
+> 比如日历 App ，可以在工作模式开启后只展示工作相关的日程，不再展示个人日程，减少工作时其他内容对自己的打扰。
 >
 > 专注模式下 App 需要用户设置的内容则通过 App Intent 暴露给系统， 供用户进行设置。
 >
