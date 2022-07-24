@@ -15,15 +15,17 @@ session_ids: [10082]
 >
 > 呼神护卫。
 
+![](images/banner.png)
+
 ## 导读
 
 今年 Apple 在开发全链路过程中对于卡顿问题的排查分析工具上做了一次相对较完整的更新，借此机会笔者想将结合本次 WWDC22 的更新内容与大家一同探讨下日常卡顿的治理思路。本文篇幅有点长，大家可以先浏览下文章的思维导图，能够帮助大家提前梳理本文的主体脉络。
-![mind](images/mind.png)
+![](images/mind.png)
 
 ## 背景介绍
 
 我们先来看一个简单示例（以下片段截取至 Session 视频的开头部分），示例展示的是 Apple 内部新研发的一款 Food Truck 应用（餐车，用于管理销售甜甜圈产品），当开发人员点击 Donuts 进入甜甜圈种类列表并尝试滚动时，发现需要等待一段时间后界面才响应。借这种现象，我们来引入本文的话题——卡顿的治理。在话题具体讨论之前，首先先回答两个问题：什么是卡顿？以及我们为什么要治理卡顿？
-![demo](images/session_demo.gif)
+![](images/session_demo.gif)
 
 **什么是卡顿？**
 
@@ -39,7 +41,7 @@ session_ids: [10082]
 
 正常情况下，iOS 默认显示频率是 60Hz，所以 GPU 渲染只要达到 60fps 就不会产生卡顿；以 60fps 为例，vSync 会每 16ms(1/60) 触发一次渲染，假如在 16ms 内没有准备好下一帧数据就会使画面停留在上一帧，就造成了掉帧或卡顿现象（参考：[iOS 保持界面流畅的技巧 | Garan no dou](https://blog.ibireme.com/2015/11/12/smooth_user_interfaces_for_ios/)）。
 
-![session_vsync](images/session_vsync.png)
+![](images/session_vsync.png)
 
 而在 iOS 开发中，由于 UIKit 是非线程安全的（参考：UIKit | Apple Developer Documentation），因此一切与 UI 相关的操作都必须放在主线程执行，系统会每 16ms 将 UI 的变化计算重新绘制，渲染至屏幕上。如果 UI 刷新的间隔能小于 16ms，那么用户是不会感到卡顿的。但是如果在主线程进行了一些耗时操作，阻碍了 UI 的刷新，那么就会产生卡顿，甚至是卡死。
 主线程对任务的处理是基于 Runloop 机制，如下图所示。Runloop 支持并提供给外部注册 6 个时机的事件回调，分别是：
@@ -53,7 +55,7 @@ session_ids: [10082]
 
 其流转关系如下图所示。Runloop 在没有任务需要处理的时候就会进入休眠状态，直至有信号将其唤醒，它又会去处理新的任务。
 
-![runloop](images/session_runloop.png)
+![](images/session_runloop.png)
 
 在日常开发中，`UIEvent`事件、`Timer`事件以及`dispatch`主线程块任务都是在 Runloop 循环机制的驱动下完成的。一旦我们在主线程中的任一个环节进行了一个耗时的操作，或者因为锁使用不当造成了主线程因等待而阻塞，那么主线程就会因为无法执行`Core Animation`回调而造成界面无法刷新。而用户的交互又依赖于`UIEvent`事件的传递和响应，该流程也必须在主线程中完成。所以主线程的阻塞会导致应用 UI 和交互双双阻塞，这也是导致卡顿的根本原因。
 
@@ -80,11 +82,11 @@ session_ids: [10082]
 
 首先是开发阶段，当我们在使用 Xcode 进行真机调试时，可以在 Edit Scheme -> Run -> Diagnostics 选项卡中开启 Thread Performance Checker。（其实升级到 Xcode 14 后就已经默认开启 Thread Performance Checker）
 
-![tpc_enable](images/session_tpc_enable.png)
+![](images/session_tpc_enable.png)
 
 当开启 Thread Performance Checker 后，Xcode 如果检测到 App 在运行时有例如线程优先级反转和非 UI 工作在主线程运行等问题时就会在 Xcode 问题导航栏中提示该卡顿风险警告。这可以帮助我们在开发初期就能发现并去解决隐含的卡顿风险问题。
 
-![tpc_issue](images/session_tpc_issue.png)
+![](images/session_tpc_issue.png)
 
 但是笔者在 Xcode 14 Beta 版上实际体验了该功能后，发现该功能目前还有一些局限性：
 
@@ -99,7 +101,7 @@ session_ids: [10082]
 接下来我们将使用 Timer Profiler 来对上述 Thread Peformance Checker 提示的线程等待问题进一步深入分析。针对 Timer Profiler 具体使用方法我这边也不做赘述了，大家可通过往届 WWDC 视频 [Instruments 入门](https://developer.apple.com/videos/play/wwdc2019/411/) 和官方文档 [Instruments Developer Help](https://help.apple.com/instruments/developer/mac/current/) 了解更多；
 当我们在使用 Xcode 14 的 Timer Profiler 工具分析 App 重现的卡顿问题时，可以惊喜地发现新的 Timer Profiler 在检测到 App 有卡顿问题时就会在轨道时间线上展示红色的 Hang 标记，该标记的长度代表了卡顿的时间间隔。然后，我们可以通过点击三次 Hang 标记过滤出该卡顿时间间隔区间内的所有事件并展开详细的线程轨道视图，以方便查看其它线程的繁忙情况。如下图所示，可以看到主线程在这段时间内属于空闲状态，而有一个 worker 子线程在这段时间内却属于繁忙状态，可见应该是主线程在等待该子线程完成任务。这与上述 Thread Performance Checker 中展示的卡顿风险警告遥相呼应，最后我们可以展开 Timer Profiler 下方的调用堆栈分析当时子线程的堆栈信息，结合实际上下文并最终解决主线程阻塞问题。
 
-![timeprofiler](images/session_timeprofiler.png)
+![](images/session_timeprofiler.png)
 
 值得一提的是上述的 Instruments 中卡顿检测与标记在 Timer Profiler 和 CPU Profiler 工具中同样都是默认可用的，另外也可以在其它 Trace 模版中添加 Hang tracing 跟其他工具结合进行测试，不过需要注意的是单独的 Hang tracing 只能检测到运行期间是否发生了卡顿以及卡顿时长，并没有实际的堆栈信息，所以在实际利用 Instruments 排查卡顿时还是建议优先使用 Timer Profiler 进行分析。
 
@@ -113,19 +115,19 @@ session_ids: [10082]
 - Monitored Apps：展示可监控的 App 列表；（注意：只展示由开发证书签名的和通过 TestFlight 安装的应用，企业证书签名无法适用）
 - Avalable Hang Logs：展示了收到卡顿警告通知时诊断所产生的卡顿日志列表，这个后续我们排查具体问题时会用到；
 
-![odd_settings](images/session_odd_settings.png)
+![](images/session_odd_settings.png)
 
 现在我们将 Food Truck 应用部署到 TestFlight 并在个人设备上安装运行，如下图所示，当我们首次点击 Orders 打开订单列表时，在屏幕上方收到了一个卡顿提示。
 
-![food_truck_with_hangs](images/session_food_truck_with_hangs.gif)
+![](images/session_food_truck_with_hangs.gif)
 
 这显然是我们在开发时都没有注意到的卡顿问题，它出现在了 Beta 测试阶段，此时我们可以切换到上述 Hang Detection 的 Avalable Hang Logs 列表中来查找该卡顿产生的诊断日志并打开详情。如下图所示，日志详情分为两部分：一部分是基于文本的卡顿日志摘要文件（格式类似崩溃日志），文件后缀名为 .ips；另一部分则是 tailspin 压缩文件，tailspin 文件可以在 Instruments 中打开查看更多维度信息（例如 Timer Profile 和 Disk Usage 等系统资源使用情况等）供深入分析使用。
 
-![hang_detection_logs](images/session_hang_detection_logs.png)
+![](images/session_hang_detection_logs.png)
 
 此时我们可以通过分享到 Airdrop 方式将这些日志发送到 Mac 上，我们将日志符号化后，可得到如下图所示的堆栈信息，可以看到 App 在发生卡顿期间，主线程正在执行一个同步读取网络/磁盘数据的方法，最终我们定位到了该问题的原因是主线程在等待资源而发生了阻塞。
 
-![hang_stack_logs](images/session_hang_stack_log.png)
+![](images/session_hang_stack_log.png)
 
 ### MetricKit
 
@@ -135,7 +137,7 @@ session_ids: [10082]
 
 最后当 App 发布到正式环境以后，后续我们就可以通过 Xcode Organizer 来分析线上版本 App 的性能指标。Xcode 14 以前 Organizer 只提供了卡顿率这种经过系统性分析后的数据指标，并没有提供诸如包含堆栈信息的卡顿报告来帮助排查定位，功能上相对鸡肋。不过在 Xcode 14 上 Organizer 终于支持了 Hang Reports，它能收集并上报线上用户在遇到卡顿时系统所产生的诊断报告数据（前提是用户同意了与 App 开发者共享应用分析）。如下图，Xcode 14 Organizer 的 Reports 分类中新增加了 Hang Reports 栏目。左起第二栏展示问题的聚合列表，问题按用户影响程度进行排序；第三栏展示了具体问题的堆栈信息，可帮助开发者分析定位卡顿原因；第四栏展示了具体问题的汇总统计信息，比如发生卡顿的数量，操作系统和设备分布比例等。
 
-![organizer_hang_reports](images/session_organizer_hang_reports.png)
+![](images/session_organizer_hang_reports.png)
 
 例如上图所示，我们观察到 Hangs Reports 的问题列表中最顶部的问题占了该版本卡顿问题的 21%，问题相当严重。我们可以尝试解决该问题，选中该问题并展开查看具体的堆栈信息，最终可以推断出该问题是因为在主线程同步读取磁盘文件而引起阻塞。这里补充说明下上述堆栈信息是经过符号化后的结果，具体只要用户在 App 上传到 App Store 时一并上传符号信息，报告中的堆栈信息就能自动符号化了。
 除了 Xcode Organizer 本身提供的可视化分析工具之外，它也支持第三方开发者通过 App Store Connect REST API 获取应用的卡顿报告数据，以方便开发者将卡顿分析集成到自己内部的分析系统中并做额外分析。（具体可参考往期[WWDC20 10057 - Identify trends with the Power and Performance API](https://xiaozhuanlan.com/topic/2036175489)的介绍）
@@ -149,7 +151,7 @@ session_ids: [10082]
 
 目前业界大多数企业（如微信、字节、美团和得物等）的 APM 工具实现线上卡顿监控能力的思路都是采用监听 Runloop 回调的方式进行卡顿的捕获，这也是综合性能和准确性表现最好的一种方案。整体流程如下：
 
-![session_watchdog_flow](images/session_watchdog_flow.png)
+![](images/session_watchdog_flow.png)
 
 具体首先对主线程 Runloop 注册两个事件回调：一个为 begin 事件回调，用于启动检测；另一个为 end 事件回调，用于关闭检测。在 begin 事件回调被触发时，可以利用`signal`机制将其运行状态传递给另一个卡顿检测线程，卡顿检测线程等待主线程`signal`信号并可以设置等待的超时时间进行间隔采样，如果等待`signal`信号超时了，这说明主线程可能发生了阻塞。另外在 end 事件被触发时，通过`signal`通知卡顿检测线程关闭卡顿检测，进入休眠状态。通过卡顿检测线程，我们可以完整地了解主线程 Runloop 的运行状态，目前处于哪个阶段，耗时了多久等等。根据这些信息，我们就可以判断主线程是否发生了卡顿/卡死，并采取对应的策略进行异常捕获和上报。更多对方案的细节补充介绍可参考：
 
