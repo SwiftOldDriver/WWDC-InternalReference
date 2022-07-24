@@ -251,8 +251,5 @@ iPadOS 16 也带来了对导航栏标题菜单的支持！
 我们也可以把一个 URL 与导航栏标题相关联。关联之后，导航栏标题菜单就会在菜单头部展示出该 URL 对应文档的预览视图：
 ![](./images/wwdc-image-20-1.png)
 
-## Wrap up
-
-![](./images/wwdc-image-last.png)
-
-iPadOS 16 上对 toolbar 的改进，能有效地帮助用户提高生产力。再者，对 toolbar 良好的适配会使你的应用在 iPad 上与众不同。
+## 结语
+Places 应用已从当初一个 `List` 进化成如今功能完备的 iPad 应用了。希望今年 SwiftUI 在 iPadOS 上的新特性能帮助一些 iPad 应用脱颖而出，既能帮助用户提高生产力，又能帮助开发者更好地完善自己的作品。
