@@ -4,7 +4,7 @@ session_ids: [10038]
 
 > 作者：Sinno，iOS 开发者，目前就职于字节跳动音乐团队
 >
-> 审核：士土 Edmond 木
+> 审核：士土Edmond木, 对 CocoaPods 有一点了解，目前对 Bazel 和 Swift 比较感兴趣。[Github Page](https://looseyi.github.io)
 
 # WWDC22 10038 - SKAdNetwork 4.0 新特性
 
