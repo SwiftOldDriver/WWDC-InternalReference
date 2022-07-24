@@ -23,7 +23,6 @@ session_ids: [10039]
 
 ![Xcode-StoreKit-Testing-01](images/Xcode-StoreKit-Testing-01.png)
 
-
 ## 2、回顾 StoreKit Testing 功能
 
 ### 2.1 StoreKit App 内购买的测试方式
@@ -677,7 +676,7 @@ App Store Connect API 新支持：
 
 关于 StoreKit 和 In-App Purchase 测试，一般开发者会更加关注在 Sandbox（沙盒环境）下测试 App 内购买功能，因为这与 Production（生产环境）的区别最小，但是测试流程比较麻烦，需要开发者证书、沙盒测试账号登录等，开发者账号还必须成功绑定银行卡信息后才能调试内购买功能。如果是订阅类型的商品，还需要覆盖测试的场景非常多，测试起来更加的麻烦。
 
-从上文的案例和代码示例可以知道，StoreKit Testing 借助 SwiftUI 和 StoreKit 2，让测试流程的实现技术更加自然。一方面是 SwiftUI 可以快速构建 UI 界面，更容易实现商品页面的展示；另一方面 StoreKit 2 的 JWS transaction 票据不需要通过苹果的 StoreKit 服务器验证，更方便实现票据的校验流程。所以，对于新项目，或者使用 StoreKit 2 改造内购买逻辑流程时，使用 StoreKit Testing 将会大大提高代码测试的效率。
+从上文的案例和代码示例可以知道，StoreKit Testing 借助 SwiftUI 和 StoreKit 2，让测试流程的实现技术更加自然。一方面是 SwiftUI 可以快速构建 UI 界面，更容易实现商品页面的展示和调整；另一方面 StoreKit 2 的 JWS transaction 票据不需要通过苹果的 StoreKit 服务器验证，更方便实现票据的校验流程。所以，对于新项目，或者使用 StoreKit 2 改造内购买逻辑流程时，使用 StoreKit Testing 将会大大提高代码测试的效率。
 
 所以基于 Xcode 的 [StoreKit Testing](https://developer.apple.com/documentation/xcode/setting-up-storekit-testing-in-xcode) 和 [StoreKitTest Framework](https://developer.apple.com/documentation/storekittest) 框架，开发者有了更加高效的测试方式。而今年 WWDC22 改进后更加方便和高效，开发者无需关注证书配置和沙盒环境账号等，就能实现本地的内购买测试，对于需要验证某个商品购买逻辑完备性，或 App 新增加内购买功能时，只需要闭环本地的代码逻辑而无需验证票据等，StoreKit 本地测试会更加顺畅，建议读者可以尝试使用！
 

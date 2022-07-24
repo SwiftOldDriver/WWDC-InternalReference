@@ -17,5 +17,3 @@ SeaHub，目前任职于腾讯 TEG 计费平台部，负责搭建服务于腾讯
 ## 公众号/小专栏图文头图
 
 ![Xcode-StoreKit-Testing-00](images/Xcode-StoreKit-Testing-00.png)
-
-
