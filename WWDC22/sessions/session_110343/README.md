@@ -25,7 +25,7 @@ struct PlacesList: View {
 
 但当这段代码跑在 iPad 上时：
 ![](./images/10058-image2.png)
-嗯，的确是正常地显示出要展示的信息，但很难说这是个好的 iPad 应用。它没有利用到 iPad 的大屏优势，从而导致展示出来的信息密度大幅降低。
+这样的效果让人很难说这是个好的 iPad 应用。它没有利用到 iPad 的大屏优势，从而导致展示出来的信息密度大幅降低。
 
 ### Multi-column tables
 
