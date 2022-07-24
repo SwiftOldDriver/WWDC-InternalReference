@@ -36,7 +36,7 @@ Multi-column table 首次登场于 macOS Monterey，今年也开始支持 iPadOS
 ![](./images/10058-image4.png)
 `Table` 与 `List` 的不同之处在于：`Table` 构造器接受的参数是 column builder 而不是 view builder。Column builder 构造器接受的参数是当前列的名称以及当前列的 view builder，额外传入的 value 关键路径（Key Path）是为了支持列排序。
 
-值得一提的是：在 compact size class 的情况下（如 iPhone 的竖屏模式和 iPad 的滑动侧栏），Multi-column tables 仅显示第一列。这就意味着：即使从 `List` 迁移为 `Table`，在 iPhone 上的显示效果仍保持一致。
+值得一提的是：在 compact size class 的情况下（如 iPhone 的竖屏模式和 iPad 的滑动侧栏），Multi-column tables 仅显示第一列。这就意味着：即使从 `List` 迁移至 `Table`，在 iPhone 上的显示效果仍保持一致。
 
 ![10058-image5](./images/10058-image5.png)
 我们接着新建两列，一列表示当前地点的舒适程度，另一列表示当前地点的噪音大小。请注意 `Comfort Level` 这一列，如果某一列仅展示文本，可以用 `TableColumn` 这个 API，无需再编写当前列的 view builder。
