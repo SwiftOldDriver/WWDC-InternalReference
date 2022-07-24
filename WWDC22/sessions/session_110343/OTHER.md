@@ -1,6 +1,6 @@
 ## 个人介绍
 
-sunset，iOS 开发者，目前工作中开始使用 SwiftUI。
+sunset，iOS 工程师，目前工作中开始使用 SwiftUI。
 
 ## 审核介绍
 
