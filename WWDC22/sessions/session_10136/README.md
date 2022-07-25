@@ -1,8 +1,7 @@
 ---
 session_ids: [10137]
 ---
-
-#  Swift Charts 高效图表的实现与优质图表设计要素
+# Swift Charts 高效图表的实现与优质图表设计要素
 
 本文章基于 WWDC22 中 4 个关于 Swift Charts 的 Session 而进行创作：
 [Session 10136 - Hello Swift Charts](https://developer.apple.com/videos/play/wwdc2022/10136/)
