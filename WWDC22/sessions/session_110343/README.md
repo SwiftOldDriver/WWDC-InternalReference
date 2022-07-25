@@ -4,7 +4,7 @@ session_ids: [110343]
 
 # Session 10058 & 110343 - SwiftUI on iPad
 
-本文中所使用的范例是 Places，它是用来记录地点的应用，它帮助使用者从中挑选出适合安静阅读的地点。
+本文中所使用的范例是 Places，它是用来记录地点的应用，帮助使用者从中挑选出适合安静阅读的地点。
 
 ## List and tables
 
@@ -25,7 +25,7 @@ struct PlacesList: View {
 
 但当这段代码跑在 iPad 上时：
 ![](./images/10058-image2.png)
-这样的效果让人很难说这是个好的 iPad 应用。它没有利用到 iPad 的大屏优势，从而导致展示出来的信息密度大幅降低。
+这样的效果让人很难说这是个好的 iPad 应用。它没有利用到 iPad 的大屏优势，从而导致展示出来的信息密度较低。
 
 ### Multi-column tables
 
@@ -44,7 +44,7 @@ Multi-column table 首次登场于 macOS Monterey，今年也开始支持 iPadOS
 #### Table Sorting
 
 ![](./images/10058-image6.png)
-Multi-column table 对列排序也有良好的支持。上图所示的三列均在构造器中指定了 value 关键路径，从而默认为可排序的。我们需要在 Table 构造时，传入对 `sortOrder` 的绑定属性，并使用 `onChange(of:perform:)` 修饰器来监听 sortOrder 的变化。当用户点击列名称，希望当前数据根据该列来进行排序时，`sortOrder` 会发生相应的变化。我们使用最新的 `sortOrder` 来更新数据模型，从而触发视图的更新。
+Multi-column table 对列排序也有良好的支持。上图所示的三列均在构造器中指定了 value 关键路径，从而默认为可排序的。我们需要在 Table 构造时，传入对 `sortOrder` 的绑定属性，并使用 `onChange(of:perform:)` 修饰器来监听 `sortOrder` 的变化。当用户点击列名称，希望当前数据根据该列来进行排序时，`sortOrder` 会发生相应的变化。我们使用最新的 `sortOrder` 来更新数据模型，从而触发视图的更新。
 
 为什么 `sortOrder` 是个数组呢？因为 `sortOrder` 代表当前 Table 所有的关键路径比较器（KeyPathComparator）。当前 `sortOrder` 初始化时，仅包含 `\Place.name` 的关键路径比较器，这表示当前 `Table` 在初始化时，默认是以地点名称排序的。
 
