@@ -1,5 +1,5 @@
 ---
-session_ids: [10058 & 110343]
+session_ids: [110343]
 ---
 
 # Session 10058 & 110343 - SwiftUI on iPad
