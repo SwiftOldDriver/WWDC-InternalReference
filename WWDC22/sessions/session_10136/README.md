@@ -14,8 +14,11 @@ session_ids: [10137]
 
 
 本文将会让大家基于 Swift Charts API 实现从简单到复杂的图表，同时了解一些优质图表的设计体验要素。
+
 当我们聊到 iOS 中图表的绘制，您应该了解现有流行的高分库 [danielgindi/Charts](https://github.com/danielgindi/Charts) ， 其拥有 25.6K stars，能够同时为 Android 和 iOS 提供相同 API 以绘制图标。其中的 iOS 部分基于 CoreGraphics 进行绘制。
+
 Swift Charts 是基于 SwiftUI 的图表框架，同样提供一种简洁的声明式的 API 用于实现各种样式的图表，用法甚至比开源的 Charts 还要精简许多。并且 Swift Charts 有对辅助功能 Accessibility 提供功能丰富的支持，包括读出图表内容，音调式播报数据值，图表交互的朗读，这些能力是 danielgindi/Charts 不具有的，这也是 Swift Charts 的一大优势。
+
 如下图所示，从简单的柱状图与饼图到复杂的向量图和热力图，Swift Chart 都可以少量代码实现：
 
 ![image](https://wwdc22.oss-cn-hangzhou.aliyuncs.com/2022/07/10/image.png)
