@@ -33,7 +33,7 @@ session_ids: [10162]
 
 - 基于 GPU 的可扩展的程序（procedual）生成
 
-  注：程序生成，也可以理解为`过程生成`、`随机生成`
+  > 注：程序生成，也可以理解为`过程生成`、`随机生成`
 
 - 自定义几何输入，比如压缩顶点数据流（compressed vertex streams）、网格片段（meshlets）、复杂的程序生成算法（complex procedural algorithms）
 
@@ -45,7 +45,7 @@ session_ids: [10162]
 
 ### 传统渲染管线（Traditional rendering pipeline）
 
-主要流程：
+**主要流程：**
 
 - 创建计算命令编码器
   - 从内存中读取网格数据（顶点数据）
@@ -65,13 +65,13 @@ session_ids: [10162]
 
 ### 网格渲染管线（Mesh rendering pipeline）
 
-主要流程：
+**主要流程：**
 
 - 创建渲染命令编码器，调用网格 draw call
   - 对象着色器（Object shader）处理网格数据（顶点数据），然后输出 `payload` 数据
   - 网格着色器（Mesh shader）处理对象着色器输出的 payload 数据，然后输出 `metal::mesh` 数据
   - 光栅化
-  - 片元着色器处理，生成最后的数据
+  - 片元着色器处理，最后生成图像
 
 ![](./images/mesh_render_pipeline.png)
 
