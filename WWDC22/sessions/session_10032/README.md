@@ -8,7 +8,11 @@ session_ids: [10032]
 
 随着 iOS 的发展更新，App 已经不仅仅局限在用户手动点击打开来使用功能了。无论是自 iOS 10 推出的 Siri，还是后续 iOS 12 出现的 Shortcut，系统已经提供了各种入口供用户使用 App。用户甚至可以只通过系统级的服务使用 App 提供的功能而无需打开 App。
 
-如今， Apple 在 iOS 16 推出了 App Intent 框架， 相对于之前为 App 实现不同 Extension 的开发方式，使用本框架可以用来统一实现扩展 App 的功能，以便于支持 Siri 、Spotlight、Shortcut app、 [Focus Filter](https://developer.apple.com/videos/play/wwdc2022/10121/) 等系统级服务。
+如今， Apple 在 iOS 16 推出了 App Intent 框架， 相对于之前通过 SiriKit 为 App 实现 Extension 的开发方式，使用本框架可以用来统一实现扩展 App 的功能，以便于支持 Siri 语音唤醒、Spotlight 中的建议、Shortcut app 中编排脚本、 [Focus Filter](https://developer.apple.com/videos/play/wwdc2022/10121/) 等系统级服务。
+
+> App Intents 可以看做对 SiriKit 部分功能的抽离及整合优化，关于 SiriKit 更多介绍，指路 ↓
+>
+> [Siri，快捷指令以及 SiriKit - 探索](https://developer.apple.com/cn/news/?id=gd1f0kbn)
 
 > 苹果在 iOS 15 推出了专注模式， 打开特定的专注模式，可以设置在一个时间段内允许指定的 App 发出通知来避免打扰。 Focus Filter 则是 iOS 16 对专注模式的进一步增强。当启用某一个专注模式后，可以让适配此专注模式的 App 执行一些操作来过滤内容。
 >
@@ -21,18 +25,30 @@ session_ids: [10032]
 本文将以一个书单 App 为例来逐步深入介绍 App Intent 框架，这个 App 用来追踪用户正在读的书、想要读的书、已阅读的书（对应 App 的三个 Tab)。
 ![图片](./images/IMG_1.png)
 
+思考一下，对于本 App，用户的一些常用操作有哪些，我们可以作提供一些捷径供用户更方便地使用：
+
+- 直接打开“正在阅读”Tab ，以便继续上一次的阅读
+- 既然可以打开指定的 Tab，那么我们可以有一个更通用的实现，通过一个参数打开任一个指定的 Tab
+- 最好直接打开某一本我正在阅读的书(只是相较于 Tab 这种可枚举的少量数据，打开某本书就需要一些更强大的查询能力)
+- 或者在日常发现一本好书时能更快捷地把它添加进来
+  - 当用户输入的信息不充分时，要考虑需要怎样的交互让用户补全信息
+  - 当返回结果有很多本书时，要怎样给用户筛选正确的结果
+  - 或者我们自作主张推荐一本热度最高的书，让用户确认是否是它想要的
+  - 只靠语音和文字的呈现或许并不充分，添加完成后最好也可以给用户展示一下书籍封面
+- 添加完成后是否可以立即打开这本书(这样就不必用户自己编排脚本，在开发时我们可以提供一些预制的脚本)
+
+带着这些思考，我们开始逐步为书单 App 实现各种方便用户使用的 Intent。
+
+![图片](./images/IMG_16.png)
+
+---
+
 首先需要了解一下 App Intent 三个关键的部分组成：Intent，Entity，AppShortcut。
 ![图片](./images/IMG_2.png)
 
 - Intent: 在 App 中构建的 Action，提供给系统去使用
 - Entity：用来表示 App 中的内容，提供给 Intent 使用
 - Shortcut：用来包装 Intent, 使之能被系统发现并使用
-
----
-
-思考一下，对于本 App，用户的一些常用操作有哪些：直接打开“正在阅读”Tab 继续上一次的阅读， 最好直接打开某一本我正在阅读的书，或者在日常发现一本好书时能更快捷地把它添加进来……带着这些想法，我们开始逐步为书单 App 实现各种方便用户使用的 Intent。
-
-![图片](./images/IMG_16.png)
 
 ## 实现 Intent
 
@@ -522,35 +538,21 @@ struct BuyBook: AppIntent {
 }
 ```
 
-## 关于 App Intent ，你需要知道的一些其他内容
-
-### 构建 App Intent 两种方式的比较
-
-#### In-app
-
-最简单， 无需跨进程开发；有着更高的内存限制；可以播放音频；可以在前台执行 Intent；在后台可以让 App 通过特殊的模式启动。（但是不显示 Scenes, 用于提高性能）
-
-App Intent 是在构建时提取静态文件得到的，会存在于 App 包内部。 为了确保能正常生效， AppIntent 必须实现在 target 或者 extension 中，而不是 framework。
-
-本地化的文案也需要放在同一个 Bundle 中。
-
-#### Extension
-
-更轻量， 无需启动 App 即可执行，但是需要更多的开发工作。
-
-更好的性能表现，对于 Focus 改变时，Focus filter intents 可以立即执行。
-
-元数据文件在 Extension Bundle 中。
-
-### 升级 SiriKit Intent 到 App Intent
-
-与 Widget、 Message、 Media 等集成的 Siri Intent 是不可以升级的；
-
-与 Siri、 Shortcut 相关自定义 Intent 是可以升级的，在对应的文件上点击 `Convert to AppIntent` 即可。
-
 ## 总结
 
-全文虽然没有提 Siri, 但实现的 Shortcut 本身就可以被 Siri 使用。和以往的开发方式相比，AppIntents 框架让 Shortcut 与 Siri 结合得更为紧密，纯粹靠代码实现的开发方式也比以往简洁了很多。除了不兼容旧版本外，新框架总是更方便开发的。
+作为一个新的框架，它出现的目的是用来统一为 App 实现一些可以被系统级调用的功能，简化开发流程。
+
+为了给自己的 App 接入 Siri，那么它相较于 SiriKit Intent 则更为简单，无需实现 Extension，只需要定义好 App Intent 即可， 构建时便会提取静态文件从而支持功能。
+
+> 也由于 App Intent 是在构建时提取静态文件得到的，它会存在于 App 包内部。 为了确保能正常生效， AppIntent 必须实现在 target 或者 extension 中，而不是 framework。同样地， 本地化的文案也需要放在同一个 Bundle 中。
+
+对于当前已经实现好的 SiriKit Intent，我们也可以很方便的升级，在对应的文件上点击 `Convert to AppIntent` 即可。
+
+> 需要注意，与 Widget、 Message、 Media 等集成的 Siri Intent 是不可以升级的；
+
+App Intent 是在 App 内的，它也拥有了更高的内存限制，可以播放音频。当然一些 Intent 也只能在前台执行，或者可以让 App 通过特殊的模式启动（但是不显示 Scenes，以便提高执行的性能)。
+
+当然通过 Extension 实现的 Intent 虽然开发工作更多，但更为轻量，大部分工作都无需启动 App。新旧两种方式在实际开发过程中按需选择即可。
 
 ## 一些参考
 
