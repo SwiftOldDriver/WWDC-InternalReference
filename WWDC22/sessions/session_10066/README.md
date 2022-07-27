@@ -56,100 +56,103 @@ Metal 是 Apple 的高效低销图形计算 `API` 。它旨在以最快、最高
 下面将逐一介绍。
 
 1. 通过创建 `Metal` 文件句柄打开一个文件
-可以通过使用 `Metal` 的设备单例创建文件句柄来打开现有文件。例如，此代码使用 `Metal` 设备实例通过使用文件路径 `URL` 调用其新的 `makeIOHandle` 方法来创建文件句柄。
+   可以通过使用 `Metal` 的设备单例创建文件句柄来打开现有文件。例如，此代码使用 `Metal` 设备实例通过使用文件路径 `URL` 调用其新的 `makeIOHandle` 方法来创建文件句柄。
 
-```python
-var fileIOHandle: MTLIOPFileHandle!
-do {
-   try fileHandle = device.makeIOHandle(url: filePath)
-} catch {
-   print (error)
-}
-```
+   ```python
+   var fileIOHandle: MTLIOPFileHandle!
+   do {
+      try fileHandle = device.makeIOHandle(url: filePath)
+   } catch {
+      print (error)
+   }
+   ```
 
 2. 通过创建 IO 命令队列和 IO 命令缓冲区来发出加载命令
-一旦有了文件句柄，就可以使用它来发出加载命令。
-这是应用程序中的一个典型场景，它执行加载操作并编码 `GPU` 工作。使用现有的加载 `API`，应用程序必须等待加载工作完成，然后才能对渲染工作进行编码。
-![](./images/issue_load_commands_basic.png)
-`Metal 3` 让您的应用程序异步执行加载命令。它创建一个 `Metal IO` 命令队列。然后使用该队列创建 `IO` 命令缓冲区并将加载命令编码到这些缓冲区。但是，由于命令缓冲区在命令队列上异步执行，因此您的应用无需等待加载操作完成。事实上，不仅 `IO` 命令缓冲区内的所有命令同时执行，`IO` 命令缓冲区本身也同时执行并无序完成。
-![](./images/issue_load_commands_sync.png)
-这种并发执行的模型通过最大化吞吐量更好更快地利用了存储硬件。
+   一旦有了文件句柄，就可以使用它来发出加载命令。
+   这是应用程序中的一个典型场景，它执行加载操作并编码 `GPU` 工作。使用现有的加载 `API`，应用程序必须等待加载工作完成，然后才能对渲染工作进行编码。
+   ![](./images/issue_load_commands_basic.png)
+   `Metal 3` 让您的应用程序异步执行加载命令。它创建一个 `Metal IO` 命令队列。然后使用该队列创建 `IO` 命令缓冲区并将加载命令编码到这些缓冲区。但是，由于命令缓冲区在命令队列上异步执行，因此您的应用无需等待加载操作完成。事实上，不仅 `IO` 命令缓冲区内的所有命令同时执行，`IO` 命令缓冲区本身也同时执行并无序完成。
+   ![](./images/issue_load_commands_sync.png)
+   这种并发执行的模型通过最大化吞吐量更好更快地利用了存储硬件。
 
-可以将三种类型的 IO 命令编码到命令缓冲区： 
+   可以将三种类型的 IO 命令编码到命令缓冲区：
 
-- loadTexture，加载到 Metal 纹理以进行纹理流式传输
-- loadBuffer，加载到 Metal 缓冲区以流式传输场景或几何数据
-- loadBytes，它加载到 CPU 可访问的内存。
+   - loadTexture，加载到 Metal 纹理以进行纹理流式传输
+   - loadBuffer，加载到 Metal 缓冲区以流式传输场景或几何数据
+   - loadBytes，它加载到 CPU 可访问的内存。
 
-将加载命令编码到命令缓冲区以在队列上执行
-要创建队列，首先制作并配置一个 `IO` 命令队列描述符。默认情况下，队列是并发的，但也可以将它们设置为按顺序完全按顺序运行命令缓冲区。然后将队列描述符传递给 `Metal` 设备实例的 `makeIOCommandQueue` 方法。
+   将加载命令编码到命令缓冲区以在队列上执行
+   要创建队列，首先制作并配置一个 `IO` 命令队列描述符。默认情况下，队列是并发的，但也可以将它们设置为按顺序完全按顺序运行命令缓冲区。然后将队列描述符传递给 `Metal` 设备实例的 `makeIOCommandQueue` 方法。
 
-```cpp
-// Create a Metal IO command queue
-let commandQueueDescriptor = MTLIOCommandQueueDescriptor()
+   ```cpp
+   // Create a Metal IO command queue
+   let commandQueueDescriptor = MTLIOCommandQueueDescriptor()
 
-commandQueueDescriptor.type = MTLIOCommandQueueType.concurrent // or serial
+   commandQueueDescriptor.type = MTLIOCommandQueueType.concurrent // or serial
 
-var ioCommandQueue: MTLIOCommandQueue!
-do {
-   try ioCommandQueue = device.makeIOCommandQueue(descriptor: commandQueueDescriptor)
-} catch {
-   print(error)
-}
-```
+   var ioCommandQueue: MTLIOCommandQueue!
+   do {
+      try ioCommandQueue = device.makeIOCommandQueue(descriptor: commandQueueDescriptor)
+   } catch {
+      print(error)
+   }
+   ```
 
-通过调用命令队列的 `makeCommandBuffer` 方法创建一个 `IO` 命令缓冲区。然后使用该命令缓冲区对加载纹理和缓冲区的加载命令进行编码。`Metal` 的验证层将在运行时捕获编码错误。加载命令使用之前创建的 `fileHandle` 实例。将加载命令添加到命令缓冲区后，通过调用命令缓冲区的提交方法将其提交到队列以执行。
+   通过调用命令队列的 `makeCommandBuffer` 方法创建一个 `IO` 命令缓冲区。然后使用该命令缓冲区对加载纹理和缓冲区的加载命令进行编码。`Metal` 的验证层将在运行时捕获编码错误。加载命令使用之前创建的 `fileHandle` 实例。将加载命令添加到命令缓冲区后，通过调用命令缓冲区的提交方法将其提交到队列以执行。
 
-```cpp
-// Create Metal IO Command Buffer
-let ioCommandBuffer = ioCommandQueue.makeCommandBuffer()
+   ```cpp
+   // Create Metal IO Command Buffer
+   let ioCommandBuffer = ioCommandQueue.makeCommandBuffer()
 
-// Encode load commands
-// Encode laod texture and load buffer commands
-ioCommandBuffer.load(texture, slice: 0, level: 0, size: size,
-                     sourceBytesPerRow: bytesPerRow, sourceBytesPerImage: bytesPerImage,
-                     destinationOrigin: fileHandle, sourceHandleOffset: 0)
-                     
-ioCommandBuffer.load(buffer, offset: 0, size: size,
-                     sourceHandle: fileHandle, sourceHandleOffset: 0)
-// Commit command buffer for execution
-ioCommandBuffer.commit()
-```
+   // Encode load commands
+   // Encode laod texture and load buffer commands
+   ioCommandBuffer.load(texture, slice: 0, level: 0, size: size,
+                        sourceBytesPerRow: bytesPerRow, sourceBytesPerImage: bytesPerImage,
+                        destinationOrigin: fileHandle, sourceHandleOffset: 0)
+                        
+   ioCommandBuffer.load(buffer, offset: 0, size: size,
+                        sourceHandle: fileHandle, sourceHandleOffset: 0)
+   // Commit command buffer for execution
+   ioCommandBuffer.commit()
+   ```
 
 3. 同步加载和渲染
 
-应用程序通常在完成为该渲染加载资源后开始其渲染工作。但是使用快速资源加载的应用程序需要一种将 IO 命令队列与渲染命令队列同步的方法。这些队列可以与 `Metal` 共享事件同步。
-![](./images/synchronize_loading_and_rendering.png)
-`Metal hared` 事件可以将 `IO` 队列中的命令缓冲区与渲染队列中的命令缓冲区同步。通过对 `waitEvent` 命令进行编码可以告诉命令缓冲区等待共享事件。类似地，可以通过对 `signalEvent` 命令进行编码来控制命令缓冲区发送共享事件信号。
-`Metal` 确保命令缓冲区中的所有 `IO` 命令在发出共享事件信号之前都是完整的。要在命令缓冲区之间进行同步，首先需要一个 `Metal ShareEvent` 。可以通过调用其 `waitForEvent` 方法来告诉命令缓冲区等待共享事件。类似地，可以调用其 `signalEvent` 方法告诉命令缓冲区向共享事件发出信号。
-```cpp
-var sharedEvent: MTLSHaredEvent!
-sharedEvent = device.makeSharedEvent()
+   应用程序通常在完成为该渲染加载资源后开始其渲染工作。但是使用快速资源加载的应用程序需要一种将 IO 命令队列与渲染命令队列同步的方法。这些队列可以与 `Metal` 共享事件同步。
+   ![](./images/synchronize_loading_and_rendering.png)
+   `Metal hared` 事件可以将 `IO` 队列中的命令缓冲区与渲染队列中的命令缓冲区同步。通过对 `waitEvent` 命令进行编码可以告诉命令缓冲区等待共享事件。类似地，可以通过对 `signalEvent` 命令进行编码来控制命令缓冲区发送共享事件信号。
+   `Metal` 确保命令缓冲区中的所有 `IO` 命令在发出共享事件信号之前都是完整的。要在命令缓冲区之间进行同步，首先需要一个 `Metal ShareEvent` 。可以通过调用其 `waitForEvent` 方法来告诉命令缓冲区等待共享事件。类似地，可以调用其 `signalEvent` 方法告诉命令缓冲区向共享事件发出信号。
 
-// Create Metal IO command buffer
-let ioCommandBuffer = ioCommandQueue.makeCommandBuffer()
+   ```cpp
+   var sharedEvent: MTLSHaredEvent!
+   sharedEvent = device.makeSharedEvent()
 
-ioCommandBuffer.waitForEvent(sharedEvent, value: waitVal)
+   // Create Metal IO command buffer
+   let ioCommandBuffer = ioCommandQueue.makeCommandBuffer()
 
-// Encode load commands
+   ioCommandBuffer.waitForEvent(sharedEvent, value: waitVal)
 
-ioCommandBuffer.signalEvent(sharedEvent, value: signalVal)
-ioCommandBuffer.commit()
+   // Encode load commands
 
-// Grapics work wairs for the IO command buffer to signal
-```
-可以将类似的逻辑添加到相应的 `GPU` 命令缓冲区，以便它等待 `IO` 命令缓冲区发出相同共享事件的信号。
+   ioCommandBuffer.signalEvent(sharedEvent, value: signalVal)
+   ioCommandBuffer.commit()
 
-加载资源的步骤以及 `API` 汇总如下
-![](./images/recap_steps_to_load_resources.png)
+   // Grapics work wairs for the IO command buffer to signal
+   ```
 
+   可以将类似的逻辑添加到相应的 `GPU` 命令缓冲区，以便它等待 `IO` 命令缓冲区发出相同共享事件的信号。
+
+   加载资源的步骤以及 `API` 汇总如下
+   ![](./images/recap_steps_to_load_resources.png)
 
 #### 进阶功能
 
 ##### 取消加载
+
 这是一个典型的场景：
 ![](./images/exp_scene.png)
 由于游戏无法将其整个地图放在内存中，它将地图细分为数个区域。随着玩家在地图上的前进，游戏开始预加载地图的区域。根据玩家的方向，游戏确定预加载的最佳区域是西北、西部和西南区域。但是，一旦玩家移动到西部地区并开始向南行驶，预装西北地区就不再有用了。为了减少未来加载的延迟，`Metal 3` 允许您尝试取消加载操作。
+
 ```cpp
 // Player in the center region
 // Encode loads for the North-West region
@@ -168,14 +171,17 @@ func regionNWCanceled() -> Bool {
    return ioCommandBufferNW.status == MTLIOStatus.cancelled
 }
 ```
+
 当播放器位于中心区域时，编码并提交三个区域的 `IO` 命令缓冲区。然后当玩家在西部地区向南行驶时，使用 `tryCancel` 方法取消对西北地区的加载。取消是在命令缓冲区粒度内的，因此我们可以在执行过程中取消命令缓冲区。
 如果稍后想知道该区域是否已完全加载，可以检查命令缓冲区的状态。
 
 ##### IO 工作与高优先级队列
+
 考虑一个游戏场景，其中玩家传送到场景的新部分，于是游戏开始流式传输大量图形资源。同时，游戏需要播放瞬移音频资源。快速资源加载允许我们加载应用程序的所有资产，包括音频数据。要加载音频，可以使用前面讨论的 `loadBytes` 命令加载到应用程序分配的内存。在此示例中，纹理和音频 `IO` 命令缓冲区在单个 `IO` 命令队列上同时执行。下图显示了存储层的请求。
 ![](./images/prioritize_io_work.png)
 存储系统能够并行执行音频和纹理加载请求。为了避免延迟音频，流系统能够优先考虑音频请求而不是纹理请求，这一点至关重要。要优先考虑音频请求，就需要创建一个单独的 `IO` 命令队列，并设置高优先级。存储系统将确保高优先级的 `IO` 请求具有较低的延迟并优先于其他请求。为音频资产创建单独的高优先级队列后，音频加载请求的执行时间变小了，而并行纹理加载请求的执行时间变长了。
 下面是创建高优先级队列的方法
+
 ```cpp
 let commandQueueDescriptor = MTLIOCommandQueueDescriptor()
 commandQueueDescriptor.type = MTLIOCommandQueueType.concurrent // or serial
@@ -190,21 +196,26 @@ do {
    print(error)
 }
 ```
+
 只需将命令队列描述符的优先级属性设置为高即可。当然也可以将优先级设置为正常或低，然后像往常一样从描述符创建一个新的 `IO` 命令队列。不过需要注意，创建队列后就无法更改队列的优先级了。
 
 #### 最佳实践
+
 下面是应用程序添加快速资源加载的最佳实践
+
 - 考虑压缩资源。
 可以使用内置或自定义压缩来减少应用程序的磁盘占用空间，用运行时性能换取更小的磁盘占用空间。
 - 在使用稀疏纹理时通过调整稀疏页面大小来提高存储吞吐量。
 
 ##### 使用 Metals 3 的 API 离线压缩资源文件
+
 首先，创建一个压缩上下文并使用块大小和压缩方法对其进行配置。然后将部分资产文件传递到上下文以生成所有文件的单个压缩版本。压缩上下文通过将所有数据分块，并使用选择的编解码器对其进行压缩并将其存储到一个包文件中。
 ![](./images/compression_context.png)
 在此示例中，上下文将数据压缩为 64KB 大小的块，但我们自然可以根据要压缩的数据的大小和类型选择合适的块大小。
 
 下面看一看 `Metal 3` 中的使用。首先，通过提供创建压缩文件的路径、压缩方法和块大小来创建压缩上下文。接下来，获取文件数据并将其附加到上下文中。在这里，文件数据在一个 `NSData` 对象中。可以通过多次调用追加数据来追加来自不同文件的数据。
 添加完数据后，通过调用 `flush` 和 `destroy` 压缩上下文函数完成并保存压缩文件。
+
 ```cpp
 // Create a compressed file
 
@@ -225,6 +236,7 @@ let compressionContext = MTLIOCreateCompressionContext(compressedFilePath, compr
 可以通过创建文件句柄来打开和访问压缩文件，此文件句柄在发出加载命令时使用。对于压缩文件，`Metal 3` 执行内联解压缩，通过将偏移量转换为它需要解压缩的块列表，并将它们加载到资源中。
 
 可以使用 `Metal` 设备实例创建文件句柄。例如，此代码使用 `Metal` 设备实例通过向我之前介绍的 `makeIOHandle` 方法提供压缩文件路径来创建文件句柄。
+
 ```cpp
 // Create an Metal File IO Handle
 
@@ -236,42 +248,53 @@ do {
    print(error)
 }
 ```
+
 压缩文件有一个压缩方法的附加参数，这与我们创建压缩文件时使用的压缩方法相同。下面是不同压缩方法以及它们各自的特点：
+
 - 当解压速度很关键并且您的应用程序可以承受较大的磁盘占用时，请使用 `LZ4`。
 - 如果编解码器速度和压缩率之间的平衡对您很重要，请使用 `ZLib`、`LZBitmap` 或 `LZFSE`。
 - 在平衡的编解码器中，`ZLib` 更适用于非 `Apple` 设备。
 - `LZBitmap` 编解码速度快，`LZFSE` 压缩比高。
 - 如果需要最佳压缩比，请考虑使用 `LZMA` 编解码器，前提是您的应用可以承受解码资源所需的额外时间。
 - 也可以使用自己的压缩方案。
+
 有时可能会遇到数据受益于自定义压缩编解码器的情况，此时就可以用自己的压缩器替换压缩上下文，并在运行时自己转换偏移量并执行解压缩。
 ![](./images/compression_codes_support.png)
+
 ##### 调整稀疏页面大小
+
 早期版本的 `Metal` 支持以 16K 的粒度将切片加载到稀疏纹理。使用 `Metal 3`，可以指定两种新的稀疏切片大小：64 和 256K。
 ![](./images/choose_sparse_tile_size.png)
 这些新尺寸允许以更大的粒度流式传输纹理，以更好地利用和饱和存储硬件。需要注意的是：流式传输较大的图块大小和流式传输的数据量之间存在权衡，因此必须尝试查看哪种大小最适合应用程序以及其稀疏纹理。
 
 #### 工具支持
+
 接下来，让我们看看如何使用 `Metal Developer Tools` 来分析和调试应用程序中的快速资源加载。
 
 `Xcode 14` 包括对快速资源加载的全面支持。
+
 1. 运行时分析
-![](./images/runtime_profiling.png)
-在 `Xcode 14` 中，`Instruments` 可以使用 `Metal System Trace` 模板分析快速资源加载。`Instruments` 是一款功能强大的分析和分析工具，可帮助您在 `Metal` 应用程序中实现最佳性能。`Metal System Trace` 模板允许您检查加载操作何时被编码和执行。
-您将能够了解它们如何与您的应用在 `CPU` 和 `GPU` 上执行的活动相关联。
-要了解如何使用 `Instruments` 分析的 `Metal` 应用程序，请查看之前的 Session
-- [Optimize Metal apps and games with GPU counters WWDC20](https://developer.apple.com/videos/play/wwdc2020/10603/)
-- [Optimize high-end games for Apple GPUs](https://developer.apple.com/videos/play/wwdc2021/10148/)
+   ![](./images/runtime_profiling.png)
+   在 `Xcode 14` 中，`Instruments` 可以使用 `Metal System Trace` 模板分析快速资源加载。`Instruments` 是一款功能强大的分析和分析工具，可帮助您在 `Metal` 应用程序中实现最佳性能。`Metal System Trace` 模板允许您检查加载操作何时被编码和执行。
+   您将能够了解它们如何与您的应用在 `CPU` 和 `GPU` 上执行的活动相关联。
+   要了解如何使用 `Instruments` 分析的 `Metal` 应用程序，请查看之前的 Session:
+
+   - [Optimize Metal apps and games with GPU counters WWDC20](https://developer.apple.com/videos/play/wwdc2020/10603/)
+   - [Optimize high-end games for Apple GPUs](https://developer.apple.com/videos/play/wwdc2021/10148/)
 
 2. API 视查
-![](./images/api_inspection.png)
-借助 `Xcode 14` 中的 `Metal` 调试器，您现在可以分析游戏对新的快速资源加载 `API` 的使用情况。
+   ![](./images/api_inspection.png)
+   借助 `Xcode 14` 中的 `Metal` 调试器，您现在可以分析游戏对新的快速资源加载 `API` 的使用情况。
+
 3. 依赖分析
-![](./images/dependency_analysis.png)
-捕获帧后，将能够检查所有快速资源加载 `API` 调用。可以使用新的依赖项查看器直观地检查快速资源加载依赖项。
-依赖关系查看器详细概述了 `IO` 命令缓冲区和 `Metal` 之间的资源依赖关系。
-从这里，您可以使用新的 `Dependency` 查看器中的所有功能，例如新的同步边和图形过滤，来深入了解和优化您的资源加载依赖项。
-要了解有关 `Xcode 14` 中新的 `Dependency` 查看器的更多信息，请查看 Session [“Go bindless with Metal 3"](https://developer.apple.com/videos/play/wwdc2022/10101/) . 
+   ![](./images/dependency_analysis.png)
+   捕获帧后，将能够检查所有快速资源加载 `API` 调用。可以使用新的依赖项查看器直观地检查快速资源加载依赖项。
+   依赖关系查看器详细概述了 `IO` 命令缓冲区和 `Metal` 之间的资源依赖关系。
+   从这里，您可以使用新的 `Dependency` 查看器中的所有功能，例如新的同步边和图形过滤，来深入了解和优化您的资源加载依赖项。
+   要了解有关 `Xcode 14` 中新的 `Dependency` 查看器的更多信息，请查看 Session [“Go bindless with Metal 3"](https://developer.apple.com/videos/play/wwdc2022/10101/).
+
 #### 实际效果
+
 这是一个测试场景，它使用新的快速资源加载 `API`， 通过使用 16 KB 大小的稀疏纹理来流式传输纹理数据。
 该场景来自配备 `M1 Pro` 芯片的 `MacBook Pro`。流系统查询 `GPU` 的稀疏纹理访问计数器以识别两件事：它已采样但未加载的图块和应用程序未使用的已加载图块。
 该应用程序使用此信息对其需要的图块的负载列表和不需要的图块的驱逐列表进行编码。这样，工作集只包含应用程序最有可能使用的图块。
@@ -290,6 +313,7 @@ do {
 `Metal 3` 中的快速资源加载引入了新方法，它们利用现代存储硬件的强大功能进行高吞吐量的资产加载，这些功能可以大大提高应用的视觉质量和响应能力。
 
 ### 离线编译
+
 新的离线编译工作流程能够减少应用程序的加载时间和卡顿。着色器二进制文件是特定于 `GPU` 的机器代码，传统上是作为 `Metal` 流水线创建过程的一部分，在应用程序运行时生成的。生成这些二进制文件是一项昂贵的操作，通常于应用启动期间在后台加载。但是，有时它们需要在帧内生成，这就会导致帧卡顿。虽然 `Metal` 缓存会保存这些文件，并不会经常造成生成的开销，但在应用程序首次启动或首次需要二进制文件时仍会造成开销。
 通过离线编译，您可以在运行时消除着色器二进制文件的生成。
 通过将二进制生成转移到项目构建时间，您可以显著减少在加载时创建 `Metal` 流水线所花费的时间，并在即时创建这些管道时减少应用程序中的卡顿。
@@ -305,8 +329,10 @@ do {
 通过离线编译，着色器二进制生成可以再次转移到项目构建阶段完成，从而缩短加载时间并让用户更快地进入应用程序。
 ![](./images/reducing_load_times.png)
 
-离线编译是具有许多复杂管道的应用程序的游戏规则改变者。想了解有关离线编译和其他改进的更多信息，请查看session ["Target and optimize GPU binaries with Metal 3"](https://developer.apple.com/videos/play/wwdc2022/10102/)。
+离线编译是具有许多复杂管道的应用程序的游戏规则改变者。想了解有关离线编译和其他改进的更多信息，请查看 session ["Target and optimize GPU binaries with Metal 3"](https://developer.apple.com/videos/play/wwdc2022/10102/)。
+
 ### MetalFX
+
 `MetalFX` 为 `Metal` 应用提供平台最优的图形效果。
 `MetalFX Upscaling`通过高性能放大和抗锯齿在更短的时间内渲染高质量的图形。
 重要的是，您可以选择时间或空间算法的组合来帮助提高性能。
@@ -315,8 +341,10 @@ do {
 
 虽然 `Retina` 分辨率提供了您希望应用和游戏利用的清晰细节，但生成所有这些像素也会影响性能。使用 `MetalFX Upscaling` ，您可以选择生成较低分辨率的像素，然后让框架以更低的成本生成高质量、高分辨率的图像，从而获得更高的帧率。
 `MetalFX` 是一个强大的框架，它使高性能、高质量的升级成为现实。要了解有关 `MetalFX Upscaling` 的更多信息，请查看 Session ["Boost performance with MetalFX Upscaling"](https://developer.apple.com/videos/play/wwdc2022/10103/)。
+
 ### Mesh Shaders
-接下来是 `Metal` 新的灵活几何管线：`Mesh Shaders`。 
+
+接下来是 `Metal` 新的灵活几何管线：`Mesh Shaders`。
 传统的可编程图形管道让您可以在着色器中转换顶点，然后将其组装成图元，以便通过固定功能硬件进行光栅化。这对于大多数应用程序来说已经足够了，但是有的情况下（如剔除技术）需要访问整个原语。每个顶点也被独立读取、转换和输出。因此，您不能在绘制过程中添加顶点或图元。
 高级几何处理需要更大的灵活性。传统来说，这意味着在计算过程中对几何图形进行预处理。
 但这需要将可变数量的中间几何存储到设备内存中，这对用户来说很难预算。
@@ -390,6 +418,7 @@ if device.supportsFamily(.metal3){
 这只是对 `Xcode 14` 中的一些开发者工具更新的快速浏览。还有许多其他新功能，例如 `Dylib` 支持、新资源列表、着色器编辑器中的文件导航、自定义缓冲区查看器布局等等。
 
 要详细了解工具以及如何充分利用 `Metal 3` 的进步，请查看这些 Session，它们将帮助您构建高级图形、游戏和专业应用程序。
+
 - Maximize your Metal ray tracing performance
 - Go bindless with Metal 3
 - Profile and optimize your game's memmory
