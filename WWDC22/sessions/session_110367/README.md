@@ -40,6 +40,96 @@ func mySwap<T>(_ a: inout T, _ b: inout T) {
 }
 ```
 
+范型编程经常用在容器类型的实现中，用于表示容器中存放元素的类型，比如大部分编程语言的标准库中定义的基础容器类型，如数组，哈希表，集合等。
+
+在 C++ 的标准库中 `vector`、`unordered_map`、`unordered_set` 都是模版类，定义了元素类型（还有可自定义的内存分配、哈希计算、比较等，并提供了默认实现）。
+
+```c++
+template<
+    class T, // 元素类
+    class Allocator = std::allocator<T> // 元素内存分配类
+> class vector;
+
+template<
+    class Key, // 键类
+    class T,  // 值类
+    class Hash = std::hash<Key>, // 键哈希计算类
+    class KeyEqual = std::equal_to<Key>, // 键比较类
+    class Allocator = std::allocator< std::pair<const Key, T> > // 键值内存分配类
+> class unordered_map;
+
+template<
+    class Key, // 元素类
+    class Hash = std::hash<Key>, // 元素哈希计算类
+    class KeyEqual = std::equal_to<Key>, // 元素比较类
+    class Allocator = std::allocator<Key> // 元素内存分配类
+> class unordered_set;
+```
+
+在 Swift 的标准库中，对应的容器类 `Array`、`Dictionary`、`Set` 也是使用范型进行抽象的：
+
+```swift
+struct Array<
+	Element // 元素类
+>
+
+struct Dictionary<
+	Key, // 键类
+	Value // 值类
+> where 
+	Key : Hashable // 键需要遵循哈希协议
+
+struct Set<
+	Element // 元素类
+> where 
+	Element : Hashable // 元素需要遵循哈希协议
+```
+
+除了基础容器类，C++ 还可以用模版实现强大复杂的容器类，比如现代 C++ 标志之一，标准库中著名的智能指针 `shared_ptr`，不仅让 C++ 的指针支持了引用计数的内存管理技术，还重载了大量运算符，在使用上更贴近原始指针。
+
+```c++
+template< class T > class shared_ptr {
+   // ...
+   T* operator->() const noexcept; // 重载箭头运算符，返回原始指针
+}
+```
+
+在没有 `shared_ptr` 之前，C++ 在使用指针时需要手动进行 `new` 和 `delete` 来手动进行内存的分配和回收，或者用 [RAII](https://zh.wikipedia.org/zh-tw/RAII) 风格来包装类型使用，使用起来繁琐而谨慎。
+
+```c++
+struct Foo {
+    int value;
+};
+
+auto a = new Foo{1}; // a 是 Foo *
+// ...
+auto b = a;
+
+a->value; // 访问成员变量
+
+// a 使用完了
+delete a; 
+
+// b 使用完了
+delete b; 
+// malloc: *** error for object 0x101007dd0: pointer being freed was not allocated
+// 很容易出现 double free 错误，释放了还没有被分配的指针
+```
+
+有了 `shared_ptr` 后，通过容器中存放的原始指针和引用计数，让已有的 C++ 指针无需改造原始类型，就支持了类似 ARC 的机制。同时也因为重载了箭头运算符 `->` 等运算符，重构成本大大降低。
+
+```c++
+auto a = std::make_shared<Foo>(Foo{1}); // a 是 std::shared_ptr<Foo>，只需要改动这一行
+// ...
+auto b = a;
+
+a->value; // 访问成员变量
+
+// 内部的原始指针会在 a 和 b 都使用完后销毁，不需要手动销毁
+```
+
+### 模版的痛点
+
 当函数加上模版后，C++ 在编译时就会进行两段检查：
 
 1. 检查模版函数定义是否正确，比如函数中是否有未定义符号等。
