@@ -15,3 +15,5 @@
 Apple 在今年 WWDC22 中没有重点展开 Swift Playgrounds 的内容，但 Swift Playgrounds 4.0 以上版本可以作为一个完整、运行在 iPad 中的 IDE，更强大用户权限管理、更细致 的 UI 表现以及更符号直觉的代码联想，我们终于可以在 iPad 上写真正的 App 了！
 
 ## 公众号/小专栏图文头图
+
+![](./images/52.png)
