@@ -70,19 +70,19 @@ template<
 
 ```swift
 struct Array<
-	Element // 元素类
+  Element // 元素类
 >
 
 struct Dictionary<
-	Key, // 键类
-	Value // 值类
+  Key, // 键类
+  Value // 值类
 > where 
-	Key : Hashable // 键需要遵循哈希协议
+  Key : Hashable // 键需要遵循哈希协议
 
 struct Set<
-	Element // 元素类
+  Element // 元素类
 > where 
-	Element : Hashable // 元素需要遵循哈希协议
+  Element : Hashable // 元素需要遵循哈希协议
 ```
 
 除了基础容器类，C++ 还可以用模版实现强大复杂的容器类，比如现代 C++ 标志之一，标准库中著名的智能指针 `shared_ptr`，不仅让 C++ 的指针支持了引用计数的内存管理技术，还重载了大量运算符，在使用上更贴近原始指针。
