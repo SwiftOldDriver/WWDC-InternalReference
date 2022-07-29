@@ -6,7 +6,7 @@ session_ids: [10162]
 
 本文基于 WWDC22 10162 [Transform your geometry with Metal mesh shaders](https://developer.apple.com/videos/play/wwdc2022/10162/) 整理，主要介绍 Metal 新一代着色器 - `网格着色器`。请注意，网格着色器目前还是 Beta 版本，后续可能会有更新或改变。
 
-> 作者：yunwill，iOS 开发
+> 作者：ysunwill，iOS 开发
 >
 > 审核：
 >
