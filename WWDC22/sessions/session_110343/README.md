@@ -9,7 +9,7 @@ session_ids: [110343]
 ## List and tables
 
 ![](./images/10058-image1-1.png)
-对于这样的首页 UI 设计，我们可以使用 `List` 实现上图所示的效果：
+对于上图所示的首页 UI 设计，我们可以使用 `List` 来实现：
 
 ``` swift
 struct PlacesList: View {
@@ -25,7 +25,7 @@ struct PlacesList: View {
 
 但当这段代码跑在 iPad 上时：
 ![](./images/10058-image2.png)
-这样的效果让人很难说这是个好的 iPad 应用。它没有利用到 iPad 的大屏优势，从而导致展示出来的信息密度较低。
+这样的效果并不是人们所期望的 iPad 应用。因为它没有利用 iPad 的大屏优势，导致展示出来的信息密度大幅降低。
 
 ### Multi-column tables
 
@@ -34,7 +34,7 @@ struct PlacesList: View {
 Multi-column table 首次登场于 macOS Monterey，今年也开始支持 iPadOS 16。它在两端的 API 保持一致，这也能侧面体现 SwiftUI 在苹果生态圈内跨平台的特性。
 
 ![](./images/10058-image4.png)
-`Table` 与 `List` 的不同之处在于：`Table` 构造器接受的参数是 column builder 而不是 view builder。Column builder 构造器接受的参数是当前列的名称以及当前列的 view builder，额外传入的 value 关键路径（Key Path）是为了支持列排序。
+`Table` 与 `List` 的不同之处在于：`Table` 构造器接受的参数是 column builder 而不是 view builder。Column builder 构造器接受的参数是当前列的名称以及当前列的 view builder，并通过额外传入的 value 关键路径（Key Path）来支持列的排序。
 
 值得一提的是：在 compact size class 的情况下（如 iPhone 的竖屏模式和 iPad 的滑动侧栏），Multi-column tables 仅显示第一列。这就意味着：即使从 `List` 迁移至 `Table`，在 iPhone 上的显示效果仍保持一致。
 
@@ -126,8 +126,6 @@ Table(modelData.places, selection: $selection, sortOrder: $sortOrder) {
     }
 }
 ```
-
-运行效果可移至本 Session [13: 20] 处查看。
 
 ## Split Views
 
@@ -227,7 +225,7 @@ macOS 上的自定义 Toolbar 功能如今也来到了 iPadOS 上。但只有 `T
 ![](./images/wwdc-image-17.png)
 我们可以使用 Control Group 来给逻辑上关联紧密的 `ToolbarItem` 分成一组。
 ![](./images/wwdc-image-18.png)
-甚至可以给 Control Group 加上对应的 Label，
+甚至可以给 Control Group 加上对应的 Label。
 ![](./images/wwdc-image-18-1.png)
 效果如下：
 ![](./images/Untitled.gif)
