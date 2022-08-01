@@ -316,7 +316,7 @@ swift_conformsToProtocolMaybeInstantiateSuperclasses 主要有三条执行路径
 
 dyld3 后有了启动闭包的概念，启动闭包中预先处理了所有可能影响启动速度的 search path、@rpaths 和环境变量，然后分析 Mach-O 的 Header 和依赖，并完成了所有符号查找的工作。最后将这些结果创建成了一个启动闭包，最终通过启动闭包来达到启动提速的效果。
 
-最重要的是，这项优化不需要升级工程的最低部署版本，只需要 App 运行在 iOS 16、tvOS 16 或者是 watchOS 9 上就可以享受到 Swift 协议检查的优化，进而提升你的 App 启动速度。
+Apple 在 Swift 协议一致性检查上所做出的优化不需要升级工程的最低部署版本，只需要 App 运行在 iOS 16、tvOS 16 或者是 watchOS 9 上就可以享受到 Swift 协议检查的优化，进而提升你的 App 启动速度。
 
 > 相比于类型更加安全、语法更加现代的 Swift ，Objective-C 近些年来基本上是处于停滞的发展状态。但是今年 Apple 带来了 Objective-C 生态中可以说是近些年来最为令人振奋的改进和提升。包括消息发送的优化、Retain & Release 调用优化和 AutoRelease 自动省略优化。
 
