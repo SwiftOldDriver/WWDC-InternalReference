@@ -153,13 +153,13 @@ SiriKit 包含 **Intents**  和 **IntentsUI** 框架，可以提供最优的 Sho
 
 新库主要有三个关键组成部分：[Intents](https://developer.apple.com/documentation/appintents/app-intents)、[Entities](https://developer.apple.com/documentation/appintents/app-entities)、[App Shortcuts](https://developer.apple.com/documentation/appintents/app-shortcuts)。理解了他们就很容易入手开发制作 Shortcuts 了。
 
-- **Intents**。一个 Intent 可以理解为是 App 的一个相对独立的、单一的功能。通过 Intent，我们将 App 的某种功能暴露给系统。比如打开某个读书 App 的某本书。另外要注意，一个 Intent 运行完成后，要么返回一个 result，要么要抛出一个 error。一个 Intent 包含了三个关键点：
+- **Intents**: 一个 Intent 可以理解为是 App 的一个相对独立的、单一的功能。通过 Intent，我们将 App 的某种功能暴露给系统。比如打开某个读书 App 的某本书。另外要注意，一个 Intent 运行完成后，要么返回一个 result，要么要抛出一个 error。一个 Intent 包含了三个关键点：
   
   - **metadata**，元数据即 Intent 的基本信息。比如一个本地化的 Title。
   - **parameters** ，参数，运行 Intent 的输入信息。很多时候，运行一个 Intent 需要用户提供额外的输入信息。比如某个读书应用，希望 Siri 可以打开某本书开始阅读。这时候可能需要用户额外输入一些信息，比如书的名字。
   - **perform method** ，执行方法。这个方法里面是一个 Intent 真正要执行的内容。
-- **Entities** 。Intent 使用 Entity 来描述表达 App。是和系统间数据交互的桥梁。
-- **App Shortcuts** 。最后包装所有 Intents，使其能够被系统识别发现。
+- **Entities**: Intent 使用 Entity 来描述表达 App。是和系统间数据交互的桥梁。
+- **App Shortcuts**: 最后包装所有 Intents，使其能够被系统识别发现。
 
   > NOTE: 每一个 App 最多支持 10 个 Shortcuts。
 
