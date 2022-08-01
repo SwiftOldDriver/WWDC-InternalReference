@@ -114,7 +114,7 @@ let section = CPListSection(items: [item])
 let listTemplate = CPListTemplate(title: "Albums", sections: [section])
 ```
 
-CPListTemplate 是列表类视图的模板，他就像 App 平时开发过程中的 UITableView。是应用最为广泛的场景，而在 CarPlay 开发中，我们无法像 TableView 一样灵活定制自己的 Cell。而是只能靠上述 CPListItem 的各种属性来展示 UI，例如上述就是给这个 Item 设置了标题和详细信息。因为开发方式比较固化，所以他提供了更多灵活的属性让你在一定范围内可以定制这个 Item，例如: 对应的 Item 是否在播放音乐 (palying)、是否可点击 (enabing) 等等。
+CPListTemplate 是列表类视图的模板，他就像 App 平时开发过程中的 UITableView。是应用最为广泛的场景，而在 CarPlay 开发中，我们无法像 TableView 一样灵活定制自己的 Cell。而是只能靠上述 CPListItem 的各种属性来展示 UI，例如上述就是给这个 Item 设置了标题和详细信息。因为开发方式比较固化，所以他提供了更多灵活的属性让你在一定范围内可以定制这个 Item，例如: 对应的 Item 是否在播放音乐 (playing)、是否可点击 (enabing) 等等。
 可参考: [CPListItem](https://developer.apple.com/documentation/carplay/cplistitem?language=objc)
 
 ## iOS 16 新特性
