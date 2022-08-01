@@ -75,7 +75,7 @@ SiriKit 包含 **Intents**  和 **IntentsUI** 框架，可以提供最优的 Sho
   - iOS16 以前，用户需要找到并点击 Add To Siri 按钮才能启用 Shortcut。
   - iOS16 中，我们应用创建的 App Shortcuts 将在应用被安装后自动生效。
 
-#### 挑选出适合作为 Shortcuts 的功能
+### 挑选出适合作为 Shortcuts 的功能
 
 想想我们应用程序中有哪些核心功能，然后拆解为互相独立的任务：
 
@@ -84,7 +84,7 @@ SiriKit 包含 **Intents**  和 **IntentsUI** 框架，可以提供最优的 Sho
 
 > Tips: 每个 App 最多可以创建 10 个 Shortcuts。Shortcuts 在于精而不是多。大多数情况下，制作 2 ~ 5 个高质量的 Shortcuts 往往就足够代表应用的核心功能了。
 
-#### 选择合适的短语来定义 Shortcuts
+### 选择合适的短语来定义 Shortcuts
 
 这个短语会出现在 Spotlight、Shortcuts App 中对应 App 标题的旁边，也是人们通过 Siri 调用 Shortcuts 时所说的话。可以从以下几个思路去命名：
 
@@ -105,7 +105,7 @@ SiriKit 包含 **Intents**  和 **IntentsUI** 框架，可以提供最优的 Sho
 - 一个短语中只能有一个动态参数，并且只能用于从有限列表中进行选择。
 - 这个动态的参数值列表可能随着 App 迭代发展而更新，因此要确保它始终包含最新的改动。
 
-#### 优化视觉
+### 优化视觉
 
 在通过 Siri 触发 Shortcuts 时，系统可以允许用户在一定程度上和自定义视图交互，以便确认用户意图、向用户展示结果或者要求用户提供更多输入信息等。如下图所示：
 
@@ -125,7 +125,7 @@ SiriKit 包含 **Intents**  和 **IntentsUI** 框架，可以提供最优的 Sho
 
 ![WX20220721-010544@2x](file:///Users/liuhuan269/Documents/GitHub/WWDC22/sessions/session_10170/images/WX20220721-010544@2x.png?lastModify=1659320768)
 
-#### 推广 Shortcuts
+### 推广 Shortcuts
 
 制作 Shortcuts 的目的之一，就是为了向用户在更广泛的场景下展示并使用我们 App 的功能。那么让我们的 Shortcuts 被用户注意到，并被唤起使用，就是十分重要的了。除了让我们的 Shortcuts 质量更高，让用户更愿意使用以外，还可以考虑使用 Siri Tip 告知用户我们拥有 Shortcuts 的能力。Siri Tip 同时支持 SwiftUI 和 UIKit。可以参考：[SwiftUI Siri Tip View](https://developer.apple.com/documentation/appintents/siritipview) 或者 [UIKit Siri Tip View](https://developer.apple.com/documentation/appintents/siritipuiview)。
 
