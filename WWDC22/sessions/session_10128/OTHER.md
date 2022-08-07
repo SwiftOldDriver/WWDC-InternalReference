@@ -1,0 +1,17 @@
+## 个人介绍
+
+- 苹果 API 搬运工，爱写文章的 ARKit 开发者。专栏[《ARKit 与计算几何》](https://xiaozhuanlan.com/computationalgeometry)，[《Metal Shader 快速使用入门》](https://xiaozhuanlan.com/metalforbeginner)
+
+- Min，iOS 开发
+
+## 审核介绍
+
+苹果 API 搬运工，爱写文章的 ARKit 开发者。专栏[《ARKit 与计算几何》](https://xiaozhuanlan.com/computationalgeometry)，[《Metal Shader 快速使用入门》](https://xiaozhuanlan.com/metalforbeginner)
+
+## 不超过 120 个字的文章简介
+
+从你手边的现实物体（以及脑海中关于 AR 的 idea），到一个有趣的 AR App，需要经历什么过程？这个 session 也许能给出答案。本文对 Object Capture 进行了回顾，介绍了 ARKit 相机增强可与其结合使用的新 API，并以一个 AR 象棋游戏作为例子，展示了从获取现实物体的 3D 模型到构建 AR 应用的基本工作流。
+
+## 公众号/小专栏图文头图
+
+![banner](images/banner.png)
