@@ -1,15 +1,15 @@
 require 'uri'
 require 'git'
 require 'octokit'
-require './scripts/helper.rb'
+require './.github/scripts/helper.rb'
 
 target_ref = ENV['TARGET_REF']
 
 files = Helper.added_markdown_files('origin/main', target_ref)
 files_as_shell_arguments = Helper.files_as_shell_arguments(files)
 
-puts `yarn markdownlint -f -q -c scripts/markdownlint.json #{files_as_shell_arguments}`
-puts `yarn lint-md -f -c scripts/documentlint.json #{files_as_shell_arguments}`
+puts `yarn markdownlint -f -q -c .github/scripts/markdownlint.json #{files_as_shell_arguments}`
+puts `yarn lint-md -f -c .github/scripts/documentlint.json #{files_as_shell_arguments}`
 
 git = Git.open(".")
 

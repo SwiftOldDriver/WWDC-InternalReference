@@ -4,7 +4,7 @@ import fs from "fs"
 import util from "util"
 
 export function lint_results(files) {
-    let markdownlintConfig = JSON.parse(fs.readFileSync("scripts/markdownlint.json"))
+    let markdownlintConfig = JSON.parse(fs.readFileSync(".github/scripts/markdownlint.json"))
     let markdownlintOptions = { files: files, config: markdownlintConfig }
 
     var errorCounter = 0
@@ -40,7 +40,7 @@ export function lint_results(files) {
         results.set(file, fileResults)
     }
 
-    let lintmdOptions = JSON.parse(fs.readFileSync("scripts/documentlint.json")).rules
+    let lintmdOptions = JSON.parse(fs.readFileSync(".github/scripts/documentlint.json")).rules
     for (let file of files) {
         let markdown = fs.readFileSync(file, 'utf8')
         let errors = lintmd.lint(markdown, lintmdOptions)

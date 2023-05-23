@@ -1,5 +1,5 @@
 require 'json'
-require './scripts/helper.rb'
+require './.github/scripts/helper.rb'
 
 files = git.added_files.select { |f| f.end_with?('.md') }
 
@@ -30,7 +30,7 @@ if session_ids.empty?
   return
 end
 
-lint_results_json = `node ./scripts/lint_results_output #{files.map{ |file| "'#{file}'" }.join(' ')}`
+lint_results_json = `node ./.github/scripts/lint_results_output #{files.map{ |file| "'#{file}'" }.join(' ')}`
 lint_results = JSON.parse lint_results_json
 
 has_error = false
