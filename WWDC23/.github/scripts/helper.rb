@@ -14,7 +14,7 @@ module Helper
   def self.front_matters(files)
     arguments = []
     arguments << "node"
-    arguments << "./scripts/front_matters_output.js"
+    arguments << "./.github/scripts/front_matters_output.js"
     arguments << files_as_shell_arguments(files)
     command = arguments.join(' ')
 

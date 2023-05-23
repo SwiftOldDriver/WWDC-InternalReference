@@ -1,7 +1,7 @@
 require 'json'
 require 'octokit'
 require 'danger'
-require './scripts/helper.rb'
+require './.github/scripts/helper.rb'
 
 pull_request_url = ENV['PULL_REQUEST_URL']
 pull_request_id = Danger::FindRepoInfoFromURL.new(pull_request_url).call.id

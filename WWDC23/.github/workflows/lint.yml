@@ -29,6 +29,6 @@ jobs:
     - name: Install Ruby Gem dependencies
       run: bundle
     - name: Lint
-      run: bundle exec danger --dangerfile=scripts/ci_lint.rb --remove-previous-comments --verbose
+      run: bundle exec danger --dangerfile=.github/scripts/ci_lint.rb --remove-previous-comments --verbose
       env:
         DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -32,7 +32,7 @@ jobs:
     - name: Install Ruby Gem dependencies
       run: bundle
     - name: Target Branch Lookup
-      run: echo "::set-output name=TARGET_REF::$(ruby scripts/ci_comment_branch_lookup.rb)"
+      run: echo "::set-output name=TARGET_REF::$(ruby .github/scripts/ci_comment_branch_lookup.rb)"
       id: target_branch_lookup
     - name: Checkout to branch where the comment happend
       uses: actions/checkout@v3
@@ -44,7 +44,7 @@ jobs:
     - name: Install Node.js dependencies
       run: yarn
     - name: Fix Format
-      run: ruby scripts/ci_fix_format.rb
+      run: ruby .github/scripts/ci_fix_format.rb
       env:
         TARGET_REF: ${{ steps.target_branch_lookup.outputs.TARGET_REF }}
         BOT_ACCESS_TOKEN: ${{ secrets.BOT_ACCESS_TOKEN }}
