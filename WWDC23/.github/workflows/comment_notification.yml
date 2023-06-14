@@ -34,7 +34,7 @@ jobs:
     - name: Install Ruby Gem dependencies
       run: bundle
     - name: Target Branch Lookup
-      run: echo "::set-output name=TARGET_REF::$(ruby .github/scripts/ci_comment_branch_lookup.rb)"
+      run: echo "::set-output name=TARGET_REF::$(bundle exec ruby .github/scripts/ci_comment_branch_lookup.rb)"
       id: target_branch_lookup
     - name: Checkout to branch where the comment happend
       uses: actions/checkout@v3
@@ -46,7 +46,7 @@ jobs:
     - name: Install Node.js dependencies
       run: yarn
     - name: Comment Notification
-      run: ruby .github/scripts/ci_comment_notification.rb
+      run: bundle exec ruby .github/scripts/ci_comment_notification.rb
       env:
         PULL_REQUEST_AUTHOR: ${{ github.event.pull_request.user.login }}
         COMMENT_SENDER: ${{ github.event.sender.login }}
