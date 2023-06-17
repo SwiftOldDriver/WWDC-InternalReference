@@ -1,7 +1,13 @@
+---
+session_ids: [10146]
+---
+
+# Session 10118 - What's new in Swift
+
+
 今年是 Swift 的一次重大更新，这个 Session 将和大家一起聊聊 Swift 语言今年的一些改进、简洁的语法糖以及一些强大的新 API 的使用。一年前，Swift 项目的核心团队宣布了成立 Language Steering Group ，主要负责监督 Swift 语言和标准库的修改。从这之后，Language Steering Group 已经审核了 40 多个新的提案，这些会覆盖到我们今天所要讨论的几个。<br />有很多社区提案都有相同的思路和看法，所以我们会将这些类似的提案进行合并。而在这之中，Swift macros（在 C 的中文教材中，一般称作**宏**，下文继续使用 macros 进行代替）是提及最多的一个提案，所以我们后文也会具体讨论 Swift 5.9 中关于 Swift macros 的新特性。<br />当然，语言的演进只是 Swift 社区工作的一部分，一门成功的语言需要的远不止这些，它还需要配合优秀的工具链、多平台的强大支持以及丰富的文档。为了全方位的监控进展，核心团队也正在组建一个 Ecosystem Steering Group ，这个新的团队也在 swift.org 的博客中有所提及，我们可以一起期待一下这个团队的进一步公告。
 
 现在我们进入正题，来讨论一下今年 Swift 语言的更新。
-<a name="xpv7p"></a>
 
 # `if/else` 和 `switch` 语句表达式
 
