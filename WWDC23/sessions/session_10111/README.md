@@ -85,9 +85,9 @@ struct WorldApp: App {
 ImmersiveSpace {
     VStack {
         Text("Hello, WWDC")
-		    .foregroundStyle(.primary)
+            .foregroundStyle(.primary)
         Text("Welcome to a new dimension")
-		    .foregroundStyle(.secondary)
+            .foregroundStyle(.secondary)
 		}
 }
 ```
@@ -277,8 +277,6 @@ var body: some View {
 在 SharePlay 的场景下，我们可以管理内容在 Private Space 和 Group Space 中的位置。如果我们的应用程序支持 SharePlay 和 Group Space，当其他参与者加入时，系统可能会将 Space 的原点移动到 Space 模板定义的共享位置原点。有关详细信息，可以查看 WWDC 23 [Build spatial SharePlay experiences](https://developer.apple.com/videos/play/wwdc2023/10087/) Session。
 
 ![Private Immersive Space 和 Group Immersive Space](./images/share_play.png)
-
-
 
 ### 使用 ImmersionStyle
 
