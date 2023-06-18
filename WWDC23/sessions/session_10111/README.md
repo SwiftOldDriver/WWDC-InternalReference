@@ -88,7 +88,7 @@ ImmersiveSpace {
             .foregroundStyle(.primary)
         Text("Welcome to a new dimension")
             .foregroundStyle(.secondary)
-		}
+    }
 }
 ```
 
