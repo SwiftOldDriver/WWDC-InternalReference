@@ -6,7 +6,7 @@ session_ids: [10111]
 
 
 
-# WWDC23 10111 - 使用 ImmersiveSpace 让 SwiftUI 跃出屏幕！
+# WWDC23 10111 - 使用 ImmersiveSpace 让 SwiftUI 跃出屏幕
 
 本文基于 [Session 10111](https://developer.apple.com/videos/play/wwdc2023/10111/) 梳理。
 
@@ -45,8 +45,6 @@ WindowGroup {
 
 在本文中，我们将将重点介绍 Space 、如何使用 Space 来创建身沉浸的体验、如何在 Space 中展示内容和更好的管理 Space，此外，还会介绍一些自定义功能。
 
-
-
 ## 初识 Space
 
 我们以太空探索主题的 World 应用程序为例，增加一个探索太空的 Space。Space 是 SwiftUI 中的一种新的 [Scene](https://developer.apple.com/documentation/swiftui/scene) Type，称为 **`ImmersiveSpace`**。我们可以在应用程序中定义一个 `ImmersiveSpace`：
@@ -76,8 +74,6 @@ struct WorldApp: App {
 
 ![Space 的原点](./images/space_origin.png)
 
-
-
 ## 在 Space 中展示内容
 
 ### 使用 RealityView
@@ -87,11 +83,11 @@ struct WorldApp: App {
 ```swift
 // View hierarchies and layout
 ImmersiveSpace {
-		VStack {
-				Text("Hello, WWDC")
-						.foregroundStyle(.primary)
-			  Text("Welcome to a new dimension")
-			      .foregroundStyle(.secondary)
+    VStack {
+        Text("Hello, WWDC")
+		    .foregroundStyle(.primary)
+        Text("Welcome to a new dimension")
+		    .foregroundStyle(.secondary)
 		}
 }
 ```
@@ -114,8 +110,6 @@ ImmersiveSpace {
 ![SwiftUI 和 RealityKit 的坐标差异](./images/different_orientation.png)
 
 除了异步加载，将 `RealityView` 放置在 `ImmersiveSpace` Scene 中还可以实现更多不一样的功能。例如我们可以将元素放置在 `RealityView`  上。或者在 Space 开启时，我们可以使用用户的手部和头部姿势数据，在 `RealityView` 中定位 Entity。关于 `RealityView` 的更多内容，可以从 WWDC 23  [Enhance your spatial computing app with RealityKit](https://developer.apple.com/videos/play/wwdc2023/10081/) Session 中了解。
-
-
 
 ### 使用 open(dismiss)ImmersiveSpace
 
@@ -167,7 +161,7 @@ struct SpaceControl: View {
 
 ```swift
 struct SpaceControl: View {
-  	// ...
+    // ...
     @State private var isSpaceHidden: Bool = true
     var body: some View {
         Button(isSpaceHidden ? "View Outer Space" : "Exit the solar system") {
@@ -205,8 +199,6 @@ struct WorldApp: App {
 
 ![LaunchWindow 和 SolarSystem](./images/launchwindow_solarsystem.gif)
 
-
-
 ### 使用 Model3D
 
 现在我们已经定义了一个多场景应用程序，其中包含一个标准的 Window 和一个 Space。我们已经看到 World 应用程序中使用了地球模型。在构建沉浸式体验的应用程序时，我们肯定会希望在 Space 中显示一些具有大量细节的 3D 资源。请记住，这些资源可能需要一些时间才能完全加载和呈现。为获得最佳用户体验，请确保利用异步加载 3D 资源的新 `Model3D` 和 `RealityView` API：
@@ -226,17 +218,13 @@ Model3D(named: "Earth") { phase in
 
 在此代码中，资源的加载被划分了不同的阶段，在模型仍在加载时或出现问题时显示提示。
 
-
-
 ## 管理 Space
 
 将沉浸式的体验带入我们的应用程序还离不开开发者与系统的管理，包括处理 [`scenePhase`](https://developer.apple.com/documentation/swiftui/scenephase)、使用 `GeometryReader3D` 进行 Scene 间协调、使用 `ImmersionStyle` 呈现不同样式。
 
-
-
 ### 使用 scenePhase
 
-与其他 SwiftUI 的 Scene 类型类似，Space 也支持相同的 `scenePhase`。通过打开 Space，它将转变到 [`active`](https://developer.apple.com/documentation/swiftui/scenephase/active)。并且在任何时间点，其都可能变更为 [`inactive `](https://developer.apple.com/documentation/swiftui/scenephase/inactive)。
+与其他 SwiftUI 的 Scene 类型类似，Space 也支持相同的 `scenePhase`。通过打开 Space，它将转变到 [`active`](https://developer.apple.com/documentation/swiftui/scenephase/active)。并且在任何时间点，其都可能变更为 [`inactive`](https://developer.apple.com/documentation/swiftui/scenephase/inactive)。
 
 例如用户走出系统定义的边界或系统 Alert 显示 `scenePhase` 将变成为 `inactive`。一旦用户重新进入， Space 和 Window 将再次变得可见，更新 `scenePhase` 以再次激活。此外，用户还可以随时使用硬件或软件方式关闭 Space。
 
@@ -264,8 +252,6 @@ struct WorldApp: App {
 由于上述示例代码，在出现 Alert 时，内容的比例发生了变化。当我们移除 Alert 时，Space 将恢复。SwiftUI 使处理这些过渡变得非常简单和方便：
 
 ![space 的 ScenePhase](./images/space_scenephase.gif)
-
-
 
 ### 使用 GeometryReader3D
 
@@ -346,7 +332,7 @@ struct WorldApp: App {
 
 ![mixed](./images/mixed.gif)
 
-这种样式很棒，但用户可能希望更加沉浸在内容中，也许还能看到一些星空。继续执行放大手势，随着内容越来越大，Space 最终会过渡到 `progressive ` 样式。`progressive ` 是沉浸式体验和完全沉浸式体验之间的桥梁，它允许我们在用户面前的呈现沉浸式体验内容以及用户现实的周围环境。让用户身临其境的同时，也能让用户意识到周围的事物。用户可以与附近的人聊天、知道坐在哪里更舒服，甚至可以与周围环境互动等。
+这种样式很棒，但用户可能希望更加沉浸在内容中，也许还能看到一些星空。继续执行放大手势，随着内容越来越大，Space 最终会过渡到 `progressive` 样式。`progressive` 是沉浸式体验和完全沉浸式体验之间的桥梁，它允许我们在用户面前的呈现沉浸式体验内容以及用户现实的周围环境。让用户身临其境的同时，也能让用户意识到周围的事物。用户可以与附近的人聊天、知道坐在哪里更舒服，甚至可以与周围环境互动等。
 
 一旦用户通过转动数码表冠，将会增加 Space 的沉浸感。现在用户像银河系中的宇航员一样漂浮在宇宙。如果用户想再次看看周围的环境，只需将数码表冠转回即可。这使用户可以快速轻松地控制内容在 Space 中的沉浸感。
 
@@ -356,13 +342,9 @@ struct WorldApp: App {
 
 到目前为止，我们已经了解到根据手势转换到不同样式是多么容易。使用 SwiftUI，只需几行代码 Space 已经是完全身临其境的体验。
 
-
-
 ## 自定义功能
 
 我们刚刚展示了通过响应 `scenePhase` 变化和控制 `ImmersionStyle` 来管理 Space 的不同方法。现在让我们添加一些增强功能，将 Space 的体验提升到一个新的水平。设备上的空间计算功能可以轻松增强我们的 Space，使其更加精彩。我们接着来看直接启动 Space、为周围环境添加效果和展示虚拟的手。
-
-
 
 ### 初始的 ImmersionStyle
 
@@ -390,8 +372,6 @@ struct WorldApp: App {
 | ![以 .mixed 启动](./images/initial_mixed.gif) | ![将用户的周围环境变暗](./images/preferred_surroundings_effect.gif) |
 | :-------------------------------------------: | :----------------------------------------------------------: |
 |               以 `.mixed` 启动                |                     将用户的周围环境变暗                     |
-
-
 
 ### 展示虚拟的手
 
@@ -450,7 +430,7 @@ struct SpaceGloves: View {
     let handTracking = HandTrackingProvider()
     var body: some View {
         RealityView { content in
-        		// ...
+            // ...
         }
     }
 }
@@ -464,7 +444,7 @@ struct SpaceGloves: View {
     let handTracking = HandTrackingProvider()
     var body: some View {
         RealityView { content in
-        		// Add root and childs
+            // Add root and childs
             // ...
             do {
                 try await arSession.run([handTracking])
@@ -476,7 +456,7 @@ struct SpaceGloves: View {
 }
 ```
 
-接下来，检查[手征性(Chirality，物理学中的概念)](https://zh.wikipedia.org/wiki/%E6%89%8B%E5%BE%B5%E6%80%A7)，确保虚拟的手的 `transform ` 与锚点相同，在这个例子中，还需确资源具有与 ARKit 提供的相同的 `jointName`。这样，我们就可以正确映射锚骨架关节名称，手套 Entity 将自动锚定用户的手：
+接下来，检查[手征性(Chirality，物理学中的概念)](https://zh.wikipedia.org/wiki/%E6%89%8B%E5%BE%B5%E6%80%A7)，确保虚拟的手的 `transform` 与锚点相同，在这个例子中，还需确资源具有与 ARKit 提供的相同的 `jointName`。这样，我们就可以正确映射锚骨架关节名称，手套 Entity 将自动锚定用户的手：
 
 ```swift
 struct SpaceGloves: View {
@@ -484,7 +464,7 @@ struct SpaceGloves: View {
     let handTracking = HandTrackingProvider()
     var body: some View {
         RealityView { content in
-        		// Add root and childs
+            // Add root and childs
             // ...
             // Await arSession run
             // ...
@@ -495,13 +475,13 @@ struct SpaceGloves: View {
                         if let leftGlove = Entity.leftHand {
                             leftGlove.transform = Transform(matrix: anchor.transform)
                             for (index, jointName) in 
-                            		anchor.skeleton.definition.jointNames.enumerated() {
-                            		leftGlove.jointTransforms[index].rotation = 
-                                  	simd_quatf(anchor.skeleton.joint(named: jointName).localTransform)
+                                anchor.skeleton.definition.jointNames.enumerated() {
+                                leftGlove.jointTransforms[index].rotation = 
+                                simd_quatf(anchor.skeleton.joint(named: jointName).localTransform)
                             }
                         }
                     case .right:
-                  	// ..
+                    // ..
                 }
             }
         }
@@ -534,11 +514,6 @@ struct WorldApp: App {
 
 通过将 `RealityView` 与 ARKit 结合使用并启用手部追踪，我们能让用户像虚拟宇航员体验太空，感觉真的很棒！
 
-
-
 ## 总结
 
 visionOS 作为 Apple 推出的新的空间计算操作系统，通过结合 SwiftUI、ARKit、RealityKit 等技术，为开发者提供了构建具有沉浸式体验的应用程序的能力。通过一些功能强大且易于使用的 API，我们能够轻松创造完全沉浸式体验。期待着大家使用 ImmersiveSpace 让 SwiftUI 跃出屏幕！
-
-
-
