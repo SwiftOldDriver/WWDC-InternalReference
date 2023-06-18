@@ -509,7 +509,7 @@ struct SpaceGloves: View {
 }
 ```
 
-在上述代码中，``.right`与 `.left` 同理。回到定义 Space 的位置，添加 `SpaceGloves` 视图。这就是我们所需要的虚拟手：
+在上述代码中，`.right` 与 `.left` 同理。回到定义 Space 的位置，添加 `SpaceGloves` 视图。这就是我们所需要的虚拟手：
 
 ```swift
 @main
