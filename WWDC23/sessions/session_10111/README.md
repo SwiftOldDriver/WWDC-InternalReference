@@ -10,13 +10,22 @@ session_ids: [10111]
 
 本文基于 [Session 10111](https://developer.apple.com/videos/play/wwdc2023/10111/) 梳理。
 
-## 进入沉浸式体验
+
+
+在 visionOS 上通过一些功能强大且易于使用的 API，我们能够轻松创造完全沉浸式的体验。所有这一切都可以通过我们已经熟悉的工具、框架和模式来实现。其核心是 SwiftUI 的 `ImmersiveSpace`。在本文中，我们将围绕 Space 展开，介绍包括 Space 的信息、如何在 Space 中展示内容和更好的管理 Space，此外，还会介绍一些自定义功能。
+
+![iOS 和 iPadOS 上丰富的 AR 体验](./images/mind_mapping.png)
+
+# 进入沉浸式体验
 
 在过去的几年中，Apple 引入和完善了许多工具及框架，用于为 iOS 和 iPadOS 等构建 AR 应用程序，例如 [ARKit](https://developer.apple.com/augmented-reality/arkit/)、[RealityKit](https://developer.apple.com/augmented-reality/realitykit/) 等。这些应用程序通过交互式的用户界面和虚拟对象来增强用户环境，模糊现实世界与想象之间的界限，创造了丰富的 AR 体验。
 
 ![iOS 和 iPadOS 上丰富的 AR 体验](./images/existing_ar_apps.png)
 
-在 WWDC23  [Take SwiftUI to the next dimension](https://developer.apple.com/videos/play/wwdc2023/10113) Session 中，Apple 详细介绍了 SwiftUI 中的第三维，可以在 visionOS 上呈现 Window 或 Volume。Volume 为我们提供了一个固定比例的容器，在任何距离都保持相同的大小，支持从任何角度查看。 Volume 是在应用程序中显示 3D 内容的好方法，同时不会占用整个空间。创建 Volume 非常简单，只需在创建新场景时使用新的 `.volumetric` 的  [`windowStyle(_:)`](https://developer.apple.com/documentation/swiftui/scene/windowstyle(_:)) 样式：
+在 WWDC23  [Take SwiftUI to the next dimension](https://developer.apple.com/videos/play/wwdc2023/10113) Session 中，Apple 详细介绍了 SwiftUI 中的第三维，可以在 visionOS 上呈现 Window 或 Volume。
+
+- Window：我们可以在 visionOS 应用中创建一个或多个的窗口。可以包含传统的视图或者控件，也可以通过添加 3D 内容来增加深度上的体验。如下左图的紫色、蓝色、红色 Window。
+- Volume：Volume 为我们提供了一个固定比例的容器，在任何距离都保持相同的大小，支持从任何角度查看。Volume 是在应用程序中显示 3D 内容的好方法，同时不会占用整个空间。如下左图的绿色 Volume。创建 Volume 非常简单，只需在创建 [Scene](https://developer.apple.com/documentation/swiftui/scene) 时使用新的 `.volumetric` 的  [`windowStyle(_:)`](https://developer.apple.com/documentation/swiftui/scene/windowstyle(_:)) 样式：
 
 ```swift
 // A volume that displays a globe.
@@ -26,24 +35,23 @@ WindowGroup {
 .windowStyle(.volumetric)
 ```
 
-![Windows 和 Volumes](./images/windows_and_volumes.png)
+| ![用户 和 Window、Volume](./images/people_volume_window.png) | ![Windows 和 Volumes](./images/windows_and_volumes.png) |
+| ------------------------------------------------------------ | ------------------------------------------------------- |
 
-但 Volume 并不是“只能达到”的体验，我们希望更加充分的利用 visionOS 提供的无限空间，创造身临其境的体验。比如说我们想把物体放在用户周围，窗口之外—— **Space** 是一种在 visionOS 上呈现用户界面的容器，可以为用户创建身临其境的体验。
+但 Volume 并不是“只能达到”的体验，我们还可以更充分的利用 visionOS 提供的无限空间，创造身临其境的体验。比如说我们想把物体放在用户周围，Window 之外—— **Space** 是另一种在 visionOS 上呈现用户界面的容器，可以为用户创建身临其境的体验。
 
-| ![无限空间](./images/infinite_space.png) | ![Windows、Volumes 以及 Spaces](./images/windows_and_volumes_and_spaces.png) |
-| ---------------------------------------- | ------------------------------------------------------------ |
+| ![Windows、Volumes 以及 Spaces](./images/windows_and_volumes_and_spaces.png) | ![无限空间](./images/infinite_space.png) |
+| ------------------------------------------------------------ | ---------------------------------------- |
 
-今年，随着 visionOS 的推出，Apple 将 AR 提升到一个全新的水平 —— **沉浸式体验(Immersive experience)**。应用程序会在用户周围显示窗口、三维内容等。开发者可以将虚拟对象或效果等锚定到物体表面，从而增强和丰富现实世界。同时，用户所处的现实环境也会作为用户体验的一部分，对用户仍然可见。
+通过 Space，Apple 将 AR 提升到一个全新的水平 —— **沉浸式体验(Immersive experience)**。应用程序会在用户周围显示窗口、三维内容等。开发者可以将虚拟对象或效果等锚定到物体表面，从而增强和丰富现实世界。同时，用户所处的现实环境也会作为用户体验的一部分，对用户仍然可见。
 
-更进一步的是**完全沉浸式体验((Fully immersive experience)**，应用程序可以完全控制用户所看到的内容，覆盖整个空间，这将解锁所有的可能！
+更进一步的是**完全沉浸式体验(Fully immersive experience)**，应用程序可以完全控制用户所看到的内容，覆盖整个空间，这将解锁所有的可能！
 
 | ![沉浸式体验](./images/immersive_experiences.gif) | ![完全沉浸式体验](./images/fully_immersive_experiences.gif) |
 | :-----------------------------------------------: | :---------------------------------------------------------: |
 |         沉浸式体验(Immersive experience)          |         完全沉浸式体验((Fully immersive experience)         |
 
-所有这一切都可以通过我们已经熟悉的工具、框架和模式来实现。其核心是 SwiftUI 的 `ImmersiveSpace`。
-
-在本文中，我们将将重点介绍 Space 、如何使用 Space 来创建身沉浸的体验、如何在 Space 中展示内容和更好的管理 Space，此外，还会介绍一些自定义功能。
+我们将围绕沉浸式体验的核心—— SwiftUI 的 `ImmersiveSpace` 展开。
 
 ## 初识 Space
 
