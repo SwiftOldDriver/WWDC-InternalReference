@@ -4,15 +4,11 @@ session_ids: [10111]
 
 ---
 
-
-
 # WWDC23 10111 - 使用 ImmersiveSpace 让 SwiftUI 跃出屏幕
 
 本文基于 [Session 10111](https://developer.apple.com/videos/play/wwdc2023/10111/) 梳理。
 
-
-
-在 visionOS 上通过一些功能强大且易于使用的 API，我们能够轻松创造完全沉浸式的体验。所有这一切都可以通过我们已经熟悉的工具、框架和模式来实现。其核心是 SwiftUI 的 `ImmersiveSpace`。在本文中，我们将围绕 Space 展开，介绍包括 Space 的信息、如何在 Space 中展示内容和更好的管理 Space，此外，还会介绍一些自定义功能。
+在 visionOS 上通过一些功能强大且易于使用的 API，我们能够轻松创造完全沉浸式的体验。所有这一切都可以通过我们已经熟悉的工具、框架和模式来实现。其核心是 SwiftUI 的 `ImmersiveSpace`。本文我们将围绕 Space 展开，介绍包括 Space 的信息、如何在 Space 中展示内容和更好的管理 Space，此外，还会介绍一些自定义功能。
 
 ![iOS 和 iPadOS 上丰富的 AR 体验](./images/mind_mapping.png)
 
@@ -22,10 +18,25 @@ session_ids: [10111]
 
 ![iOS 和 iPadOS 上丰富的 AR 体验](./images/existing_ar_apps.png)
 
+在 SwiftUI2.0 中，Apple 提供了全新的 [`App`](https://developer.apple.com/documentation/swiftui/app)、[`Scene`](https://developer.apple.com/documentation/swiftui/scene) 协议，使代码变得更清晰：
+
+```swift
+@main
+struct WorldApp: App {
+    var body: some Scene {
+        WindowGroup {
+            Text("Hello world")
+        }
+    }
+}
+```
+
+通在符合 `App` 协议的结构的声明之前加上 [`@main`](https://docs.swift.org/swift-book/ReferenceManual/Attributes.html#ID626) 属性，以指示该结构提供进入应用程序的入口点。`Scene` 是视图层次结构的容器，通过在 `App` 实例的 `body`中组合一个或多个符合 `Scene` 协议的实例来呈现具体程序。SwiftUI2.0 提供了预置的 Scene，此外，用户也可以自己编写符合 `Scene` 协议的场景。预置的 Scene 包括 [`WindowGroup`](https://developer.apple.com/documentation/swiftui/windowgroup)、[`DocumentGroup`](https://developer.apple.com/documentation/swiftui/documentgroup)，macOS 使用的 [`Window`](https://developer.apple.com/documentation/swiftui/window)、[`Settings`](https://developer.apple.com/documentation/swiftui/settings)，watchOS 使用的 [`WKNotificationScene`](https://developer.apple.com/documentation/swiftui/wknotificationscene)。
+
 在 WWDC23  [Take SwiftUI to the next dimension](https://developer.apple.com/videos/play/wwdc2023/10113) Session 中，Apple 详细介绍了 SwiftUI 中的第三维，可以在 visionOS 上呈现 Window 或 Volume。
 
-- Window：我们可以在 visionOS 应用中创建一个或多个的窗口。可以包含传统的视图或者控件，也可以通过添加 3D 内容来增加深度上的体验。如下左图的紫色、蓝色、红色 Window。
-- Volume：Volume 为我们提供了一个固定比例的容器，在任何距离都保持相同的大小，支持从任何角度查看。Volume 是在应用程序中显示 3D 内容的好方法，同时不会占用整个空间。如下左图的绿色 Volume。创建 Volume 非常简单，只需在创建 [Scene](https://developer.apple.com/documentation/swiftui/scene) 时使用新的 `.volumetric` 的  [`windowStyle(_:)`](https://developer.apple.com/documentation/swiftui/scene/windowstyle(_:)) 样式：
+- Window：我们可以在 visionOS 应用中创建一个或多个的窗口。可以包含传统的视图或者控件，也可以通过添加 3D 内容来增加深度上的体验。如下左图的紫色、蓝色、红色 Window。Window 即常规的 `WindowGroup` 在 visionOS 上的表现。
+- Volume：Volume 为我们提供了一个固定比例的容器，在任何距离都保持相同的大小，支持从任何角度查看。Volume 是在应用程序中显示 3D 内容的好方法，同时不会占用整个空间。如下左图的绿色 Volume。创建 Volume 非常简单，只需在创建 Scene 时使用新的 `.volumetric` 的  [`windowStyle(_:)`](https://developer.apple.com/documentation/swiftui/scene/windowstyle(_:)) 样式：
 
 ```swift
 // A volume that displays a globe.
@@ -38,7 +49,7 @@ WindowGroup {
 | ![用户 和 Window、Volume](./images/people_volume_window.png) | ![Windows 和 Volumes](./images/windows_and_volumes.png) |
 | ------------------------------------------------------------ | ------------------------------------------------------- |
 
-但 Volume 并不是“只能达到”的体验，我们还可以更充分的利用 visionOS 提供的无限空间，创造身临其境的体验。比如说我们想把物体放在用户周围，Window 之外—— **Space** 是另一种在 visionOS 上呈现用户界面的容器，可以为用户创建身临其境的体验。
+但 Volume 并不是“只能达到”的体验，我们还可以更充分的利用 visionOS 提供的无限空间，创造身临其境的体验。比如说我们想把物体放在 Window 之外、用户周围—— **Space** 是另一种在 visionOS 上呈现用户界面的容器，可以为用户创建身临其境的体验。
 
 | ![Windows、Volumes 以及 Spaces](./images/windows_and_volumes_and_spaces.png) | ![无限空间](./images/infinite_space.png) |
 | ------------------------------------------------------------ | ---------------------------------------- |
@@ -288,7 +299,7 @@ var body: some View {
 
 ### 使用 ImmersionStyle
 
-`ImmersionStyle` 以不同的方式呈现 Space 内容。我们可以将内容以**混合样式(Mixed)**、**渐进样式(Progressive)**或**完整样式(Full)**呈现。同时，`ImmersionStyle` 是动态可改的：
+`ImmersionStyle` 以不同的方式呈现 Space 内容。我们可以将内容以**混合样式 Mixed**、**渐进样式 Progressive** 或**完整样式 Full** 呈现。同时，`ImmersionStyle` 是动态可改的：
 
 ![ImmersionStyle](./images/immersionstyle.png)
 
