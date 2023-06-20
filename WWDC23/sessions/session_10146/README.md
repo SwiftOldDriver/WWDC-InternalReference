@@ -81,7 +81,7 @@ Result Builders 是驱动 SwiftUI 声明式语法的 Swift 特性之一。在前
 
 在外面日常使用 Swift 语言中，我们会经常使用 Array ，并结合范型特性来提供一个存储任何类型的数组。由于 Swift 具有强大的类型推断能力，所以我们在使用时，只需要提供其中的元素，Swift 编译器将会自动推断出来这个数组的类型。
 
-但是在实际使用中，这个场景其实具有局限性。例如我们在网络请求的时候，使用处理网络请求结果中，我们处理的不仅仅是单一类型的 `Result`，而是多个类型的 `Result` 入参。
+但是在实际使用中，这个场景其实具有局限性。例如我们有一系列的数据需要处理，且它们不仅仅是单一类型的 `Result`，而是多个类型的 `Result` 入参。
 
 ```swift
 struct Request<Result> { ... }
@@ -162,7 +162,7 @@ assert(max(a, b) == c)
 
 ![image.png](https://cdn.nlark.com/yuque/0/2023/png/227152/1686279836154-bde41aca-b8e3-4b37-9ad2-469aac0f6a58.png#averageHue=%23cdd1cd&clientId=u2119719c-d5b9-4&from=paste&height=630&id=u8bb67240&originHeight=1260&originWidth=2168&originalType=binary&ratio=2&rotation=0&showTitle=false&size=628472&status=done&style=none&taskId=u44cf2144-c074-4871-af06-a1675ba5451&title=&width=1084)
 
-所以我们应该怎么扩展错误信息呢？在 Macros 特性未出之前，也许我们没有更好的方法。下面我们来看看如何用 Macros 特性，来改善这一痛点。首先我们使用新的 hash（# 符号）assert 的关键字来重写这段代码。
+所以我们应该怎么扩展错误信息呢？在 Macros 特性未出之前，也许我们没有更好的方法。下面我们来看看如何用 Macros 特性，来改善这一痛点。首先我们使用新的 hash（`#`） 的关键字来重写这段代码。
 
 ```swift
 #assert(max(a, b) == c)
@@ -172,7 +172,7 @@ assert(max(a, b) == c)
 
 ![image.png](https://cdn.nlark.com/yuque/0/2023/png/227152/1686286374965-b0d585ac-1c59-4677-9de7-67489c87ce82.png#averageHue=%23c9cec9&clientId=u2119719c-d5b9-4&from=paste&height=630&id=u33d1b89f&originHeight=1260&originWidth=2168&originalType=binary&ratio=2&rotation=0&showTitle=false&size=642701&status=done&style=none&taskId=u4226fb85-9e55-40fc-b09b-2a736b32eba&title=&width=1084)
 
-如果我们想自己定义一个这种带有 hashtag 符号的 Macros 要如何定义呢？
+如果我们想自己定义一个这种带有 `#` 符号的 Macros 要如何定义呢？
 
 我们可以使用 `macro` 关键字来声明一个 Macros ：
 
