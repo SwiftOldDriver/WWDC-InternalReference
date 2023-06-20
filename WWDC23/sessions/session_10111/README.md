@@ -12,7 +12,7 @@ session_ids: [10111]
 
 ![iOS 和 iPadOS 上丰富的 AR 体验](./images/mind_mapping.png)
 
-# 进入沉浸式体验
+## 进入沉浸式体验
 
 在过去的几年中，Apple 引入和完善了许多工具及框架，用于为 iOS 和 iPadOS 等构建 AR 应用程序，例如 [ARKit](https://developer.apple.com/augmented-reality/arkit/)、[RealityKit](https://developer.apple.com/augmented-reality/realitykit/) 等。这些应用程序通过交互式的用户界面和虚拟对象来增强用户环境，模糊现实世界与想象之间的界限，创造了丰富的 AR 体验。
 
