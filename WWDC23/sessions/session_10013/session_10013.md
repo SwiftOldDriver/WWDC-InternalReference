@@ -1,4 +1,10 @@
+```
+session_ids: [10013]
+```
+
 # WWDC23 10013 - Meet StoreKit for SwiftUI
+
+> 本文基于 [Session 10013](https://developer.apple.com/videos/play/wwdc2023/10013) 梳理
 
 内购（IAP）的实现一直是一个复杂棘手的问题。不过最新的 StoreKit 为 SwiftUI 提供了一种非常简洁优雅的实现方式，本文将以实战为基础，由浅入深地进行介绍。
 
