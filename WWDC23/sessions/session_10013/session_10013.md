@@ -12,8 +12,6 @@ session_ids: [10013]
 
 ![](images/0.png)
 
-
-
 ## 1. 背景知识
 
 ### 什么是 Merchandising
@@ -34,8 +32,6 @@ IAP 可付费购买的内容，一共有四种类型：
 - Non-renewing subscriptions：不自动续期的订阅。付费会员，但是不自动续期，比如单月购买，这种一般会比自动续期的贵一点
 
 ![](images/1.png)
-
-
 
 ### StoreKit 配置文件
 
@@ -323,7 +319,7 @@ onInAppPurchaseStart，会在点击了购买按钮后回调。这可以用于购
 
 ![](images/28.png)
 
-- 直接把 nil 传入这些回调当中，能阻止其父 Views 处理生命周期回调事件，相当于回到默认状态，由Transaction.updates 方法进行处理。
+- 直接把 nil 传入这些回调当中，能阻止其父 Views 处理生命周期回调事件，相当于回到默认状态，由 Transaction.updates 方法进行处理。
 
 
 
@@ -358,11 +354,7 @@ onInAppPurchaseStart，会在点击了购买按钮后回调。这可以用于购
 
 
 
-
-
 ## 7. 深入探索 UI 样式的优化
-
-
 
 ### 优化商品 icon 的展示
 
