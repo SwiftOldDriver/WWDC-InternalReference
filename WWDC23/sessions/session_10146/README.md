@@ -62,17 +62,17 @@ let attributedName =
 
 因为 `if/else`是一个带有返回值的表达式，所以这个特性可以支持我们去掉那些冗余的 closure 写法，从而让你的代码更简洁。
 
-## Result Builders 相关工具链优化
+## Result Builder 相关工具链优化
 
-Result Builders 是驱动 SwiftUI 声明式语法的 Swift 特性之一。在前几个版本中，如果有语法错误，Swift 编译器在检测时会花费很长的时间，因为类型检查中，会不断深度搜索很多无效的路径。
+Result Builder （结果生成器）是驱动 SwiftUI 声明式语法的 Swift 特性之一。在前几个版本中，Swift 编译器需要花费很长的时间来确定错误，因为类型检查器搜索了大量无效路径。
 
-从 Swift 5.8 开始，无效代码的类型检测速度将大幅度提升，对无效代码的错误信息现在也更加准确。
+从 Swift 5.8 开始，错误代码的类型检测速度将大幅度提升，对错误代码的错误信息现在也更加准确。
 
 例如，我们来看下以下代码：
 
 ![image.png](./images/session_10164_01.png)
 
-在这个代码中，我们很显然知道具体的问题就是 `NavigationLink(value: .one)` 中，`.one` 是一个类型错误的参数。但是在 Swift 5.7 旧版本中，会报出如图中展示的错误。Swift 5.8 我们对 Result Builders 语法诊断做了优化，不仅提高了语法诊断的准确性，而且也大幅度优化了时间开销。在 Swift 5.8 及之后的版本中，你将会立即查看到正确的语法诊断错误提示，例如下图：
+在这个代码中，我们很显然知道具体的问题就是 `NavigationLink(value: .one)` 中，`.one` 是一个类型错误的参数。但是在 Swift 5.7 旧版本中，会报出如图中展示的错误。Swift 5.8 我们对 Result Builder 诊断做了优化，不仅提高了诊断的准确性，而且也大幅度优化了时间开销。在 Swift 5.8 及之后的版本中，你将会立即查看到正确的语义诊断错误提示，例如下图：
 
 ![image.png](./images/session_10164_02.png)
 
@@ -139,7 +139,7 @@ func evaluate<each Result>(_: repeat Request<each Result>) -> (repeat each Resul
 
 通过这样定义，我们就可以传入不受限制个数的参数，并且可以保证每一个入参都是独立范型类型。
 
-当然这个特性，最大的受益场景就是 SwiftUI ，因为当一个 `View` 内嵌多个 `View`的时候，SwiftUI 官方的方法就是通过范型以及 Result Builders 进行设计的，并且最大的子 `View`有 10 个为上限的数量限制。当引入了 Type Parameter Pack 这个特性之后，限制将被突破，API 设计也更加简洁和易读。
+当然这个特性，最大的受益场景就是 SwiftUI ，因为当一个 `View` 内嵌多个 `View`的时候，SwiftUI 官方的方法就是通过范型以及 Result Builder 进行设计的，并且最大的子 `View`有 10 个为上限的数量限制。当引入了 Type Parameter Pack 这个特性之后，限制将被突破，API 设计也更加简洁和易读。
 
 ## Macro
 
