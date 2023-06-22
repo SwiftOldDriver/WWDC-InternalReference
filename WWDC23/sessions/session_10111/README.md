@@ -8,7 +8,7 @@ session_ids: [10111]
 
 本文基于 [Session 10111](https://developer.apple.com/videos/play/wwdc2023/10111/) 梳理。
 
-在 visionOS 上通过一些功能强大且易于使用的 API，我们能够轻松创造完全沉浸式的体验。所有这一切都可以通过我们已经熟悉的工具、框架和模式来实现。其核心是 SwiftUI 的 `ImmersiveSpace`。本文我们将围绕 Space 展开，介绍包括 Space 的信息、如何在 Space 中展示内容和更好的管理 Space，此外，还会介绍一些自定义功能。
+在 visionOS 上通过一些功能强大且易于使用的 API，我们能够轻松创造完全沉浸式的体验。所有这一切都可以通过我们已经熟悉的工具、框架和模式来实现。其核心是 SwiftUI 的 [`ImmersiveSpace`](https://developer.apple.com/documentation/swiftui/immersivespace)。本文我们将围绕 Space 展开，介绍包括 Space 的信息、如何在 Space 中展示内容和更好的管理 Space，此外，还会介绍一些自定义功能。
 
 ![iOS 和 iPadOS 上丰富的 AR 体验](./images/mind_mapping.png)
 
@@ -36,7 +36,7 @@ struct WorldApp: App {
 在 WWDC23  [Take SwiftUI to the next dimension](https://developer.apple.com/videos/play/wwdc2023/10113) Session 中，Apple 详细介绍了 SwiftUI 中的第三维，可以在 visionOS 上呈现 Window 或 Volume。
 
 - Window：我们可以在 visionOS 应用中创建一个或多个的窗口。可以包含传统的视图或者控件，也可以通过添加 3D 内容来增加深度上的体验。如下左图的紫色、蓝色、红色 Window。Window 即常规的 `WindowGroup` 在 visionOS 上的表现。
-- Volume：Volume 为我们提供了一个固定比例的容器，在任何距离都保持相同的大小，支持从任何角度查看。Volume 是在应用程序中显示 3D 内容的好方法，同时不会占用整个空间。如下左图的绿色 Volume。创建 Volume 非常简单，只需在创建 Scene 时使用新的 `.volumetric` 的  [`windowStyle(_:)`](https://developer.apple.com/documentation/swiftui/scene/windowstyle(_:)) 样式：
+- Volume：Volume 为我们提供了一个固定比例的容器，在任何距离都保持相同的大小，支持从任何角度查看。Volume 是在应用程序中显示 3D 内容的好方法，同时不会占用整个空间。如下左图的绿色 Volume。创建 Volume 非常简单，只需在创建 Scene 时使用新的 [`.volumetric`](https://developer.apple.com/documentation/swiftui/windowstyle/volumetric/) 的  [`windowStyle(_:)`](https://developer.apple.com/documentation/swiftui/scene/windowstyle(_:)) 样式：
 
 ```swift
 // A volume that displays a globe.
@@ -48,6 +48,8 @@ WindowGroup {
 
 | ![用户 和 Window、Volume](./images/people_volume_window.png) | ![Windows 和 Volumes](./images/windows_and_volumes.png) |
 | ------------------------------------------------------------ | ------------------------------------------------------- |
+
+> 符合 `WindowStyle` 协议的样式，包括只服务于 macOS 的 [`hiddentitlebar`](https://developer.apple.com/documentation/swiftui/windowstyle/hiddentitlebar)、[`titleBar`](https://developer.apple.com/documentation/swiftui/windowstyle/titlebar)，服务于 macOS 和 visionOS 的  [`automatic`](https://developer.apple.com/documentation/swiftui/windowstyle/automatic)、以及只服务于 visionOS [`plain`](https://developer.apple.com/documentation/swiftui/windowstyle/plain)、[`volumetric`](https://developer.apple.com/documentation/swiftui/windowstyle/volumetric)。`automatic` 和 `plain` 即我们上文提到的 Window，但 `automatic` 作为普通 Window，与 `plain` 的差异在于是否在 visionOS 中展示玻璃背景效果。
 
 但 Volume 并不是“只能达到”的体验，我们还可以更充分的利用 visionOS 提供的无限空间，创造身临其境的体验。比如说我们想把物体放在 Window 之外、用户周围—— **Space** 是另一种在 visionOS 上呈现用户界面的容器，可以为用户创建身临其境的体验。
 
@@ -66,7 +68,7 @@ WindowGroup {
 
 ## 初识 Space
 
-我们以太空探索主题的 World 应用程序为例，增加一个探索太空的 Space。Space 是 SwiftUI 中的一种新的 [Scene](https://developer.apple.com/documentation/swiftui/scene) Type，称为 **`ImmersiveSpace`**。我们可以在应用程序中定义一个 `ImmersiveSpace`：
+我们以太空探索主题的 World 应用程序为例，增加一个探索太空的 Space。Space 是 SwiftUI 中的一种新的 Scene Type，称为 **`ImmersiveSpace`**。我们可以在应用程序中定义一个 `ImmersiveSpace`：
 
 ```swift
 @main
@@ -164,7 +166,9 @@ struct LaunchWindow: Scene {
 
 ![WindowGroup](./images/windowgroup.png)
 
-单击该按钮时，我们将改按钮标题并打开 Space。此前，SwiftUI 为了控制 Window，提供了 `openWindow` 和 `dismissWindow` 的 Environment Action。对于 `ImmersiveSpace`，SwiftUI 添加了新的 `openImmersiveSpace` 和 `dismissImmersiveSpace` Action，可以在按钮响应时使用这些 Action：
+单击该按钮时，我们将改按钮标题并打开 Space。此前，SwiftUI 为了控制 Window，提供了 `openWindow` 和 `dismissWindow` 的 Environment Action。对于 `ImmersiveSpace`，SwiftUI 添加了新的 [`openImmersiveSpace`](https://developer.apple.com/documentation/swiftui/environmentvalues/openimmersivespace) 和 [`dismissImmersiveSpace`](https://developer.apple.com/documentation/swiftui/dismissimmersivespaceaction) Action。
+
+顾名思义，`openImmersiveSpace` 是呈现 Space 的 Action，`dismissImmersiveSpace` 是消除 Space 的 Action。我们可以在按钮响应时使用这些 Action：
 
 ```swift
 struct SpaceControl: View {
@@ -218,9 +222,13 @@ struct WorldApp: App {
 
 ![LaunchWindow 和 SolarSystem](./images/launchwindow_solarsystem.gif)
 
+我们可以回顾下文章最初提到的概念，如果此时有多个应用程序并排运行时，在点击按钮时，我们的 Space 将在其中脱颖而出。其他应用程序将暂时消失。
+
 ### 使用 Model3D
 
-现在我们已经定义了一个多场景应用程序，其中包含一个标准的 Window 和一个 Space。我们已经看到 World 应用程序中使用了地球模型。在构建沉浸式体验的应用程序时，我们肯定会希望在 Space 中显示一些具有大量细节的 3D 资源。请记住，这些资源可能需要一些时间才能完全加载和呈现。为获得最佳用户体验，请确保利用异步加载 3D 资源的新 `Model3D` 和 `RealityView` API：
+现在我们已经定义了一个多场景应用程序，其中包含一个标准的 Window 和一个 Space。我们已经看到 World 应用程序中使用了地球模型。在构建沉浸式体验的应用程序时，我们肯定会希望在 Space 中显示一些具有大量细节的 3D 资源。需要注意的是，这些资源可能需要一些时间才能完全加载和呈现。
+
+如果我们想在 SwiftUI 应用程序中嵌入 USD 文件或 Reality 文件的 3D 模型，为获得最佳用户体验，可以利用新 [`Model3D`](https://developer.apple.com/documentation/realitykit/model3d/)  API，这是一个新的 View 视图，用于异步加载 3D 资源：
 
 ```swift
 Model3D(named: "Earth") { phase in
@@ -236,6 +244,37 @@ Model3D(named: "Earth") { phase in
 ```
 
 在此代码中，资源的加载被划分了不同的阶段，在模型仍在加载时或出现问题时显示提示。
+
+此外，我们可以使用标准的 ViewModifier 来调整模型的大小。 例如，使用 [`resizable(_:)`](https://developer.apple.com/documentation/realitykit/resolvedmodel3d/resizable(_:)) 方法缩放模型，适应当前视图的大小。使用 [`aspectRatio(_:contentMode:)`](https://developer.apple.com/documentation/SwiftUI/View/aspectRatio(_:contentMode:)-771ow) 方法调整大小，保持模型的原始纵横比：
+
+```swift
+ Model3D(named: "Robot-Drummer") { model in
+     model
+         .resizable()
+         .aspectRatio(contentMode: .fit)
+ } placeholder: {
+     ProgressView()
+ }
+```
+
+如果我们希望从指定的 URL 加载模型：
+
+```swift
+ Model3D(url: URL(string: "https://example.com/robot.usdz")!)
+     .frame(width: 300, height: 600)
+```
+
+在模型加载之前，`Model3D` 会显示一个填充可用空间的标准占位符，即我们在上文图片中看到的、地球在加载时展示的“空白地球”。加载成功完成后，视图将更新以显示模型。此外，我们也可以指定自定义占位符：
+
+```swift
+ let url = URL(string: "https://example.com/robot.usdz")!
+ Model3D(url: url) { model in
+     model.resizable()
+ } placeholder: {
+     ProgressView()
+ }
+ .frame(width: 50, height: 50)
+```
 
 ## 管理 Space
 
@@ -365,11 +404,11 @@ struct WorldApp: App {
 
 ### 初始的 ImmersionStyle
 
-到目前为止，我们的应用程序允许我们通过单击按钮打开 Space。如果我们想在应用程序启动时立即启动 Space 该怎么办？为了直接进入 Space，我们需要为应用程序配置 Scene Configuration：
+到目前为止，我们的应用程序允许我们通过单击按钮打开 Space。如果我们想在应用程序启动时立即启动 Space 该怎么办？为了直接进入 Space，我们需要为应用程序的 Info.plist 配置 Scene Configuration：
 
 ![Scene Configuration](./images/scene_configuration.png)
 
-只需设置  `UISceneSessionRoleImmersiveSpaceApplication` 的 `UISceneInitialImmersionStyle` 为期望的 `ImmersionStyle` 即可。
+只需设置  `UISceneSessionRoleImmersiveSpaceApplication` 的 `UISceneInitialImmersionStyle` 为期望的 `ImmersionStyle` 即可。包括 `UIImmersionStyleMixed`、`UIImmersionStyleFull`、`UIImmersionStyleProgressive`。但从开发者角度看，当前使用 Info.plist 作为配置，这个单一不可选的实现方式导致灵活性也受到了一些限制。
 
 `preferredSurroundingsEffect` 允许我们调整背景明暗，使 Space 内容更加清晰。当 Space 的 `ImmersionStyle` 切换为 `Progressive` 时，我们设置了 `preferredSurroundingEffects` 为 `.systemDark`，所以当 `SolarSystem` 出现时，用户的周围会自动变暗。
 
