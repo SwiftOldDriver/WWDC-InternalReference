@@ -12,7 +12,7 @@ session_ids: [10111]
 
 ## 不超过 120 个字的文章简介
 
->> 在 visionOS 上通过一些功能强大且易于使用的 API，我们能够轻松创造完全沉浸式体验。所有这一切都可以通过我们已经熟悉的工具、框架和模式来实现。其核心是 SwiftUI 的 ImmersiveSpace。
+>> 通过 SwiftUI 的 ImmersiveSpace，我们能够轻松的在 visionOS 上创造完全沉浸式的体验。在 Space 中，我们可以使用 `RealityView` 、`Model3D` 等展示内容，可以使用 `scenePhase`、`GeometryReader3D`、`ImmersionStyle`等更好的管理 Space，此外，还有一些自定义功能也值得我们探索。
 
 ## 公众号/小专栏图文头图
 
