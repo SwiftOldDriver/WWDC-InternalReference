@@ -2,7 +2,7 @@
 session_ids: [10123]
 ---
 
-# Session 10123 - 把你的游戏移植到 Mac 上，第一部分：制定移植计划
+# Session 10123 - 把你的游戏移植到 Mac 上，第一部分：制定移植方案
 
 本文基于 [Session 10123] ([Bring your game to Mac, Part 1: Make a game plan](https://developer.apple.com/videos/play/wwdc2023/10123/?time=127))梳理。
 
@@ -12,9 +12,9 @@ session_ids: [10123]
 
 首先介绍一下大杀器 - Game Porting Toolkit。
 
-它是苹果提供的移植套件，旨在提升游戏开发者的移植效率。既然是套件，就包含了许多功能，这里先重点介绍一下「环境模拟器」，其他功能下文会陆续介绍。
+它是苹果提供的移植套件，旨在提升游戏开发者的移植效率。
 
-在说这个模拟器是什么之前，先上三张图，开开胃：
+在详细介绍它之前，先上三张图，开开胃：
 
 ![2077](./images/CyberPunk2077.png)
 ![FF7](./images/FF7.png)
@@ -54,28 +54,56 @@ session_ids: [10123]
 
 ![D3DToMetal](./images/D3DToMetal.jpg)
 
-总结来看，环境模拟器做了两次翻译，首先是将「基于 D3D 的 x86 架构的 Windows 游戏」翻译成「基于 Metal 的 x86 架构的 Mac 游戏」，再将「x86 架构的 Mac 游戏」翻译成「ARM 架构的 Windows 游戏」，于是 M 系列芯片的 Mac 就可以愉快地运行游戏了。
+总结来看，Game Porting Toolkit 做了两次翻译，首先是将「基于 D3D 的 x86 架构的 Windows 游戏」翻译成「基于 Metal 的 x86 架构的 Mac 游戏」，再将「x86 架构的 Mac 游戏」翻译成「ARM 架构的 Windows 游戏」，于是 M 系列芯片的 Mac 就可以愉快地运行游戏了。
 
 ![WhatAppleDone](./images/WhatAppleDone.jpg)
 
 既然是翻译了两次，一定是有性能损耗的，业界估计平均损耗在 50% 上下。
 
-## 移植计划
+## 移植方案
 
-话说回来，Game Porting Toolkit 的初衷还是想让游戏开发者可以更加便利地移植游戏，苹果推荐了一个移植计划：
+话说回来，Game Porting Toolkit 的初衷还是想让游戏开发者可以更加便利地移植游戏，苹果推荐了一个移植方案：
 
 ![GamePortingPlan](./images/GamePortingPlan.png)
 
-接下来，我会分别介绍着六步流程。
+接下来，我会分别介绍这六步流程。
 
-## 评估游戏
+### 评估游戏
 
 得益于 Game Porting Toolkit 提供的环境模拟器，开发者可以在不修改任何代码的情况，直接运行 Windows 版本的游戏。
 
 ![PlayGameWithDebug](./images/PlayGameWithDebug.png)
 
-开发者不仅可以在右上角看到游戏运行中的各种参数，还能在终端里直接看到各种需要优化的信息。更进一步，你还可以打开 Instrument 做更深度的性能检测。
+开发者不仅可以在右上角看到游戏运行中的各种参数，还能在终端里直接看到各种需要优化的信息。
+
+浏览一下 HUD 中的可观测信息：
+
+![HUD](./images/HUD.png)
+
+更进一步，你还可以打开 Instrument 做更深度的性能检测：
+
+![Instrument](./images/Instrument.jpg)
 
 基于以上信息，再结合游戏中的实际体验，开发者可以很容易地评估当前游戏移植到 Mac 上需要优化的点，以及大致的工作量。
 
-## 着色器移植
+### 着色器移植
+
+苹果这次还提供了 Metal Shader Converter，用来将 Windows 游戏中的 DXIL 着色器（HLSL 的编译产物）转换为 Metal 可用的版本。
+
+具体细节，可以观看本主题的第二部分：【第二部分传送门占位】。
+
+### 使用 Metal 渲染
+
+在完成了着色器转换之后，就可以使用 Metal 来做渲染了。
+
+Metal 3 提供了现代高端游戏使用的所有高级图形和计算功能，包括 MetalFX、快速资源加载、离线编译、网格着色器和光线追踪，这使得转换图形代码变得非常简单。
+
+![Metal](./images/Metal.jpg)
+
+具体细节，可以观看本主题的第三部分：【第三部分传送门占位】。
+
+### 输入体验移植
+
+### 听觉体验移植
+
+### 视觉体验移植
