@@ -277,17 +277,23 @@ withConfiguration: UIImage. SymbolConfiguration(locale: locale)
 ![New sidebar behavior](./images/New%20sidebar%20behavior.gif)
 
 ### 键盘滑动支持
+
 为了使iPad在与Magic Keyboard等硬件键盘组合使用时更加强大，Apple增加了对键盘滚动的支持。在iOS 17中，可以使用Page Up、Page Down、Home和End键来滚动UIScrollView。开发者可以使用UIScrollView的新API allowsKeyboardScrolling 来覆盖此行为。
+
 ### 提升对文档的支持
+
 在iPadOS 17中，Apple改进了对文档应用程序的支持。UIKit提供了一个新的UIDocumentViewController作为内容视图控制器的基类，它提供了系统默认一些体验，并提供了许多额外的功能，例如自动配置标题菜单、分享、拖放、键盘命令等等。同时UIDocument现在遵循UINavigationItemRenameDelegate协议，在将其设置为视图控制器的导航项的重命名代理时提供完整的重命名体验。想要了解更多关于UIKit对于文档应用的提升请观看[Build better document-based apps](https://developer.apple.com/videos/play/wwdc2023/10056)
 ![Impoved Document](./images/Impoved%20Document.png)
+
 ### Apple Pencil新功能
+
 在iOS 17中Apple为Apple Pencil在iPad OS应用中引入了许多新功能与API。
 首先使用全新的iPad Pro和iOS 16.4版本，可以体验Apple引入的Apple Pencil悬停功能。要捕捉来自笔的悬停事件，开发者可以使用UIHoverGestureRecognizer。`z-offet`反映了从屏幕测得的标准化悬停距离，取值范围从0到1。开发者还可以捕捉笔在悬停范围内的高度和方位角，以准确地预览在屏幕上您的画笔触笔可能呈现的效果。使用笔触悬停功能，开发者还可以在主屏幕和应用程序中的工具栏图标上进行悬停。如果正在使用UIPointerInteraction，则无需进行额外的设置。使用鼠标或触控板输入与使用Apple Pencil输入时的视觉交互略有不同。例如，在使用Apple Pencil时，系统指针等指针样式是不可见的，关于这点想要了解更多可以观看[Build for the iPadOS pointer](https://developer.apple.com/videos/play/wwdc2020/10093)
 ![Hover Apple Pencil](./images/Hover%20with%20Apple%20Pencil.png)
 在iOS 17中，PencilKit变得更加富有表现力，同时引入了新的墨迹类型。单线笔类型非常适合细节绘制，可以提供一致宽度的线条。钢笔类型模拟了书法的效果，有粗的下笔和细的提笔。水彩效果类型可以创造出美丽的笔触和表现力。蜡笔类型则是一个有趣的新增功能。
 ![New inks in PencilKit](./images/New%20inks%20in%20PencilKit.png)
 > 在使用新的墨迹类型时，请考虑向后兼容性的问题。之前的iOS版本无法加载包含新墨迹类型。在数据模型类型（如PKDrawing、PKStroke等）上增加了一个新的contentVersion属性，用于指示加载对象所需的PencilKit版本。contentVersion为1表示使用iOS 14中发布的墨迹类型，而2表示使用iOS 17中的新墨迹类型。为了提供良好的用户体验，可以使用该API来检测不兼容性，并提供相应的提示信息或渲染备用图像。当无法保持向后兼容性时，可以使用新的maximumSupportedContentVersion API来限制通过画布（canvas）和工具选择器（toolpicker）可用的功能。
+
 ## 常规功能增强
 
 ### Collection View性能提升
