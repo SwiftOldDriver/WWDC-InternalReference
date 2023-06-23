@@ -217,9 +217,12 @@ viewController.contentUnavailableConfiguration = config
 ![empty status search](./images/empty%20status%20search.png)
 
 ## 国际化语言支持
+
 在所有苹果平台上，无论语言设置如何，均提供一致、高质量的体验这是非常重要，为了实现这一点，iOS 17在字体和文本渲染领域取得了重大进展。在这一部分中将介绍动态行高调整功能，它有助于防止在某些字体和语言中出现文本裁剪和碰撞，也将介绍对于断行与连字的改进与基于本地化设置图片的新API。
 ![Internationalization introduce](./images/Internationalization%20introduce.png)
+
 ### 自适应的动态行高
+
 首先是关于字体以及其度量，字体度量使用几个术语来定义，`baseline`是一个想象的线，用于支撑汉字或单词，`baseline`是一个水平的线，汉字或单词的下部或底部通常与其对齐。`line-height`是`baseline`之间的距离如下图。
 ![Dynamic line-height](./images/Dynamic%20line-height.png)
 `x-height`是位于小写字母顶部的一条线，一些字体的上行和下行会延伸到这些线之外，上行超过`x-height`，下行超过`baseline`，如下图所示。
@@ -228,16 +231,20 @@ viewController.contentUnavailableConfiguration = config
 ![Dynamic line-height_1](./images/Dynamic%20line-height_1.png)
 为了防止所有语言中存在的上行与下行重叠的问题，Apple引入了动态行高调整功能。这个功能使得文本控件如UILabel自动调整其行高和垂直距离来实现最佳的可读效果。
 ![Dynamic line-height_2](./images/Dynamic%20line-height_2.png)
+
 ### 断行与连字的提升
+
 在iOS 17中对于中文、德文、日文和韩文等语言的断行行为进行了大量增强，这些改进根据应用使用的不同文本样式使用不同的规则，同时可以适配各种文本样式，更多的细节请观看[What’s new with text and text interactions](https://developer.apple.com/videos/play/wwdc2023/10058)。
 ![line-breaking and hyphenation](./images/line-breaking%20and%20hyphenation.png)
 
 ### 由本地化重设图片
+
 在iOS 17中UIKit支持访问特定的本地化图像变体，例如，`character.textbox SF Symbol`有八个基于不同区域设置的变体。
 ![Retieve UIiamges by local](./images/Retieve%20UIiamges%20by%20local.png)
 默认情况下，UIKit会根据设备上当前的语言设置获取相应的变体。如果当前语言是美式英语，则显示拉丁字母的变体。
 ![Retieve UIimages by local english](./images/Retieve%20UIimages%20by%20local%20english.png)
 在iOS 17中，应用程序可以通过在图像的配置中提供区域设置来请求特定的变体。例如，开发者可以提供一个带有日语区域设置的配置来获取该符号的日语版本。通过这些文本渲染的增强和对各种区域设置的扩展支持，应用程序可以为全球用户营造一种熟悉和归属感。
+
 ```Swift
 // Retrieve UIImage by locale
 let locale = Locale (languageCode: •japanese)
@@ -247,7 +254,9 @@ systemName: "character.textbox",
 withConfiguration: UIImage. SymbolConfiguration(locale: locale)
 )
 ```
+
 ![Retieve UIimages by local japanese](./images/Retieve%20UIimages%20by%20local%20japanese.png)
+
 ## iPad OS应用改进
 
 ### 窗口拖拽交互
