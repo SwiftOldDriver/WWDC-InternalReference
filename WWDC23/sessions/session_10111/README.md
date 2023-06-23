@@ -408,7 +408,9 @@ struct WorldApp: App {
 
 ![Scene Configuration](./images/scene_configuration.png)
 
-只需设置  `UISceneSessionRoleImmersiveSpaceApplication` 的 `UISceneInitialImmersionStyle` 为期望的 `ImmersionStyle` 即可。包括 `UIImmersionStyleMixed`、`UIImmersionStyleFull`、`UIImmersionStyleProgressive`。但从开发者角度看，当前使用 Info.plist 作为配置，这个单一不可选的实现方式导致灵活性也受到了一些限制。
+只需设置  `UISceneSessionRoleImmersiveSpaceApplication` 的 `UISceneInitialImmersionStyle` 为期望的 `ImmersionStyle` 即可。包括 `UIImmersionStyleMixed`、`UIImmersionStyleFull`、`UIImmersionStyleProgressive`。
+
+但根据已公开内容和笔者尝试，该配置无法通过其他途径进行修改。从开发者角度看，唯一使用 Info.plist 作为配置，这个单一不可选的实现方式导致灵活性也受到了一些限制。也许 Apple 对于应用程序的形态有独特的想法，期待 Apple 后续可以提供解释或者优化该部分内容。
 
 `preferredSurroundingsEffect` 允许我们调整背景明暗，使 Space 内容更加清晰。当 Space 的 `ImmersionStyle` 切换为 `Progressive` 时，我们设置了 `preferredSurroundingEffects` 为 `.systemDark`，所以当 `SolarSystem` 出现时，用户的周围会自动变暗。
 
