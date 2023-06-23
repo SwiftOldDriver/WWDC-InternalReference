@@ -453,15 +453,23 @@ iOS 17和macOS Sonoma引入了调色板菜单(Palette Menus)，调色板菜单(P
 ## References
 
 [UIKit updates](https://developer.apple.com/documentation/Updates/UIKit)
+
 [Session_10055](https://developer.apple.com/videos/play/wwdc2023/10055/)
+
 [viewIsAppearing:](https://developer.apple.com/documentation/uikit/uiviewcontroller/4195485-viewisappearing?language=objc)
 
 ## Related Videos
 
 [Animate symbols in your app](https://developer.apple.com/videos/play/wwdc2023/10258)
+
 [Animate with springs](https://developer.apple.com/videos/play/wwdc2023/10158)
+
 [Build better document-based apps](https://developer.apple.com/videos/play/wwdc2023/10056)
+
 [Support HDR images in your app](https://developer.apple.com/videos/play/wwdc2023/10181)
+
 [Unleash the UIKit trait system](https://developer.apple.com/videos/play/wwdc2023/10057)
+
 [What’s new with text and text interactions](https://developer.apple.com/videos/play/wwdc2023/10058)
+
 [Build for the iPadOS pointer](https://developer.apple.com/videos/play/wwdc2020/10093)
