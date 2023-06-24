@@ -4,15 +4,15 @@ session_ids: [10000]
 
 ## 个人介绍
 
->> Sample：
+> > Sample：
 
 ## 审核介绍
 
->> Sample：
+> > Sample：
 
 ## 不超过 120 个字的文章简介
 
->> Sample
+> > Sample
 
 ## 公众号/小专栏图文头图
 
