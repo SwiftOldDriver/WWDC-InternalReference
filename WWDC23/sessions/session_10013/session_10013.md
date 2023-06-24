@@ -506,7 +506,7 @@ StoreKit Views 内部已经实现了关于缓存的逻辑，通过 storeProducts
 
 ![](images/50.png)
 
->  想要了解更多 containerBackground 相关的 API，可以参考：
+> 想要了解更多 containerBackground 相关的 API，可以参考：
 >
 > - What's new in SwiftUI - WWDC23
 >
