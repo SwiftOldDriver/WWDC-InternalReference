@@ -453,6 +453,7 @@ iOS 17和macOS Sonoma引入了调色板菜单(Palette Menus)，调色板菜单(P
 
 ![Summary](./images/summary.png)
 
+在iOS 17中对于UIKit的更新还是挺好玩的，对于Xcode Preview的更新可以更快的看到的我们的代码改动，View Controller生命周期的更新再也不要想视图更新的代码写到哪去了，以及新的UIPageControl交互的更新等等。同时UIKit与SwiftUI的交互也在进一步的提升，可预见的未来SwiftUI一定会兴盛起来，抓紧肝起来~
 ## References
 
 [UIKit updates](https://developer.apple.com/documentation/Updates/UIKit)
