@@ -60,6 +60,10 @@ session_ids: [10123]
 
 既然是翻译了两次，一定是有性能损耗的，业界估计平均损耗在 50% 上下。
 
+当然，Game Porting Toolkit 的能力不仅仅于此，它还翻译了输入控制、音频等功能。一切都是为了让你一行代码不改，就把游戏运行起来。
+
+![GamePortingToolkit](./images/GamePortingToolkit.png)
+
 ## 移植方案
 
 话说回来，Game Porting Toolkit 的初衷还是想让游戏开发者可以更加便利地移植游戏，苹果推荐了一个移植方案：
@@ -90,7 +94,7 @@ session_ids: [10123]
 
 苹果这次还提供了 Metal Shader Converter，用来将 Windows 游戏中的 DXIL 着色器（HLSL 的编译产物）转换为 Metal 可用的版本。
 
-具体细节，可以观看本主题的第二部分：【第二部分传送门占位】。
+更多详情，可以观看本主题的第二部分：【第二部分传送门占位】。
 
 ### 使用 Metal 渲染
 
@@ -100,10 +104,53 @@ Metal 3 提供了现代高端游戏使用的所有高级图形和计算功能，
 
 ![Metal](./images/Metal.jpg)
 
-具体细节，可以观看本主题的第三部分：【第三部分传送门占位】。
+更多详情，可以观看本主题的第三部分：【第三部分传送门占位】。
 
 ### 输入体验移植
 
+在使用 Game Porting Toolkit 体验过游戏的输入体验之后，开发者就可以进行具体的移植了。
+
+在 Mac 上，游戏控制器框架（ Game Controller framework）为游戏提供了线程安全和低延迟的支持，可以在各种外设上进行游戏输入，例如游戏手柄、键盘、鼠标、赛车方向盘和街机摇杆。开发者还可以访问游戏控制器的附加功能，包括触觉反馈和运动感应。Mac 提供系统级别的用户偏好设置，支持每个应用程序的输入重映射，以及自动支持从任何游戏中的控制器进行屏幕截图、录制视频和获取 15 秒游戏高光时刻。
+
+![InputFramework](./images/InputFramework.png)
+
+在这种全方位的功能支持下，无论你的 Windows 游戏用的是第三方的跨平台输入组件，或是底层的 Windows API，还是游戏外设自定义的 SDK，都能获得足够的移植空间。
+
+更多细节可以观看往期的主题：
+
+- [Tap into virtual and physical game controllers](https://developer.apple.com/videos/play/wwdc2021/10081)
+- [Advancements in Game Controllers](https://developer.apple.com/videos/play/wwdc2020/10614)
+
 ### 听觉体验移植
 
+如果你的游戏是基于第三方跨平台音频组件的话，比如 Wwise、Unity 和 FMOD。那么恭喜你，你几乎不用做任何移植就可以完美适配了，因为这些组件的跨平台版本已经很好地支持了 Mac。
+
+如果你的游戏没有使用跨平台组件，而是采用了更低级别的音频框架或 API，你也可以正常使用苹果提供的高级或低级各种音频框架来进行移植。
+
+![AudioFramework](./images/AudioFramework.png)
+
+更多细节可以观看往期的主题：
+
+- [Plug-in and play: Add Apple frameworks to your Unity game projects](https://developer.apple.com/videos/play/wwdc2022/10065)
+- [Discover geometry-aware audio with the Physical Audio Spatialization Engine (PHASE)](https://developer.apple.com/videos/play/wwdc2021/10079)
+
 ### 视觉体验移植
+
+使用 Game Porting Toolkit，你可以在显示器上看到游戏运行在基础动态范围与帧速率控制的接口上的情况。
+
+在 Windows 上，你的游戏可能会用到颜色管理和色调映射的接口来实现高动态范围。比如，AdvancedColorInfo 关于颜色空间的 API。还可能会利用 IDXGISwapChain 中 timing 和 feedback 来控制 SDR 和 HDR 内容的节奏。
+
+在 Mac 上，你可以使用 CAMetalLayer 的扩展动态范围支持，以及 CAMetalDisplayLink 提供的 API 来实现完整的功能移植。
+
+![DisplayFramework](./images/DisplayFramework.png)
+
+更多细节可以观看往期的主题：
+
+- [Explore EDR on iOS](https://developer.apple.com/videos/play/wwdc2022/10113)
+- [Explore HDR rendering with EDR](https://developer.apple.com/videos/play/wwdc2021/10161)
+
+## 结束语
+
+基于以上总总，我们可以看出苹果今年在游戏上是下了大力气的。不论 Game Porting Toolkit 还是 Metal Shader Converter，都是为了让开发者更有动力来移植游戏，最终让自家的游戏生态更加繁荣。
+
+为什么今年来苹果对游戏生态愈加重视呢？之前我不懂，今年看到 Apple Vision Pro 我终于明白了。Apple Vision Pro 想要快速普及和应用，短时间内可能还是要落地在游戏领域，而今天 Mac 的游戏生态，也是为了未来的 Apple Vision Pro 生态去铺路。核心还是 Metal 的普及和推广上，如果能在近几年吸引一批开发者通过移植游戏熟悉 Metal，并积累一些开源生态，未来等 Apple Vision Pro 真正大量铺货的时候，一切也就水到渠成了。
