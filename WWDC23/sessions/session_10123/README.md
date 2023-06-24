@@ -12,7 +12,7 @@ session_ids: [10123]
 
 首先介绍一下大杀器 - Game Porting Toolkit。
 
-它是苹果提供的移植套件，旨在提升游戏开发者的移植效率。
+它是苹果提供的移植套件，旨在让开发者在不改一行代码的情况下，就看到游戏运行在 Mac 上的情况。
 
 在详细介绍它之前，先上三张图，开开胃：
 
@@ -28,8 +28,9 @@ session_ids: [10123]
 
 ![GameList](./images/GameList.jpg)
 
-👆🏻 以上是国外大佬总结的游戏可玩性清单，[传送门](https://docs.google.com/spreadsheets/d/1t_E04Qt411f9mEZJVku_OJsEe6XCqZZsdqtjVaMCcgk/edit#gid=0)（需要梯子）
-心动了吗？想要动手试试，你可以下载 [Game Porting Toolkit](https://developer.apple.com/download/all/?q=game%20porting%20toolkit)，打开里面的 Read Me.rtf 跟着步骤试试看。不过，我更推荐神秘的民间力量：
+以上是国外大佬总结的游戏可玩性清单，[传送门](https://docs.google.com/spreadsheets/d/1t_E04Qt411f9mEZJVku_OJsEe6XCqZZsdqtjVaMCcgk/edit#gid=0)（需要梯子）。
+
+心动了吗？想要动手试试，你可以下载 [Game Porting Toolkit](https://developer.apple.com/download/all/?q=game%20porting%20toolkit)，打开里面的 Read Me.rtf 跟着教程试试看。不过，我更推荐神秘的民间力量：
 
 1. 这篇[博客](https://www.outcoldman.com/en/archive/2023/06/07/playing-diablo-4-on-macos/)手把手教你在 Mac 上，把大菠萝 IV 跑起来。
 2. 这个叫做 [macgaming](https://www.reddit.com/r/macgaming/) 的 reddit 小组就更厉害了，里面讨论着用 Mac 玩游戏的一切。从名字你就可以看出，里面聚集了一大堆有大病的表叔，用 Mac 玩游戏 :)。
@@ -38,7 +39,7 @@ session_ids: [10123]
 
 > Wine （“Wine Is Not an Emulator” 的首字母缩写）是一个能够在多种 POSIX-compliant 操作系统（诸如 Linux，macOS 及 BSD 等）上运行 Windows 应用的兼容层。Wine 不是像虚拟机或者模拟器一样模仿内部的 Windows 逻辑，而是將 Windows API 调用翻译成为动态的 POSIX 调用，免除了性能和其他一些行为的内存占用，让你能够干净地集合 Windows 应用到你的桌面。
 
-简单来说，Wine 牛逼的地方在于它翻译而不是模拟，它需要猜测 Windows API 的实现，自己实现一套一模一样的。工作量的庞大可想而知，但是性能比虚拟机好了许多。
+简单来说，Wine 牛逼的地方在于它是翻译而不是模拟，它需要猜测 Windows API 的内部实现，自己实现一套一模一样的。工作量的庞大可想而知，但是性能比虚拟机好了许多。
 
 在苹果之前，Valve 推出的掌机 Steam Deck 就用了这套方案，它能运行 Steam 平台上绝大多数 Windows 游戏，就是基于一个名叫 Proton 的兼容层，而 Proton 就是就是基于 Wine 实现的。得益于 Wine 的强大，Steam Deck 用了挺普通的芯片，也能将各种 3A 游戏玩弄于股掌之间。
 
@@ -50,7 +51,7 @@ session_ids: [10123]
 
 > Direct3D（简称：D3D）是微软公司在 Microsoft Windows 操作系统上所开发的一套 3D 绘图编程接口，是 DirectX 的一部分，目前广为各家显卡所支持。与 OpenGL 同为电脑绘图软件和电脑游戏最常使用的两套绘图编程接口之一。
 
-如果只是为了翻译 D3D，其实已经好几套方案。比如，CrossOver、virtualbox。但是，这次苹果直接适配了 D3D 12，这是其他厂家想做但是一直没做到的。而大部分新款 3A 大作都是基于 D3D 12 的，所以苹果这次将 D3D 12 翻译成 Metal 才会引发这么多关注。
+如果只是为了翻译 D3D，其实已经好几套方案。比如，CrossOver、VirtualBox。但是，这次苹果直接适配了 D3D 12，这是其他厂家想做但是一直没做到的。而大部分新款 3A 大作都是基于 D3D 12 的，所以苹果这次将 D3D 12 翻译成 Metal 才会引发这么多关注。
 
 ![D3DToMetal](./images/D3DToMetal.jpg)
 
@@ -66,7 +67,7 @@ session_ids: [10123]
 
 ## 移植方案
 
-话说回来，Game Porting Toolkit 的初衷还是想让游戏开发者可以更加便利地移植游戏，苹果推荐了一个移植方案：
+话说回来，Game Porting Toolkit 的初衷还是想让游戏开发者可以更加便利地移植游戏，苹果希望开发者在尽可能低成本的情况下，完成游戏移植，百分百利用苹果提供的软硬件能力。于是，苹果推荐了一个移植方案：
 
 ![GamePortingPlan](./images/GamePortingPlan.png)
 
