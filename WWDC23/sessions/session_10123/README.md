@@ -126,7 +126,7 @@ Metal 3 提供了现代高端游戏使用的所有高级图形和计算功能，
 
 如果你的游戏是基于第三方跨平台音频组件的话，比如 Wwise、Unity 和 FMOD。那么恭喜你，你几乎不用做任何移植就可以完美适配了，因为这些组件的跨平台版本已经很好地支持了 Mac。
 
-如果你的游戏没有使用跨平台组件，而是采用了更低级别的音频框架或 API，你也可以正常使用苹果提供的高级或低级各种音频框架来进行移植。
+如果你的游戏没有使用跨平台组件，而是采用了更低级别的音频框架或 API，你也可以正常使用苹果提供的各种音频框架来进行移植。
 
 ![AudioFramework](./images/AudioFramework.png)
 
@@ -137,9 +137,9 @@ Metal 3 提供了现代高端游戏使用的所有高级图形和计算功能，
 
 ### 视觉体验移植
 
-使用 Game Porting Toolkit，你可以在显示器上看到游戏运行在基础动态范围与帧速率控制的接口上的情况。
+使用 Game Porting Toolkit，你可以在显示器上看到游戏运行在基础动态范围与帧速率控制的 API 上的情况。
 
-在 Windows 上，你的游戏可能会用到颜色管理和色调映射的接口来实现高动态范围。比如，AdvancedColorInfo 关于颜色空间的 API。还可能会利用 IDXGISwapChain 中 timing 和 feedback 来控制 SDR 和 HDR 内容的节奏。
+在 Windows 上，你的游戏可能会用到颜色管理和色调映射的 API 来实现高动态范围。比如，AdvancedColorInfo 关于颜色空间的 API。还可能会利用 IDXGISwapChain 中 timing 和 feedback 来控制 SDR 和 HDR 内容的节奏。
 
 在 Mac 上，你可以使用 CAMetalLayer 的扩展动态范围支持，以及 CAMetalDisplayLink 提供的 API 来实现完整的功能移植。
 
@@ -152,6 +152,8 @@ Metal 3 提供了现代高端游戏使用的所有高级图形和计算功能，
 
 ## 结束语
 
-基于以上总总，我们可以看出苹果今年在游戏上是下了大力气的。不论 Game Porting Toolkit 还是 Metal Shader Converter，都是为了让开发者更有动力来移植游戏，最终让自家的游戏生态更加繁荣。
+至此，我们介绍完了游戏移植的所有步骤。
+
+可以看出苹果今年在游戏上是下了大力气的。不论 Game Porting Toolkit 还是 Metal Shader Converter，都是为了让开发者更有动力来移植游戏，最终让自家的游戏生态更加繁荣。
 
 为什么今年来苹果对游戏生态愈加重视呢？之前我不懂，今年看到 Apple Vision Pro 我终于明白了。Apple Vision Pro 想要快速普及和应用，短时间内可能还是要落地在游戏领域，而今天 Mac 的游戏生态，也是为了未来的 Apple Vision Pro 生态去铺路。核心还是 Metal 的普及和推广上，如果能在近几年吸引一批开发者通过移植游戏熟悉 Metal，并积累一些开源生态，未来等 Apple Vision Pro 真正大量铺货的时候，一切也就水到渠成了。
