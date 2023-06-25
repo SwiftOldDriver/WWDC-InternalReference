@@ -1,0 +1,620 @@
+---
+session_ids: [10107]
+---
+
+# WWDC23 10107 - 在 App 中接入照片选择器
+
+本文基于 Session [10107](https://developer.apple.com/videos/play/wwdc2023/10107/)、Xcode 15.0 beta 2 (15A5161b) 撰写，简析在 App 中使用 SwiftUI 和 UIKit 接入照片选择器，后续版本可能存在 API 变更，请读者朋友们留意。可在 [nuomi1/TestPhotosPicker](https://github.com/nuomi1/TestPhotosPicker) 仓库中获取本文的全部代码。
+
+## 照片选择器的前世今生
+
+照片选择器随着 iOS 2 一同面世，彼时的名字叫 `UIImagePickerController`。从 iOS 14 开始，提供了新的照片选择器 `PHPickerViewController`，在 iOS 16 则带来了 `PhotosPicker`，在 iOS 17 中增加更多的定制选项。本文将介绍 SwiftUI 和 UIKit 两种接入方式，读者朋友们可以自由选择。
+
+## 如何接入照片选择器
+
+演示 App 采用 MVVM 架构，在 SwiftUI 和 UIKit 中使用各自的 UI 组件进行代码编写，最后使用 SwiftUI 的 `TabView` 拼装顶层 App。
+
+### 公共
+
+在 `PHPickerViewController` 中使用 `PHPickerResult` 作为原始照片资产，而在 `PhotosPicker` 中则使用 `PhotosPickerItem` 作为原始照片资产。除了 Item 的类型不相同，其他照片选择和展示的逻辑相同，因此抽取通用的 `ListViewModel` 和 `ItemViewModel` 进行封装，避免模板代码。
+
+#### ImageStatus
+
+`ImageStatus` 为照片展示过程的各种状态，分为 _加载中_ / _照片_ / _实况照片_ / _视频_ / _失败_ 这五种，并提供各个状态对应的计算属性进行快速判断 / 取值。另外提供 `ImageLoadingError` 表示加载错误。
+
+> 使用关联值可有效地进行管理，同时在视图中可以直接使用。
+
+```swift
+enum ImageStatus {
+    case loading
+    case image(UIImage)
+    case livePhoto(PHLivePhoto)
+    case video(AVURLAsset)
+    case failed(Error)
+
+    // five computed properties
+}
+
+enum ImageLoadingError: Error {
+    case contentTypeNotSupported
+}
+```
+
+#### Transferable
+
+`NSItemProvider` 提供的 `loadTransferable(type:completionHandler:)` 方法没有异步版本，借助 `withCheckedThrowingContinuation(function:_:)` 方法进行封装。通过 `LoadTransferableProviding` 协议复用接口，以便 `ItemViewModel` 进行调用。
+
+> `UIImage` / `AVURLAsset` 实现 `Transferable` 协议为演示 App 简化处理。一般不给 _系统类型_ 实现 _系统协议_。
+>
+> `canLoadObject(ofClass: AVURLAsset.self)` 会返回 `false`。
+>
+> `AVURLAsset` 直接使用 `receivedFile.file` 时无法播放。
+
+```swift
+protocol LoadTransferableProviding {
+
+    func loadTransferable<T: Transferable & NSItemProviderReading>(type: T.Type) async throws -> T?
+}
+
+extension PhotosPickerItem: LoadTransferableProviding {}
+
+extension NSItemProvider {
+
+    func loadTransferable<T: Transferable & NSItemProviderReading>(type: T.Type) async throws -> T? {
+        guard _canLoadObject(ofClass: type) else { return nil }
+        let received = try await withCheckedThrowingContinuation { continuation in
+            _ = loadTransferable(type: type) { continuation.resume(with: $0) }
+        }
+        return received
+    }
+
+    private func _canLoadObject(ofClass aClass: NSItemProviderReading.Type) -> Bool {
+        if aClass is PHLivePhoto.Type { return canLoadObject(ofClass: aClass) }
+        if aClass is AVURLAsset.Type { return hasItemConformingToTypeIdentifier(UTType.movie.identifier) }
+        if aClass is UIImage.Type { return canLoadObject(ofClass: aClass) }
+        assertionFailure()
+        return false
+    }
+}
+
+// MARK: - DON'T DO THIS IN PRODUCTION
+
+extension UIImage: Transferable {
+
+    public static var transferRepresentation: some TransferRepresentation {
+        DataRepresentation(importedContentType: .image) { data in
+            guard let image = UIImage(data: data) else { throw ImageLoadingError.contentTypeNotSupported }
+            return image
+        }
+    }
+}
+
+extension AVURLAsset: Transferable {
+
+    public static var transferRepresentation: some TransferRepresentation {
+        FileRepresentation(importedContentType: .movie) { receivedFile in
+            let fileManager = FileManager.default
+            let fileName = receivedFile.file.lastPathComponent
+            let copingFile = fileManager.temporaryDirectory.appendingPathComponent(fileName)
+            if fileManager.fileExists(atPath: copingFile.path()) { try fileManager.removeItem(at: copingFile) }
+            try fileManager.copyItem(at: receivedFile.file, to: copingFile)
+            let asset = AVURLAsset(url: copingFile)
+            return asset
+        }
+    }
+}
+```
+
+#### ListViewModel
+
+`ListViewModel` 为照片列表的 ViewModel，指定泛型 `ItemViewModel` 和其约束条件。`items` 为照片选择器选中的原始照片资产，`itemViewModels` 为视图所需要的照片 ViewModel。
+
+当 `items` 更新后，属性观察器执行，复用或创建 `itemViewModels`，并更新 `cache` 缓存。创建 `ItemViewModel` 借助 `ItemViewModelInitializable` 协议里面声明的 `init(_:)` 构造器实现。
+
+> 这里的 `cache` 只缓存前后两次选中 ItemViewModel，可借助 `NSCache` 等进行优化。
+
+```swift
+protocol ItemViewModelInitializable<Item> {
+
+    associatedtype Item
+    init(_ item: Item)
+}
+
+@MainActor final class ListViewModel<ItemViewModel: Identifiable & ItemViewModelInitializable>: ObservableObject
+    where ItemViewModel.Item: Identifiable, ItemViewModel.ID == ItemViewModel.Item.ID {
+
+    @Published var items: [ItemViewModel.Item] = [] { didSet { updateItemViewModelsIfNeeded() } }
+    @Published var itemViewModels: [ItemViewModel] = []
+    private var cache: [ItemViewModel.Item.ID: ItemViewModel] = [:]
+
+    private func updateItemViewModelsIfNeeded() {
+        let newItemViewModels = items.map { cache[$0.id] ?? ItemViewModel($0) }
+        let newCache = newItemViewModels.reduce(into: [:]) { $0[$1.id] = $1 }
+        itemViewModels = newItemViewModels
+        cache = newCache
+    }
+}
+```
+
+#### ImageViewModel
+
+`ImageViewModel` 为照片的 ViewModel，因为原始照片资产在 UIKit 和 SwiftUI 中使用不同的类型且处理逻辑有部分不相同，因此指定泛型 `Item`。
+
+`loadImage()` 方法为加载照片，借助 `loadTransferableProviding` 访问统一的接口。`calculateVideoSize()` 方法和 `playOrStopVideo()` 方法为视频播放相关的方法。
+
+> 使用 `Image.self` 作为接收类型时仅支持 PNG 格式。
+>
+> `PHPickerResult` / `PhotosPickerItem` 实现 `Identifiable` 协议为演示 App 简化处理。一般不给 _系统类型_ 实现 _系统协议_。
+
+```swift
+@MainActor class ImageViewModel<Item: Identifiable>: ObservableObject, Identifiable, ItemViewModelInitializable {
+
+    let item: Item
+    nonisolated var id: Item.ID { item.id }
+
+    @Published var imageStatus: ImageStatus?
+    @Published var imageDescription = ""
+    @Published var videoPlayer: AVPlayer?
+    @Published var videoAspectRatio: CGFloat?
+    @Published var isPlaying = false
+
+    var loadTransferableProviding: LoadTransferableProviding { fatalError("override") }
+
+    required nonisolated init(_ item: Item) {
+        self.item = item
+    }
+
+    final func loadImage() async {
+        guard imageStatus == nil || imageStatus?.isFailed == true else { return }
+        imageStatus = .loading
+        do {
+            if let livePhoto = try await loadTransferableProviding.loadTransferable(type: PHLivePhoto.self) {
+                imageStatus = .livePhoto(livePhoto)
+            } else if let asset = try await loadTransferableProviding.loadTransferable(type: AVURLAsset.self) {
+                imageStatus = .video(asset)
+                videoPlayer = AVPlayer(playerItem: AVPlayerItem(asset: asset))
+            } else if let image = try await loadTransferableProviding.loadTransferable(type: UIImage.self) {
+                imageStatus = .image(image)
+            } else {
+                throw ImageLoadingError.contentTypeNotSupported
+            }
+        } catch {
+            imageStatus = .failed(error)
+        }
+    }
+
+    @discardableResult final func calculateVideoSize() async -> CGSize? {
+        guard videoAspectRatio == nil, let video = imageStatus?.video else { return nil }
+        guard let videoSize = try? await video.videoSize else { return nil }
+        let aspectRatio = videoSize.width / videoSize.height
+        videoAspectRatio = aspectRatio
+        return videoSize
+    }
+
+    final func playOrStopVideo() {
+        if isPlaying {
+            videoPlayer?.pause()
+        } else {
+            videoPlayer?.play()
+        }
+        isPlaying.toggle()
+        videoPlayer?.seek(to: .zero)
+    }
+}
+
+extension AVAsset {
+
+    fileprivate var videoSize: CGSize {
+        get async throws {
+            let tracks = try await loadTracks(withMediaType: .video)
+            assert(tracks.count == 1)
+            guard let track = tracks.first else { throw ImageLoadingError.contentTypeNotSupported }
+            let (naturalSize, preferredTransform) = try await track.load(.naturalSize, .preferredTransform)
+            return naturalSize.applying(preferredTransform)
+        }
+    }
+}
+
+// MARK: - DON'T DO THIS IN PRODUCTION
+
+extension PHPickerResult: Identifiable {
+
+    public var id: String { assetIdentifier! }
+}
+
+extension PhotosPickerItem: Identifiable {
+
+    public var id: String { itemIdentifier! }
+}
+```
+
+### UIKit
+
+在 UIKit 的版本中，使用近年来 Apple 推荐的 `configuration` API，与 SwiftUI 的思想类似，通过配置渲染视图，这样可以更好地实现 UI 单元测试。
+
+#### UIKitVersionViewController
+
+首先创建一个 `UIKitVersionViewController` 视图控制器，在 `presentPickerViewController()` 方法中设置照片选择器的配置并弹出，在 `picker(_:didFinishPicking:)` 回调中更新 ListViewModel 并呼叫 `applySnapshot()` 方法更新列表以展示选中的照片。
+
+```swift
+@MainActor class UIKitVersionViewController: UIViewController {
+
+    @ObservedObject var viewModel = ViewModel()
+    let emptyView = UIImageView()
+    lazy var compositionalLayout = makeCompositionalLayout()
+    lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: compositionalLayout)
+    lazy var dataSource = makeDataSource()
+    let button = UIButton(configuration: .filled())
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // setup subviews
+    }
+
+    @objc private func presentPickerViewController() {
+        var configuration = PHPickerConfiguration(photoLibrary: .shared())
+        configuration.preselectedAssetIdentifiers = viewModel.items.map(\.id)
+        configuration.selectionLimit = 0
+        configuration.selection = .default
+        configuration.filter = nil
+        configuration.preferredAssetRepresentationMode = .current
+        configuration.mode = .default
+        configuration.disabledCapabilities = []
+        let viewController = PHPickerViewController(configuration: configuration)
+        viewController.delegate = self
+        present(viewController, animated: true)
+    }
+}
+
+extension UIKitVersionViewController: PHPickerViewControllerDelegate {
+
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        viewModel.items = results
+        picker.dismiss(animated: true)
+        applySnapshot()
+    }
+}
+```
+
+#### UIKitVersionViewController+List
+
+`makeCompositionalLayout()` 方法创建类似 `UITableView` 圆角 Section 的布局。`makeDataSource()` 方法创建数据源，使用 `CellRegistration` 进行 Cell 的关联和配置，减少以前基于字符串的 API 导致的崩溃。`applySnapshot()` 方法更新数据并刷新列表和隐藏空白页。
+
+```swift
+extension UIKitVersionViewController {
+
+    func makeCompositionalLayout() -> UICollectionViewCompositionalLayout {
+        .list(using: .init(appearance: .insetGrouped))
+    }
+
+    func makeDataSource() -> UICollectionViewDiffableDataSource<String, ImageAttachment> {
+        let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, ImageAttachment> { cell, _, itemIdentifier in
+            var contentConfiguration = ImageAttachmentView.ContentConfiguration()
+            contentConfiguration.imageAttachment = itemIdentifier
+            cell.contentConfiguration = contentConfiguration
+        }
+        let dataSource = UICollectionViewDiffableDataSource<String, ImageAttachment>(collectionView: collectionView) { collectionView, indexPath, itemIdentifier in
+            let cell = collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
+            return cell
+        }
+        return dataSource
+    }
+
+    func applySnapshot() {
+        var snapshot = NSDiffableDataSourceSnapshot<String, ImageAttachment>()
+        snapshot.appendSections([Constants.List.sectionIdentifier])
+        snapshot.appendItems(viewModel.itemViewModels, toSection: Constants.List.sectionIdentifier)
+        dataSource.apply(snapshot)
+        emptyView.isHidden = !viewModel.itemViewModels.isEmpty
+    }
+}
+```
+
+从 iOS 14 开始，Apple 提供了 `UIContentView` 协议允许视图直接作为 `UITableViewCell` 和 `UICollectionViewCell` 的内容视图，而不需要每次都创建子类或者容器子类来使用，同时提供了一套标准接口来更新配置和视图。
+
+在 `updateContentConfiguration(_:)` 方法中，对照片的每一个状态进行处理，不是当前状态的隐藏对应视图。当选中视频时，发起任务计算视频大小并更新布局。在照片没有加载到 App 时发起任务加载并更新视图配置。
+
+> `PHLivePhotoView` / `AVPlayerView` 在 `UIStackView` 中没有宽高，需要单独设置宽高约束。
+>
+> `UIImageView` 不展示 Symbol 时需要设置宽度约束。
+
+```swift
+extension UIKitVersionViewController {
+
+    class ImageAttachmentView: UIView, UIContentView {
+
+        private let stackView = UIStackView()
+        private let textField = UITextField()
+        private let spacer = UIView()
+        private let activityIndicatorView = UIActivityIndicatorView()
+        private let imageView = UIImageView()
+        private let livePhotoView = PHLivePhotoView()
+        private let playerView = AVPlayerView()
+        private let playerButton = UIButton(configuration: .plain())
+
+        var configuration: UIContentConfiguration { didSet { updateContentConfiguration(configuration as! ContentConfiguration) } }
+
+        private var imageViewWidthConstraint: NSLayoutConstraint?
+        private var livePhotoViewWidthConstraint: NSLayoutConstraint?
+        private var playerViewWidthConstraint: NSLayoutConstraint?
+
+        init(configuration: ContentConfiguration) {
+            self.configuration = configuration
+            super.init(frame: .zero)
+            prepare()
+            updateContentConfiguration(configuration)
+        }
+
+        private func prepare() {
+            // setup subviews
+        }
+
+        private func updateContentConfiguration(_ configuration: ContentConfiguration) {
+            // imageAttachment
+
+            assert(configuration.imageAttachment != nil)
+            let isLoading = configuration.imageAttachment?.imageStatus?.isLoading == true
+            let image = configuration.imageAttachment?.imageStatus?.image
+            let livePhoto = configuration.imageAttachment?.imageStatus?.livePhoto
+            let video = configuration.imageAttachment?.imageStatus?.video
+            let isFailed = configuration.imageAttachment?.imageStatus?.isFailed == true
+            let resolvedImage = isFailed ? UIImage(systemName: Constants.Cell.failedImage) : image
+
+            // textField
+
+            textField.text = configuration.imageAttachment?.imageDescription
+
+            // activityIndicatorView
+
+            activityIndicatorView.isHidden = !isLoading
+            if isLoading {
+                activityIndicatorView.startAnimating()
+            } else {
+                activityIndicatorView.stopAnimating()
+            }
+
+            // imageView
+
+            imageView.image = resolvedImage
+            imageView.isHidden = resolvedImage == nil
+            updateWidthConstraint(imageView, resolvedImage?.size, &imageViewWidthConstraint, resolvedImage?.isSymbolImage == false)
+
+            // livePhotoView
+
+            livePhotoView.livePhoto = livePhoto
+            livePhotoView.isHidden = livePhoto == nil
+            updateWidthConstraint(livePhotoView, livePhoto?.size, &livePhotoViewWidthConstraint)
+
+            // playerView
+
+            playerView.player = configuration.imageAttachment?.videoPlayer
+            playerView.isHidden = video == nil
+
+            if video != nil {
+                Task { [weak self] in
+                    guard let self = self else { return }
+                    let size = await configuration.imageAttachment?.calculateVideoSize()
+                    self.updateWidthConstraint(self.playerView, size, &self.playerViewWidthConstraint)
+                }
+            }
+
+            // imageStatus
+
+            if configuration.imageAttachment?.imageStatus == nil {
+                Task { [weak self] in
+                    guard let self = self else { return }
+                    await configuration.imageAttachment?.loadImage()
+                    self.configuration = self.configuration
+                }
+            }
+        }
+    }
+}
+
+extension UIKitVersionViewController.ImageAttachmentView {
+
+    struct ContentConfiguration: UIContentConfiguration {
+
+        var imageAttachment: UIKitVersionViewController.ImageAttachment?
+
+        func makeContentView() -> UIView & UIContentView {
+            let contentView = UIKitVersionViewController.ImageAttachmentView(configuration: self)
+            return contentView
+        }
+
+        func updated(for state: UIConfigurationState) -> ContentConfiguration {
+            return self
+        }
+    }
+}
+```
+
+`AVPlayerView` 为视频视图，借助 `@dynamicMemberLookup` 特性可通过点语法直接访问和修改 `AVPlayerLayer` 的属性。
+
+```swift
+@dynamicMemberLookup class AVPlayerView: UIView {
+
+    override static var layerClass: AnyClass { AVPlayerLayer.self }
+    private var playerLayer: AVPlayerLayer { layer as! AVPlayerLayer }
+
+    subscript<T>(dynamicMember keyPath: ReferenceWritableKeyPath<AVPlayerLayer, T>) -> T {
+        get { playerLayer[keyPath: keyPath] }
+        set { playerLayer[keyPath: keyPath] = newValue }
+    }
+}
+```
+
+#### UIKitVersionViewController+ViewModel
+
+创建 `ImageAttachment` 照片 ViewModel，指定 `loadTransferableProviding` 为 `item.itemProvider`。`UICollectionViewDiffableDataSource` 要求 `Item` 实现 `Hashable` 协议，此处简单处理只考虑 `id` 是否相同。
+
+```swift
+extension UIKitVersionViewController {
+
+    class ImageAttachment: ImageViewModel<PHPickerResult>, Hashable {
+
+        override var loadTransferableProviding: LoadTransferableProviding { item.itemProvider }
+
+        nonisolated static func == (lhs: ImageAttachment, rhs: ImageAttachment) -> Bool {
+            lhs.id == rhs.id
+        }
+
+        nonisolated func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+        }
+    }
+}
+```
+
+### SwiftUI
+
+#### SwiftUIVersionView
+
+`SwiftUIVersionView` 为 SwiftUI 版本视图，代码非常简单，`ImageList` 和 `PhotosPicker` 即可组成整个页面。
+
+```swift
+struct SwiftUIVersionView: View {
+
+    @StateObject var viewModel = ViewModel()
+
+    var body: some View {
+        VStack {
+            ImageList(viewModel: viewModel)
+            Spacer()
+            PhotosPicker(
+                selection: $viewModel.items,
+                maxSelectionCount: nil,
+                selectionBehavior: .default,
+                matching: nil,
+                preferredItemEncoding: .current,
+                photoLibrary: .shared()
+            ) {
+                Text(Constants.PhotosPicker.title)
+            }
+            .photosPickerStyle(.presentation)
+            .photosPickerAccessoryVisibility(.automatic, edges: .all)
+            .photosPickerDisabledCapabilities([])
+            .frame(height: Constants.PhotosPicker.height)
+        }
+    }
+}
+```
+
+#### SwiftUIVersionView+List
+
+`ImageList` 为照片列表，未选择时展示占位图，选择后展示对应照片。`ImageAttachmentView` 为照片视图，通过枚举 `imageStatus` 处理不同的状态，当第一次展示视图和视频时，发起任务获取照片数据或视频大小。
+
+```swift
+extension SwiftUIVersionView {
+
+    struct ImageList: View {
+
+        @ObservedObject var viewModel: ViewModel
+
+        var body: some View {
+            if viewModel.itemViewModels.isEmpty {
+                VStack {
+                    Spacer()
+                    Image(systemName: Constants.List.emptyImage)
+                        .font(.system(Constants.List.emptyImageFont))
+                    Spacer()
+                }
+            } else {
+                List(viewModel.itemViewModels) { imageAttachment in
+                    ImageAttachmentView(imageAttachment: imageAttachment)
+                }
+            }
+        }
+    }
+}
+
+extension SwiftUIVersionView {
+
+    struct ImageAttachmentView: View {
+
+        @ObservedObject var imageAttachment: ImageAttachment
+
+        var body: some View {
+            HStack {
+                TextField(Constants.Cell.imageDescription, text: $imageAttachment.imageDescription)
+                Spacer()
+                switch imageAttachment.imageStatus {
+                case .loading:
+                    ProgressView()
+                case let .image(image):
+                    Image(uiImage: image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                case let .livePhoto(livePhoto):
+                    LivePhotoView(livePhoto: livePhoto)
+                        .aspectRatio(livePhoto.size.width / livePhoto.size.height, contentMode: .fit)
+                case .video:
+                    VideoPlayer(player: imageAttachment.videoPlayer!) {
+                        Button {
+                            imageAttachment.playOrStopVideo()
+                        } label: {
+                            Image(systemName: imageAttachment.isPlaying ? Constants.Cell.stopImage : Constants.Cell.playImage)
+                        }
+                    }
+                    .aspectRatio(imageAttachment.videoAspectRatio, contentMode: .fit)
+                    .task {
+                        await imageAttachment.calculateVideoSize()
+                    }
+                case .failed:
+                    Image(systemName: Constants.Cell.failedImage)
+                        .font(.system(Constants.Cell.failedImageFont))
+                case nil:
+                    EmptyView()
+                }
+            }
+            .frame(height: Constants.Cell.height)
+            .task {
+                if imageAttachment.imageStatus == nil {
+                    await imageAttachment.loadImage()
+                }
+            }
+        }
+    }
+}
+```
+
+SwiftUI 中没有原生的实况照片视图，因此借助 `PHLivePhotoView` 封装 `LivePhotoView`。
+
+```swift
+struct LivePhotoView: UIViewRepresentable {
+
+    typealias UIViewType = PHLivePhotoView
+
+    let livePhoto: PHLivePhoto
+
+    private let livePhotoView = PHLivePhotoView()
+
+    func makeUIView(context: Context) -> UIViewType {
+        livePhotoView.livePhoto = livePhoto
+        return livePhotoView
+    }
+
+    func updateUIView(_ uiView: UIViewType, context: Context) {
+        // no-op
+    }
+}
+```
+
+#### SwiftUIVersionView+ViewModel
+
+创建 `ImageAttachment` 照片 ViewModel，指定 `loadTransferableProviding` 为 `item`。
+
+```swift
+extension SwiftUIVersionView {
+
+    class ImageAttachment: ImageViewModel<PhotosPickerItem> {
+
+        override var loadTransferableProviding: LoadTransferableProviding { item }
+    }
+}
+```
+
+## 总结
+
+通过 UIKit 和 SwiftUI 两种接入方式的比较，可以看到 SwiftUI 使用少量代码即可实现相同的效果。即使部分视图没有 SwiftUI 的版本，也可以通过 `UIViewRepresentable` 协议进行封装。如果仍然需要大量使用 UIKit，也建议参考 Apple 近年来推荐的 `configuration` API 风格进行代码编写，通过 _配置描述视图_，可以更好地进行状态还原和单元测试。
