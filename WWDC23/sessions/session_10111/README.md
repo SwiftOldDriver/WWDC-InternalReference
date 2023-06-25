@@ -12,6 +12,17 @@ session_ids: [10111]
 
 ![iOS 和 iPadOS 上丰富的 AR 体验](./images/mind_mapping.png)
 
+> 文章涉及的概念主要包括 SwiftUI 的 `App`、`Scene`、`View` 协议，visionOS 下的 Window、Volume、Space。详细的内容将在文中展开，以下是概念简述：
+>
+> |                             概念                             |                             简述                             |
+> | :----------------------------------------------------------: | :----------------------------------------------------------: |
+> | [`App`](https://developer.apple.com/documentation/swiftui/app) | 表示应用程序的结构和行为的类型，通过声明符合 `App` 协议的结构来创建应用程序。 |
+> | [`Scene`](https://developer.apple.com/documentation/swiftui/scene) | 应用程序用户界面的一部分，充当要向用户显示的 `View` 层次结构的容器。 |
+> | [`View`](https://developer.apple.com/documentation/swiftui/view) | 应用程序用户界面的一部分，过声明符合 `View` 协议的类型来创建视图。 |
+> | [Window](https://developer.apple.com/documentation/swiftui/window) |              在独特的窗口中呈现其内容的 Scene。              |
+> | [Volume](https://developer.apple.com/documentation/swiftui/windowstyle/volumetric/) |    在有界区域内托管 3D 内容，是 Window Scene 的一种样式。    |
+> | [Space](https://developer.apple.com/documentation/swiftui/immersivespace) |              在无限的空间中呈现其内容的 Scene。              |
+
 ## 进入沉浸式体验
 
 在过去的几年中，Apple 引入和完善了许多工具及框架，用于为 iOS 和 iPadOS 等构建 AR 应用程序，例如 [ARKit](https://developer.apple.com/augmented-reality/arkit/)、[RealityKit](https://developer.apple.com/augmented-reality/realitykit/) 等。这些应用程序通过交互式的用户界面和虚拟对象来增强用户环境，模糊现实世界与想象之间的界限，创造了丰富的 AR 体验。
@@ -31,7 +42,7 @@ struct WorldApp: App {
 }
 ```
 
-通在符合 `App` 协议的结构的声明之前加上 [`@main`](https://docs.swift.org/swift-book/ReferenceManual/Attributes.html#ID626) 属性，以指示该结构提供进入应用程序的入口点。`Scene` 是视图层次结构的容器，通过在 `App` 实例的 `body`中组合一个或多个符合 `Scene` 协议的实例来呈现具体程序。SwiftUI2.0 提供了预置的 Scene，此外，用户也可以自己编写符合 `Scene` 协议的场景。预置的 Scene 包括 [`WindowGroup`](https://developer.apple.com/documentation/swiftui/windowgroup)、[`DocumentGroup`](https://developer.apple.com/documentation/swiftui/documentgroup)，macOS 使用的 [`Window`](https://developer.apple.com/documentation/swiftui/window)、[`Settings`](https://developer.apple.com/documentation/swiftui/settings)，watchOS 使用的 [`WKNotificationScene`](https://developer.apple.com/documentation/swiftui/wknotificationscene)。
+通在符合 `App` 协议的结构的声明之前加上 [`@main`](https://docs.swift.org/swift-book/ReferenceManual/Attributes.html#ID626) 属性，以指示该结构提供进入应用程序的入口点。`Scene` 是 `View` 层次结构的容器，通过在 `App` 实例的 `body`中组合一个或多个符合 `Scene` 协议的实例来呈现具体程序。SwiftUI2.0 提供了预置的 Scene，此外，用户也可以自己编写符合 `Scene` 协议的场景。预置的 Scene 包括 [`WindowGroup`](https://developer.apple.com/documentation/swiftui/windowgroup)、[`DocumentGroup`](https://developer.apple.com/documentation/swiftui/documentgroup)，macOS 使用的 [`Window`](https://developer.apple.com/documentation/swiftui/window)、[`Settings`](https://developer.apple.com/documentation/swiftui/settings)，watchOS 使用的 [`WKNotificationScene`](https://developer.apple.com/documentation/swiftui/wknotificationscene)。
 
 在 WWDC23  [Take SwiftUI to the next dimension](https://developer.apple.com/videos/play/wwdc2023/10113) Session 中，Apple 详细介绍了 SwiftUI 中的第三维，可以在 visionOS 上呈现 Window 或 Volume。
 
