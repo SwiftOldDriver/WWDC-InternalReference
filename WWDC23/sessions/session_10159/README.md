@@ -23,36 +23,17 @@ ScrollView 是一个可以让其包含的内容进行滚动的构建块，参数
 - `axes`：滚动方向；
 - `content`：滚动内容；当内容超出 ScrollView 的大小时，其中部分内容将被裁剪，需要向上或向下滑动才能查看。ScrollView 可确保内容放置在安全区域内，通过将安全区域解析为边距来设置其内容。
   
-默认情况下，ScrollView 急切地评估其内容，我们可以使用 `lazy stack` 来更改此行为（*你可以运行以下代码体验一下*）。
+默认情况下，ScrollView 会立即加载并获得其所有子 view 的信息，我们可以使用 `lazy stack` 来`按需加载和渲染其子视图`，从而在加载大量子 view 时提供显著的`性能提升`。
 
-```swift
-ScrollView(.vertical) {
-    VStack { // 分别尝试下 VStack 和 LazyStack
-        Foreach(items) { item in
-            ItemView(item: item)
-        }
-    }
-}
+如图，例如使用 `VStack` 时，控制台一次把全部的 Item init 打印出来。而使用 `LazyVStack` 时，控制台先是打印了第一屏出现的 Item init，继续滑动时再打印屏幕显示到的 Item。说明了 lazy stack 是按需初始化子视图的，从而对性能提升优化。此特性从 WWDC20 提出的，详细可以了解[官方的对比说明文档](https://developer.apple.com/documentation/swiftui/creating-performant-scrollable-stacks)。
 
-struct Item: Identifiable {
-    var id: Int
-}
+*VStack：*
 
-struct ItemView: View {
-    var item: Item
+![](images/stack.gif)
 
-    init(item: Item) {
-        print("init: \(item.id)") // 观察两种情况下这里的打印时机
-        self.item = item
-    }
-    
-    var body: some View {
-        Text(item.id, format: .number)
-            .padding(.vertical)
-            .frame(maxWidth: .infinity)
-    }
-}
-```
+*LazyVStack：*
+
+![](images/lazy_stack.gif)
 
 ### Content Offset
 
