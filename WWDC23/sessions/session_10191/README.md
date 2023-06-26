@@ -157,20 +157,20 @@ var body: some View {
 var body: some View {
     ReconstructionProgressView()
         .task {
-						// 初始化配置
+            // 初始化配置
             var configuration = PhotogrammetrySession.Configuration()
-						// 和采集设置成同一个检查点目录，加快重建过程（可选）
+            // 和采集设置成同一个检查点目录，加快重建过程（可选）
             configuration.checkpointDirectory = getDocumentsDir()
                 .appendingPathComponent("Snapshots/")
-						// 初始化 PhotogrammetrySession，并且设置素材图片的路径
+            // 初始化 PhotogrammetrySession，并且设置素材图片的路径
             let session = try PhotogrammetrySession(
                 input: getDocumentsDir().appendingPathComponent("Images/"),
                 configuration: configuration)
-						// 开始处理，设置模型输出路径，名称和格式
+            // 开始处理，设置模型输出路径，名称和格式
             try session.process(requests: [ 
                 .modelFile(url: getDocumentsDir().appendingPathComponent("model.usdz")) 
             ])
-						// 监听 session 的状态和错误，以及输出的结果。
+            // 监听 session 的状态和错误，以及输出的结果。
             for try await output in session.outputs {
                 switch output {
                     case .processingComplete:
@@ -193,7 +193,7 @@ session.start(imagesDirectory: getDocumentsDir().appendingPathComponent("Images/
               configuration: configuration)
 ```
 
-要在 Mac 上重建模型，我们甚至不需要写任何的代码，Object Capture 已经集成到 Apple 新的MacOS 应用 Reality Composer Pro 中，具体详情可以查看 [Meet Reality Composer Pro](https://developer.apple.com/videos/play/wwdc2023/10083)，我们只需要将图像导入应用中，选择细节级别，然后获取模型即可。
+要在 Mac 上重建模型，我们甚至不需要写任何的代码，Object Capture 已经集成到 Apple 新的 MacOS 应用 Reality Composer Pro 中，具体详情可以查看 [Meet Reality Composer Pro](https://developer.apple.com/videos/play/wwdc2023/10083)，我们只需要将图像导入应用中，选择细节级别，然后获取模型即可。
 
 ![wwdc2023-10191_hd-0011.png](./images/wwdc2023-10191_hd-0011.png)
 
