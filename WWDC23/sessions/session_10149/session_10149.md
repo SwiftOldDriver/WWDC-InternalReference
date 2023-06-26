@@ -16,7 +16,7 @@ Observation 是基于 Swift 5.9 宏系统推出的全新特性，它可以帮助
 
 Observation 是 Swift 的一个新特性，它可以通过**宏**将 Swift 基本类型转换为可以被追踪属性变化的类型。这让开发者只需使用 Swift 基础类型来定义数据模型就可以在 SwiftUI 中实现数据驱动 UI。极大地简化了开发者在设计和实现数据模型方面的负担。
 
-```swift 
+```swift
 @Observable class FoodTruckModel {    
     var orders: [Order] = []
     var donuts = Donut.all
@@ -40,17 +40,18 @@ class FoodTruckModel: ObservableObject {
     var donuts = Donut.all
 }
 ```
+
 3.在 `View` 中通过 `@ObservedObject` 或者 `@StateObject` 来描述我们持有的数据模型
 
 ```swift
 struct ContentView: View {
 
-	@ObservedObject
-	var model: FoodTruckModel
-	
-	var body: some View {
-		// ... //
-	}
+ @ObservedObject
+ var model: FoodTruckModel
+ 
+ var body: some View {
+  // ... //
+ }
 }
 ```
 
@@ -77,7 +78,7 @@ struct ContentView {
 
 这一切都源自于 Swift 的宏系统，接下来我们详细介绍下 Observation 提供的几个 Swift 宏。
 
-### @Observable 
+### @Observable
 
 `@Observable` 是一个 Swift 宏，用于修饰模型。使用它后，Swift 编译器会将你的代码从普通类型扩展成可被监听的类型。这样一来，我们就无需使用任何类似于 `@Published` 的 `propertyWrapper`，就可以让数据模型驱动 SwiftUI 视图的更新。
 
@@ -131,7 +132,7 @@ class FoodTruckModel: ObservableObject {
 
 上面提到 `@Observable` 是一个 Swift 宏。它在编译阶段会通过编译器转译扩展我们的代码
 
-```swift 
+```swift
 @Observable class FoodTruckModel {    
     var orders: [Order] = []
     var donuts = Donut.all
@@ -148,7 +149,7 @@ class FoodTruckModel: ObservableObject {
 
 我们的数据模型经过第一步转译之后变成这样：
 
-```swift 
+```swift
 class FoodTruckModel {
     
     @ObservationTracked
@@ -160,9 +161,10 @@ class FoodTruckModel {
 ```
 
 #### 2. 将 `@ObservationTracked` 宏展开转译为计算属性
+
 接着，所有被标记为 `@ObservationTracked` 的存储属性都会被转换为同名的计算属性，并在计算属性的 `getter` 和 `setter` 方法中增加额外的方法调用 `access` & `withMutation:`。原有的存储属性被转换为带下划线前缀的私有存储属性，并被标记为 `@ObservationIgnored`。
 
-```swift 
+```swift
 class FoodTruckModel {
     
     var orders: [Order] {
@@ -196,69 +198,71 @@ class FoodTruckModel {
 ```
 
 #### 3. 加入其他辅助代码
+
 `@Observable` 还会在新的类型里面加入一些 Observation 的功能辅助代码。包括 `access` 和 `withMutation` 的定义等等。
 
-```swift 
+```swift
 @ObservationIgnored private let _$observationRegistrar = ObservationRegistrar()
 
 internal nonisolated func access<Member>(keyPath: KeyPath<FoodTruckModel , Member>) {
-	_$observationRegistrar.access(self, keyPath: keyPath)
+ _$observationRegistrar.access(self, keyPath: keyPath)
 }
 
 internal nonisolated func withMutation<Member, T>(keyPath: KeyPath<FoodTruckModel , Member>,
-      											  _ mutation: () throws -> T) rethrows -> T {
-	try _$observationRegistrar.withMutation(of: self, keyPath: keyPath, mutation)
+                   _ mutation: () throws -> T) rethrows -> T {
+ try _$observationRegistrar.withMutation(of: self, keyPath: keyPath, mutation)
 }
 ```
+
 最终在编译阶段之前的模型会被转义成这样的类型:
 
 ```swift
 class FoodTruckModel {
-	@ObservationIgnored private let _$observationRegistrar = ObservationRegistrar()
+ @ObservationIgnored private let _$observationRegistrar = ObservationRegistrar()
 
-	internal nonisolated func access<Member>(keyPath: KeyPath<FoodTruckModel , Member>) {
-		_$observationRegistrar.access(self, keyPath: keyPath)
-	}
+ internal nonisolated func access<Member>(keyPath: KeyPath<FoodTruckModel , Member>) {
+  _$observationRegistrar.access(self, keyPath: keyPath)
+ }
 
-	internal nonisolated func withMutation<Member, T>(keyPath: KeyPath<FoodTruckModel , Member>,
-												       _ mutation: () throws -> T) rethrows -> T {
-	try _$observationRegistrar.withMutation(of: self, keyPath: keyPath, mutation)
-	}
-	
-	var orders: [Order] {
-		get {
-			access(keyPath: \.orders)
-			return _orders
-		}
-		set {
-			withMutation(keyPath: \.orders) {
-				_orders = newValue
-			}
-		}
-	}
+ internal nonisolated func withMutation<Member, T>(keyPath: KeyPath<FoodTruckModel , Member>,
+                   _ mutation: () throws -> T) rethrows -> T {
+ try _$observationRegistrar.withMutation(of: self, keyPath: keyPath, mutation)
+ }
+ 
+ var orders: [Order] {
+  get {
+   access(keyPath: \.orders)
+   return _orders
+  }
+  set {
+   withMutation(keyPath: \.orders) {
+    _orders = newValue
+   }
+  }
+ }
 
-	var donuts: Donut {
-		get {
-			access(keyPath: \.donuts)
-			return _donuts
-		}
-        	
-		set {
-			withMutation(keyPath: \.donuts) {
-				_donuts = newValue
-			}
-		}
-	}
-	
-	@ObservationIgnored private var _orders: [Order] = []
+ var donuts: Donut {
+  get {
+   access(keyPath: \.donuts)
+   return _donuts
+  }
+         
+  set {
+   withMutation(keyPath: \.donuts) {
+    _donuts = newValue
+   }
+  }
+ }
+ 
+ @ObservationIgnored private var _orders: [Order] = []
 
-	@ObservationIgnored private var _donuts  = Donut.all
+ @ObservationIgnored private var _donuts  = Donut.all
 }
 ```
 
 **简化一下，看重点**：
 
-```swift 
+```swift
 class FoodTruckModel {
     // ... ///
     var donuts: Donut {
@@ -318,10 +322,11 @@ struct ContentView: View {
     }
 }
 ```
+
 > 调用 `_printChanges` 方法可以告诉我们本次视图更新尝试刷新 UI 的数据变化来源。
-> 
+>
 > 这个方法通常在 `View.body` 中被调用，通过它我们可以清晰地了解到数据变化的具体来源是谁。
-> 
+>
 > 更多性能调试技巧可以看这里：  [【WWDC23 10160】Demystify SwiftUI performance](https://developer.apple.com/videos/play/wwdc2023/10160/)
 
 
@@ -333,7 +338,7 @@ struct ContentView: View {
 
 相比之下，Observation 是从 `View` 的 `body` 中根据属性的访问情况来建立数据依赖关系。这在一定程度上避免了冗余计算。
 
-```swift 
+```swift
 @Observable class FoodTruckModel {
     var orders: [Order] = []
     var donuts = Donut.all
@@ -397,7 +402,7 @@ struct OrderView: View {
 
 其实 `DonutsView` 根本没有用到 `orders`，这是**额外的性能开销**。之前 SwiftUI 推荐我们规避这种性能开销的方式是：每个子视图使用独立的 `ViewModel`。
 
-```swift 
+```swift
 class FoodTruckModel: ObservableObject {
     var orderModel: OrderModel
     var donuts: DonutModel
@@ -427,9 +432,9 @@ struct ContentView: View {
         }
     }
 }
-``` 
+```
 
-但是现在有了 Observation。它的数据依赖关系是建立在 `View` 到具体属性之间的。因此，当多个 `View` 共用同一个模型时，只有依赖于某个属性的 `View` 会在该属性值发生变化时重新计算 `View Diff`，而不是所有使用该模型的` View` 都会重新计算。
+但是现在有了 Observation。它的数据依赖关系是建立在 `View` 到具体属性之间的。因此，当多个 `View` 共用同一个模型时，只有依赖于某个属性的 `View` 会在该属性值发生变化时重新计算 `View Diff`，而不是所有使用该模型的`View` 都会重新计算。
 
 我们不需要拆分一堆额外的 `ViewModel`。所有视图共用一个 `Model` 就可以。
 
@@ -467,18 +472,18 @@ struct ContentView: View {
 
 ```swift
 @Observable class Donut {
-	var name: String {
-		get {
-			access(keyPath: \.name)
-			return someNonObservableLocation.name
-		}
-		
-		set {
-			withMutation(keyPath: \.name) {
-				someNonObservableLocation.name = newValue
-			}
-		}
-	}
+ var name: String {
+  get {
+   access(keyPath: \.name)
+   return someNonObservableLocation.name
+  }
+  
+  set {
+   withMutation(keyPath: \.name) {
+    someNonObservableLocation.name = newValue
+   }
+  }
+ }
 }
 ```
 
@@ -487,9 +492,9 @@ struct ContentView: View {
 `@Observable` 和 Swift 宏极大地简化了模型设计，避免之前需要写很多无用的存储属性。
 
 > 更多 Swift 宏的相关介绍可以看这里
-> 
+>
 > - [【WWDC23 10166】Write Swift macros](https://developer.apple.com/videos/play/wwdc2023/10166/)
-> 
+>
 > - [【WWDC23 10167】Expand on Swift macros](https://developer.apple.com/videos/play/wwdc2023/10167/)
 
 
