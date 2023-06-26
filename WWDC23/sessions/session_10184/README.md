@@ -11,7 +11,7 @@ session_ids: [10184]
 
 Hi 大家好，我是小杰瑞，这篇文章主要是对 WWDC2023 `Meet ActivityKit` 这个 Session 做一个全面的梳理，并辅以一个 Demo 来方便大家熟悉和掌握快速适配一个实时小组件。主要内容包含了对于这个 Session 所提到的所有的核心内容，并在关键的一些步骤中稍加扩展(毕竟 Session 之间还是存在一定的联系的，而如果太割裂的来看效果不是很好)。
 
-首先，先谈一下自己的一些感想。这期 Session 其实严格意义上不能算是全新的技术特性，锁屏实时小组件第一次出现是在 WWDC2022 中，但是碍于九月份才能发布灵动岛的 iPhone，Apple 也是把它藏到了九月份才发布了 ActivityKit 框架，开发者才开始能够进行全面的实时小组件的开发和设计。因此这篇 Session 更多的是对过去一年相关内容缺失的一个补充，正因为这个原因，去年的 Demo 其实用在今天的这篇文章中显得非常合适(摸鱼好理由)，但为了卷的更好看一点，硬生生的给去年的 Demo 加上了两个按钮，也算是有了一定的升级了。好了，废话到这里，开始我们的实时小组件之旅，希望对大家的适配和学习有一定的帮助。
+首先，先谈一下自己的一些感想。这期 Session 其实严格意义上不能算是全新的技术特性，锁屏实时小组件第一次出现是在 WWDC2022 中，但是碍于九月份才能发布灵动岛的 iPhone，Apple 也是藏到了九月份才发布了 ActivityKit 框架，开发者才开始能够进行全面的实时小组件的开发和设计。因此这篇 Session 更多的是对过去一年相关内容缺失的一个补充，正因为这个原因，去年的 Demo 其实用在今天的这篇文章中显得非常合适(摸鱼好理由)，但为了卷的更好看一点，硬生生的给去年的 Demo 加上了两个按钮，也算是有了一定的升级了。好了，废话到这里，开始我们的实时小组件之旅，希望对大家的适配和学习有一定的帮助。
 
 ## 1. ActivityKit 它是什么
 
@@ -37,13 +37,13 @@ Hi 大家好，我是小杰瑞，这篇文章主要是对 WWDC2023 `Meet Activit
 
 ### 1.2 灵动岛上的 Live Activities
 
-相对于锁屏堆叠放置的各家实时小组件(包涵自家 App 的多个实时小组件)来说，在灵动岛上的展示要复杂的多了，背后自然有 Apple 关于多个 App 登岛的逻辑，我们所需要做的或者说必须要做的，就是适配好所有尺寸的灵动岛上的视图。而关于尺寸，Apple 甚至在你新建`Target`时边为你搭好了所有代码，我们只需要在相应的代码块中塞进我们的视图就可以了。
+相对于锁屏堆叠放置的各家实时小组件(包涵自家 App 的多个实时小组件)来说，在灵动岛上的展示要复杂的多了，背后自然有 Apple 关于多个 App 登岛的逻辑，我们所需要做的或者说必须要做的，就是适配好所有尺寸的灵动岛上的视图。而关于尺寸，Apple 甚至在你新建`Target`时便为你搭好了所有代码，我们只需要在相应的代码块中塞进我们的视图就可以了。
 
-单个 App :这一部分也叫做`compact` 紧凑型，分为前后两个 View 来组成。
+单个 App 上岛，这一部分也叫做 `compact` 紧凑型，分为前后两个 View 来组成。
 
 ![type-compact](images/type-compact~dark@2x.png)
 
-多个 App 登岛，也叫做`minimal`型，一个紧贴摄像头，一个分离与摄像头，这里需要注意的是，看似这两个 View 长得不一样，但实质上都是一样的。我们也不要对多个 App 登岛时，我们自己 App 是前边的还是后边的做假设。
+多个 App 上岛，也叫做 `minimal` 型，一个紧贴摄像头，一个分离与摄像头，这里需要注意的是，看似这两个 View 长得不一样，但实质上都是一样的。我们也不要对多个 App 登岛时，我们自己 App 是前边的还是后边的做假设。
 
 ![type-minimal](images/type-minimal~dark@2x.png)
 
@@ -61,7 +61,7 @@ Hi 大家好，我是小杰瑞，这篇文章主要是对 WWDC2023 `Meet Activit
 
 4. 重大事件的持续跟踪报道，专题性质的新闻更新，24 小时热点新闻轮播
 
-而在这儿，则要引出今年第二个新特性，也是今年整个`Widget`小组件主题最为让我惊喜的新特性了：添加更多的交互性，也就是我们可以在桌面小组件和实时小组件中增加按钮和切换键了(当然了仅有这俩组件可以，翻遍了 AppIntent 框架也搜不到第三了)，关于这个会在后边的 Demo 中稍有涉及，因为大部分的内容在《Bring Widgets to life》这个 Session 中，感兴趣的小伙伴可以去看那篇博文。
+而在这儿，则要引出今年第二个新特性，也是今年整个`Widget`小组件主题最为让我惊喜的新特性了：添加更多的交互性，也就是我们可以在桌面小组件和实时小组件中增加按钮和切换键了(当然了仅有这俩组件可以，翻遍了 AppIntent 框架也搜不到第三了)，关于这个会在后边的 Demo 中稍有涉及，因为大部分的内容是在 [Bring Widgets to life](https://developer.apple.com/videos/play/wwdc2023/10028/) 这个 Session 中，感兴趣的小伙伴可以去看一下。
 
 在第一部分的最后，还想提醒 2 个小 Tips，或者说再啰嗦 2 个小感想。
 
@@ -120,7 +120,7 @@ extension View {
 
 ### 3.2 创建 ActivityAttributes
 
-无论是主 App 还是推送更新，我们和 ActivityKit 传输数据的媒介叫做`ActivityAttributes`，它由两部分组成，一部分数据自始至终都不会发生变化，静态的数据，而另一部分则是我们定义好的，用来告知 WidgetKit 数据发生了变化，需要重新绘制和存储 View。
+无论是主 App 还是推送更新，我们和 ActivityKit 传输数据的媒介叫做`ActivityAttributes`。它由两部分组成，一部分是静态的数据，而另一部分则是我们定义的，用来告知 WidgetKit 数据发生了变化，需要重新绘制和存储 View。
 
 ```Swift
 struct NBAWidgetAttributes: ActivityAttributes {
@@ -140,11 +140,11 @@ struct NBAWidgetAttributes: ActivityAttributes {
 }
 ```
 
-`ContentState`记录了实时小组件中将会变更的动态数据，例如两个队的得分情况、两个队的助力情况，以及比赛时间。而外部则定义了不会发生变化的两个球队的基础信息，包涵球队的名称、ID 等。而在开启小组件之后，更新数据传输只负责不断地生成新的`ContentState`,并告知 WidgetKit 即可更新我们的小组件视图。
+`ContentState`记录了实时小组件中将会变更的动态数据，例如两个队的得分情况、两个队的助力情况，以及比赛时间。而外部则定义了不会发生变化的两个球队的基础信息，包涵球队的名称、ID 等。而在开启小组件之后，更新数据传输只负责不断地生成新的`ContentState`，并告知 WidgetKit 即可更新我们的小组件视图。
 
 ### 3.3 绘制实时小组件 UI
 
-下一步则是按照文档给出的需要适配的不同类型的 View，来定制业务 View，当我们新建`Widget Extension`并勾选`Live Activity`之后，Xcode 会非常贴心的给我们安排了一个完形填空，下图为 New -> Target -> 勾选 Live
+下一步则是按照文档给出的需要适配的不同类型的 View，来定制业务 View，当我们新建 `Widget Extension` 并勾选 `Live Activity` 之后，Xcode 会非常贴心的给我们安排了一个完形填空，下图为 New -> Target -> 勾选 Include Live Activity
 
 ![createLive](images/createLive.png)
 
@@ -201,7 +201,7 @@ struct DemoWidgetLiveActivity: Widget {
 
 这里先补充一个细节，那就是我们的 App 不止可以激活一个实时小组件的，例如世界杯期间，同一时间可能同时进行 2 场比赛，而用户则是可以同时激活这两场比赛的实时小组件的。因此关于实时小组件的管理，个人建议是实现一个类似 Manager 一样的管理类，通过数组等方式来进行管理，而对应的 API，都会返回给我们相应的`Activity<Attributes>`实例。注:本 Demo 为了演示，仅保存一个小组件实例。
 
-首先的首先，我们要引入`ActivityKit`, 这是这篇文章的核心 -。-
+首先的首先，我们要引入`ActivityKit`，这是这篇文章的核心 -。-
 
 #### 3.4.1 开启普通 Live Activities
 
@@ -210,7 +210,11 @@ struct DemoWidgetLiveActivity: Widget {
 实时小组件的更新方式有两种，一种是端内触发，一种是 Push 触发，其实还有一个，留个悬念后边说。我们先看端内触发的情况，此时开启 Live Activities 的方式如下:
 
 ```swift
-self.statusActivity = try Activity<NBAWidgetAttributes>.request(attributes: attribute, contentState: startState, pushType: nil)
+self.statusActivity = try Activity<NBAWidgetAttributes>.request(
+    attributes: attribute, 
+    contentState: startState, 
+    pushType: nil
+)
 ```
 
 此时`PushType`参数传 nil。`attributes`参数则为上面我们定义好的 ActivityAttributes，`contentState` 参数则是我们定义好的一个初始状态。例如，初始是湖人对阵勇士的比赛，我们分别模拟两个球队的数据(Demo 使用，测试数据)，并模拟了一个主队 12:10 领先的开启状态。
@@ -259,13 +263,13 @@ Task {
 
 具体的 Push 更新和结束实时小组件可以参考这篇文档：[利用 Push 来更新 Live Activities](https://developer.apple.com/documentation/ActivityKit/updating-and-ending-your-live-activity-with-activitykit-push-notifications) 以及[Session 10185: Update Live Activities with push notifications](https://developer.apple.com/videos/play/wwdc2023/10184)
 
-这里简单的贴出一个测试的 APNS 数据，`event`字段用来标志此条是更新还是结束，`content-state`则和我们刚才定义的 ActivityAttributes 要一一对应。
+这里简单的贴出一个测试的 APNS 数据，`event` 字段用来标识此条是更新还是结束，`content-state` 则和我们刚才定义的 ActivityAttributes 中的内容要一一对应，这一点往往会被忽视(下面 Json 仅为示意使用)，而 `timestamp` 时间戳字段同样非常重要，在过去自己测试过程中发现，如果不改变时间戳的值(需要是一个未来的时间，并在每一次 Push 更新时 增加这个数)，会出现实时小组件不更新的问题。
 
 ```
 {
     "aps": {
         "timestamp": 1660556374,
-        "event": "end",
+        "event": "end",// or "update"
         "content-state": {
             "estimatedEndTime": 1660559974,
             "homeScore": 2,
@@ -365,20 +369,20 @@ struct likeAppIntent: WidgetConfigurationIntent {
 而在我们的 Widget UI 中，加入按钮也是十分的简单，如下代码所示，Button 新增了一个构造方法，引入`AppIntents`框架，即可传入我们定义好的`favorAppIntent`，当该按钮被点击时，触发我们写好的 Perform 程序
 
 ```swift
-                    if #available(iOS 17.0, *) {
-                        HStack {
-                            Text(likeNum.formatted())
-                                .foregroundColor(.white)
-                                .contentTransition(.numericText())
-                            Button(intent: favorAppIntent(teamId: team.teamId)) {
-                                Image(systemName: "hand.thumbsup")
-                                    .foregroundColor(.white)
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    } else {
-                    //仅展示其他UI
-                    }
+if #available(iOS 17.0, *) {
+    HStack {
+        Text(likeNum.formatted())
+            .foregroundColor(.white)
+            .contentTransition(.numericText())
+        Button(intent: favorAppIntent(teamId: team.teamId)) {
+            Image(systemName: "hand.thumbsup")
+                .foregroundColor(.white)
+        }
+        .buttonStyle(.plain)
+    }
+} else {
+    //展示其他UI
+}
 ```
 
 这里需要注意判断系统版本，这是一个仅 iOS17+ 的功能。
@@ -413,9 +417,9 @@ extension View {
 
 对于已经拥有了 Widget Extension 的工程，我们同样也可以快速支持 Live Activities。
 
-首先我们需要在 Widget Extension 中 新建一个 Swift 文件，并引入`ActivityKit`框架, `WidgetKit`框架以及`SwiftUI`框架，然后则需要创建`ActivityAttributes` 来定义实时小组件的传输数据媒介。
+首先我们需要在 Widget Extension 中 新建一个 Swift 文件，并引入`ActivityKit`框架、`WidgetKit`框架以及`SwiftUI`框架，然后需要创建`ActivityAttributes` 来定义实时小组件的传输数据媒介。
 
-然后我们需要创建一个 Widget Struct 来声明我们所要实现的实时小组件 Widget:
+在这之后我们需要创建一个 Widget Struct 来声明我们所要实现的实时小组件 Widget (代码进行了叠起，填充 View 部分用 ... 表示):
 
 ```swift
 
