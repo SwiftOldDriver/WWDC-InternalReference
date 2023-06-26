@@ -13,7 +13,7 @@ Hi 大家好，我是小杰瑞，这篇文章主要是对WWDC2023 `Meet Activity
 
 首先，先谈一下自己的一些感想。这期 Session 其实严格意义上不能算是全新的技术特性，锁屏实时小组件第一次出现是在 WWDC2022 中，但是碍于九月份才能发布灵动岛的 iPhone，Apple 也是把它藏到了九月份才发布了 ActivityKit 框架，开发者才开始能够进行全面的实时小组件的开发和设计。因此这篇 Session 更多的是对过去一年相关内容缺失的一个补充，正因为这个原因，去年的 Demo 其实用在今天的这篇文章中显得非常合适(摸鱼好理由)，但为了卷的更好看一点，硬生生的给去年的 Demo 加上了两个按钮，也算是有了一定的升级了。好了，废话到这里，开始我们的实时小组件之旅，希望对大家的适配和学习有一定的帮助。
 
-## 1.ActivityKit它是什么
+## 1.ActivityKit 它是什么
 
 在去年分享的一些文章或者视频的留言中，总会有小伙伴问我这个不就是一个通知么。说他是，锁屏里的它静静地在那里还确实很像通知，且文档中又明确的提到了它可以通过 Push 来驱动数据更新，但如果真的把它归为这个作用，又稍有违背 Apple 设计它的初衷。
 
@@ -21,9 +21,9 @@ Hi 大家好，我是小杰瑞，这篇文章主要是对WWDC2023 `Meet Activity
 
 > Live Activities 是一个可以在 iPhone 或者 iPad 锁屏以及灵动岛上展示我们 App 核心内容的功能，这个入口可以让用户直达他正在进行的一个任务或者活动，并清晰的看到它的内容变化。
 
-### 1.1 不仅仅是iPhone，锁屏上的Live Activities
+### 1.1 不仅仅是 iPhone，锁屏上的 Live Activities
 
-这段描述相较于去年7月28日第一版文档是发生了变化的。没错，去年实时小组件是`仅iPhone`的，而在今年第一个变化就是支持了`iPad`。而在iOS平台上，同时也支持了`StandBy`模式。
+这段描述相较于去年 7 月 28 日第一版文档是发生了变化的。没错，去年实时小组件是`仅iPhone`的，而在今年第一个变化就是支持了`iPad`。而在 iOS 平台上，同时也支持了`StandBy`模式。
 
 ![ipad_live](images/ipad_live.png)
 
@@ -35,15 +35,15 @@ Hi 大家好，我是小杰瑞，这篇文章主要是对WWDC2023 `Meet Activity
 
 而实时小组件我认为和灵动岛属于是互相成就了。在丝滑动画的加持下，用户会更加喜欢这种能带来小惊喜的上岛体验。下面我们来看看灵动岛上的实时小组件的样子。
 
-## 1.2 灵动岛上的Live Activities
+## 1.2 灵动岛上的 Live Activities
 
 相对于锁屏堆叠放置的各家实时小组件(包涵自家 App 的多个实时小组件)来说，在灵动岛上的展示要复杂的多了，背后自然有 Apple 关于多个 App 登岛的逻辑，我们所需要做的或者说必须要做的，就是适配好所有尺寸的灵动岛上的视图。而关于尺寸，Apple 甚至在你新建`Target`时边为你搭好了所有代码，我们只需要在相应的代码块中塞进我们的视图就可以了。
 
-单独App:这一部分也叫做`compact` 紧凑型，分为前后两个 View 来组成。
+单个 App :这一部分也叫做`compact` 紧凑型，分为前后两个 View 来组成。
 
 ![type-compact](images/type-compact~dark@2x.png)
 
-多个App登岛，也叫做`minimal`型，一个紧贴摄像头，一个分离与摄像头，这里需要注意的是，看似这两个 View 长得不一样，但实质上都是一样的。我们也不要对多个 App 登岛时，我们自己 App 是前边的还是后边的做假设。
+多个 App 登岛，也叫做`minimal`型，一个紧贴摄像头，一个分离与摄像头，这里需要注意的是，看似这两个 View 长得不一样，但实质上都是一样的。我们也不要对多个 App 登岛时，我们自己 App 是前边的还是后边的做假设。
 
 ![type-minimal](images/type-minimal~dark@2x.png)
 
@@ -59,16 +59,16 @@ Hi 大家好，我是小杰瑞，这篇文章主要是对WWDC2023 `Meet Activity
 
 3. 上传、下载等任务的实时更新显示
 
-4. 重大事件的持续跟踪报道，专题性质的新闻更新，24小时热点新闻轮播
+4. 重大事件的持续跟踪报道，专题性质的新闻更新，24 小时热点新闻轮播
 
 而在这儿，则要引出今年第二个新特性，也是今年整个`Widget`小组件主题最为让我惊喜的新特性了：添加更多的交互性，也就是我们可以在桌面小组件和实时小组件中增加按钮和切换键了(当然了仅有这俩组件可以，翻遍了 AppIntent 框架也搜不到第三了)，关于这个会在后边的 Demo 中稍有涉及，因为大部分的内容在《Bring Widgets to life》这个 Session 中，感兴趣的小伙伴可以去看那篇博文。
 
-在第一部分的最后，还想提醒2个小Tips，或者说再啰嗦2个小感想。
+在第一部分的最后，还想提醒 2 个小 Tips，或者说再啰嗦 2 个小感想。
 
 1. Live Activities 的实现依赖`SwiftUI`和`WidgetKit`，新特性用 SwiftUI，包括今年的 VisionOS，都可以看出 SwiftUI 的重要性，而结合我个人和一些同行的聊天，可以看出大厂在历史包袱的重压下或者快速迭代的压力下，也很难快速的转型 SwiftUI，甚至 Swift。小组件的出现和更迭便成为了一个很好的睡服产品和领导们的理由，想适配么？那得先留点时间学 SwiftUI 丫！
 2. 实时小组件的开启，需要明确的和用户操作相对应，切忌什么都上岛，再过去一年的实际体验当中，还是看到了一些不当用法的，遇到这种直接设置-关闭走起了。因此还是那句话，适配是好事儿，但硬凑或许真的适得其反。
 
-## 2.Live Activities的生命周期
+## 2.Live Activities 的生命周期
 
 在开始动手实现或者适配一个实时小组件功能前，我们有必要对其整个的生命周期做一个了解。开发者本质上需要做的主要有四件事儿，分别是:
 
@@ -81,11 +81,11 @@ Hi 大家好，我是小杰瑞，这篇文章主要是对WWDC2023 `Meet Activity
 
 ![widgetKit](images/widgetKit.png)
 
-## 3.展示球赛比分的完整Live Activities实现之旅
+## 3.展示球赛比分的完整 Live Activities 实现之旅
 
 在大致了解了实时小组件是什么以及生命周期之后，我们边可以打开~~产品文档~~开发文档进行
 
-[Live Activity开发文档](https://developer.apple.com/documentation/activitykit/displaying-live-data-with-live-activities)
+[Live Activity 开发文档](https://developer.apple.com/documentation/activitykit/displaying-live-data-with-live-activities)
 
 本 Demo 基于`Xcode 15 Beta2`。
 
@@ -117,7 +117,7 @@ extension View {
 而在使用的地方，尤其是需要 Xcode Preview 的 View 上添加该修饰符
 ![background](images/background.png)
 
-### 3.2创建ActivityAttributes
+### 3.2 创建 ActivityAttributes
 
 无论是主 App 还是推送更新，我们和 ActivityKit 传输数据的媒介叫做`ActivityAttributes`，它由两部分组成，一部分数据自始至终都不会发生变化，静态的数据，而另一部分则是我们定义好的，用来告知 WidgetKit 数据发生了变化，需要重新绘制和存储 View。
 
@@ -141,7 +141,7 @@ struct NBAWidgetAttributes: ActivityAttributes {
 
 `ContentState`记录了实时小组件中将会变更的动态数据，例如两个队的得分情况、两个队的助力情况，以及比赛时间。而外部则定义了不会发生变化的两个球队的基础信息，包涵球队的名称、ID 等。而在开启小组件之后，更新数据传输只负责不断地生成新的`ContentState`,并告知 WidgetKit 即可更新我们的小组件视图。
 
-### 3.3 绘制实时小组件UI
+### 3.3 绘制实时小组件 UI
 
 下一步则是按照文档给出的需要适配的不同类型的 View，来定制业务 View，当我们新建`Widget Extension`并勾选`Live Activity`之后，Xcode 会非常贴心的给我们安排了一个完形填空，下图为 New -> Target -> 勾选 Live
 
@@ -196,13 +196,13 @@ struct DemoWidgetLiveActivity: Widget {
 
 ![demoGif](images/demoGif.gif)
 
-### 3.4 根据业务逻辑实现Live Activities的生命周期
+### 3.4 根据业务逻辑实现 Live Activities 的生命周期
 
-这里先补充一个细节，那就是我们的 App 不止可以激活一个实时小组件的，例如世界杯期间，同一时间可能同时进行2场比赛，而用户则是可以同时激活这两场比赛的实时小组件的。因此关于实时小组件的管理，个人建议是实现一个类似 Manager 一样的管理类，通过数组等方式来进行管理，而对应的 API，都会返回给我们相应的`Activity<Attributes>`实例。注:本 Demo 为了演示，仅保存一个小组件实例。
+这里先补充一个细节，那就是我们的 App 不止可以激活一个实时小组件的，例如世界杯期间，同一时间可能同时进行 2 场比赛，而用户则是可以同时激活这两场比赛的实时小组件的。因此关于实时小组件的管理，个人建议是实现一个类似 Manager 一样的管理类，通过数组等方式来进行管理，而对应的 API，都会返回给我们相应的`Activity<Attributes>`实例。注:本 Demo 为了演示，仅保存一个小组件实例。
 
 首先的首先，我们要引入`ActivityKit`, 这是这篇文章的核心 -。-
 
-#### 3.4.1 开启普通Live Activities
+#### 3.4.1 开启普通 Live Activities
 
 实时小组件的更新方式有两种，一种是端内触发，一种是 Push 触发，其实还有一个，留个悬念后边说。我们先看端内触发。相应的 API 为:
 
@@ -210,7 +210,7 @@ struct DemoWidgetLiveActivity: Widget {
 self.statusActivity = try Activity<NBAWidgetAttributes>.request(attributes: attribute, contentState: startState, pushType: nil)
 ```
 
-此时`PushType`参数传 nil。`attributes`参数则为上面我们定义好的 ActivityAttributes，`contentState` 参数则是我们定义好的一个初始状态。例如，初始是湖人对阵勇士的比赛，我们分别模拟两个球队的数据(Demo 使用，测试数据)，并模拟了一个主队12:10领先的开启状态。
+此时`PushType`参数传 nil。`attributes`参数则为上面我们定义好的 ActivityAttributes，`contentState` 参数则是我们定义好的一个初始状态。例如，初始是湖人对阵勇士的比赛，我们分别模拟两个球队的数据(Demo 使用，测试数据)，并模拟了一个主队 12:10 领先的开启状态。
 
 ```swift
 let guestTeam = MatchDataManager.shared.teams.filter { $0.teamId == "Lakers" }.first!
@@ -230,9 +230,9 @@ guard ActivityAuthorizationInfo().areActivitiesEnabled else {
 }
 ```
 
-#### 3.4.2 开启Push Live Activities
+#### 3.4.2 开启 Push Live Activities
 
-与3.4.1几乎一致，只不过`PushType`参数需要传进去`.token`，并且在适当的时候拿到 Push Token，给到我们的后台，后台便可以拿着这个 Push Token 来发送通知。这里有两点需要额外注意:
+与 3.4.1 几乎一致，只不过`PushType`参数需要传进去`.token`，并且在适当的时候拿到 Push Token，给到我们的后台，后台便可以拿着这个 Push Token 来发送通知。这里有两点需要额外注意:
 
 1. request API 不会立刻返回带有 Token 的 Activities 实例，我们需要起一个 Task 来监听 Push Token 的回调，来给到我们的后台。
 
@@ -252,7 +252,7 @@ Task {
 3. Token 会变化，客户端需要监听 Token 的变化来及时的通知后台
 4. 一定要是 Token-Base 链接形式的 Push 发送
 
-具体的 Push 更新和结束实时小组件可以参考这篇文档：[利用Push来更新Live Activities](https://developer.apple.com/documentation/ActivityKit/updating-and-ending-your-live-activity-with-activitykit-push-notifications) 以及[Session 10185: Update Live Activities with push notifications](https://developer.apple.com/videos/play/wwdc2023/10184)
+具体的 Push 更新和结束实时小组件可以参考这篇文档：[利用 Push 来更新 Live Activities](https://developer.apple.com/documentation/ActivityKit/updating-and-ending-your-live-activity-with-activitykit-push-notifications) 以及[Session 10185: Update Live Activities with push notifications](https://developer.apple.com/videos/play/wwdc2023/10184)
 
 这里简单的贴出一个测试的 APNS 数据，`event`字段用来标志此条是更新还是结束，`content-state`则和我们刚才定义的 ActivityAttributes 要一一对应。
 
@@ -271,7 +271,7 @@ Task {
 }
 ```
 
-#### 3.4.3 更新Live Activities
+#### 3.4.3 更新 Live Activities
 
 当比分发生变化时，我们需要主动的更新实时小组件的 UI，调用 Update 方法，不再需要传递静态的球队数据，仅关心动态的一些数据。
 
@@ -291,7 +291,7 @@ if activityState == .dismissed {
 }
 ```
 
-#### 3.4.4 关闭Live Activities
+#### 3.4.4 关闭 Live Activities
 
 就像开篇所说，优雅的帮用户关闭无用的实时小组件，可以极大的提升用户的使用体验。因此在一场比赛结束后，我们可以主动的关闭我们开启过的 Live Activities:
 
@@ -308,9 +308,9 @@ public func endLiveActivities() -> Void {
 }
 ```
 
-这里 Apple 提供了三种策略:立即结束、再常驻个4小时以及一段制定的时间后结束，还是比较自由的。
+这里 Apple 提供了三种策略:立即结束、再常驻个 4 小时以及一段制定的时间后结束，还是比较自由的。
 
-### 3.5 给实时小组件增加一个按钮！
+### 3.5 给实时小组件增加一个按钮
 
 在 iOS17 之前，实时小组件通过`widgetURL`来进入 App 指定的页面来进行后续的操作，略显繁琐，而在 iOS17 我们可以借助`AppIntent`的力量来实现增加按钮和切换键 (Toggle) 这个组件来丰富我们的功能。
 
@@ -346,7 +346,7 @@ struct likeAppIntent: WidgetConfigurationIntent {
 }
 ```
 
-我们定义了一个`LikeAppIntent`的助力 Intent，将球队 ID 进行保存，实现 Perform 协议方法，并找到模拟的球队数据，将他们的点赞数加10，这里触发了上面 Live Activities 管理类中的更新方法，来更新我们的实时小组件。
+我们定义了一个`LikeAppIntent`的助力 Intent，将球队 ID 进行保存，实现 Perform 协议方法，并找到模拟的球队数据，将他们的点赞数加 10，这里触发了上面 Live Activities 管理类中的更新方法，来更新我们的实时小组件。
 
 而在我们的 Widget UI 中，加入按钮也是十分的简单，如下代码所示，Button 新增了一个构造方法，引入`AppIntents`框架，即可传入我们定义好的`favorAppIntent`，当该按钮被点击时，触发我们写好的 Perform 程序
 
@@ -371,7 +371,7 @@ struct likeAppIntent: WidgetConfigurationIntent {
 
 ### 3.6 息屏处理
 
-锁屏时，一段时间后，屏幕会进入到息屏状态，而此时，我们的 UI 表现可能会很糟糕，因此我们可以通过`isLuminanceReduced`环境变量来拿到此时的机器状态，从而从容的来设置我们的UI表现。因此，我简单封装了一个 View Extension：
+锁屏时，一段时间后，屏幕会进入到息屏状态，而此时，我们的 UI 表现可能会很糟糕，因此我们可以通过`isLuminanceReduced`环境变量来拿到此时的机器状态，从而从容的来设置我们的 UI 表现。因此，我简单封装了一个 View Extension：
 
 ```swift
 struct LuminanceReducedColor: ViewModifier {
@@ -395,15 +395,15 @@ extension View {
 
 当息屏时，文字等颜色变为白色，更加便于辨认。
 
-## 4.你可能还会需要了解的TIPS
+## 4.你可能还会需要了解的 TIPS
 
 1. [Live Activities 人机交互指南](https://developer.apple.com/design/human-interface-guidelines/live-activities) 
-2. 无论你采用什么方式更新，数据量都不能大于4KB
-3. Live Activities 可以独立于Widget小组件，但 Apple 建议实时小组件都搞了，不差 Widget 了，再做一个
+2. 无论你采用什么方式更新，数据量都不能大于 4KB
+3. Live Activities 可以独立于 Widget 小组件，但 Apple 建议实时小组件都搞了，不差 Widget 了，再做一个
 4. Info.plist 文件需要添加 NSSupportsLiveActivities == YES
-5. 锁屏中UI、灵动岛展开UI如果超过160points，系统有可能会裁切我们的 View
+5. 锁屏中 UI、灵动岛展开 UI 如果超过 160points，系统有可能会裁切我们的 View
 6. StandBy 模式，是采用我们的 Lock Screen 的 UI 来填充展示
-7. 一个App可以开启多个 Live Activities，而一台设备可以开启多个App的多个 Live Activities，不要对这个数量作出假设，也不要对岛上出现的时机和顺序或者位置做出假设
+7. 一个 App 可以开启多个 Live Activities，而一台设备可以开启多个 App 的多个 Live Activities，不要对这个数量作出假设，也不要对岛上出现的时机和顺序或者位置做出假设
 8. 在开启、更新等重要时机前，我们应该处理当 Live Activities 不可用时的错误，基于用户友好的提示
 9. Push 暂时是无法开启 Live Activities 的
 
@@ -413,5 +413,5 @@ extension View {
 
 那关于这期 Session 的梳理就到这里，希望对大家有所帮助。
 
-[本篇Demo地址](https://github.com/jerryliurui/Live-Activities-Demo-NBA-Score)
+[本篇 Demo 地址](https://github.com/jerryliurui/Live-Activities-Demo-NBA-Score)
 
