@@ -615,6 +615,55 @@ extension SwiftUIVersionView {
 }
 ```
 
+## 详细 API 介绍
+
+`PHPickerViewController` 与 `PhotosPicker` 所支持的功能大致相同，下面将以 `PhotosPicker` 进行讲解。
+
+### 构造器
+
+`init(selection:maxSelectionCount:selectionBehavior:matching:preferredItemEncoding:photoLibrary:label:)` 构造器参数很多，一个一个来解析。
+
+1. `selection: Binding<[PhotosPickerItem]>`，已选中的原始照片资产。当用户第一次选择后，再次打开照片选择器，会在当前展示的照片列表中选中之前的照片，当用户更新选中项且确认后，该绑定将自动更新；
+2. `maxSelectionCount: Int?`，最大选择数，默认为 `nil`，由系统自动管理；
+3. `selectionBehavior: PhotosPickerSelectionBehavior`，选中行为，默认为 `default`，还有 `ordered` / `continuous` / `continuousAndOrdered` 可选。`continuous(*)` 将在选中后自动更新 `selection`；
+4. `matching: PHPickerFilter?`，过滤器，默认为 `nil`，不过滤。指定过滤器后，不符合条件的照片会被过滤，支持多种方式进行过滤。单一条件如 `.images` 显示所以照片，复合条件如 `.any(of: [.images, .not(.livePhotos)])` 显示除实况照片以外的所有照片；
+5. `preferredItemEncoding: PhotosPickerItem.EncodingDisambiguationPolicy`，编码方法，默认为 `.automatic`，还有 `current` / `compatible` 可选。`current` 只使用原始格式，`compatible` 会进行兼容转码；
+6. `photoLibrary: PHPhotoLibrary`，照片库，仅能通过 `.shared()` 访问。
+
+### 自定义配置
+
+1. `photosPickerStyle(_:)`，更改样式，默认为 `presentation`，还有 `inline` / `compact` 可选。
+2. `photosPickerAccessoryVisibility(_:edges:)`，更改附件可见性，默认为全部可见。根据 `edges` 和 `style` 配合动态处理。
+3. `photosPickerDisabledCapabilities(_:)`，禁用部分功能，默认为不禁用。有 `collectionNavigation` / `search` / `selectionActions` / `sensitivityAnalysisIntervention` / `stagingArea` 可选。
+
+### 组合使用
+
+iOS 17 新增的配置 API，需要多个参数 / 方法一起使用，否则会出现一些无效的情况。
+
+1. 当使用 `selectionBehavior: .continuous` 和 `photosPickerStyle(.inline)` 时，`selection` 将会实时更新，此时导航栏中的「Done」按钮将无效，可通过 `.photosPickerDisabledCapabilities([.selectionActions])` 进行隐藏（但「Clear」按钮也会一起隐藏）；
+2. 当使用 `default` / `ordered` 时，导航栏按钮为 `Cancel` 和 `Add`。当使用 `continuous` / `continuousAndOrdered` 时，导航栏按钮为 `Clear` 和 `Done`；
+3. 在 iOS 中，「Top Accessory」为导航栏，「Bottom Accessory」为工具栏，在 iPadOS 和 macOS 中，「Leading Accessory」为侧边栏。在 `presentation` 时隐藏导航栏将无法关闭弹窗。
+
+### 隐私
+
+当第一次使用照片选择器时，系统会提示 App 只能读取用户选中的照片。
+
+![app-01](./images/app-01.png)
+
+点击「Learn More」可以看到更多信息，并且提示可在设置中进行调整。
+
+![app-02](./images/app-02.png)
+
+从第二次使用照片选择器开始，左上角会有一个动画提示隐私保护。
+
+![app-03](./images/app-03.png)
+
+无论是选择 `presentation` 还是 `compact` 样式，在 Xcode 调试时均无法读取到照片选择器的图层信息（通过代码截图同理），但用户手动截图时不受限制，这样可以尽可能保护用户的照片隐私。
+
+![xcode-01](./images/xcode-01.png)
+
+![xcode-02](./images/xcode-02.png)
+
 ## 总结
 
-通过 UIKit 和 SwiftUI 两种接入方式的比较，可以看到 SwiftUI 使用少量代码即可实现相同的效果。即使部分视图没有 SwiftUI 的版本，也可以通过 `UIViewRepresentable` 协议进行封装。如果仍然需要大量使用 UIKit，也建议参考 Apple 近年来推荐的 `configuration` API 风格进行代码编写，通过 _配置描述视图_，可以更好地进行状态还原和单元测试。
+通过 UIKit 和 SwiftUI 两种接入方式的比较，可以看到 SwiftUI 使用少量代码即可实现相同的效果。即使部分视图没有 SwiftUI 的版本，也可以通过 `UIViewRepresentable` 协议进行封装。如果仍然需要大量使用 UIKit，也建议参考 Apple 近年来推荐的 `configuration` API 风格进行代码编写，通过 _配置描述视图_，可以更好地进行状态还原和单元测试。同时可以看到，Apple 在隐私方面的保护力度是逐年加大的，今年也有相关的 session 总结，希望大家可以重视起来。
