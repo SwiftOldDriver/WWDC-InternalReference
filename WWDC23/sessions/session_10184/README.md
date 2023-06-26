@@ -9,7 +9,7 @@ session_ids: [10184]
 
 ## 0.前言
 
-Hi 大家好，我是小杰瑞，这篇文章主要是对WWDC2023 `Meet ActivityKit` 这个 Session 做一个全面的梳理，并辅以一个 Demo 来方便大家熟悉和掌握快速适配一个实时小组件。主要内容包含了对于这个 Session 所提到的所有的核心内容，并在关键的一些步骤中稍加扩展(毕竟 Session 之间还是存在一定的联系的，而如果太割裂的来看效果不是很好)。
+Hi 大家好，我是小杰瑞，这篇文章主要是对 WWDC2023 `Meet ActivityKit` 这个 Session 做一个全面的梳理，并辅以一个 Demo 来方便大家熟悉和掌握快速适配一个实时小组件。主要内容包含了对于这个 Session 所提到的所有的核心内容，并在关键的一些步骤中稍加扩展(毕竟 Session 之间还是存在一定的联系的，而如果太割裂的来看效果不是很好)。
 
 首先，先谈一下自己的一些感想。这期 Session 其实严格意义上不能算是全新的技术特性，锁屏实时小组件第一次出现是在 WWDC2022 中，但是碍于九月份才能发布灵动岛的 iPhone，Apple 也是把它藏到了九月份才发布了 ActivityKit 框架，开发者才开始能够进行全面的实时小组件的开发和设计。因此这篇 Session 更多的是对过去一年相关内容缺失的一个补充，正因为这个原因，去年的 Demo 其实用在今天的这篇文章中显得非常合适(摸鱼好理由)，但为了卷的更好看一点，硬生生的给去年的 Demo 加上了两个按钮，也算是有了一定的升级了。好了，废话到这里，开始我们的实时小组件之旅，希望对大家的适配和学习有一定的帮助。
 
@@ -114,6 +114,7 @@ extension View {
     }
 }
 ```
+
 而在使用的地方，尤其是需要 Xcode Preview 的 View 上添加该修饰符
 ![background](images/background.png)
 
@@ -227,7 +228,7 @@ let startState = NBAWidgetAttributes.ContentState(homeScore: 12, guestScore: 10,
 guard ActivityAuthorizationInfo().areActivitiesEnabled else {
      print("当前设备不可用Live Activities，用户关闭或者设备无法使用")
      return
-}
+}   
 ```
 
 #### 3.4.2 开启 Push Live Activities
@@ -235,6 +236,11 @@ guard ActivityAuthorizationInfo().areActivitiesEnabled else {
 与 3.4.1 几乎一致，只不过`PushType`参数需要传进去`.token`，并且在适当的时候拿到 Push Token，给到我们的后台，后台便可以拿着这个 Push Token 来发送通知。这里有两点需要额外注意:
 
 1. request API 不会立刻返回带有 Token 的 Activities 实例，我们需要起一个 Task 来监听 Push Token 的回调，来给到我们的后台。
+2. 此 Token 并不是我们 App 启动注册的 Token，需要区分，后台同学需要知晓
+3. Token 会变化，客户端需要监听 Token 的变化来及时的通知后台
+4. 一定要是 Token-Base 链接形式的 Push 发送
+
+下面代码为客户端开启 Activities 后，更新 Token 给到后台
 
 ```swift
 Task {
@@ -247,10 +253,6 @@ Task {
     } 
 }
 ```
-
-2. 此 Token 并不是我们 App 启动注册的 Token，需要区分，后台同学需要知晓
-3. Token 会变化，客户端需要监听 Token 的变化来及时的通知后台
-4. 一定要是 Token-Base 链接形式的 Push 发送
 
 具体的 Push 更新和结束实时小组件可以参考这篇文档：[利用 Push 来更新 Live Activities](https://developer.apple.com/documentation/ActivityKit/updating-and-ending-your-live-activity-with-activitykit-push-notifications) 以及[Session 10185: Update Live Activities with push notifications](https://developer.apple.com/videos/play/wwdc2023/10184)
 
@@ -397,7 +399,7 @@ extension View {
 
 ## 4.你可能还会需要了解的 TIPS
 
-1. [Live Activities 人机交互指南](https://developer.apple.com/design/human-interface-guidelines/live-activities) 
+1. [Live Activities 人机交互指南](https://developer.apple.com/design/human-interface-guidelines/live-activities)
 2. 无论你采用什么方式更新，数据量都不能大于 4KB
 3. Live Activities 可以独立于 Widget 小组件，但 Apple 建议实时小组件都搞了，不差 Widget 了，再做一个
 4. Info.plist 文件需要添加 NSSupportsLiveActivities == YES
