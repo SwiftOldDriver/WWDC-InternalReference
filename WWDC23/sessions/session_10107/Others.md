@@ -16,4 +16,4 @@ session_ids: [10107]
 
 ## 公众号/小专栏图文头图
 
-![banner](./images/SwiftOldDriver.png)
+![banner](./images/banner.png)
