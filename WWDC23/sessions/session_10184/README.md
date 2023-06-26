@@ -7,13 +7,13 @@ session_ids: [10184]
 本文基于 Session 10184 - Meet ActivityKit 梳理和扩展
 作者信息:小杰瑞，猪场资深 iOS 开发工程师
 
-## 0.前言
+## 0. 前言
 
 Hi 大家好，我是小杰瑞，这篇文章主要是对 WWDC2023 `Meet ActivityKit` 这个 Session 做一个全面的梳理，并辅以一个 Demo 来方便大家熟悉和掌握快速适配一个实时小组件。主要内容包含了对于这个 Session 所提到的所有的核心内容，并在关键的一些步骤中稍加扩展(毕竟 Session 之间还是存在一定的联系的，而如果太割裂的来看效果不是很好)。
 
 首先，先谈一下自己的一些感想。这期 Session 其实严格意义上不能算是全新的技术特性，锁屏实时小组件第一次出现是在 WWDC2022 中，但是碍于九月份才能发布灵动岛的 iPhone，Apple 也是把它藏到了九月份才发布了 ActivityKit 框架，开发者才开始能够进行全面的实时小组件的开发和设计。因此这篇 Session 更多的是对过去一年相关内容缺失的一个补充，正因为这个原因，去年的 Demo 其实用在今天的这篇文章中显得非常合适(摸鱼好理由)，但为了卷的更好看一点，硬生生的给去年的 Demo 加上了两个按钮，也算是有了一定的升级了。好了，废话到这里，开始我们的实时小组件之旅，希望对大家的适配和学习有一定的帮助。
 
-## 1.ActivityKit 它是什么
+## 1. ActivityKit 它是什么
 
 在去年分享的一些文章或者视频的留言中，总会有小伙伴问我这个不就是一个通知么。说他是，锁屏里的它静静地在那里还确实很像通知，且文档中又明确的提到了它可以通过 Push 来驱动数据更新，但如果真的把它归为这个作用，又稍有违背 Apple 设计它的初衷。
 
@@ -35,7 +35,7 @@ Hi 大家好，我是小杰瑞，这篇文章主要是对 WWDC2023 `Meet Activit
 
 而实时小组件我认为和灵动岛属于是互相成就了。在丝滑动画的加持下，用户会更加喜欢这种能带来小惊喜的上岛体验。下面我们来看看灵动岛上的实时小组件的样子。
 
-## 1.2 灵动岛上的 Live Activities
+### 1.2 灵动岛上的 Live Activities
 
 相对于锁屏堆叠放置的各家实时小组件(包涵自家 App 的多个实时小组件)来说，在灵动岛上的展示要复杂的多了，背后自然有 Apple 关于多个 App 登岛的逻辑，我们所需要做的或者说必须要做的，就是适配好所有尺寸的灵动岛上的视图。而关于尺寸，Apple 甚至在你新建`Target`时边为你搭好了所有代码，我们只需要在相应的代码块中塞进我们的视图就可以了。
 
@@ -51,7 +51,7 @@ Hi 大家好，我是小杰瑞，这篇文章主要是对 WWDC2023 `Meet Activit
 
 ![expanded-layout](images/expanded-layout~dark@2x.png)
 
-基于上面实时小组件在不同平台上展示的图例，我们可以联想和脑洞一些能够上岛的功能点了。当然肯定不止下面我列举的这些，仅作为抛转引入只用:
+基于上面实时小组件在不同平台上展示的图例，我们可以联想和脑洞一些能够上岛的功能点了。当然肯定不止下面我列举的这些，仅作为抛砖引玉之用:
 
 1. 比赛直播类 App，实时的更新用户关心的比赛
 
@@ -65,25 +65,25 @@ Hi 大家好，我是小杰瑞，这篇文章主要是对 WWDC2023 `Meet Activit
 
 在第一部分的最后，还想提醒 2 个小 Tips，或者说再啰嗦 2 个小感想。
 
-1. Live Activities 的实现依赖`SwiftUI`和`WidgetKit`，新特性用 SwiftUI，包括今年的 VisionOS，都可以看出 SwiftUI 的重要性，而结合我个人和一些同行的聊天，可以看出大厂在历史包袱的重压下或者快速迭代的压力下，也很难快速的转型 SwiftUI，甚至 Swift。小组件的出现和更迭便成为了一个很好的睡服产品和领导们的理由，想适配么？那得先留点时间学 SwiftUI 丫！
-2. 实时小组件的开启，需要明确的和用户操作相对应，切忌什么都上岛，再过去一年的实际体验当中，还是看到了一些不当用法的，遇到这种直接设置-关闭走起了。因此还是那句话，适配是好事儿，但硬凑或许真的适得其反。
+1. Live Activities 的实现依赖`SwiftUI`和`WidgetKit`，新特性用 SwiftUI，包括今年的 VisionOS，都可以看出 SwiftUI 的重要性，而结合我个人和一些同行的聊天，可以看出大厂在历史包袱的重压下或者快速迭代的压力下，也很难快速的转型 SwiftUI，甚至 Swift。小组件的出现和更迭便成为了一个很好的说服产品和领导们的理由，想适配么？那得先留点时间学 SwiftUI 丫！
+2. 实时小组件的开启，需要明确的和用户操作相对应，切忌什么都上岛，在过去一年的实际体验当中，还是看到了一些不当用法的，遇到这种我是直接设置-关闭走起了。因此还是那句话，适配是好事儿，但硬凑或许真的适得其反。
 
-## 2.Live Activities 的生命周期
+## 2. Live Activities 的生命周期
 
 在开始动手实现或者适配一个实时小组件功能前，我们有必要对其整个的生命周期做一个了解。开发者本质上需要做的主要有四件事儿，分别是:
 
 1. 开启，开启前，比较好的做法是先 check 当前环境实时小组件功能是否可用
 2. 更新，可以开启后台任务更新，也可以通过 Push 更新
 3. 持续监听每一个开启的实时小组件的状态，并进行相应的逻辑处理
-4. 结束，当比赛结束时，又或者外卖送到时，我们有义务关闭掉一个没有后续的小组件任务，虽然用户可以手动关闭，或者系统自动关闭，但如果我们非常优雅的处理了有始有终，会给用户非常不错的使用体验。
+4. 结束，当比赛结束时，又或者外卖送到时，我们有义务关闭掉一个没有后续的小组件任务，虽然用户可以手动关闭，或者系统自动关闭，但如果我们处理的非常优雅，会带给用户非常不错的使用体验
 
-在这里也是花了一个简图，来更好的说明我们需要做的工作，在后边的 Demo 中也会有详尽的代码加以描述。
+在这里也是画了一个简图，来更好的说明我们需要做的工作，在后边的 Demo 中也会有详尽的代码加以描述:
 
 ![widgetKit](images/widgetKit.png)
 
-## 3.展示球赛比分的完整 Live Activities 实现之旅
+## 3. 展示球赛比分的完整 Live Activities 实现之旅
 
-在大致了解了实时小组件是什么以及生命周期之后，我们边可以打开~~产品文档~~开发文档进行
+在大致了解了实时小组件是什么以及它的生命周期之后，我们便可以打开~~产品文档~~开发文档进行实际的开发了。
 
 [Live Activity 开发文档](https://developer.apple.com/documentation/activitykit/displaying-live-data-with-live-activities)
 
@@ -93,7 +93,7 @@ Hi 大家好，我是小杰瑞，这篇文章主要是对 WWDC2023 `Meet Activit
 
 由于是拿着去年的 Demo 进行的演示，因此在用新的 Xcode15 打开之后，需要稍微调整一下工程代码的，也就是需要做一些准备工作，其实就是编不过-，-，这里稍微扩展一丢丢:
 
-大家在打开之前的 Widget SwiftUI 工程后，command+option+p 激活 Xcode Preview 预览时，会遇到这个错误
+大家在打开之前的 Widget SwiftUI 工程后，`command+option+p`激活 Xcode Preview 预览时，会遇到这个错误
 
 ![errorforfirst](images/errorforfirst.png)
 
@@ -205,7 +205,9 @@ struct DemoWidgetLiveActivity: Widget {
 
 #### 3.4.1 开启普通 Live Activities
 
-实时小组件的更新方式有两种，一种是端内触发，一种是 Push 触发，其实还有一个，留个悬念后边说。我们先看端内触发。相应的 API 为:
+特别要注意一点的是，开启 Live Activities 需要我们的 App 保持在前台，其实这也和 Apple 推荐的 Live Activities 最佳实践是保持一致的，既实时小组件是用户非常主动的开启的一个任务或者事件。
+
+实时小组件的更新方式有两种，一种是端内触发，一种是 Push 触发，其实还有一个，留个悬念后边说。我们先看端内触发的情况，此时开启 Live Activities的方式如下:
 
 ```swift
 self.statusActivity = try Activity<NBAWidgetAttributes>.request(attributes: attribute, contentState: startState, pushType: nil)
@@ -233,12 +235,13 @@ guard ActivityAuthorizationInfo().areActivitiesEnabled else {
 
 #### 3.4.2 开启 Push Live Activities
 
-与 3.4.1 几乎一致，只不过`PushType`参数需要传进去`.token`，并且在适当的时候拿到 Push Token，给到我们的后台，后台便可以拿着这个 Push Token 来发送通知。这里有两点需要额外注意:
+与 3.4.1 几乎一致，只不过`PushType`参数需要传进去`.token`，并且在适当的时候拿到 Push Token，给到我们的后台，后台便可以拿着这个 Push Token 来发送通知。这里有几点需要额外注意:
 
 1. request API 不会立刻返回带有 Token 的 Activities 实例，我们需要起一个 Task 来监听 Push Token 的回调，来给到我们的后台。
-2. 此 Token 并不是我们 App 启动注册的 Token，需要区分，后台同学需要知晓
-3. Token 会变化，客户端需要监听 Token 的变化来及时的通知后台
-4. 一定要是 Token-Base 链接形式的 Push 发送
+2. 此 Token 并不是我们 App 启动注册的 Token，需要区分，后台同学需要知晓他们之间的不同
+3. 实时小组件的 Push 和 App 正常的远程 Push 非常容易造成混淆，本质上其实是两种实现的方式；且实时小组件的开关并不依赖系统设置中自己 App 的 Push 推送开关，也就是说当用户关闭了主推送开关时，只要授权了实时小组件的功能权限，我们依然可以通过 Push 的方式来驱动实时小组件的更新
+4. Token 会变化，客户端需要监听 Token 的变化来及时的通知后台
+5. 一定要是 Token-Base 链接形式的 Push 发送
 
 下面代码为客户端开启 Activities 后，更新 Token 给到后台
 
@@ -310,11 +313,18 @@ public func endLiveActivities() -> Void {
 }
 ```
 
-这里 Apple 提供了三种策略:立即结束、再常驻个 4 小时以及一段制定的时间后结束，还是比较自由的。
+在 Demo 当中，我们将最终的比分传递给 Activity 框架，以确保用户看到的是最后的比分状态，并清楚的在 UI 上显示 Finished。而关于 API 当中`dismissalPolicy` 的含义，参考文档可以总结为:
+1. `.default` 系统对于实时小组件`默认`的消失策略，当我们设置这个参数时，系统会继续保持我们的实时小组件最长 4 个小时的展示，或者被用户主动清除掉；而在文档中，我们可以看到一个实时小组件最长可以停留八个小时，也就是理论上，我们的小组件可以存在 8+4=12 个小时
+2. `.immediate` 会立即结束我们实时小组件的展示，使用这个可能会让用户失去瞥见最后信息的机会
+3. `.after(someDate)` 我们可以通过设置这个参数来制定消失实时小组件的时机，需要注意的是，这个策略也需要传入最长 4 个小时的窗口，如果大于这个时间，系统会在 4 小时时清除掉我们的小组件
+
+当用户主动清除锁屏中的实时小组件时，我们又该做什么呢:
+1. 首先，移除实时小组件不等于取消当前任务，例如外卖类的实时小组件，被移除不代表我们要`cancel` 掉这份外卖(用户会被气疯的吧。。。)
+2. 端内可以通过`self.statusActivity?.activityState` 来主动获取我们创建出的小组件实例的状态，当发现是`dismissed`时，则意味着不需要再更新它了，可以在我们的数据管理 Manager 中做移除
 
 ### 3.5 给实时小组件增加一个按钮
 
-在 iOS17 之前，实时小组件通过`widgetURL`来进入 App 指定的页面来进行后续的操作，略显繁琐，而在 iOS17 我们可以借助`AppIntent`的力量来实现增加按钮和切换键 (Toggle) 这个组件来丰富我们的功能。
+在 iOS17 之前，实时小组件通过`widgetURL`来进入 App 指定的页面来进行后续的操作，略显繁琐，而在 iOS17 我们可以借助`AppIntent`的力量来实现增加按钮和切换键 (Toggle) 这两个组件来丰富我们的功能。
 
 ```swift
 struct likeAppIntent: WidgetConfigurationIntent {
@@ -397,7 +407,7 @@ extension View {
 
 当息屏时，文字等颜色变为白色，更加便于辨认。
 
-## 4.已有 Widget 工程如何加入 Live Activities
+## 4. 已有 Widget 工程如何加入 Live Activities
 
 对于已经拥有了 Widget Extension 的工程，我们同样也可以快速支持 Live Activities。
 
@@ -428,7 +438,7 @@ struct DemoWidgetBundle: WidgetBundle {
 
 ```
 
-## 5.你可能还会需要了解的 TIPS
+## 5. 你可能还会需要了解的 TIPS
 
 1. [Live Activities 人机交互指南](https://developer.apple.com/design/human-interface-guidelines/live-activities)
 2. 无论你采用什么方式更新，数据量都不能大于 4KB
@@ -437,7 +447,7 @@ struct DemoWidgetBundle: WidgetBundle {
 5. 锁屏中 UI、灵动岛展开 UI 如果超过 160points，系统有可能会裁切我们的 View
 6. StandBy 模式，是采用我们的 Lock Screen 的 UI 来填充展示
 7. 一个 App 可以开启多个 Live Activities，而一台设备可以开启多个 App 的多个 Live Activities，不要对这个数量作出假设，也不要对岛上出现的时机和顺序或者位置做出假设
-8. 在开启、更新等重要时机前，我们应该处理当 Live Activities 不可用时的错误，基于用户友好的提示
+8. 在开启、更新等重要时机前，我们应该处理当 Live Activities 不可用时的错误，给予用户友好的提示
 9. Push 暂时是无法开启 Live Activities 的
 
 ## 6. 小结
