@@ -207,7 +207,7 @@ struct DemoWidgetLiveActivity: Widget {
 
 特别要注意一点的是，开启 Live Activities 需要我们的 App 保持在前台，其实这也和 Apple 推荐的 Live Activities 最佳实践是保持一致的，既实时小组件是用户非常主动的开启的一个任务或者事件。
 
-实时小组件的更新方式有两种，一种是端内触发，一种是 Push 触发，其实还有一个，留个悬念后边说。我们先看端内触发的情况，此时开启 Live Activities的方式如下:
+实时小组件的更新方式有两种，一种是端内触发，一种是 Push 触发，其实还有一个，留个悬念后边说。我们先看端内触发的情况，此时开启 Live Activities 的方式如下:
 
 ```swift
 self.statusActivity = try Activity<NBAWidgetAttributes>.request(attributes: attribute, contentState: startState, pushType: nil)
