@@ -397,7 +397,38 @@ extension View {
 
 当息屏时，文字等颜色变为白色，更加便于辨认。
 
-## 4.你可能还会需要了解的 TIPS
+## 4.已有 Widget 工程如何加入 Live Activities
+
+对于已经拥有了 Widget Extension 的工程，我们同样也可以快速支持 Live Activities。
+
+首先我们需要在 Widget Extension 中 新建一个 Swift 文件，并引入`ActivityKit`框架, `WidgetKit`框架以及`SwiftUI`框架，然后则需要创建`ActivityAttributes` 来定义实时小组件的传输数据媒介。
+
+然后我们需要创建一个 Widget Struct 来声明我们所要实现的实时小组件 Widget:
+
+```swift
+
+    var body: some WidgetConfiguration {for: DemoWidgetAttributes.self} dynamicIsland: { context in
+            DynamicIsland {...} compactLeading: {...} compactTrailing: {...} minimal: {...}
+            .widgetURL(URL(string: "http://www.apple.com"))//点击跳转
+    }
+
+```
+
+最后我们需要使用`WidgetBundle`来将刚才定义好的 Widget 加入进去，系统才会识别我们有一个实时小组件可用:
+
+```swift
+
+@main
+struct DemoWidgetBundle: WidgetBundle {
+    var body: some Widget {
+        DemoWidget()
+        DemoWidgetLiveActivity() //刚才定义好的新的实时小组件
+    }
+}
+
+```
+
+## 5.你可能还会需要了解的 TIPS
 
 1. [Live Activities 人机交互指南](https://developer.apple.com/design/human-interface-guidelines/live-activities)
 2. 无论你采用什么方式更新，数据量都不能大于 4KB
@@ -409,7 +440,7 @@ extension View {
 8. 在开启、更新等重要时机前，我们应该处理当 Live Activities 不可用时的错误，基于用户友好的提示
 9. Push 暂时是无法开启 Live Activities 的
 
-## 5. 小结
+## 6. 小结
 
 虽然实时小组件出现到现在的时间不长，但它可以快速拉进用户和 App 之间的距离，并能将用户最关心的任务和信息展示在锁屏和灵动岛等比较重要的系统 UI 中，这些优点会随着更多第三方应用的适配而无限放大。但与此同时，滥用它的特性也一定会被用户甚至 Apple 所嫌弃。因此如何精简出自己 App 适合上岛的功能点，我觉得要比如何适配如何实现更加的重要，毕竟总览 Live Activities 的实现，Apple 已经几乎做到手把手了，如果之前有过桌面小组件开发经验的同学，或者 SwiftUI 相关经验的同学，上手起来会非常的快。
 
