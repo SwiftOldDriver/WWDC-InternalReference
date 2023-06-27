@@ -1,5 +1,5 @@
 ---
-session_ids: [10027, 10028]
+session_ids: [10028]
 ---
 
 ## 个人介绍
@@ -8,7 +8,7 @@ Raydon：现就职于 TikTok 音乐团队
 
 ## 审核介绍
 
->> 
+
 
 ## 不超过 120 个字的文章简介
 
@@ -17,3 +17,4 @@ Raydon：现就职于 TikTok 音乐团队
 ## 公众号/小专栏图文头图
 
 ![banner](./images/banner.png)
+

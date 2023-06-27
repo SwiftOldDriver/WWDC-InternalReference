@@ -1,5 +1,5 @@
 ---
-session_ids: [10027, 10028]
+session_ids: [10028]
 ---
 
 # WWDC23 10028 - 让你的小组件栩栩如生
@@ -32,7 +32,7 @@ struct ContentMarginWidget: Widget {
         AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
             ContentMarginWidgetEntryView(entry: entry)
         }
-      	/// 使 Content margin 失效
+        /// 使 Content margin 失效
         .contentMarginsDisabled()
     }
 }
@@ -46,11 +46,11 @@ struct ContentMarginWidget: Widget {
 
 
 
-有趣的是，在老版本的实现里，只有在 WatchOS9 的小组件才有 `Safe Area` 的概念。若通过 `GeometryReader` 去读取其他系统的小组件的 `Safe Area`，对应的数值都为 0。在新版本中，全部小组件的 `Safe Area` 都被设置为0，而都修改为使用 `Content Margin` 作为安全距离。
+有趣的是，在老版本的实现里，只有在 WatchOS9 的小组件才有 `Safe Area` 的概念。若通过 `GeometryReader` 去读取其他系统的小组件的 `Safe Area`，对应的数值都为0。在新版本中，全部小组件的 `Safe Area` 都被设置为0，而都修改为使用 `Content Margin` 作为安全距离。
 
-| < iOS17, < watchOS10                                         | = iOS 17, = watchOS10                                        |
-| ------------------------------------------------------------ | ------------------------------------------------------------ |
-| <img src="./images/safe_area_1.png" alt="安全距离" style="zoom:50%;" /> | <img src="./images/safe_area_2.PNG" alt="安全距离" style="zoom:50%;" /> |
+| < iOS17, < watchOS10                        | = iOS 17, = watchOS10                 |
+| ------------------------------------------- | ------------------------------------- |
+| ![低版本安全距离](./images/safe_area_1.png) | ![安全距离](./images/safe_area_2.png) |
 
 ```Swift
 var body: some View {
@@ -92,7 +92,7 @@ struct MyWidget: Widget {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             MyWidgetEntryView(entry: entry)
         }
-      	/// 将背景设置为不可移除
+        /// 将背景设置为不可移除
         .containerBackgroundRemovable(false)
         .configurationDisplayName("My Widget")
         .description("This is an example widget.")
@@ -175,7 +175,7 @@ struct TotalCaffeineView: View {
             Text(totalCaffeine.formatted())
                 .font(.title)
                 .minimumScaleFactor(0.8)
-          			/// 增加文本内容过渡效果
+                /// 增加文本内容过渡效果
                 .contentTransition(.numericText(value: totalCaffeine.value))
         }
         .foregroundColor(.espresso)
@@ -200,7 +200,7 @@ struct LastDrinkView: View {
             Text("\(log.date, format: Self.dateFormatStyle) · \(caffeineAmount)")
         }
         .font(.caption)
-      	/// 增加转场效果
+        /// 增加转场效果
         .id(log)
         .transition(.push(from: .bottom))
     }
@@ -400,3 +400,4 @@ var body: some View {
 - 小组件拓展了四个可放置的区域，分别是 **Mac 的桌面**、**iPad 的锁屏**、**iPhone 的 StandBy** 以及 **Apple Watch 的 Smart Stack**。
 - 小组件在 timeline 更新节点刷新视图时，支持添加 SwiftUI 中**转场（Transition）**、**动画（Animation）**和**内容过渡（Content Transition）**效果。
 - 结合 `SwiftUI` 和 `AppIntents`，小组件可支持 **`Button`** 和 **`Toggle`** 两个交互组件。
+
