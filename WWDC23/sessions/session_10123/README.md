@@ -117,6 +117,70 @@ Metal 3 提供了现代高端游戏使用的所有高级图形和计算功能，
 
 在这种全方位的功能支持下，无论你的 Windows 游戏用的是第三方的跨平台输入组件，或是底层的 Windows API，还是游戏外设自定义的 SDK，都能获得足够的移植空间。
 
+如果你有过在 PC 上打游戏的经历，那你的输入设备一般有两种选择：键鼠或者游戏手柄。键鼠的移植相对简单，因为 PC 与 Mac 对键鼠的抽象代码都是差不多的。作为游戏发烧友，我必须为你介绍发烧程度更高的 - 游戏手柄的移植。
+
+接下来我们拿 Xbox 游戏手柄来举个例子，首先你要做的就是在项目中引入 Game Controllers：
+
+![ImportGameControllers](./images/ImportGameControllers.png)
+
+于是你的游戏在 Xbox 游戏手柄下就自动具备了分享功能，只要你的手柄上有分享按钮：
+
+1. 长按，代表开始或结束录屏
+2. 双击，代表截屏
+
+![ShareButton](./images/ShareButton.png)
+
+而这一切功能，不需要你添加一行代码。
+
+接着我们再为 Xbox 的老对手 Sony PlayStation DualSense 写点代码，DualSense 有个很酷的功能 - 自适应扳机。它能根据力道的反馈，模拟各种真实的场景。
+
+![DualSense](./images/DualSense.png)
+
+我们来模拟拉弓的感觉：一开始很轻松，接着约拉越紧，直到拉满弓，肌肉因为僵持不下开始微微抖动：
+
+```Swift
+func updateControllerAdaptiveTriggers() {
+
+    // 获取 dualSense
+    guard let dualSense = GCController.current?.physicalInputProfile as? GCDualSenseGamepad
+    else {
+        return
+    }
+
+    // 获取右扳机
+    let adaptiveTrigger = dualSense.rightTrigger
+
+    // 判断玩家正在拉弓
+    if playerIsPullingSlingshot {
+
+        // 根据扣动扳机的程度，换算成阻力
+        let resistiveStrength = min(1, 0.4 + adaptiveTrigger.value)
+
+        if adaptiveTrigger.value < 0.9 {
+
+            // 当扣动扳机的程度小于 0.9 时，根据程度，调整反馈的阻力
+            adaptiveTrigger.setModeFeedbackWithStartPosition(
+                0,
+                resistiveStrength: resistiveStrength)
+        } else {
+
+            // 当扣动扳机的程度大于等于 0.9 时，加入低频震动
+            adaptiveTrigger.setModeVibrationWithStartPosition(
+                0,
+                amplitude: resistiveStrength,
+                frequency: 0.03)
+        }
+    } else if adaptiveTrigger.mode != .off {
+
+        // 完成射击后，则关闭自适应扳机
+        adaptiveTrigger.setModeOff()
+    }
+}
+
+```
+
+是不是很棒？就这么一点代码，就完成了模拟拉弓反馈的移植。
+
 更多细节可以观看往期的主题：
 
 - [Tap into virtual and physical game controllers](https://developer.apple.com/videos/play/wwdc2021/10081)
