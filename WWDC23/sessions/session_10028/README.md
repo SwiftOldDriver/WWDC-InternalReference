@@ -46,7 +46,7 @@ struct ContentMarginWidget: Widget {
 
 
 
-有趣的是，在老版本的实现里，只有在 WatchOS9 的小组件才有 `Safe Area` 的概念。若通过 `GeometryReader` 去读取其他系统的小组件的 `Safe Area`，对应的数值都为0。在新版本中，全部小组件的 `Safe Area` 都被设置为0，而都修改为使用 `Content Margin` 作为安全距离。
+有趣的是，在老版本的实现里，只有在 WatchOS9 的小组件才有 `Safe Area` 的概念。若通过 `GeometryReader` 去读取其他系统的小组件的 `Safe Area`，对应的数值都为 0。在新版本中，全部小组件的 `Safe Area` 都被设置为 0，且统一修改使用 `Content Margin` 作为安全距离。
 
 | < iOS17, < watchOS10                        | = iOS 17, = watchOS10                 |
 | ------------------------------------------- | ------------------------------------- |
