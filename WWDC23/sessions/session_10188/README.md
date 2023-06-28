@@ -22,9 +22,15 @@ session_ids: [10188]
 > 
 > 为了充分理解本 `Session`，您应对 `CloudKit` 和 `CKRecord` 比较熟悉。
 
-### 在开始了解 CKSyncEngine 之前
+### 1. iCloud in WWDC
 
-我想分享的一些我的 `iCloud` 实战场景，在我自己的[独立应用](https://apps.apple.com/cn/developer/rongqing-wang/id1264542103)开发过程中，主要有用到三种 `iCloud` 功能开发方案。在我实际开发中同一个应用中会根据具体场景使用不同的方案实现。
+![iCloud in WWDC](images/iCloud%20in%20WWDC.png)
+
+很开心第二次参与到 `WWDC 内参`，并再次负责对 `iCloud` 相关的 `Session`。`CKSyncEngine` 的发布我觉得是近三年 `iCloud` 相关最具实用价值的更新。前两年的 `WWDC` 更多的集中在对 `CloudKit` 后台自动化等一些不痛不痒的点的更新。`CKSyncEngine` 让 `iCloud` 同步方案的实现更加灵活。
+
+### 2. 一点分享
+
+我还想分享的一些我的 `iCloud` 实战场景，在我自己的[独立应用](https://apps.apple.com/cn/developer/rongqing-wang/id1264542103)开发过程中，主要有用到三种 `iCloud` 功能开发方案。在我实际开发中同一个应用中会根据具体场景使用不同的方案实现。
 
 #### 方案一： 直接通过 CKRecord 数据流交互，无本地数据
 
@@ -449,11 +455,17 @@ func testSyncConflict() async throws {
 
 这些步骤将有助于使用 `CKSyncEngine` 创建和维护可靠、持久的应用程序。
 
-## 总结与展望
+## 总结
 
 通过本 `Session` 了解了 `CKSyncEngine` 后，我认为，`CKSyncEngine` 其实是将 `NSPersistentCloudKitContainer` 内部对 `CoreData` 数据进行同步的功能抽了出来，更加灵活通用。解决了 `NSPersistentCloudKitContainer` 强绑定 `CoreData` 的缺点，对于不使用 `CoreData` 又想方便的进行 `iCloud` 云备份的项目来说是极大的利好。
 
 对于已经采用了 `CoreData + NSPersistentCloudKitContainer` 方案的项目来说没有必要进行切换。就我个人的项目而言，那款记账软件是比较适合切换到 `CKSyncEngine` 的，因为持久化方案没有使用 `CoreData`，而是 `SQLite`，然后通过 `FileManager` 进行对文件整体进行 `iCloud` 备份的。我需要做的就是在更改数据的时候将对应的更改同步提交给 `CKSyncEngine`，并在适当的时候处理引擎相关的事件。
+
+### 回顾
+
+很开心第二次参与到 `WWDC 内参`，并再次负责对 `iCloud` 相关的 `Session`。`CKSyncEngine` 的发布我觉得是近三年 `iCloud` 相关最具实用价值的更新。前两年的 `WWDC` 更多的集中在对 `CloudKit` 后台自动化等一些不痛不痒的点的更新。`CKSyncEngine` 让 `iCloud` 同步方案的实现更加灵活。
+
+期待 `iCloud` 团队带来更多让人眼前一亮的更新。
 
 ## 推荐阅读
 
@@ -472,3 +484,9 @@ func testSyncConflict() async throws {
 > [【WWDC22 10115/10119】优化 CoreData & CloudKit 实现](https://xiaozhuanlan.com/topic/5821964073)
 > 
 > [【WWDC22 10116】初见 CKTool JS](https://xiaozhuanlan.com/topic/8235470691)
+> 
+> [【WWDC21 10086】CloudKit 新特性](https://xiaozhuanlan.com/topic/6132549708)
+> 
+> [【WWDC21 10118】CloudKit 自动化开发](https://xiaozhuanlan.com/topic/4917635208)
+> 
+> [【WWDC21 10015】Build apps that share data through CloudKit and Core Data](https://developer.apple.com/videos/play/wwdc2021/10015/)
