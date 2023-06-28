@@ -15,11 +15,11 @@ session_ids: [10188]
 首先，我们将谈论在 `Apple` 平台上与 `CloudKit` 同步的状态。然后将概述 `CKSyncEngine` 是什么以及其工作原理。然后，您将了解如何在自己的项目中开始使用 `CKSyncEngine`。一旦设置完成，您将学习如何使用同步引擎在设备之间同步数据。最后，您将学习有关测试和调试与 `CKSyncEngine` 集成的最佳实践。
 
 > 本文基于[Session 10188: Sync to iCloud with CKSyncEngine](https://developer.apple.com/videos/play/wwdc2023/10188/)梳理。
-> 
+>
 > 通过本文您将了解 `CKSyncEngine` 如何帮助您将人们的 `CloudKit` 数据同步到 `iCloud`。了解当您让系统处理同步操作的调度时，如何减少应用程序中的代码量。
-> 
+>
 > 本 `Session` 将分享如何自动受益于随着 `CloudKit` 的发展而提高的性能，探索同步实现的测试等内容。
-> 
+>
 > 为了充分理解本 `Session`，您应对 `CloudKit` 和 `CKRecord` 比较熟悉。
 
 ### 1. iCloud in WWDC
@@ -169,7 +169,7 @@ session_ids: [10188]
 
 在使用 `CKSyncEngine` 之前，您需要完成一些设置项目的工作。这些要求与您是使用 `CKSyncEngine` 还是构建自己的自定义 `CloudKit` 实现无关。
 
-在开始工作之前，需要基本了解 `CloudKit` 的基本数据类型 `CKRecord` 和 `CKRecordZone`。同步引擎API大量使用 `CKRecord` 和 `CKRecordZone`，因此您应该在深入研究之前了解它们是什么。
+在开始工作之前，需要基本了解 `CloudKit` 的基本数据类型 `CKRecord` 和 `CKRecordZone`。同步引擎 API 大量使用 `CKRecord` 和 `CKRecordZone`，因此您应该在深入研究之前了解它们是什么。
 
 * 在 `Xcode` 中 `Signing & Capabilities` 为您的项目启用 `CloudKit` 功能。
 * 由于同步引擎依赖推送通知来保持最新，因此您还需要启用`远程通知`功能。
@@ -214,7 +214,7 @@ actor MySyncManager : CKSyncEngineDelegate {
 
 * 为了初始化同步引擎，需要传递一个配置对象。
   * 需要提供要与之同步的数据库、同步引擎状态的最后已知版本和您的代理对象。
-* 代理协议中的一个功能是处理事件函数：`handleEvent(_ event: CKSyncEngine.Event, syncEngine: CKSyncEngine)` 
+* 代理协议中的一个功能是处理事件函数：`handleEvent(_ event: CKSyncEngine.Event, syncEngine: CKSyncEngine)`
   * 同步引擎会通过它通知通过过程中的相关事件，当同步引擎更新其内部状态，或您自己更新状态时，同步引擎将发布状态更新事件。
     * 例如，当从服务器获取新数据或帐户更改时，将在此处收到更新事件。
   * 响应此事件时，你应该将 `stateSerialization` 保存在本地，并在下次初始化同步引擎的时候传入。
@@ -254,7 +254,7 @@ func nextRecordZoneChangeBatch(
 
 最后，处理事件 `sentDatabaseChanges` 和 `sentRecordZoneChanges`。这些事件将在更改已发送到服务器后发布。
 
-这是一个发送更改到服务器的示例。该应用程序编辑数据并希望同步新记录更改。为此，您将向同步引擎状态添加待处理记录区域更改，以告诉它您需要保存该记录。当同步引擎准备好同步记录时，它将调用代理方法 `nextRecordZoneChangeBatch`。在此处，您将返回要发送到服务器的下一批更改。通过提供待处理更改列表和记录提供程序来初始化 `RecordZoneChangeBatch`。待处理更改列表包含要保存或删除的 `RecordID`，记录提供程序将在实际同步发生时将这些ID映射到记录上。
+这是一个发送更改到服务器的示例。该应用程序编辑数据并希望同步新记录更改。为此，您将向同步引擎状态添加待处理记录区域更改，以告诉它您需要保存该记录。当同步引擎准备好同步记录时，它将调用代理方法 `nextRecordZoneChangeBatch`。在此处，您将返回要发送到服务器的下一批更改。通过提供待处理更改列表和记录提供程序来初始化 `RecordZoneChangeBatch`。待处理更改列表包含要保存或删除的 `RecordID`，记录提供程序将在实际同步发生时将这些 ID 映射到记录上。
 
 ### 2. 从服务端获取数据
 
@@ -462,23 +462,23 @@ func testSyncConflict() async throws {
 ## 推荐阅读
 
 > [CKSyncEngine 文档](https://developer.apple.com/documentation/cloudkit/cksyncengine)
-> 
+>
 > [示例代码：需要 Xcode15](https://github.com/apple/sample-cloudkit-sync-engine)
-> 
+>
 > [Get the most out of CloudKit Sharing](https://developer.apple.com/videos/play/tech-talks/10874)
-> 
+>
 > [LabLawliet: 基于 iCloud 构建独立项目用户体系](https://mp.weixin.qq.com/s/W7XuE3rNaIyjFblrkEoDtQ)
-> 
+>
 > [Core Data](https://developer.apple.com/documentation/coredata)
-> 
+>
 > [Synchronizing a local store to the cloud](https://developer.apple.com/documentation/coredata/synchronizing_a_local_store_to_the_cloud)
-> 
+>
 > [【WWDC22 10115/10119】优化 CoreData & CloudKit 实现](https://xiaozhuanlan.com/topic/5821964073)
-> 
+>
 > [【WWDC22 10116】初见 CKTool JS](https://xiaozhuanlan.com/topic/8235470691)
-> 
+>
 > [【WWDC21 10086】CloudKit 新特性](https://xiaozhuanlan.com/topic/6132549708)
-> 
+>
 > [【WWDC21 10118】CloudKit 自动化开发](https://xiaozhuanlan.com/topic/4917635208)
-> 
+>
 > [【WWDC21 10015】Build apps that share data through CloudKit and Core Data](https://developer.apple.com/videos/play/wwdc2021/10015/)
