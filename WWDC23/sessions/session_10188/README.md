@@ -22,6 +22,43 @@ session_ids: [10188]
 > 
 > 为了充分理解本 `Session`，您应对 `CloudKit` 和 `CKRecord` 比较熟悉。
 
+### 在开始了解 CKSyncEngine 之前
+
+我想分享的一些我的 `iCloud` 实战场景，在我自己的[独立应用](https://apps.apple.com/cn/developer/rongqing-wang/id1264542103)开发过程中，主要有用到三种 `iCloud` 功能开发方案。在我实际开发中同一个应用中会根据具体场景使用不同的方案实现。
+
+#### 方案一： 直接通过 CKRecord 数据流交互，无本地数据
+
+![扫雷Elic](images/MyApp01.jpeg)
+
+这个 App 是我最早进行 `CloudKit` 功能尝试的作品。保持着平时做需求的思维，通过接口数据驱动 App 展示与交互。而在这里 `CloudKit` 就充当了`服务端`的角色，`CKRecord 数据流`充当了 `JSON 数据流`的角色。
+
+最终基于这个思路实现了一套较为完善的用户体系与排行榜等一系列功能。
+
+> 自从游戏要版号后没办法就把内购都去掉了，这个 App 就处于放养状态了。
+
+#### 方案二： 本地数据库 + FileManager 实现云备份
+
+![梦见账本](images/MyApp02.jpeg)
+
+这是一个记账软件，本体使用了较为熟悉的数据库方案，并通过 `FileManaer` 实现`数据库文件`的`上传`与`下载`功能，这个方案比较简单直接粗暴。
+
+除了记账数据哭本身的备份需求以外，还根据上一款应用的经验，同样基于 `CloudKit` 构建了一套用户与虚拟货币内购体系。
+
+最终这款基于 `iCloud` 的应用在不同场景下使用了不同的方案。
+
+#### 方案三： CoreData + NSPersistentCloudKitContainer 自动同步
+
+![一色](images/MyApp03.jpeg)
+
+这是一套 `CoreData` 开发文档里推荐的一套非常完善解决方案。本地 `CoreData` 数据库通过 `NSPersistentCloudKitContainer` 与 `CloudKit` 后台进行同步。
+
+在这款应用内，收藏夹就是通过这套方案实现的。
+
+当然后续的用户体系与一些强持久化的需求我依旧会去使用第一种方案。也欢迎前往[AppStore](https://apps.apple.com/cn/developer/rongqing-wang/id1264542103)体验交流。
+
+> [Apple Demo: Synchronizing a local store to the cloud](https://developer.apple.com/documentation/coredata/synchronizing_a_local_store_to_the_cloud)
+
+下面看看全新的 `CKSyncEngine` 能够带来什么新的东西吧！
 
 ## 一、 同步状态
 
@@ -53,7 +90,7 @@ session_ids: [10188]
 
 当您使用 `CKSyncEngine` 时，您需要编写的同步代码量变得更小而且更专注于业务逻辑。您只需要处理特定于应用程序的事件，而同步引擎则处理其余部分。为了编写合适的同步引擎，您可能需要编写数千行代码，并在测试中将该数量加倍。据说 `NSPersistentCloudKitContainer` 就有超过 `70,000` 行测试代码，`CKSyncEngine` 也有很多测试，因为它可以为您处理很多事务。
 
-## 认识 CKSyncEngine
+## 二、 认识 CKSyncEngine
 
 那么，这个新的 `CKSyncEngine API` 是什么？
 
@@ -141,7 +178,7 @@ session_ids: [10188]
 
 总的来说，我们建议您依赖自动同步调度。但是，我们理解存在手动同步的相关场景，同步引擎在必要时有 `API` 可供使用。
 
-## 二、 快速开始
+## 三、 快速开始
 
 ### 1. 项目配置
 
@@ -186,7 +223,7 @@ actor MySyncManager : CKSyncEngineDelegate {
 
 为了初始化同步引擎，您将传递一个配置对象。在配置中，您需要提供要与之同步的数据库、同步引擎状态的最后已知版本和您的代理对象。代理协议中的一个功能是处理事件函数。该函数是同步引擎通知您的应用程序有关正常同步操作期间发生的不同事件的方式。例如，当从服务器获取新数据或帐户更改时，它将发布事件。其中一个事件是状态更新事件。当同步引擎更新其内部状态，或您自己更新状态时，同步引擎将发布状态更新事件。响应此事件时，您应该本地持久化此新的序列化状态。在示例中，您将在下次初始化同步引擎时使用此状态序列化。
 
-## 三、 使用 CKSyncEngine
+## 四、 使用 CKSyncEngine
 
 现在基础设置已完成，接下来介绍如何使用同步引擎进行同步。有几个简单的步骤可以让您将更改发送到服务器。
 
@@ -374,7 +411,7 @@ let syncEngines = databases.map {
 }
 ```
 
-## 四、 测试与调试
+## 五、 测试与调试
 
 自动化测试是确保代码稳定性并快速开发的最佳方式。使用同步引擎，您可以使用多个 `CKSyncEngine` 实例模拟设备之间的用户流程。您应该模拟应用程序可能遇到的极端情况。为此，您可以通过将 `automaticallySync` 设置为 `false` 来干预同步引擎流程。
 
@@ -412,6 +449,12 @@ func testSyncConflict() async throws {
 
 这些步骤将有助于使用 `CKSyncEngine` 创建和维护可靠、持久的应用程序。
 
+## 总结与展望
+
+通过本 `Session` 了解了 `CKSyncEngine` 后，我认为，`CKSyncEngine` 其实是将 `NSPersistentCloudKitContainer` 内部对 `CoreData` 数据进行同步的功能抽了出来，更加灵活通用。解决了 `NSPersistentCloudKitContainer` 强绑定 `CoreData` 的缺点，对于不使用 `CoreData` 又想方便的进行 `iCloud` 云备份的项目来说是极大的利好。
+
+对于已经采用了 `CoreData + NSPersistentCloudKitContainer` 方案的项目来说没有必要进行切换。就我个人的项目而言，那款记账软件是比较适合切换到 `CKSyncEngine` 的，因为持久化方案没有使用 `CoreData`，而是 `SQLite`，然后通过 `FileManager` 进行对文件整体进行 `iCloud` 备份的。我需要做的就是在更改数据的时候将对应的更改同步提交给 `CKSyncEngine`，并在适当的时候处理引擎相关的事件。
+
 ## 推荐阅读
 
 > [CKSyncEngine 文档](https://developer.apple.com/documentation/cloudkit/cksyncengine)
@@ -421,3 +464,11 @@ func testSyncConflict() async throws {
 > [Get the most out of CloudKit Sharing](https://developer.apple.com/videos/play/tech-talks/10874)
 > 
 > [LabLawliet: 基于 iCloud 构建独立项目用户体系](https://mp.weixin.qq.com/s/W7XuE3rNaIyjFblrkEoDtQ)
+> 
+> [Core Data](https://developer.apple.com/documentation/coredata)
+> 
+> [Synchronizing a local store to the cloud](https://developer.apple.com/documentation/coredata/synchronizing_a_local_store_to_the_cloud)
+> 
+> [【WWDC22 10115/10119】优化 CoreData & CloudKit 实现](https://xiaozhuanlan.com/topic/5821964073)
+> 
+> [【WWDC22 10116】初见 CKTool JS](https://xiaozhuanlan.com/topic/8235470691)
