@@ -73,7 +73,9 @@ session_ids: [10105]
 6. 相机设有图像缓冲区，需要从缓冲区读取最新的图像数据进行处理和存储，如果捕捉手势与真正拍照设置之间的延迟过长，会引入图像模糊等问题。
 7. 因此在我们点击相机按钮和调用 capturePhoto API 之间代码越少越好
 ## New Responsive Capture 新的响应捕获
-
+    
+![](./images/change.gif)
+    
 1. 通过 `isResponsiveCaptureSupported` 和 `isResponsiveCaptureEnabled` 来启用响应捕获，同时打开上述的`isZeroShutterLagEnabled`，可以获得重叠的响应捕获，这样就可以在同一时间内拍摄更多照片，提高捕捉完美时刻的机会
 2. 照片拍摄会从线性的执行调整为并行执行，以提供更快更连贯的连续拍摄。但是这会增加内存峰值，同时代理回调顺序也会紊乱，比如在第一张图片`didFinishProcessingPhoto` 回调之前，可能发生了多次 `willBeginCaptureFor`  因此我们必须要兼容处理照片的回调
 3. 之前我们只能通过去设置 -> 相机 -> 优先快速拍摄，iOS 17 之后我们可以通过设置 `isFastCapturePrioritizationSupported` 和 `isFastCapturePrioritizationEnabled` 来控制它的开关。开启之后，如果相机检测到在短时间内连续拍摄了多张照片，会相应地将照片质量从最高质量设置调整为更“平衡”的质量设置，以保持连拍时间间隔
