@@ -212,4 +212,80 @@ WEB 中常见定义颜色的方式有如上图所示的五种：
 
 上面这五种方式可以定义出相同的色值，但是都局限于 sRGB 色域中，如果想要定义仅存在于 P3 色域的颜色，需要用到新的色值定义方式。
 
-​         
+它们分别是
+
+* [lch](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/lch)
+* [oklch](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/oklch)
+* [lab](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/lab)
+* [oklab](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/oklab)
+
+这四种色值定义方法可以呈现包含 P3 色域在内的任何色域中的颜色。
+
+![03-02](./images/03-2.png)
+
+* 所有方法中的 L 代表了色彩的亮度（Lightness）
+* lch 和 oklch 中的 c 衡量了色度（Chroma）
+* lch 和 oklch 中的 h 代表了色相
+
+![03-3](./images/03-3.png)
+
+* lab 和 oklab 中的 a 为介于 -125 和 125 之间的数值或者是介于 -100% 和 100% 之间的百分比，指定了在 Lab 色彩空间中沿 a 轴的距离，即颜色绿或红的程度。
+* lab 和 oklab 中的 b 为介于 -125 和 125 之间的数值或者是介于 -100% 和 100% 之间的百分比，指定了在 Lab 色彩空间中沿 b 轴的距离，即颜色蓝或黄的程度。
+
+![03-4](./images/03-4.png)
+
+Safari 15.4 开始支持这四种颜色定义函数，可以用来定义任何色域中的颜色。Chrome、Edge 和 Firefox 在今年也支持了上述四种色彩定义函数。
+
+初次之外，还可以使用 color() 函数来定义颜色。
+
+![03-5](./images/03-5.png)
+
+[color()](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color) 接收以下参数：
+
+* 色域：包括 `srgb`、`display-p3`、`srgb-linear` 等
+* p1, p2, p3：指定色域所接收的值
+* alpha: 透明度，取值范围 (0-1/0%-100%)
+
+Safari 从 10.1 开始就已经支持了 color() 函数来指定在某个色域下的颜色值了。
+
+关于 CSS 工作组对于色彩更多的定义请参考 [CSS Color Module Level 5](https://drafts.csswg.org/css-color-5/)。
+
+### 引用颜色
+
+在以前，如果想要在 CSS 中引用之前已经定义过的颜色一般来说是通过 CSS 预处理器来实现的，而 [Relative Color syntax](https://www.w3.org/TR/css-color-5/#relative-colors) 也可以达到同样的效果了。
+
+![04-1](./images/04-1.png)
+
+> Safari 从 16.4 开始支持 Relative color syntax，其它浏览器暂不支持该特性
+
+下面我们来看下实际的用法。
+
+1.定义一个颜色 color original
+
+```CSS
+background: #87cefa;
+```
+
+2.引用 original 作为 from 的值
+
+```css
+background: rgb(from #87cefa);
+```
+
+3.根据新定义颜色的函数的值进行插值操作
+
+```css
+background: rgb(from #87cefa r g b / 0.7);
+```
+
+这里的效果就是基于 `#87cefa` 这个颜色值作为基底颜色，然后在 rgb 函数中保留原本基底颜色的 red、green、blue 值，但是修改其透明度为 70%。
+
+![04-2](./images/04-2.png)
+
+更多用法请参考 [在线 Demo - 请使用 Safari 16.4 及以上版本打开](https://stackblitz.com/edit/web-platform-dmcebx?file=index.html)
+
+Relative color syntax 还可以很便捷的用来定义设计系统中的色盘。
+
+![04-3](./images/04-3.png)
+
+如上图所示，定义一个基准颜色之后，通过 Relative color syntax 修改 lightness 就可以实现一个色盘的搭建。
