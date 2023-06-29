@@ -234,9 +234,15 @@ Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'IMG_1960.MOV':
 
 视差图的分辨率低于视频轨道。如上面的 `IMG_1960.MOV`，使用 media_info 命令行工具，可以看到视频轨道的分辨率是 1920×1080，而视差轨道的分辨率只有 320×180。
 
-视差是两个相机观察同一场景时看到的像素偏移（pixel shift），近距离的物体比远距离的物体偏移更多。你可以自己感受视差，注视一个物体，使用单个眼睛观察，看看不同距离的物体是如何移动的。
+![](images/PICSEW_C4D8.JPEG)
 
-TD：补充视差、深度相关概念。
+视差是两个相机观察同一场景时看到的像素偏移（pixel shift），近距离的物体比远距离的物体偏移更多。你可以自己感受视差，保持一个方向注视物体，使用单个眼睛轮换观察，看看不同距离的物体是如何移动的。
+
+从视差原理可知，视差数据需要双目观测，即需要用到设备的双摄同时采集，三摄还不一定行。所以可以使用 `builtInDualCamera` 或 `builtInDualWideCamera` AVCaptureDevice.DeviceType 来获取和使用设备。
+
+深度与视差紧密关联，可以这么说，视差是用于计算得出深度的，但视差得出的深度是相对的，目前只用在拍照和录像，像 AR 场景就需要前置的 TrueDepth 镜头或后置的 LiDAR，或后置单摄 + ML 来获取深度。有了深度信息，渲染景深就有了数据支撑，也是这样，才能实现自然的对焦平面（垂直于相机拍摄方向），而不是简单地抠像做 mask 模糊。所以在电影效果模式中的背景模糊效果是与人像模式中的效果保持一致的。
+
+有关深度采集的更多技术细节和数学原理可以观看往期 WWDC 视频 [Capturing Depth in iPhone Photography](https://developer.apple.com/videos/play/wwdc2017/507/)，以及文档与示例代码 [Depth data capture](https://developer.apple.com/documentation/avfoundation/additional_data_capture#2877303)。
 
 #### Metadata Track
 
