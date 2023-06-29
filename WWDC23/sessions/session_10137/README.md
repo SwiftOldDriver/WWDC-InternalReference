@@ -318,7 +318,7 @@ let asset = await withCheckedContinuation { continuation in
 }
 ```
 
-使用从选择器获取的 asset id，现在可以在请求它之前获取带有关于 Cinematic asset 信息的照片 asset。需要确保设置请求选项以获取原始版本，并允许网络访问，以防 asset 在 iCloud 上，最后请求电影模式 asset 为 AVAsset，后续的操作都是基于这个 AVAsset。从上面的 `IMG_1960.MOV ` 数据分析，我们也得知该视频文件就包含了电影效果模式所需的所有轨道数据。
+使用从选择器获取的 asset id，现在可以在请求它之前获取带有关于 Cinematic asset 信息的照片 asset。需要确保设置请求选项以获取原始版本，并允许网络访问，以防 asset 在 iCloud 上，最后请求电影模式 asset 为 AVAsset，后续的操作都是基于这个 AVAsset。从上面的 `IMG_1960.MOV` 数据分析，我们也得知该视频文件就包含了电影效果模式所需的所有轨道数据。
 
 ### 播放 asset
 
