@@ -5,8 +5,12 @@ session_ids: [10262]
 
 # Session 10262 - 重新探索 Safari 开发者功能
 
-> 作者：Style 月月， iOS 程序媛，简书/掘金文章贡献者，目前任职于小米，侧重于海外相关业务；
-> 审核：；
+> 作者：
+> 
+> Style 月月， iOS 程序媛，简书/掘金文章贡献者，目前任职于小米，侧重于海外相关业务；
+> 审核：
+>
+> Nemo ，SwiftGG 成员，目前就职于字节跳动，在剪映写 Cpp 和 TS。
 
 本文是根据 WWDC23 中的 [Rediscover Safari developer features](https://developer.apple.com/videos/play/wwdc2023/10262/) 撰写，主要是探索 Safari 为开发、设计准备的调试工具集。
 
