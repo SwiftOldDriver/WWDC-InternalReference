@@ -495,5 +495,5 @@ func testSyncConflict() async throws {
 > [【WWDC21 10118】CloudKit 自动化开发](https://xiaozhuanlan.com/topic/4917635208)
 >
 > [【WWDC21 10015】Build apps that share data through CloudKit and Core Data](https://developer.apple.com/videos/play/wwdc2021/10015/)
-> 
-> [【iOS独立开发】纯客户端基于 iCloud 构建排行榜功能](https://juejin.cn/post/6989918320224895012)
+>
+> [【iOS 独立开发】纯客户端基于 iCloud 构建排行榜功能](https://juejin.cn/post/6989918320224895012)
