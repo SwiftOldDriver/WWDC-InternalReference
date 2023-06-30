@@ -6,7 +6,7 @@ session_ids: [10188]
 
 ## 前言
 
-![目录](images/目录.jpeg)
+![目录](./images/目录.jpeg)
 
 作为一名 `iOS` 独立开发者，开发了多个个人项目，`CloudKit` 是我构建项目体系的核心。非常开心 `CloudKit` 持续的在优化更新，让我这样无后端的独立开发者能够持续发挥想象力输出产品。
 
@@ -24,7 +24,7 @@ session_ids: [10188]
 
 ### 1. iCloud in WWDC
 
-![iCloud in WWDC](images/iCloud%20in%20WWDC.png)
+![iCloud in WWDC](./images/iCloud%20in%20WWDC.png)
 
 很开心第二次参与到 `WWDC 内参`，并再次负责对 `iCloud` 相关的 `Session`。`CKSyncEngine` 的发布我觉得是近三年 `iCloud` 相关最具实用价值的更新。前两年的 `WWDC` 更多的集中在对 `CloudKit` 后台自动化等一些不痛不痒的点的更新。`CKSyncEngine` 让 `iCloud` 同步方案的实现更加灵活。
 
@@ -34,7 +34,7 @@ session_ids: [10188]
 
 #### 方案一： 直接通过 CKRecord 数据流交互，无本地数据
 
-![扫雷Elic](images/MyApp01.jpeg)
+![扫雷Elic](./images/MyApp01.jpeg)
 
 这个 App 是我最早进行 `CloudKit` 功能尝试的作品。保持着平时做需求的思维，通过接口数据驱动 App 展示与交互。而在这里 `CloudKit` 就充当了`服务端`的角色，`CKRecord 数据流`充当了 `JSON 数据流`的角色。
 
@@ -44,7 +44,7 @@ session_ids: [10188]
 
 #### 方案二： 本地数据库 + FileManager 实现云备份
 
-![梦见账本](images/MyApp02.jpeg)
+![梦见账本](./images/MyApp02.jpeg)
 
 这是一个记账软件，本体使用了较为熟悉的数据库方案，并通过 `FileManaer` 实现`数据库文件`的`上传`与`下载`功能，这个方案比较简单直接粗暴。
 
@@ -54,7 +54,7 @@ session_ids: [10188]
 
 #### 方案三： CoreData + NSPersistentCloudKitContainer 自动同步
 
-![一色](images/MyApp03.jpeg)
+![一色](./images/MyApp03.jpeg)
 
 这是一套 `CoreData` 开发文档里推荐的一套非常完善解决方案。本地 `CoreData` 数据库通过 `NSPersistentCloudKitContainer` 与 `CloudKit` 后台进行同步。
 
@@ -70,13 +70,13 @@ session_ids: [10188]
 
 `CloudKit` 本身并不复杂，但是同步这件事却是困难的。当涉及多个设备同步的场景时，可能会出现许多问题。
 
-![同步状态](images/同步状态-01.png)
+![同步状态](./images/同步状态-01.png)
 
 因此，我们的同步代码尽可能简单越好。而简化同步代码的最佳方法是尽可能少地编写代码。
 
 值得庆幸的是，您可以通过一些很棒的 `API` 来与 `CloudKit` 同步，并且这些 `API` 会为您完成大部分繁重工作。
 
-![同步状态](images/同步状态-02.png)
+![同步状态](./images/同步状态-02.png)
 
 ### 选择合适的方案
 
@@ -108,7 +108,7 @@ session_ids: [10188]
 
 ### 1. 同步引擎的工作原理
 
-![同步引擎的工作原理3](images/同步引擎的工作原理-03.png)
+![同步引擎的工作原理3](./images/同步引擎的工作原理-03.png)
 
 一般来说，同步引擎充当应用程序和 `CloudKit 服务器` 之间数据的传输渠道。应用程序以 `CKRecord` 和 `CKRecordZone` 的形式与同步引擎通信。
 
@@ -123,7 +123,7 @@ session_ids: [10188]
 
 ### 2. 同步引擎与服务器交互
 
-![同步引擎与服务器交互](images/同步引擎与服务器交互-04.png)
+![同步引擎与服务器交互](./images/同步引擎与服务器交互-04.png)
 
 首先，有人对数据进行修改。也许他们输入了一些内容，或者翻转了开关，或者删除了一个对象。然后，您的应用程序告诉同步引擎有一个待处理的更改需要发送到服务器。这让同步引擎知道它有任务要做。接下来，同步引擎向调度程序提交任务。一旦设备就绪，调度程序运行任务。
 
@@ -139,7 +139,7 @@ session_ids: [10188]
 
 ### 3. 从服务器拉取更新
 
-![从服务器拉取更新](images/从服务器拉取更新-04.png)
+![从服务器拉取更新](./images/从服务器拉取更新-04.png)
 
 现在，一个设备已经将一些数据发送到服务器，其他设备将获取该数据。当服务器接收到新更改时，它会向具有访问权限的其他设备发送推送通知。
 
