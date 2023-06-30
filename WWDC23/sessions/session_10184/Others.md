@@ -8,7 +8,10 @@ session_ids: [10184]
 
 ## 审核介绍
 
-TBD
+士土 Edmond 木，对 CocoaPods 有一点了解，对 Rust 和 Swift 比较感兴趣。[Github Page](https://looseyi.github.io/)
+
+叶孤城，老司机早期作者，现在佛系划水，独立开发者 (app: 灵动大陆) ，积极拥抱 SwiftUI too
+
 
 ## 不超过 120 个字的文章简介
 
