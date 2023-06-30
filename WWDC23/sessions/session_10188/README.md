@@ -36,11 +36,23 @@ session_ids: [10188]
 
 ![扫雷Elic](./images/MyApp01.jpeg)
 
-这个 App 是我最早进行 `CloudKit` 功能尝试的作品。保持着平时做需求的思维，通过接口数据驱动 App 展示与交互。而在这里 `CloudKit` 就充当了`服务端`的角色，`CKRecord 数据流`充当了 `JSON 数据流`的角色。
+这个应用是我最早进行 `CloudKit` 功能尝试的作品。为了构建一个所有用户都可参与的排行榜功能，按照平时做需求的思维，想要通过接口数据驱动应用展示与交互。而基于 `CloudKit` 构建适当的数据结构，完全能够实现这个功能。
 
-最终基于这个思路实现了一套较为完善的用户体系与排行榜等一系列功能。
+**数据结构之间的关系**
 
-> 自从游戏要版号后没办法就把内购都去掉了，这个 App 就处于放养状态了。
+![数据结构](./images/ElicRankDataFlow.png)
+
+**核心数据结构**
+
+![用户表](./images/ElicUserTable.png)
+
+![排行榜表](./images/ElicRankTable.png)
+
+![头像资源表](./images/ElicAvatarTable.png)
+
+在这里 `CloudKit` 就充当了`服务端`的角色，`CKRecord 数据流`充当了 `JSON 数据流`的角色。最终基于这个思路实现了一套较为完善的用户体系与排行榜等一系列功能。
+
+> 更多细节可以查看：[纯客户端基于 iCloud 构建排行榜功能](https://juejin.cn/post/6989918320224895012)
 
 #### 方案二： 本地数据库 + FileManager 实现云备份
 
@@ -190,6 +202,9 @@ session_ids: [10188]
 ```Swift
 actor MySyncManager : CKSyncEngineDelegate {
     
+    /// 初始化同步引擎
+    /// - container: CloudKit 容器（云数据库）
+    /// - localPersistence: 本地存的，上次接收到代理事件时保存的同步引擎的状态 lastKnownSyncEngineState
     init(container: CKContainer, localPersistence: MyLocalPersistence) {
         let configuration = CKSyncEngine.Configuration(
             database: container.privateCloudDatabase,
@@ -201,23 +216,21 @@ actor MySyncManager : CKSyncEngineDelegate {
         self.syncEngine = CKSyncEngine(configuration)
     }
     
+    /**
+    代理事件函数
+    - 同步引擎会通过它通知通过过程中的相关事件，当同步引擎更新其内部状态，或您自己更新状态时，同步引擎将发布状态更新事件。
+    - 例如，当从服务器获取新数据或帐户更改时，将在此处收到更新事件。
+    */
     func handleEvent(_ event: CKSyncEngine.Event, syncEngine: CKSyncEngine) async {
         switch event {
         /// 处理更新事件
         case .stateUpdate(let stateUpdate):
-            /// 本地持久化 stateSerialization
+            /// 本地持久化 stateSerialization，在下次初始化同步引擎的时候传入（见上面的 init 函数）
             self.localPersistence.lastKnownSyncEngineState = stateUpdate.stateSerialization
         }
     }
 }
 ```
-
-* 为了初始化同步引擎，需要传递一个配置对象。
-  * 需要提供要与之同步的数据库、同步引擎状态的最后已知版本和您的代理对象。
-* 代理协议中的一个功能是处理事件函数：`handleEvent(_ event: CKSyncEngine.Event, syncEngine: CKSyncEngine)`
-  * 同步引擎会通过它通知通过过程中的相关事件，当同步引擎更新其内部状态，或您自己更新状态时，同步引擎将发布状态更新事件。
-    * 例如，当从服务器获取新数据或帐户更改时，将在此处收到更新事件。
-  * 响应此事件时，你应该将 `stateSerialization` 保存在本地，并在下次初始化同步引擎的时候传入。
 
 ## 四、 使用 CKSyncEngine
 
@@ -482,3 +495,5 @@ func testSyncConflict() async throws {
 > [【WWDC21 10118】CloudKit 自动化开发](https://xiaozhuanlan.com/topic/4917635208)
 >
 > [【WWDC21 10015】Build apps that share data through CloudKit and Core Data](https://developer.apple.com/videos/play/wwdc2021/10015/)
+> 
+> [【iOS独立开发】纯客户端基于 iCloud 构建排行榜功能](https://juejin.cn/post/6989918320224895012)

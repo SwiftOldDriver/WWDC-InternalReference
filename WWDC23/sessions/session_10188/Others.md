@@ -16,4 +16,4 @@ session_ids: [10188]
 
 ## 公众号/小专栏图文头图
 
-![banner](images/cover.jpeg)
+![banner](./images/cover.jpeg)
