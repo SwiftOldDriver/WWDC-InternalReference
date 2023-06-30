@@ -464,7 +464,7 @@ struct DemoWidgetBundle: WidgetBundle {
 
 [本篇 Demo 地址](https://github.com/jerryliurui/Live-Activities-Demo-NBA-Score)
 
-相关Session 汇总:
+相关 Session 汇总:
 [Bring widgets to new places](https://developer.apple.com/wwdc23/10027)
 [Bring widgets to life](https://developer.apple.com/wwdc23/10028)
 [Meet ActivityKit](https://developer.apple.com/wwdc23/10184)
