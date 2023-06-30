@@ -464,3 +464,17 @@ struct DemoWidgetBundle: WidgetBundle {
 
 [本篇 Demo 地址](https://github.com/jerryliurui/Live-Activities-Demo-NBA-Score)
 
+相关Session 汇总:
+[Bring widgets to new places](https://developer.apple.com/wwdc23/10027)
+[Bring widgets to life](https://developer.apple.com/wwdc23/10028)
+[Meet ActivityKit](https://developer.apple.com/wwdc23/10184)
+[Update Live Activities with push notifications](https://developer.apple.com/wwdc23/10185)
+
+相关文档汇总:
+[WidgetKit](https://developer.apple.com/documentation/widgetkit)
+[ActivityKit](https://developer.apple.com/documentation/activitykit)
+[Adding interactivity to widgets and Live Activities](https://developer.apple.com/documentation/widgetkit/adding-interactivity-to-widgets-and-live-activities)
+[Animating data updates in widgets and Live Activities](https://developer.apple.com/documentation/widgetkit/animating-data-updates-in-widgets-and-live-activities)
+[人机交互指南中文(小组件)](https://developer.apple.com/cn/design/human-interface-guidelines/widgets)
+[人机交互指南中文(实时活动)](https://developer.apple.com/cn/design/human-interface-guidelines/live-activities/)
+
