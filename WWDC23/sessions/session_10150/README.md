@@ -8,7 +8,7 @@ session_ids: [10150]
 
 > 作者：师大小海腾，iOS 开发者。
 >
-> 审核：
+> 审核：苍耳，iOS 开发者，[GitHub](https://github.com/djs66256) ，[博客](https://djs66256.github.io/)
 
 ## 新一代 CarPlay
 
