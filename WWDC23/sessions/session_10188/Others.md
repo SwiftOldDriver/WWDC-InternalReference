@@ -8,7 +8,7 @@ session_ids: [10188]
 
 ## 审核介绍
 
->> 苍耳，iOS 开发者，[GitHub](https://github.com/djs66256) ，[博客](https://djs66256.github.io/)
+>> 苍耳，iOS 开发者，现就职于字节跳动，负责客户端架构工作，[GitHub](https://github.com/djs66256) ，[博客](https://djs66256.github.io/)
 
 ## 不超过 120 个字的文章简介
 
