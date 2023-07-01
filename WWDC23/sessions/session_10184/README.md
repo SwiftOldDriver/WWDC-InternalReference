@@ -9,7 +9,7 @@ session_ids: [10184]
 
 ## 0. 前言
 
-Hi 大家好，我是小杰瑞，这篇文章主要是对 WWDC2023 `Meet ActivityKit` 这个 Session 做一个全面的梳理，并辅以一个 Demo 来方便大家熟悉和掌握快速适配一个实时小组件。主要内容包含了对于这个 Session 所提到的所有的核心内容，并在关键的一些步骤中稍加扩展(毕竟 Session 之间还是存在一定的联系的，而如果太割裂的来看效果不是很好)。
+Hi 大家好，我是小杰瑞，这篇文章主要是对 WWDC2023 `Meet ActivityKit` 这个 Session 做一个梳理和扩展，主要内容包含了两部分，第一部分主要是对这个 Session 所提到的核心内容进行一个总结，涉及什么是 ActivityKit 以及它的生命周期介绍，基于文档、Session 提取出了一些比较适合实时小组件的使用场景；第二部分则是一个实际的 Demo:用来实时展示球赛比分的实时小组件的实现，以此来实战相关的技术点，并在关键的一些步骤中稍加扩展(毕竟 Session 之间还是存在一定的联系的，而如果太割裂的来看效果不是很好)。
 
 首先，先谈一下自己的一些感想。这期 Session 其实严格意义上不能算是全新的技术特性，锁屏实时小组件第一次出现是在 WWDC2022 中，但是碍于九月份才能发布灵动岛的 iPhone，Apple 也是藏到了九月份才发布了 ActivityKit 框架，开发者才开始能够进行全面的实时小组件的开发和设计。因此这篇 Session 更多的是对过去一年相关内容缺失的一个补充，正因为这个原因，去年的 Demo 其实用在今天的这篇文章中显得非常合适(摸鱼好理由)，但为了卷的更好看一点，硬生生的给去年的 Demo 加上了两个按钮，也算是有了一定的升级了。好了，废话到这里，开始我们的实时小组件之旅，希望对大家的适配和学习有一定的帮助。
 
@@ -63,14 +63,14 @@ Hi 大家好，我是小杰瑞，这篇文章主要是对 WWDC2023 `Meet Activit
 
 而在这儿，则要引出今年第二个新特性，也是今年整个`Widget`小组件主题最为让我惊喜的新特性了：添加更多的交互性，也就是我们可以在桌面小组件和实时小组件中增加按钮和切换键了(当然了仅有这俩组件可以，翻遍了 AppIntent 框架也搜不到第三了)，关于这个会在后边的 Demo 中稍有涉及，因为大部分的内容是在 [Bring Widgets to life](https://developer.apple.com/videos/play/wwdc2023/10028/) 这个 Session 中，感兴趣的小伙伴可以去看一下。
 
-在第一部分的最后，还想提醒 2 个小 Tips，或者说再啰嗦 2 个小感想。
+在第一章节的最后，还想提醒 2 个小 Tips，或者说再啰嗦 2 个小感想。
 
 1. Live Activities 的实现依赖`SwiftUI`和`WidgetKit`，新特性用 SwiftUI，包括今年的 VisionOS，都可以看出 SwiftUI 的重要性，而结合我个人和一些同行的聊天，可以看出大厂在历史包袱的重压下或者快速迭代的压力下，也很难快速的转型 SwiftUI，甚至 Swift。小组件的出现和更迭便成为了一个很好的说服产品和领导们的理由，想适配么？那得先留点时间学 SwiftUI 丫！
 2. 实时小组件的开启，需要明确的和用户操作相对应，切忌什么都上岛，在过去一年的实际体验当中，还是看到了一些不当用法的，遇到这种我是直接设置-关闭走起了。因此还是那句话，适配是好事儿，但硬凑或许真的适得其反。
 
 ## 2. Live Activities 的生命周期
 
-在开始动手实现或者适配一个实时小组件功能前，我们有必要对其整个的生命周期做一个了解。开发者本质上需要做的主要有四件事儿，分别是:
+在开始动手实现或者适配一个实时小组件功能前，我们有必要对其整个的生命周期做一个了解。这也是本 Session 着重去展开的一个地方。开发者本质上需要做的主要有四件事儿，分别是:
 
 1. 开启，开启前，比较好的做法是先 check 当前环境实时小组件功能是否可用
 2. 更新，可以开启后台任务更新，也可以通过 Push 更新
@@ -83,7 +83,7 @@ Hi 大家好，我是小杰瑞，这篇文章主要是对 WWDC2023 `Meet Activit
 
 ## 3. 展示球赛比分的完整 Live Activities 实现之旅
 
-在大致了解了实时小组件是什么以及它的生命周期之后，我们便可以打开~~产品文档~~开发文档进行实际的开发了。
+在大致了解了实时小组件是什么以及它的生命周期之后，我也是在众多实时小组件的使用场景中找了一个自己比较感兴趣的实时比赛直播的 Case 来把它实现出来，也是想通过一个实际的开发案例深入上文所提到的一些理论知识，从实时小组件的创建、更新、到结束，来进行实战。
 
 [Live Activity 开发文档](https://developer.apple.com/documentation/activitykit/displaying-live-data-with-live-activities)
 
@@ -422,7 +422,6 @@ extension View {
 在这之后我们需要创建一个 Widget Struct 来声明我们所要实现的实时小组件 Widget (代码进行了叠起，填充 View 部分用 ... 表示):
 
 ```swift
-
     var body: some WidgetConfiguration {for: DemoWidgetAttributes.self} dynamicIsland: { context in
             DynamicIsland {...} compactLeading: {...} compactTrailing: {...} minimal: {...}
             .widgetURL(URL(string: "http://www.apple.com"))//点击跳转
@@ -433,7 +432,6 @@ extension View {
 最后我们需要使用`WidgetBundle`来将刚才定义好的 Widget 加入进去，系统才会识别我们有一个实时小组件可用:
 
 ```swift
-
 @main
 struct DemoWidgetBundle: WidgetBundle {
     var body: some Widget {
@@ -460,7 +458,7 @@ struct DemoWidgetBundle: WidgetBundle {
 
 虽然实时小组件出现到现在的时间不长，但它可以快速拉进用户和 App 之间的距离，并能将用户最关心的任务和信息展示在锁屏和灵动岛等比较重要的系统 UI 中，这些优点会随着更多第三方应用的适配而无限放大。但与此同时，滥用它的特性也一定会被用户甚至 Apple 所嫌弃。因此如何精简出自己 App 适合上岛的功能点，我觉得要比如何适配如何实现更加的重要，毕竟总览 Live Activities 的实现，Apple 已经几乎做到手把手了，如果之前有过桌面小组件开发经验的同学，或者 SwiftUI 相关经验的同学，上手起来会非常的快。
 
-那关于这期 Session 的梳理就到这里，希望对大家有所帮助。
+那关于这期 Session 的梳理和 Demo 实战就到这里，希望对大家有所帮助。
 
 [本篇 Demo 地址](https://github.com/jerryliurui/Live-Activities-Demo-NBA-Score)
 
