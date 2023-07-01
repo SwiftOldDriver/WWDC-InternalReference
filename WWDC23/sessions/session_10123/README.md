@@ -190,9 +190,15 @@ func updateControllerAdaptiveTriggers() {
 
 如果你的游戏是基于第三方跨平台音频组件的话，比如 Wwise、Unity 和 FMOD。那么恭喜你，你几乎不用做任何移植就可以完美适配了，因为这些组件的跨平台版本已经很好地支持了 Mac。
 
-如果你的游戏没有使用跨平台组件，而是采用了更低级别的音频框架或 API，你也可以正常使用苹果提供的各种音频框架来进行移植。
-
 ![AudioFramework](./images/AudioFramework.png)
+
+如果你的游戏没有使用跨平台组件，也不用担心，我们接下来分两种情况讨论：
+
+假设你游戏中包含了空间音频，PHASE (Physical Audio Spatialization Engine) 会非常适合你。因为 PHASE 提供了动态空间音频的能力，能够根据游戏场景中人物的移动，反馈出模拟现实物理场景的声音反馈，并且它还支持各种音频硬件，使你的应用可以在不同平台和输出设备（例如耳机和扬声器）上提供一致的空间音频体验。
+
+![PHASE](./images/PHASE.png)
+
+假设你游戏用不到空间音频，那么直接使用 AVFoundation 或者 Core Audio 即可。
 
 更多细节可以观看往期的主题：
 
