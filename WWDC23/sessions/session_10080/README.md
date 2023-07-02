@@ -8,42 +8,42 @@ session_ids: [10080]
 
 本文基于 [Session 10080](https://developer.apple.com/videos/play/wwdc2023/10080/) 梳理。
 
-现在你可以使用全新推出的 [RealityView](https://developer.apple.com/documentation/realitykit/realityview)，一个能够展示3D模型的 SwiftUI View，在模型上添加手势互动，动画和空间音频，为你的 visionOS app 打造更好的空间体验！
+现在你可以使用全新推出的 [RealityView](https://developer.apple.com/documentation/realitykit/realityview)，一个能够展示3D模型的 **SwiftUI View**，在模型上添加手势互动，动画和空间音频，为你的 visionOS app 打造完整的空间体验！
 
-本文将会围绕新发布的 RealityView 与 RealityKit 框架中原有的实体 (Entity)，组件 (Component) 做介绍，并通过 Demo 演示如何让 3D 的地球和月亮模型在沉浸式空间中展示、环绕。
+本文将会围绕新发布的 RealityView 与 [RealityKit](https://developer.apple.com/documentation/realitykit/) 框架中原有的实体 (Entity)和组件 (Component) 做介绍，并通过 Demo 演示如何让 3D 的地球和月亮模型在沉浸式空间中展示、环绕。
 
-> 筆者：由于 **RealityKit 在 2019 年就推出了**，这个 session 里部分的概念不是新系统才有的，这里整理出各个名词出现的版本，详细的内容会在正文里展开
+> 筆者：由于 **RealityKit 在 2019 年就推出了**，这个 session 里部分的概念不是新系统才有的，这里整理出各个名词推出的版本，详细的内容会在正文里展开
 > 
 > |  概念   | 框架  | 最早推出版本  | 简述  | 
 > |  ----  | ----  | ----  | ----  |
->| [Entity](https://developer.apple.com/documentation/realitykit/entity) | [RealityKit](https://developer.apple.com/documentation/realitykit/) | iOS 13.0+ | 实体，Reality 中类似 UIView 的容器，不负责渲染，可以添加 Component，可以添加子 Entity |
-> | [Component](https://developer.apple.com/documentation/realitykit/component) | [RealityKit](https://developer.apple.com/documentation/realitykit/) | iOS 13.0+ | 组件，本身是一个协议，有各种官方提供现成的组件，被添加可以使 Entity 实现渲染、布局、光影等效果 |
-> | [Model3D](https://developer.apple.com/documentation/realitykit/model3d) | [RealityKit](https://developer.apple.com/documentation/realitykit/) . [SwiftUI](https://developer.apple.com/xcode/swiftui/) | iOS 13.0+ | 一个 SwiftUI View 可以加载 3D 模型并展示 |
+>| [Entity](https://developer.apple.com/documentation/realitykit/entity) | [RealityKit](https://developer.apple.com/documentation/realitykit/) | iOS 13.0+ | 实体，RealityKit 中类似 UIView 的容器，不负责渲染，可以添加 Component，可以添加子 Entity |
+> | [Component](https://developer.apple.com/documentation/realitykit/component) | [RealityKit](https://developer.apple.com/documentation/realitykit/) | iOS 13.0+ | 组件，本身是一个协议，可被添加至 Entity中，有各种官方提供现成的组件，实现渲染, 布局, 光影....等效果 |
+> | [Model3D](https://developer.apple.com/documentation/realitykit/model3d) | [RealityKit](https://developer.apple.com/documentation/realitykit/) . [SwiftUI](https://developer.apple.com/xcode/swiftui/) | iOS 13.0+ | 一个可以加载 3D 模型的 SwiftUI View  |
 > | [RealityView](https://developer.apple.com/documentation/realitykit/realityview) | [RealityKit](https://developer.apple.com/documentation/realitykit/) . [SwiftUI](https://developer.apple.com/xcode/swiftui/) | visionOS 1.0+ | 一个 SwiftUI View，比起 Model3D 能更进阶的控制与展示 RealityKit 的内容 |
 > | [Volumetric Window](https://developer.apple.com/documentation/SwiftUI/WindowStyle/volumetric) | [SwiftUI](https://developer.apple.com/xcode/swiftui/) | visionOS 1.0+ | (非本文重点) SwiftUI 针对 visionOS 新增加的视窗类型 (Window Style)，用于打造空间体验 |
-> | [Reality Composer Pro](https://developer.apple.com/augmented-reality/tools/) | Xcode | Xcode 15.0+ | 新推出的 Xcode 工具，为开发 visionOS App 提供 3D 内容预览和调整 |
+> | [Reality Composer Pro](https://developer.apple.com/augmented-reality/tools/) | Xcode | Xcode 15.0+ | (非本文重点) 新推出的 Xcode 工具，为开发 visionOS App 提供 3D 内容预览和调整 |
 
 ## 关于 RealityKit 
 
-随著iOS13, iPadOS13 在WWDC2019加入，[RealityKit](https://developer.apple.com/documentation/realitykit/)也首次面世。RealityKit的定位是苹果所有平台的核心3D框架，提供了强大的渲染引擎，能够处理复杂的光照、阴影和材质效果，从而提供逼真的虚拟场景。
+随着iOS13, iPadOS13 在WWDC2019加入，[RealityKit](https://developer.apple.com/documentation/realitykit/) 也首次问世。RealityKit 的定位是苹果所有平台的核心 3D 框架，提供了强大的渲染引擎，能够处理复杂的光照、阴影和材质效果，从而提供逼真的虚拟场景。
 
-此前，开发者通常将 RealityKit与[ARKit](https://developer.apple.com/augmented-reality/arkit/)(增强现实框架)结合开发AR应用程序，可以透过摄像头将虚拟的3D物件与现实世界融合。
+此前，开发者通常将 RealityKit 与 [ARKit](https://developer.apple.com/augmented-reality/arkit/)(增强现实框架) 结合开发 AR 应用程序，可以透过摄像头将虚拟的 3D 物件与现实世界融合。
 
 ![RealityKit](./images/realitykit_logo.png)
 
-让我们将时间拉回今年，有了 vision pro 带来的沉浸式空间，开发者除了可以将 3D 的内容呈现在使用者身处的空间中，还能藉由 RealityKit 的其他功能，把用户和周遭的环境融合打造真正的沉浸式体验。
+让我们将时间拉回今年，有了 vision pro 带来的沉浸式空间，开发者除了可以将 3D 的内容呈现在使用者身处的空间中，还能藉由 RealityKit 的其他功能，把用户和周围的环境融合打造真正的沉浸式体验。
 
 ![RealityKit 包含概念](./images/realitykit_concept.png)
 
-RealityKit 包含的概念可以见上图，其中本文会涉及到高亮部分「Entities(实体), Components(组件), Systems(系統), Meshes, Spatial Audio(空间音频)，RealityView, Animation, Collsion Detection(碰撞感知), Reality Composer Pro」，其他没有涉及到的可以参见其他Session。
+RealityKit 包含的概念可以见上图，其中本文会涉及到高亮部分「Entities(实体), Components(组件), Systems(系統), Meshes, Spatial Audio(空间音频)，RealityView, Animation(动画), Collsion Detection(碰撞感知), Reality Composer Pro」，其他没有涉及到的可以参见其他Session。
 
-> 文章中有涉及到其他Session的地方，笔者都放上了 💠 标示，你也可以在文章最底部找到所有的 💠
+> 文章中有涉及到其他Session的地方，笔者都放上了 💠 标示，你也可以在文章最底部找到。
 
 ## 概述
 
 ![](./images/hello_world_cover.png) 
 
-贯穿本 Session 演示的是本次 WWDC23 的主要 Demo 「Hellow World」的其中一部分，包含了以下几个环节：
+贯穿本 Session 演示的是本次 WWDC23 的主要 Demo ***「Hellow World」*** 的其中一部分，包含了以下几个环节：
 
 | ![环节1](./images/demo_part_1.png) | ![环节2](./images/demo_part_2.png) | ![环节3](./images/demo_part_3.gif) |
 |  ----  | ----  | ----  |
@@ -51,11 +51,11 @@ RealityKit 包含的概念可以见上图，其中本文会涉及到高亮部分
 
 本文会按照下面的章节顺序，一步步完成上面的环节：
 
-1. RealityKit and SwiftUI:  两个框架如何搭配使用
-2. Entities(实体) and components(组件):  RealityKit的核心概念，实体是容器，组件是功能实现
-3. RealitiyView: 一个全新的 SwiftUI View 可以用来展示 3D 模型以及特效
-4. Input, Animation, and audio: 介绍实体如何响应手势, 添加动画和音频
-5. Custom System: 自定义组件和系统，实现更进阶的效果
+1. **RealityKit and SwiftUI**:  两个框架如何搭配使用
+2. **Entities(实体) and components(组件)**:  RealityKit 的核心概念，实体是容器，组件是功能实现
+3. **RealitiyView**: 一个全新的 SwiftUI View 可以用来展示 3D 模型以及特效
+4. **Input, Animation, and audio**: 介绍实体如何响应手势, 添加动画和音频
+5. **Custom System**: 自定义组件和系统，实现更进阶的效果
 
 让我们开始吧！
 
@@ -80,7 +80,7 @@ struct GlobeModule: View {
 
 ### 展示 3D 模型
 
-那如果我想要使用 3D 的地球模型替换掉这张 2D 图片呢？我可以 import RealityKit，并使用 Model3D 这个 View 然后指定"Globe"模型 ("Globe"是一个放在我的 project 中的 USD 文件)，现在可以看到 3D 的地球模型展示在画面右侧。
+那如果我想要使用 3D 的地球模型替换掉这张 2D 图片呢？我可以 `import RealityKit`，并使用 Model3D 这个 View 然后指定"Globe"模型 ("Globe"是一个放在我的 project 中的 USD 文件)，现在可以看到 3D 的地球模型展示在画面右侧。
 
 ```swift
 import SwiftUI
@@ -105,9 +105,10 @@ struct GlobeModule: View {
 虽然地球本身已经是 3D 的了，但它仍然只展示在这个 2D 的视窗里。我想要地球跳脱出来，展示在我的正前方，这里会用到一个全新的 Window 类型 "Volumetric"，Volumetric 是一个可以从任何角度查看的立体视窗，这正符合我想要的效果。
 
 > Volumetric Window在本Session不会展开
-> ![](./images/volmetric_window_basic.png)
+> 
+> ![Volmetric 视窗类型](./images/volmetric_window_basic.png)
 
-我们在 SwiftUI 代码里声明一个 Window Group ，并且命名为 "planet-earth"，接著设置它为 .volumetric 类型。
+我们在 SwiftUI 代码里声明一个 Window Group ，并且命名为 *"planet-earth"*，接著设置它为 .volumetric 类型。
 
 ```swift
 // Define a volumetric window.
@@ -124,7 +125,7 @@ struct WorldApp: App {
 }
 ```
 
-回到介绍地球的详情页，让我们添加一个 SwiftUI 按钮，执行打开刚刚声明 "planet-earth" 视窗
+回到介绍地球的详情页，让我们添加一个 SwiftUI 按钮，执行打开刚刚声明的 *"planet-earth"* 视窗
 
 ```swift
 Button("View Globe") {
@@ -134,17 +135,17 @@ Button("View Globe") {
 
 重新运行后，进入详情点击按钮，你就能360度的观赏这颗地球了！至此我们完成第一个Demo环节，"展示立体的地球🌏"
 
-![](./images/demo_volumetric_earth.gif)
+![在 Volmetric 视窗里展示的地球模型](./images/demo_volumetric_earth.gif)
 
 ### 沉浸式空间 (ImmersiveSpace)
 
-如果我们想要进一步提升感官体验，我们需要的是「Immersion (沉浸)」。在 Demo 的第二个环节中，会让你彷佛置身在地球, 月亮的天体轨道中，这就是使用了 [immersive space](https://developer.apple.com/documentation/swiftui/immersivespace) ，一个新的 SwiftUI 无边界 Scene ，这种 scene 可以让你将 3D 物件摆在用户身处空间的任意位置，跳脱传统 Window 的限制。
+如果我们想要进一步提升感官体验，我们需要的是**「Immersion (沉浸)」**。在 Demo 的第二个环节中，你彷佛置身在地球, 月亮的天体轨道中，这就是使用了 [immersive space](https://developer.apple.com/documentation/swiftui/immersivespace) ，一个新的 SwiftUI 无边界 Scene ，这种场景可以让你将 3D 物件摆在用户身处空间的任意位置，跳脱传统 Window 的限制。
 
 > 需要有边界的场景，使用 Window Group, 文件夹相关的应用场景，使用 DocumentGroup
 
 ![Immersive Space](./images/immersive_space_intro.png)
 
-跟添加 Window Group 类似，我们在 App 中声明一个 ImmersiveSpace 命名为 "objects-in-orbit" ，并且这里我要使用另一个新的视图 RealityView 替代Model3D 当做 Scene 的根视图，它能让我们在提供更多 RealityKit 的能力，稍后我们在后面的章节会介绍更多 RealityView 的能力。
+跟添加 Window Group 类似，我们在 App 中声明一个 ImmersiveSpace 命名为 *"objects-in-orbit"* ，并且这里我要使用另一个新的视图 RealityView 替代Model3D 当做这个 Scene 的根视图，它能让我们在提供更多 RealityKit 的能力，稍后我们在后面的章节会介绍更多 RealityView 的能力。
 
 ```swift
 // Define a immersive space.
@@ -161,7 +162,7 @@ struct WorldApp: App {
 }
 ```
 
-跟上个环节一样，我们在详情页新增一个SwiftUI Button，点击后展示这个空间
+跟上个环节一样，我们在详情页新增一个SwiftUI Button，用于展示沉浸式空间
 
 ```swift
 Button("View Orbits") {
@@ -179,21 +180,21 @@ Button("View Orbits") {
 
 ## Entities(实体) and components(组件)
 
-在前面的代码中，我们用到了两种不同的 SwiftUI View - 「Model 3D」和「RealityView」，这两种 View 都是 SwiftUI 配合 RealityKit 设计的。
+在前面的代码中，我们用到了两种不同的 SwiftUI View - **「Model 3D」** 和 **「RealityView」**，这两种 View 都是 SwiftUI 配合 RealityKit 设计的。
 
-在第一个 Demo 环节中，使用了 Model3D 简单的展示了地球模型。在上个章节的最后我们也提到了 RealityView 有比前者更多的特性，其中最大的区别就是 **RealityView 有添加 Entites 的能力**。
+在第一个 Demo 环节中，使用了 Model3D 简单的展示了地球模型。之后在上个章节的最后我们也提到了 RealityView 它有比前者更多的特性，其中最大的区别就是 ***RealityView 有添加 Entites 的能力***。
 
-Entity 是 RealityKit 推出(2019)时就具备的概念。它是一个 3D 容器，但你必须往里面添加 Components 这个容器才会渲染或是具备其他功用，如果他没有任何 Components 那实体就是一个空壳，没有任何作用。
+Entity 是 RealityKit 推出(2019)时就具备的概念。它是一个 3D 容器，你必须往里面添加 Components 这个容器才会渲染或是具备其他功用，如果他没有任何 Components 那这个实体就是一个空壳，没有任何作用。
 
 ### Model 组件 & Transform 组件
 
-每个 Componenet 都有其特定的用途，例如先前展示的地球(Earth) Entity 其实包含两个 Components:
+每个 Componenet 都有其特定的用途，例如先前展示的地球(Earth) Entity 其实包含**两个 Components**:
 
 ![Model & Transform](./images/model_transform_intro.png)
 
 - Model Component: 这个组件提供地球实体渲染所需要的模型网线(Meshes)和渲染材质(Material)
 
-	![](./images/model_component_intro.png)
+	![Model Component](./images/model_component_intro.png)
 
 	> 白话的意思是 Model 组件让这个实体能被渲染出来，类似 UIView (Entity) 和 CALayer (Model Component) 的概念
 	> 
@@ -209,19 +210,19 @@ Entity 是 RealityKit 推出(2019)时就具备的概念。它是一个 3D 容器
 	
 	![Coordinates in RealityKit](./images/realitykit_coordinate.png)
 	
-### Sub Entites
+### Entites 层级
 
-每个实体必然会加上 Transform 组件 (否则这个实体不会被展示在空间中)，但不是每一个实体都需要带上 Model 组件，有些实体可以只用来承载其他子实体(Child Entities)，由子实体去添加 Model。
+**每个实体必然会加上 Transform 组件** (否则这个实体不会被展示在空间中)，但不是每一个实体都需要带上 Model 组件，有些实体可以只用来承载其他子实体(Child Entities)，由子实体去添加 Model 做渲染。
 
 例如我想对卫星实体的所有子实体做整体动画，就可以针对一个卫星根实体(Root Entity)执行动画(Animation)：
 
-![](./images/root_entity_intro.png)
+![Entites Hierarchy](./images/root_entity_intro.png)
 
 除了前面提到的 Model 和 Transform 组件，还有许多其他官方提供的 Components 可以让实体完成各种效果，在本文的最后也会示范如何自定义 Components
 
-![](./images/official_components.png)
+![官方提供的Component](./images/official_components.png)
 
-> 由于Entity 和 Components的概念在iOS13就有了，所以也同样适用于非visionOS的场景。
+> 由于 Entity 和 Components 的概念在iOS13就有了，所以这个章节也同样适用于非visionOS的 RealityKit 场景。
 
 ## RealityView
 
@@ -229,7 +230,7 @@ Entity 是 RealityKit 推出(2019)时就具备的概念。它是一个 3D 容器
 
 ### 添加 Entity 至 RealityView
 
-RealityView 就是一个可以包含任意数量实体的 SwiftUI View，而一个实体也必须要添加到 RealityView 里 (=放到视图堆栈中)才能被用户看到。
+RealityView 是一个可以包含任意数量实体的 SwiftUI View，而一个实体也必须要添加到 RealityView 里 *(=放到视图堆栈中)*才能被用户看到。
 
 > 结合上一章节：一个实体要能被用户看到，需要几个条件：
 > 
@@ -253,7 +254,7 @@ struct Orbit: View {
 }
 ```
 
-你也可以选择在 RealityView 中异步载入你的 Entity
+你也可以选择在 RealityView 中*异步*载入你的 Entity
 
 ```swift
 import SwiftUI
@@ -363,15 +364,15 @@ struct AnimatedModel: View {
 
 介绍完 RealityView，让我们回到天体 Demo，并让地球, 月亮和卫星焕发生机。
 
-首先，会示范如何添加手势(Gesture)，让你可以自由移动地球实体。接著，介绍如何对实体添加动画(Animation)以及空间音频(Spatial Audio)。
+首先，会**示范如何添加手势(Gesture)，让你可以自由移动地球实体。接著，介绍如何对实体添加动画(Animation)以及空间音频(Spatial Audio)**。
 
 ### RealityView 的点击事件
 
-下图是一个 RealityView 包含三个实体。由于 RealityView 本身就是一个 SwfitUI View，所以你能像平常一样添加手势，特别的是 RealityView 支持对自身包含的所有实体做 Hit Test。
+下图是一个 RealityView 包含三个实体。由于 RealityView 本身就是一个 SwfitUI View，所以你能像平常一样添加手势，特别的是 **RealityView 支持对自身包含的所有实体做 Hit Test**。
 
-需要注意的是如果你的实体想要接受点击事件(Touch Event)，你必须要在实体里添加 Input 组件 和 collision 组件。当一个点击事件被 RealityView 响应时，它会自动忽略没有包含这两个组件的实体。(下图中只有最后一个C能响应)
+需要注意的是如果你的实体想要接受点击事件(Touch Event)，你必须要在实体里添加 Input 组件 和 collision 组件。当一个点击事件被 RealityView 响应时，它会自动忽略没有包含这两个组件的实体。**(下图中只有最后一个C能响应)**
 
-![](./images/realityview_gesture.png)
+![RealityView 的手势原理](./images/realityview_gesture.png)
 
 了解 RealityView 的手势如何运作后，我们明确下如果要让我们的地球实体可以被拖动，必须具备：
 
@@ -385,27 +386,27 @@ struct AnimatedModel: View {
 > 如果你想要更进一步学习 Reality Composer Pro，可以参考Session:
 > 💠 [Meet Reality Composer Pro](https://developer.apple.com/videos/play/wwdc2023/10083/)
 > 
-> ![](./images/reality_composer_pro.png)
+> ![Reality Composer Pro](./images/reality_composer_pro.png)
 
 我们的 App 已经包含一些演示中会用到 Assets package (包含多个模型USD文件)。
 
-地球模型本身是一个 USDZ 压缩文件(archive)，我们不想要去修改这个 assets 本体，我们可以创建一个新的 USD scene file 并且引用地球 asset。
+地球模型本身是一个 **USDZ 压缩文件(archive)**，我们不想要去修改这个 assets 本体，我们可以创建一个新的 USD scene file 并且引用地球 asset。
 
 > USD 文件可以引用其他的 USD 文件，并且我可以在不修改引用的原文件的前提下，将新建的 USD 调整到我想要的效果。这种不破坏原 USD 文件的编辑，可以让你对模型做调整却又不影响其他使用的人。
 
 我把这个新的 scene 命名为 "DraggableGlobe"，并将先前范例中的 "Globe" 文件拖进来做引用。并新增Input 和 Collision 两个组件。
 
-![](./images/how_to_add_components.png)
+![使用 Composer Pro 添加组件](./images/how_to_add_components.png)
 
 > Collsion 组件的形状默认是一个方块 (Cube)，这里把它改成球体 (Sphere) 会更贴合我们的模型，整体交互的效果会更真实。
 > 
-> ![](./images/collision_shapes.png)
+> ![Collistion Shapes](./images/collision_shapes.png)
 
 #### RealityView 添加手势
 
 最后一个条件，为 RealityView 添加手势，这里我们使用标准的 SwiftUI 拖动手势就可以了。
 
-我可以用 "targetedToEntity" 指定该手势只能操控哪几个实体，而不是拖动整个 View。当我们的手势有数值变化时，让他修改地球的 position。
+我可以用 `targetedToEntity` 指定该手势只能操控哪几个实体，而不是拖动整个 View。当我们的手势有数值变化时，让他修改地球的 position。
 
 ```swift
 struct DraggableModel: View {
@@ -429,7 +430,7 @@ struct DraggableModel: View {
 
 现在我可以在 visionOS 设备上，透过捏合拖动手势来移动这颗地球。
 
-![](./images/drag_gesture_demo.gif)
+![拖动实体](./images/drag_gesture_demo.gif)
 
 ### Entity 动画
 
@@ -439,7 +440,7 @@ struct DraggableModel: View {
 2. "Orbit"：让一个实体可以围绕著它的父容器 
 3. "Sampled"：将整个动画逐帧设置对应的值
 
-![](./images/animations_style.png)
+![Animations Style](./images/animations_style.png)
 
 我们来为月亮设置一个 围绕轨道(Orbit)动画，让它能每 30s 就围绕著 y轴做一次公转。
 
