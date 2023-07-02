@@ -14,9 +14,11 @@ session_ids: [10107]
 
 演示 App 采用 MVVM 架构，在 SwiftUI 和 UIKit 中使用各自的 UI 组件进行代码编写，最后使用 SwiftUI 的 `TabView` 拼装顶层 App。
 
+![TabView](./images/TabView.gif)
+
 ### 公共
 
-在 `PHPickerViewController` 中使用 `PHPickerResult` 作为原始照片资产，而在 `PhotosPicker` 中则使用 `PhotosPickerItem` 作为原始照片资产。除了 Item 的类型不相同，其他照片选择和展示的逻辑相同，因此抽取通用的 `ListViewModel` 和 `ItemViewModel` 进行封装，避免模板代码。
+在 `PHPickerViewController` 中使用 `PHPickerResult` 作为原始照片资产（ImageAsset，下同），而在 `PhotosPicker` 中则使用 `PhotosPickerItem` 作为原始照片资产。除了 Item 的类型不相同，其他照片选择和展示的逻辑相同，因此抽取通用的 `ListViewModel` 和 `ItemViewModel` 进行封装，避免模板代码。
 
 #### ImageStatus
 
@@ -32,7 +34,7 @@ enum ImageStatus {
     case video(AVURLAsset)
     case failed(Error)
 
-    // five computed properties
+    // 省略五个计算属性
 }
 
 enum ImageLoadingError: Error {
@@ -77,7 +79,7 @@ extension NSItemProvider {
     }
 }
 
-// MARK: - DON'T DO THIS IN PRODUCTION
+// MARK: - 不要在生产环境这么写
 
 extension UIImage: Transferable {
 
@@ -215,7 +217,7 @@ extension AVAsset {
     }
 }
 
-// MARK: - DON'T DO THIS IN PRODUCTION
+// MARK: - 不要在生产环境这么写
 
 extension PHPickerResult: Identifiable {
 
@@ -249,7 +251,7 @@ extension PhotosPickerItem: Identifiable {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // setup subviews
+        // 设置子视图
     }
 
     @objc private func presentPickerViewController() {
@@ -347,7 +349,7 @@ extension UIKitVersionViewController {
         }
 
         private func prepare() {
-            // setup subviews
+            // 设置子视图
         }
 
         private func updateContentConfiguration(_ configuration: ContentConfiguration) {
@@ -630,11 +632,51 @@ extension SwiftUIVersionView {
 5. `preferredItemEncoding: PhotosPickerItem.EncodingDisambiguationPolicy`，编码方法，默认为 `.automatic`，还有 `current` / `compatible` 可选。`current` 只使用原始格式，`compatible` 会进行兼容转码；
 6. `photoLibrary: PHPhotoLibrary`，照片库，仅能通过 `.shared()` 访问。
 
+#### selectionBehavior
+
+| selectionBehavior    | snapshot                                                                                       |
+| -------------------- | ---------------------------------------------------------------------------------------------- |
+| default              | ![selectionBehavior-default](./images/selectionBehavior-default.png)                           |
+| ordered              | ![selectionBehavior-ordered](./images/selectionBehavior-ordered.png)                           |
+| continuous           | ![selectionBehavior-continuous](./images/selectionBehavior-continuous.png)                     |
+| continuousAndOrdered | ![selectionBehavior-continuousAndOrdered](./images/selectionBehavior-continuousAndOrdered.png) |
+
 ### 自定义配置
 
-1. `photosPickerStyle(_:)`，更改样式，默认为 `presentation`，还有 `inline` / `compact` 可选。
-2. `photosPickerAccessoryVisibility(_:edges:)`，更改附件可见性，默认为全部可见。根据 `edges` 和 `style` 配合动态处理。
-3. `photosPickerDisabledCapabilities(_:)`，禁用部分功能，默认为不禁用。有 `collectionNavigation` / `search` / `selectionActions` / `sensitivityAnalysisIntervention` / `stagingArea` 可选。
+#### photosPickerStyle
+
+`photosPickerStyle(_:)`，更改样式，默认为 `presentation`，还有 `inline` / `compact` 可选。
+
+| photosPickerStyle | snapshot                                                                       |
+| ----------------- | ------------------------------------------------------------------------------ |
+| presentation      | ![photosPickerStyle-presentation](./images/photosPickerStyle-presentation.png) |
+| inline            | ![photosPickerStyle-inline](./images/photosPickerStyle-inline.png)             |
+| compact           | ![photosPickerStyle-compact](./images/photosPickerStyle-compact.png)           |
+
+#### photosPickerAccessoryVisibility
+
+`photosPickerAccessoryVisibility(_:edges:)`，更改附件可见性，默认为全部可见。根据 `edges` 和 `style` 配合动态处理。
+
+| photosPickerAccessoryVisibility | snapshot                                                                                                       |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| automatic-all                   | ![photosPickerAccessoryVisibility-automatic-all](./images/photosPickerAccessoryVisibility-automatic-all.png)   |
+| hidden-top                      | ![photosPickerAccessoryVisibility-hidden-top](./images/photosPickerAccessoryVisibility-hidden-top.png)         |
+| hidden-leading                  | ![photosPickerAccessoryVisibility-hidden-leading](./images/photosPickerAccessoryVisibility-hidden-leading.png) |
+| hidden-bottom                   | ![photosPickerAccessoryVisibility-hidden-bottom](./images/photosPickerAccessoryVisibility-hidden-bottom.png)   |
+
+#### photosPickerDisabledCapabilities
+
+`photosPickerDisabledCapabilities(_:)`，禁用部分功能，默认为不禁用。有 `collectionNavigation` / `search` / `selectionActions` / `sensitivityAnalysisIntervention` / `stagingArea` 可选。
+
+> `sensitivityAnalysisIntervention` 为新出的敏感图片检测相关功能，这里不进行展示。
+
+| photosPickerDisabledCapabilities | snapshot                                                                                                                     |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| none                             | ![photosPickerDisabledCapabilities-none](./images/photosPickerDisabledCapabilities-none.png)                                 |
+| collectionNavigation             | ![photosPickerDisabledCapabilities-collectionNavigation](./images/photosPickerDisabledCapabilities-collectionNavigation.png) |
+| search                           | ![photosPickerDisabledCapabilities-search](./images/photosPickerDisabledCapabilities-search.png)                             |
+| selectionActions                 | ![photosPickerDisabledCapabilities-selectionActions](./images/photosPickerDisabledCapabilities-selectionActions.png)         |
+| stagingArea                      | ![photosPickerDisabledCapabilities-stagingArea](./images/photosPickerDisabledCapabilities-stagingArea.png)                   |
 
 ### 组合使用
 
