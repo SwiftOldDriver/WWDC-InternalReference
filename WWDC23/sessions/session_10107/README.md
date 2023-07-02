@@ -12,7 +12,7 @@ session_ids: [10107]
 
 ## 如何接入照片选择器
 
-演示 App 采用 MVVM 架构，在 SwiftUI 和 UIKit 中使用各自的 UI 组件进行代码编写，最后使用 SwiftUI 的 `TabView` 拼装顶层 App。
+演示 App 采用 MVVM 架构，在 SwiftUI 和 UIKit 中使用各自的 UI 组件进行代码编写，最后使用 SwiftUI 的 `TabView` 拼装顶层 App。同时采用了 Concurrency 进行异步代码编写，如需了解更多可查看参考。
 
 ![TabView](./images/TabView.gif)
 
@@ -473,7 +473,7 @@ extension UIKitVersionViewController {
 
 #### SwiftUIVersionView
 
-`SwiftUIVersionView` 为 SwiftUI 版本视图，代码非常简单，`ImageList` 和 `PhotosPicker` 即可组成整个页面。
+`SwiftUIVersionView` 为 SwiftUI 版本视图，代码非常简单，`ImageList` 和 `PhotosPicker` 即可组成整个页面。下文展示了每个方法不同参数对应的效果图。
 
 ```swift
 struct SwiftUIVersionView: View {
@@ -709,3 +709,10 @@ iOS 17 新增的配置 API，需要多个参数 / 方法一起使用，否则会
 ## 总结
 
 通过 UIKit 和 SwiftUI 两种接入方式的比较，可以看到 SwiftUI 使用少量代码即可实现相同的效果。即使部分视图没有 SwiftUI 的版本，也可以通过 `UIViewRepresentable` 协议进行封装。如果仍然需要大量使用 UIKit，也建议参考 Apple 近年来推荐的 `configuration` API 风格进行代码编写，通过 _配置描述视图_，可以更好地进行状态还原和单元测试。同时可以看到，Apple 在隐私方面的保护力度是逐年加大的，今年也有相关的 session 总结，希望大家可以重视起来。
+
+## 参考
+
+1. [Apple - Implementing an inline Photos picker](https://developer.apple.com/documentation/photokit/implementing_an_inline_photos_picker)
+2. [Apple - Bringing Photos picker to your SwiftUI app](https://developer.apple.com/documentation/photokit/bringing_photos_picker_to_your_swiftui_app)
+3. [Apple - Selecting Photos and Videos in iOS](https://developer.apple.com/documentation/photokit/selecting_photos_and_videos_in_ios)
+4. [Apple - Updating an App to Use Swift Concurrency](https://developer.apple.com/documentation/swift/updating_an_app_to_use_swift_concurrency)
