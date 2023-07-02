@@ -39,6 +39,7 @@ DocC 也可以导出为静态网络托管解决方案，允许直接发布到 Gi
 > 最终在今年的 Xcode 15 上完成了实现，但是其他 IDE 如 VSCode 也是可以通过目前的接口支持 Live Preview 的
 >
 > [Documentation Workgroup meeting notes: August 1st 2022](https://forums.swift.org/t/documentation-workgroup-meeting-notes-august-1st-2022/59432)
+> [Add Swift Documentation Preview Support](https://github.com/swift-server/vscode-swift/issues/562)
 
 除此之外，借助全新的 DocC 指令支持，如基于网格的布局、视频支持、自定义页面图标等，甚至完全自定义的主题配置，我们可以制作真正体现框架特色的定制文档。
 
