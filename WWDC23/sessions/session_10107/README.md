@@ -686,6 +686,20 @@ iOS 17 新增的配置 API，需要多个参数 / 方法一起使用，否则会
 2. 当使用 `default` / `ordered` 时，导航栏按钮为 `Cancel` 和 `Add`。当使用 `continuous` / `continuousAndOrdered` 时，导航栏按钮为 `Clear` 和 `Done`；
 3. 在 iOS 中，「Top Accessory」为导航栏，「Bottom Accessory」为工具栏，在 iPadOS 和 macOS 中，「Leading Accessory」为侧边栏。在 `presentation` 时隐藏导航栏将无法关闭弹窗。
 
+### 选项
+
+在选项中，可以单独设置返回的数据是否包含地理位置信息，是否进行转码。
+
+![options-list.png](./images/options-list.png)
+
+当选择不包含地理位置信息时，选择器底部工具栏将进行提示。
+
+![options-location-off](./images/options-location-off.png)
+
+当格式选择 `automatic` 时，系统将自动处理（该模式在不同系统版本可能表现不同）；当选择 `current` 时，不进行转码，返回原始格式，如果接受的格式与原始格式不相同，则读取失败；当选择 `compatible` 时，按照接受的格式进行转码。
+
+举个例子，原始照片格式为 `.heic`，使用 `current` 和 `DataRepresentation(importedContentType: .jpeg)` 进行读取时会提示失败，使用 `.heic` 和 `.image` 则没有问题；若改用 `compatible`，则 `.jpeg` / `.heic` / `.image` 都没有问题。
+
 ### 隐私
 
 当第一次使用照片选择器时，系统会提示 App 只能读取用户选中的照片。
