@@ -448,9 +448,9 @@ struct Person {
 |  名称   | 描述  |
 | --- | --- |
 | overloaded | 在关联类型的基础上创建一个相同名称的声明（仅限用于关联宏） |
-| prefixed(<some prefix>) | 创建一个声明，以 <some prefix> 开头，跟随关联类型的名称。prefix 可以以 $ 符号开头（仅限用于关联宏） |
-| suffixed(<some suffix>) | 创建一个声明，以关联类型的名称开头，<some suffix> 结尾（仅限用于关联宏） |
-| named(<some name>) | 创建一个以 <some name> 为名的声明 |
+| prefixed(`<`some prefix`>`) | 创建一个声明，以 `<`some prefix`>` 开头，跟随关联类型的名称。prefix 可以以 $ 符号开头（仅限用于关联宏） |
+| suffixed(`<`some suffix`>`) | 创建一个声明，以关联类型的名称开头，`<`some suffix`>` 结尾（仅限用于关联宏） |
+| named(`<`some name`>`) | 创建一个以 `<`some name`>` 为名的声明 |
 | arbitrary | 创建名称不包括在上述规则之中的声明 |
 
 这里提下 arbitrary，在多维数组的例子中，就使用了 arbitrary 名称标识符，因为它创建出来的名称是由它的维度入参 n 决定的，无法被前四种类型囊括。但如果在名称能够确定规则的情况下，尽量不要使用 arbitrary。
