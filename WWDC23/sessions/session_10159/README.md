@@ -413,4 +413,4 @@ SwiftUI 的时长很短，前几年一直忙于完善更重要的 API，除了 W
 
 而今年，ScrollView 从 **`布局展示`、`滚动位置`、`过渡动画`** 三个方面做了强大的改进，新增的以上 API 全面的考虑了开发者对 ScrollView 的使用需要。
 
-虽然以上 API 很丰富，不过在日常实践中还是会有更多的场景需求。例如我们经常需要监听滚动偏移量 contentOffset、滚动时粘性头部 Sticky Header 在本次更新中没有 API 可以提供便捷的方式实现。我们还可以使用一些优秀的第三方库，例如 [ScrollKit](https://github.com/danielsaidi/ScrollKit) 可以帮助我们快速的实现这些功能。
+虽然以上 API 很丰富，但是在日常实践中我们会遇到更多的场景需求。例如我们经常需要监听滚动偏移量 contentOffset、滚动视图的粘性头部 Sticky Header 在本次更新中仍然没有 API 可以提供便捷的实现方式。不过，我们还可以使用一些优秀的第三方库，例如 [ScrollKit](https://github.com/danielsaidi/ScrollKit) 可以帮助我们快速的实现这些功能。
