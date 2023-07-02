@@ -29,8 +29,8 @@ Swift 宏是 Swift 5.9 中引入的新特性，希望开发者可以用更简单
 ```swift
 import Foundation
 
+/// nested Suit enumeration
 enum Suit: Character {
-	// nested Suit enumeration
     case spades = "♠"
     case hearts = "♡"
 }
@@ -50,31 +50,31 @@ SourceFileSyntax
 ├─statements: CodeBlockItemListSyntax
 │ ├─[0]: CodeBlockItemSyntax
 │ │ ╰─item: ImportDeclSyntax
-│ │   ├─importKeyword: keyword(SwiftSyntax.Keyword.import) trailingTrivia=spaces(1)
+│ │   ├─importKeyword: keyword(SwiftSyntax.Keyword.import)
 │ │   ╰─path: ImportPathSyntax
 │ │     ╰─[0]: ImportPathComponentSyntax
 │ │       ╰─name: identifier("Foundation")
 │ ╰─[1]: CodeBlockItemSyntax
 │   ╰─item: EnumDeclSyntax
-│     ├─enumKeyword: keyword(SwiftSyntax.Keyword.enum) leadingTrivia=newlines(2) trailingTrivia=spaces(1)
+│     ├─enumKeyword: keyword(SwiftSyntax.Keyword.enum)
 │     ├─identifier: identifier("Suit")
 │     ├─inheritanceClause: TypeInheritanceClauseSyntax
-│     │ ├─colon: colon trailingTrivia=spaces(1)
+│     │ ├─colon: colon
 │     │ ╰─inheritedTypeCollection: InheritedTypeListSyntax
 │     │   ╰─[0]: InheritedTypeSyntax
 │     │     ╰─typeName: SimpleTypeIdentifierSyntax
-│     │       ╰─name: identifier("Character") trailingTrivia=spaces(1)
+│     │       ╰─name: identifier("Character")
 │     ╰─memberBlock: MemberDeclBlockSyntax
 │       ├─leftBrace: leftBrace
 │       ├─members: MemberDeclListSyntax
 │       │ ├─[0]: MemberDeclListItemSyntax
 │       │ │ ╰─decl: EnumCaseDeclSyntax
-│       │ │   ├─caseKeyword: keyword(SwiftSyntax.Keyword.case) leadingTrivia=[newlines(1), tabs(2), lineComment("// nested Suit enumeration"), newlines(1), spaces(4)] trailingTrivia=spaces(1)
+│       │ │   ├─caseKeyword: keyword(SwiftSyntax.Keyword.case)
 │       │ │   ╰─elements: EnumCaseElementListSyntax
 │       │ │     ╰─[0]: EnumCaseElementSyntax
-│       │ │       ├─identifier: identifier("spades") trailingTrivia=spaces(1)
+│       │ │       ├─identifier: identifier("spades")
 │       │ │       ╰─rawValue: InitializerClauseSyntax
-│       │ │         ├─equal: equal trailingTrivia=spaces(1)
+│       │ │         ├─equal: equal
 │       │ │         ╰─value: StringLiteralExprSyntax
 │       │ │           ├─openQuote: stringQuote
 │       │ │           ├─segments: StringLiteralSegmentsSyntax
@@ -83,19 +83,19 @@ SourceFileSyntax
 │       │ │           ╰─closeQuote: stringQuote
 │       │ ╰─[1]: MemberDeclListItemSyntax
 │       │   ╰─decl: EnumCaseDeclSyntax
-│       │     ├─caseKeyword: keyword(SwiftSyntax.Keyword.case) leadingTrivia=[newlines(1), spaces(4)] trailingTrivia=spaces(1)
+│       │     ├─caseKeyword: keyword(SwiftSyntax.Keyword.case)
 │       │     ╰─elements: EnumCaseElementListSyntax
 │       │       ╰─[0]: EnumCaseElementSyntax
-│       │         ├─identifier: identifier("hearts") trailingTrivia=spaces(1)
+│       │         ├─identifier: identifier("hearts")
 │       │         ╰─rawValue: InitializerClauseSyntax
-│       │           ├─equal: equal trailingTrivia=spaces(1)
+│       │           ├─equal: equal
 │       │           ╰─value: StringLiteralExprSyntax
 │       │             ├─openQuote: stringQuote
 │       │             ├─segments: StringLiteralSegmentsSyntax
 │       │             │ ╰─[0]: StringSegmentSyntax
 │       │             │   ╰─content: stringSegment("♡")
 │       │             ╰─closeQuote: stringQuote
-│       ╰─rightBrace: rightBrace leadingTrivia=newlines(1)
+│       ╰─rightBrace: rightBrace
 ╰─eofToken: eof
 ```
 
@@ -177,7 +177,7 @@ expression 意为表达式，指的是一段可执行且有返回值的代码。
 
 ```swift
 guard let image = downloadedImage else {
-	preconditionFailure("Unexpectedly found nil: downloadedImage was already checked")
+    preconditionFailure("Unexpectedly found nil: downloadedImage was already checked")
 }
 ```
 
@@ -239,7 +239,7 @@ public struct Array3D<Element>: Collection {
     var width1，width2: Int
 
     public func makeIndex(_ i: Int,_ i1: Int,_ i2: Int) -> Index {
-    	Index(storageIndex: (i * width1 + i1) * width2 + i2)
+        Index(storageIndex: (i * width1 + i1) * width2 + i2)
     }
 
     public subscript (_i: Int,_ i1: Int,_ i2: Int) -> Element {
@@ -519,7 +519,7 @@ struct Person {
 
 ## 最后
 
-如果你的工程支持 Swift Package Manager，那恭喜你，只需要依赖 SwiftSyntax，其他统统交给 Xcode；如果使用的是 Cocoapods，也有人尝试了解决方案：[Swift Macro 不使用 Swift Package Manager如何集成](https://gist.github.com/0x1306a94/09674ddc71459ffa00a625f01b5f49cc)；对于 Bazel 来说，官方虽然也在[支持这一新特性](https://github.com/bazelbuild/rules_swift/pull/1058)，但像语法高亮、宏展开这些和 IDE 捆绑的流程，可能就比较难整合了。
+如果你的工程支持 Swift Package Manager，那恭喜你，只需要依赖 SwiftSyntax，其他统统交给 Xcode；如果使用的是 Cocoapods，也有人尝试了解决方案：[Swift Macro 不使用 Swift Package Manager 如何集成](https://gist.github.com/0x1306a94/09674ddc71459ffa00a625f01b5f49cc)；对于 Bazel 来说，官方虽然也在[支持这一新特性](https://github.com/bazelbuild/rules_swift/pull/1058)，但像语法高亮、宏展开这些和 IDE 捆绑的流程，可能就比较难整合了。
 
 开源社区有人整理了 [Swift Macro 合集](https://github.com/krzysztofzablocki/Swift-Macros)，看看别人是如何编写宏的，官方文档也会是你学习开发、使用宏的利器：[Macros](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/macros/)。
 
