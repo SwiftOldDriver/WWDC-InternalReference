@@ -456,7 +456,7 @@ struct Person {
 
 ## 宏是如何被还原成代码的
 
-讲完了宏的类型、角色，这里再提下 Swift 编译器是如何将宏还原成代码的。在前面所有提到宏定义的地方都没有写出一个关键的点，宏的声明是如何和实现关联的？以 `stringify` 宏的声明为例，实现是通过 `=` 声明在宏定义的右边。
+讲完了宏的类型、角色，这里提下 Swift 编译器是如何将宏还原成代码的。在前面所有提到宏定义的地方都没有写出一个关键的点，宏的声明是如何和实现关联的？以 `stringify` 宏的声明为例，实现是通过 `=` 声明在宏定义的右边。
 
 ```swift
 /// 创建一个包含了 expr 执行结果以及 expr 源码字符串的元组
@@ -486,16 +486,41 @@ macro stringify<T>(_ expr: T) -> (T， String) = #externalMacro(
 
 ## 使用宏的注意事项
 
-1. 宏的展开无法知道对方做了什么
-2. 宏不阻止命名冲突
-3. 不要使用编译器没有提供的信息
-4. 宏无法获取网络和文件系统
-5. 当前宏的展开对其他的宏不可见（不要依赖宏的展开顺序）
+### 多个宏展开之间无法互相看见展开的结果
+
+```swift
+@DictionaryStorage
+struct Person {
+    var name: String
+    var height: Measurement<UnitLength>
+
+    @DictionaryStorage(key: "birth_date")
+    var birthDate: Date?
+}
+```
+
+以前面的 Person 结构体为例，`DictionaryStorage` 宏的使用了多个关联宏角色，而每个宏在展开时是独立的，不同宏之间无法知道对方的展开结果，展开顺序也不保证和声明中的顺序相同。因此在使用时，多个宏的展开结果不应该相互依赖。这点和其他语言的类似特性不太一致，例如 Java 的 Annotation Processor。
+
+![](./images/invisible_to_others.png)
+
+### Swift 宏默认不阻止命名冲突
+
+部分语言通过卫生宏（hygienic）的机制避免宏实现内部意外捕获外部的变量，而在 Swift 宏实现中，是可以访问外部的参数的，例如在 `@DictionaryStorage` 中使用了 `@attached(accessor)` 自动生成 get 和 set 方法，访问 `@attached(member, names: named(dictionary), named(init(dictionary:)))` 生成的 dictionary 存储属性。如果想要避免参数命名冲突的情况，可以使用 `context.makeUniqueName()`，它会确保生成一个外部未使用的变量名来保证唯一性（context 是宏实现方法声明的入参，类型是 some MacroExpansionContext）。
+
+![](./images/unique_name.png)
+
+### 不要使用编译器没有提供的信息
+
+编译器会假定宏的实现是**纯函数（pure function）**，这意味着在数据源没有发生改变的情况下，宏的展开结果也不应该有改变。如果使用了编译器提供之外的信息，例如在实现中获取编译时间，会导致展开结果出错（编译器不知道在什么时候应该重新生成新的展开结果）。
+
+为了避免这种情况，编译器插件是运行在独立沙盒之中的，阻止宏在实现内部访问文件系统和网络。但沙盒没法阻止不好的使用，比如获取时间，或者生成一个随机数，也可以在一个实现中存储一个全局变量供另外一个宏展开使用。如果这么做了，你的宏可能和你预想的表现会有出入，所以千万不要这么做。
 
 ## 最后
 
-看到这里是不是跃跃欲试了？如果你的工程支持 Swift Package Manager，那恭喜你，只需要依赖 SwiftSyntax，其他统统交给 Xcode；如果使用的是 Cocoapods，也有人尝试了解决方案：[Swift Macro 不使用 Swift Package Manager如何集成](https://gist.github.com/0x1306a94/09674ddc71459ffa00a625f01b5f49cc)；对于 Bazel 来说，官方虽然也在[支持这一新特性](https://github.com/bazelbuild/rules_swift/pull/1058)，但像语法高亮、宏展开这些和 IDE 捆绑的流程，可能就比较难整合了。
+如果你的工程支持 Swift Package Manager，那恭喜你，只需要依赖 SwiftSyntax，其他统统交给 Xcode；如果使用的是 Cocoapods，也有人尝试了解决方案：[Swift Macro 不使用 Swift Package Manager如何集成](https://gist.github.com/0x1306a94/09674ddc71459ffa00a625f01b5f49cc)；对于 Bazel 来说，官方虽然也在[支持这一新特性](https://github.com/bazelbuild/rules_swift/pull/1058)，但像语法高亮、宏展开这些和 IDE 捆绑的流程，可能就比较难整合了。
 
-另外，开源社区有人整理了 [Swift Macro 合集](https://github.com/krzysztofzablocki/Swift-Macros)，看看别人是如何编写宏的，官方文档也会是你学习开发、使用宏的利器：[Macros](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/macros/)。
+开源社区有人整理了 [Swift Macro 合集](https://github.com/krzysztofzablocki/Swift-Macros)，看看别人是如何编写宏的，官方文档也会是你学习开发、使用宏的利器：[Macros](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/macros/)。
+
+另外，直接阅读 Swift Evolution 中关于宏的部分也十分推荐：[SE-0382 Expression Macros](https://github.com/apple/swift-evolution/blob/main/proposals/0382-expression-macros.md)、[SE-0389 Attached Macros](https://github.com/apple/swift-evolution/blob/main/proposals/0389-attached-macros.md)、[SE-0397 Freestanding Declaration Macros](https://github.com/apple/swift-evolution/blob/main/proposals/0397-freestanding-declaration-macros.md)。
 
 Happy Coding！
