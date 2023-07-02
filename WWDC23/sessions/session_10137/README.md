@@ -505,6 +505,35 @@ commandBuffer.addCompletedHandler { commandBuffer in
 commandBuffer.commit()
 ```
 
+可以看到，这里直接使用 CNRenderingSession 编码渲染命令到命令缓冲区，这里渲染的就是景深效果，也意味着我们不能自定义景深的渲染方式。
+
+整个播放流程如下：
+
+![](images/playback.png)
+
+1. PhotosPicker 选取图片，获得 Cinematic asset id。
+2. 构造 CinematicAsset，存储用户数据状态：
+   1. 使用 asset id 获取 PHAsset，请求 PHImageManager 获得 AVAsset。
+   2. 构建 CinematicAssetData，存储 Cinematic asset 提取的相关信息：
+      1. 使用 AVAsset 构建 CNAssetInfo，包含 Cinematic asset 轨道信息。
+      2. 使用 AVAsset 构建 CNRenderingSession.Attributes，包含 Cinematic asset 得渲染属性。
+      3. 使用 MTLCommandQueue、渲染属性、轨道信息创建 CNRenderingSession。
+      4. 使用 AVAsset 构建 CNScript，包含 Cinematic script。
+      5. 读取本地 Cinematic script 修改持久化文件，一并加载到 CNScript 对象。
+      6. 使用上述构造的结果构造 CinematicAssetData。
+   3. 创建 AVMutableComposition，并使用 CNAssetInfo 添加轨道。
+   4. 创建 SampleCompositionInstruction，创建 AVMutableVideoComposition，并配置指令。
+   5. 使用 AVMutableComposition 对象构建 AVPlayerItem，并配置 AVMutableVideoComposition 对象。
+   6. 使用 AVPlayerItem 构造 AVPlayer。
+3. 使用 CinematicAsset 的 AVPlayer 构造 VideoPlayer。
+4. `showDetections` 展示/隐藏检测框：更新当前帧。
+5. `fNumber` 修改光圈值：更新当前帧。
+
+更新当前帧：
+
+1. 使用用户的修改 `showDetections`、`fNumber` 创建 SampleCompositionInstruction、AVMutableVideoComposition，重新配置到 AVPlayerItem。
+2. AVPlayer seek 到当前帧，以重新渲染。
+
 播放效果如下：
 
 ![](images/session_10137_14.01.jpeg)
@@ -594,6 +623,8 @@ drawRects(
 
 当开始播放时，注意到焦点和渲染是如何在影片中跟随黄色焦点检测的，而候选的检测结果仅以白色显示。
 
+这里的检测框是直接使用 Metal API 画出来的，示例代码有着完整的渲染管线，最终输出到用当前帧 CVPixelBuffer 创建的纹理中。对 Metal 有兴趣的同学可阅读 CinematicEditHelper 的实现，里面的代码简练清晰，非常值得阅读和学习。
+
 ### 手势更新 Cinematic script
 
 一旦知道如何绘制检测框，实际上使用 UI 点击点修改脚本非常类似。同样，遍历所有检测，如果点击点在检测矩形内，则获取其相应的检测 ID 并创建一个新的决策。决策强度可以在 UI 中设置。
@@ -648,6 +679,11 @@ if let frame = cinematicScript.frame(at: frameTime, tolerance: tolerance) {
 }
 ```
 
+完成了用户配置后，与播放中的更新帧一样：
+
+1. 创建 SampleCompositionInstruction、AVMutableVideoComposition，重新配置到 AVPlayerItem。
+2. AVPlayer seek 到当前帧，以重新渲染。
+
 执行 Demo，并通过点击来修改脚本和焦点。从播放模式切换到编辑模式，现在可以更新 Cinematic script。可以通过单击以获得弱决策（显示为黄色虚线框），或者双击以获得强决策（显示为黄色实心框）来修改焦点决策。当点击不同的角色时，可以看到焦点和渲染会根据用户输入进行修改。
 
 ![](images/session_10137_19.17.JPEG)
@@ -682,12 +718,31 @@ cinematicScript.reload(changes: cinematicScriptChanges)
 
 如前所述，自定义视频合成器可以用于导出渲染的视频。这些视频可以直接渲染保存回照片库。这在 Demo 代码中有详细介绍。
 
-API 还包括一个跟踪器，CNObjectTracker，它可以用于没有自动检测的对象。示例代码介绍了如何通过点击没有检测的对象来启用跟踪器。跟踪器将提供一个检测轨道，并可以添加到脚本中。
+API 还包括一个跟踪器，CNObjectTracker，可用于自定义的主体检测，手动补充 Cinematic 没有自动检测到的主体。示例代码介绍了如何通过点击没有检测的对象来启用跟踪器。跟踪器将提供一个检测轨道，并可以添加到脚本中。
 
 另外还可以通过提供自己的跟踪器并将自己的自定义检测轨道添加到脚本中来添加自定义跟踪。可以为每个帧自定义渲染属性，允许自定义过渡和光圈修改。
+
+![](images/reader_objecttracker.png)
+
+CNObjectTracker 的使用封装在 SampleObjectTracking 中，跟踪是针对一个时间区间的，同步遍历每一帧完成。
+
+1. 通过命令队列构建 CNObjectTracker。说明 CNObjectTracker 需要使用 Metal 做 GPU 计算。
+2. 在当前帧的给定区域寻找主体（`findObject`），找到的话会返回 CNBoundsPrediction（置信度和主体区域）。
+3. 基于找到的主体区域，以当前的 PTS 为起始点，传入当前帧 pixel buffer 和 disparity buffer，开始跟踪（`startTracking`）。
+4. 继续下一帧，继续使用新一帧的 PTS、 pixel buffer、disparity buffer 继续跟踪（`continueTracking`），这同样会返回 CNBoundsPrediction 作为跟踪的结果。
+5. 循环遍历时间区间的每一帧，直到遍历完成，或跟踪返回的 CNBoundsPrediction 中的主体区域为空，则结束检测跟踪（`finishDetectionTrack`），会返回一个 CNDetectionTrack 检测轨道。
+6. 把轨道添加到 CNScript 中，并添加一个 CNDecision 用户决策即可完成自定义的跟踪轨道。
+
+而这里的帧获取，示例代码中封装了一个 CinematicAssetReader，这其中使用 AVAssetReader + AVAssetReaderTrackOutput 模式，对时间区间内帧进行逐个解复用和解码，读取上面 Cinematic asset 的每一个轨道（从 CNAssetInfo 中获取轨道），最终得到：
+
+- video track: CVPixelBuffer
+- disparity track: CVPixelBuffer
+- metadata track: CMSampleBuffer
+
+注意这里读取 disparity track 固定使用 `kCVPixelFormatType_DisparityFloat16` 像素格式。
 
 ## 总结
 
 纵观 Cinematic API，主要是提供了电影效果模式视频的播放和编辑能力。但没有像支持 HDR 视频那么轻松，直接把 AVAsset 丢给 AVPlayer，好处了提供了更大的自由度。甚至我们可以不使用 AVFoundation 的 composition 一套的编辑框架，自行通过 CNAssetInfo、CNScript 读取轨道信息和 Cinematic asset，在自己的编辑框架中自行使用、渲染和编辑。也可以使用 CNObjectTracker 直接在自己的拍摄页实时地检测和跟踪画面主体，简单实现一些挂件或记录追踪信息。
 
-期待各大编辑 App 可以集成 Cinematic API，给压箱底的电影效果模式视频如虎添翼。
+期待各大编辑 App 集成 Cinematic API，给压箱底的电影效果模式视频如虎添翼。
