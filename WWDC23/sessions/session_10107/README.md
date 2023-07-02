@@ -668,7 +668,7 @@ extension SwiftUIVersionView {
 
 `photosPickerDisabledCapabilities(_:)`，禁用部分功能，默认为不禁用。有 `collectionNavigation` / `search` / `selectionActions` / `sensitivityAnalysisIntervention` / `stagingArea` 可选。
 
-> `sensitivityAnalysisIntervention` 为新出的敏感图片检测相关功能，这里不进行展示。
+> `sensitivityAnalysisIntervention` 为新出的敏感照片检测相关功能，这里不进行展示。
 
 | photosPickerDisabledCapabilities | snapshot                                                                                                                     |
 | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
@@ -720,6 +720,10 @@ iOS 17 新增的配置 API，需要多个参数 / 方法一起使用，否则会
 
 ![xcode-02](./images/xcode-02.png)
 
+### HDR 照片与影院模式视频
+
+限于篇幅，本文不讲述 HDR 照片与影院模式视频相关内容，如需了解更多，可查看参考列表或今年的其他内参。
+
 ## 总结
 
 通过 UIKit 和 SwiftUI 两种接入方式的比较，可以看到 SwiftUI 使用少量代码即可实现相同的效果。即使部分视图没有 SwiftUI 的版本，也可以通过 `UIViewRepresentable` 协议进行封装。如果仍然需要大量使用 UIKit，也建议参考 Apple 近年来推荐的 `configuration` API 风格进行代码编写，通过 _配置描述视图_，可以更好地进行状态还原和单元测试。同时可以看到，Apple 在隐私方面的保护力度是逐年加大的，今年也有相关的 session 总结，希望大家可以重视起来。
@@ -730,3 +734,6 @@ iOS 17 新增的配置 API，需要多个参数 / 方法一起使用，否则会
 2. [Apple - Bringing Photos picker to your SwiftUI app](https://developer.apple.com/documentation/photokit/bringing_photos_picker_to_your_swiftui_app)
 3. [Apple - Selecting Photos and Videos in iOS](https://developer.apple.com/documentation/photokit/selecting_photos_and_videos_in_ios)
 4. [Apple - Updating an App to Use Swift Concurrency](https://developer.apple.com/documentation/swift/updating_an_app_to_use_swift_concurrency)
+5. [Apple - WWDC23 - What’s new in privacy](https://developer.apple.com/videos/play/wwdc2023/10053)
+6. [Apple - WWDC23 - Support HDR images in your app](https://developer.apple.com/videos/play/wwdc2023/10181/)
+7. [Apple - WWDC23 - Support Cinematic mode videos in your app](https://developer.apple.com/videos/play/wwdc2023/10137/)
