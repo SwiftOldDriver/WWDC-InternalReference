@@ -141,7 +141,7 @@ func evaluate<each Result>(_: repeat Request<each Result>) -> (repeat each Resul
 
 当然这个特性，最大的受益场景就是 SwiftUI ，因为当一个 `View` 内嵌多个 `View` 的时候，SwiftUI 官方的方法就是通过泛型以及 Result Builder 进行设计的，并且最大的子 `View`有 10 个为上限的数量限制。当引入了 Type Parameter Pack 这个特性之后，限制将被突破，API 设计也更加简洁和易读。
 
-> Stevapple: type parameter pack 是 variadic generics（可变泛型）系列 feature 的一部分，更大的范畴上是增强 Swift 泛型系统的一部分。Variadic generics 的概念其实可以这么理解：generics 是对类型进行抽象，而variadic generics 希望在此基础上增加对参数数量的抽象。具体的提案可以查看[这里](https://github.com/hborla/swift-evolution/blob/variadic-generics-vision/vision-documents/variadic-generics.md)。
+> Stevapple: type parameter pack 是 variadic generics（可变泛型）系列 feature 的一部分，更大的范畴上是增强 Swift 泛型系统的一部分。Variadic generics 的概念其实可以这么理解：generics 是对类型进行抽象，而 variadic generics 希望在此基础上增加对参数数量的抽象。具体的提案可以查看[这里](https://github.com/hborla/swift-evolution/blob/variadic-generics-vision/vision-documents/variadic-generics.md)。
 
 ## Macro
 
@@ -369,22 +369,22 @@ public macro Observable() = #externalMacro(...).
 
 ```swift
 @Observable final class Person: ObservableObject {
-	@ObservationTracked var name: String { get { … } set { … } }
-	@ObservationTracked var age: Int { get { … } set { … } }
-	@ObservationTracked var isFavorite: Bool { get { … } set { … } }
+    @ObservationTracked var name: String { get { … } set { … } }
+    @ObservationTracked var age: Int { get { … } set { … } }
+    @ObservationTracked var isFavorite: Bool { get { … } set { … } }
 
-	internal let _$observationRegistrar = ObservationRegistrar<Person>()
-	internal func access<Member>(
-		keyPath: KeyPath<Person, Member>
-	) {
-		_$observationRegistrar.access(self, keyPath: keyPath)
-	}
-	internal func withMutation<Member, T>(
-		keyPath: KeyPath<Person, Member>,
-		_ mutation: () throws -> T
-	) rethrows -> T {
-		try _$observationRegistrar.withMutation(of: self, keyPath: keyPath, mutation)
-	}
+    internal let _$observationRegistrar = ObservationRegistrar<Person>()
+    internal func access<Member>(
+        keyPath: KeyPath<Person, Member>
+    ) {
+        _$observationRegistrar.access(self, keyPath: keyPath)
+    }
+    internal func withMutation<Member, T>(
+        keyPath: KeyPath<Person, Member>,
+        _ mutation: () throws -> T
+    ) rethrows -> T {
+        try _$observationRegistrar.withMutation(of: self, keyPath: keyPath, mutation)
+    }
 }
 ```
 
