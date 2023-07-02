@@ -6,8 +6,6 @@ session_ids: [10244]
 
 叶絮雷，Swift Documentation Workgroup 成员，目前就职于字节西瓜视频团队
 
-> > Sample：
-
 ## 审核介绍
 
 > > Sample：
@@ -18,4 +16,4 @@ session_ids: [10244]
 
 ## 公众号/小专栏图文头图
 
-![banner](./images/SwiftOldDriver.png)
+![banner](./images/banner.png)
