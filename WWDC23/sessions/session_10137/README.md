@@ -275,6 +275,30 @@ Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'IMG_1960.MOV':
 
 最后就得到了应用了效果的 Rendered asset，这是一个可以共享的普通 QuickTime 影片。
 
+## AVFoundation
+
+我们将使用 AVFoundation 实现 Cinematic asset 的播放与编辑。进入具体 API 讲解前，我们先简单梳理下 AVFoundation 播放和编辑的核心类及其关系。
+
+![A diagram of four rectangular items. The rectangle on the left represents AVAsset. A line connects it to three stacked rectangles on the right that represent AVAssetTrack (Video), AVAssetTrack (Audio), and AVAssetTrack (Subtitles) from top to bottom.](https://docs-assets.developer.apple.com/published/052d037bdf/rendered2x-1678221624.png)
+
+AVAsset 是具体音视频文件的数据模型类，包含了媒体资源的静态信息，如元数据、轨道对象抽象，但这些信息都是访问时才去读取文件加载信息。AVAsset 是抽象类和不可变类，一般使用 AVURLAsset 实例化，即从 URL 本地或远程加载音视频资源。
+
+![](images/avasset_avcomposition.png)
+
+AVComposition 是 AVAsset 子类，一般使用其 mutable 版本，即 AVMutableComposition，是多媒体轨道容器，与 AVAsset 不同，它允许组合来自不同的 asset 的轨道的部分时间段，即用于组织时间线。
+
+![](images/avvideocomposition.png)
+
+AVVideoComposition 是视频帧在时间点上的合成描述，即画面编辑的描述。使用 AVAsset 创建，一般也使用其 mutable 版本，即 AVMutableVideoComposition。通过指令 `instructions: [AVVideoCompositionInstructionProtocol]` 接收用户数据模型。配置自定义合成器类 `customVideoCompositorClass: AVVideoCompositing.Type?` 可实现自定义的合成器。内置的合成器只能实现 opacity、transform、cropRectangle 的修改，要更多的编辑能力都需要自定义合成器。
+
+![](images/avplayeritem.png)
+
+AVPlayerItem 则是音视频播放状态（时间、加载等）的数据源，管理着播放相关的动态信息。使用 AVAsset 创建，支持配置 `videoComposition: AVVideoComposition`，即可以播放编辑后的效果。AVPlayerItem 是播放数据源，意味着要修改播放状态，直接修改该对象即可。当然它只是数据源，完整的播放流程还需要 AVPlayer 和 AVPlayerLayer。AVPlayer 是控制器类，使用 AVPlayerItem 创建，可以简单理解为 AVPlayerItem 的包装和管理，可实现更便捷的播控和时间监听。AVPlayerLayer 视频渲染对象，呈现 `player: AVPlayer` 的视频内容，当然也完全受 AVPlayer 的控制。
+
+![](images/avplayeritem_avassetexportsession_avassetimagegenerator.png)
+
+AVAssetExportSession 用于导出。AVAssetImageGenerator 用于视频抽帧。它们都是使用 AVAsset 创建，也支持配置 `videoComposition: AVVideoComposition`。这样编辑配置的合成信息也能用于导出。
+
 接下来介绍如何使用 Cinematic API 渲染和编辑电影效果模式数据。
 
 ## 播放
@@ -337,8 +361,6 @@ let asset = await withCheckedContinuation { continuation in
 
 但要发挥电影效果模式的威力，我们还需要添加一个自定义视频合成器（video compositor），它可以处理多个轨道、用户修改，并最终调用 Cinematic 渲染器来合成输出。这个自定义合成器也可以用于缩略图生成和导出。
 
-TD：补充 Edit and Play Back HDR Video with AVFoundation 中相关内容。
-
 #### 配置渲染会话
 
 Cinematic API 使用 CN 前缀。需要使用 3 个 API 调用来渲染会话，实现景深渲染。
@@ -384,8 +406,6 @@ let compositionInfo: CNCompositionInfo = avComposition.addTracks(
 ```
 
 #### Composition instruction
-
-Cinematic composition 信息与 Cinematic asset 类似，只是轨道类型不同，composition 指向 AVMutableCompositionTrack，asset 指向 AVAssetTrack；composition 可动态插入、移除和修剪，而 asset 只能是从文件或数据流中静态读取，两者是继承关系，因此也可以直接从 composition 读取 Cinematic asset。
 
 首先从 Cinematic asset 中获取 Cinematic script。其中包含所有检测识别结果和焦点决策。
 
