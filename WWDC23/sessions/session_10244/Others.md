@@ -1,10 +1,10 @@
 ---
-session_ids: [10000]
+session_ids: [10244]
 ---
 
 ## 个人介绍
 
-叶絮雷，Swift Documentation Workgroup中的成员，目前就职于字节西瓜视频团队
+叶絮雷，Swift Documentation Workgroup 成员，目前就职于字节西瓜视频团队
 
 > > Sample：
 
