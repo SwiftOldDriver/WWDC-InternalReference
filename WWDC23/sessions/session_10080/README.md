@@ -12,6 +12,8 @@ session_ids: [10080]
 
 本文将会围绕新发布的 RealityView 与 [RealityKit](https://developer.apple.com/documentation/realitykit/) 框架中原有的实体 (Entity)和组件 (Component) 做介绍，并通过 Demo 演示如何让 3D 的地球和月亮模型在沉浸式空间中展示、环绕。
 
+![Outline](./images/outline.png)
+
 > 筆者：由于 **RealityKit 在 2019 年就推出了**，这个 session 里部分的概念不是新系统才有的，这里整理出各个名词推出的版本，详细的内容会在正文里展开
 > 
 > |  概念   | 框架  | 最早推出版本  | 简述  | 
