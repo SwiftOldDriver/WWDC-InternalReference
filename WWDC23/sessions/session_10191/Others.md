@@ -8,7 +8,7 @@ session_ids: [10191]
 
 ## 审核介绍
 
-> > Sample：
+
 
 ## 不超过 120 个字的文章简介
 
@@ -16,4 +16,4 @@ session_ids: [10191]
 
 ## 公众号/小专栏图文头图
 
-![banner](./images/SwiftOldDriver.png)
+![banner](./images/banner.png)
