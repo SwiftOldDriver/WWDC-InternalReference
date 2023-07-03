@@ -254,12 +254,12 @@ PhotogrammetrySession.isSupported
 | iPhone 13 Pro Max | 2021 |
 | iPhone 14 Pro | 2022 |
 | iPhone 14 Pro Max | 2022 |
-| iPad Pro 11''（2代）  | 2020 |
-| iPad Pro 12.9''（4代）  | 2020 |
-| iPad Pro 11''（3代）  | 2021 |
-| iPad Pro 12.9''（5代）  | 2021 |
-| iPad Pro 11''（4代）  | 2022 |
-| iPad Pro 12.9''（6代）  | 2022 |
+| iPad Pro 11'' （2代）  | 2020 |
+| iPad Pro 12.9'' （4代）  | 2020 |
+| iPad Pro 11'' （3代）  | 2021 |
+| iPad Pro 12.9'' （5代）  | 2021 |
+| iPad Pro 11'' （4代）  | 2022 |
+| iPad Pro 12.9'' （6代）  | 2022 |
 
 ### 目标采集
 
