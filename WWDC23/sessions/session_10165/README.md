@@ -259,6 +259,18 @@ Xcode 便会自动搜索工程内的本地化资源（`.strings`、`.stringsdict
 此外，Xcode 15 为我们提供了一个更加简便的方式去维护 `string catalog`，每一次构建，Xcode 都会自动提取代码中所有的字符串，如果新增或者删除某个字符串，Xcode 会自动在本地化目录中标记该字符串的状态，方便我们根据该状态对此维护：
 ![string_catalog](./images/string_catalog_4.png)
 
+State 有如下四种类型：
+
+- STALE：Not found in code
+- NEW：Untranslated
+- NEEDS REVIEW：May require change
+- ✅：Translated
+![string_catalog](./images/string_catalog_5.png)
+
+`STALE` 这个状态比较有意思，表明你在 string catalog 中新增了这个字符串，但是在代码中没有找到，意味着这个字符串很有可能已经被废弃，可以用于辅助无用代码的检查。
+`NEEDS REVIEW` 当你改动了某个 string，那么这个 string 的状态就是这个了。
+其余的状态就是字面意思理解。
+
 > Tips: 更多关于 string catalogs 参考
 > [Session 10155 - Discover String Catalogs](https://developer.apple.com/videos/play/wwdc2023/10155/)
 
