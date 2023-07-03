@@ -19,7 +19,7 @@ session_ids: [10165]
       - [根据首字母匹配相应的文件名](#根据首字母匹配相应的文件名)
       - [多参函数，列出所有可能的参数排列](#多参函数列出所有可能的参数排列)
       - [智能分析代码上下文，给出合适的代码建议](#智能分析代码上下文给出合适的代码建议)
-    - [Assets.xcassets 添加的资源文件，自动生成 Swift symbols](#assetsxcassets-添加的资源文件自动生成-swift-symbols)
+    - [Assets.xcassets 添加的资源文件，自动生成 symbols 常量](#assetsxcassets-添加的资源文件自动生成-symbols-常量)
   - [更简洁的 Xcode](#更简洁的-xcode)
     - [IDE 安装包拆包下载](#ide-安装包拆包下载)
     - [string catalog](#string-catalog)
@@ -104,19 +104,135 @@ TODO: 文章完成后更新
 键入 `font` 后再键入 `.`，此时 Xcode 会将 `fontweight` 以及 `bold` 等置顶，因为很有可能我们下一步就要设置这两个属性：
 ![code_complete](./images/code_complete_4.png)
 
-### Assets.xcassets 添加的资源文件，自动生成 Swift symbols
+### Assets.xcassets 添加的资源文件，自动生成 symbols 常量
 
-Xcode 15 会自动生成 Color 和 Image assets 的 Swift symbols，因此我们可以直接在代码中通过这些 assets 的常量名进行直接引用，不必再以字符串的形式进行引用，这样做的好处如下：
+Xcode 15 会自动生成 Color 和 Image assets 的 symbols，因此我们可以直接在代码中通过这些 assets 的常量名进行直接引用，不必再以字符串的形式进行引用，这样做的好处如下：
 
-1. 在编译期就能做一些编译检查，比如我们在某次更改中，改了某个 image assets 的名字，这时候如果通过字符串引用，在编译期是无法进行检查的，只有在 App 运行后我们才能看到这张图片无法展示（或者进行全局的字符串搜索），降低了一定出现线上问题的概率。
-**TODO: iOS 17 SDK 下载成功后补充图片**
+1. 在编译期就能做一些编译检查，比如我们在某次更改中，改了某个 image assets 的名字，这时候如果通过硬编码字符串，在编译期是无法进行检查的，只有在 App 运行后我们才能看到这张图片无法展示（或者进行全局的字符串搜索），编译期检查能够降低一定出现线上问题的概率。
+2. 根据 Assets 自动生成的 symbols 可以使用 Xcode 15 强大的代码补全能力，方便我们选择适当的资源文件。
+![asset_catalog](./images/asset_catalog_1.gif)
+上面的 gif 演示了 Xcode 15 Assert Catalog 的新特性，我们看到在 Assets 中有一张名为 `sun` 的图片，我们把它重命名为 `sunny` 此时，回到代码编辑界面，发现代码报错（找不到名为 `sun` 的图片），我们编辑代码，Xcode 15 弹出代码提示，改为 `sunny` 后，代码不再报错，可以正常预览。
+由此可见，自动生成的 Swift symbols 确实能够方便我们尽早发现资源问题，也能方便我们快速编写代码（要是支持预览就更好了）。
+3. 我们也可以更方便地做一些资源清理的操作，只需要扫描没有被使用到的  symbols 即可。
 
-2. 根据 Assets 自动生成的 Swift symbols 可以使用 Xcode 15 强大的代码补全能力，方便我们选择适当的资源文件。
-**TODO: iOS 17 SDK 下载成功后补充图片**
+> 值得注意的是，目前 Assert catalog 仅仅支持创建 `Assets` 中的图片以及颜色资源的 symbol，即支持的资源文件如下：
+> *Image Set：图片*
+> *Color Set：颜色*
+> *Symbol Image Set：符号图片（svg）*
 
-3. 我们也可以更方便地做一些资源清理的操作，只需要扫描没有被使用到的 Swift symbols 即可。
+读到这你是不是也很好奇 Xcode 15 是怎么做到将 Asset Catalog 中的图片和颜色资源转成 symbol 的？Session 中没有具体阐述，我们深入研究下~
+既然是编译期做的事情，我们操作编译一下，然后找到编译日志中有关 asset catalogs 的日志，找到相应编译产物的路径：
+![asset_catalog](./images/asset_1.png)
+可以看到 `Generate asset symbols` 执行完成后生成了两个产物分别是：
 
-可以说这个功能的更新是相当有用的了。
+- `GeneratedAssetSymbols.h`
+- `GeneratedAssetSymbols.swift`
+
+这里我们着重看下生成的 `GeneratedAssetSymbols.swift` 代码（下面所列代码为部分重要代码片段）
+
+```swift
+// MARK: - Color Symbols -
+
+@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
+extension DeveloperToolsSupport.ColorResource {
+
+    /// The "bgColor" asset catalog color resource.
+    static let bg = DeveloperToolsSupport.ColorResource(name: "bgColor", bundle: resourceBundle)
+
+}
+
+// MARK: - Image Symbols -
+
+@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
+extension DeveloperToolsSupport.ImageResource {
+
+    /// The "sunny" asset catalog image resource.
+    static let sunny = DeveloperToolsSupport.ImageResource(name: "sunny", bundle: resourceBundle)
+
+}
+```
+
+可以看到编译后根据项目中 Assets 类型自动生成了两个 `extension` 分别扩展
+`DeveloperToolsSupport.ColorResource` 和 `DeveloperToolsSupport.ImageResource`，由于 Color 和 Image 的实现代码几乎一致，下面我们以 Image 举例，看下具体做了什么事情：
+
+```swift
+private init?(thinnableName: String, bundle: Bundle) {
+#if canImport(AppKit) && os(macOS)
+        if bundle.image(forResource: NSImage.Name(thinnableName)) != nil {
+            self.init(name: thinnableName, bundle: bundle)
+        } else {
+            return nil
+        }
+#elseif canImport(UIKit) && !os(watchOS)
+        if UIKit.UIImage(named: thinnableName, in: bundle, compatibleWith: nil) != nil {
+            self.init(name: thinnableName, bundle: bundle)
+        } else {
+            return nil
+        }
+#else
+        return nil
+#endif
+    }
+```
+
+由上述代码可知，调用 `ImageResource` 的初始化方法扩展了一个 `Type Property`：`sunny`。
+
+在 iOS 17 中，苹果给 `Image` 新增了一个初始化方法，支持通过传入 `ImageResource` 参数创建 `Image`。
+
+```swift
+@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
+extension Image {
+
+    /// Initialize an `Image` with an image resource.
+    public init(_ resource: ImageResource)
+}
+```
+
+因此可以直接调用 `Image` 新的初始化方法初始化 `Image`：
+
+```swift
+Image(.sunny)
+```
+
+那如果是 `UIImage`，苹果是怎么处理的呢，我们先来看看如何调用
+
+```swift
+UIImage(resource: .sunny)
+```
+
+和 `Image` 类似，苹果也给 `UIImage` 新增了一个初始化方法，支持通过传入 `ImageResource` 初始化 `UIImage` 对象（该扩展方法在编译后生成的 `GeneratedAssetSymbols.swift` 文件中）：
+
+```swift
+#if canImport(UIKit)
+@available(iOS 17.0, tvOS 17.0, *)
+@available(watchOS, unavailable)
+extension UIKit.UIImage {
+
+    private convenience init?(thinnableResource: DeveloperToolsSupport.ImageResource?) {
+#if !os(watchOS)
+        if let resource = thinnableResource {
+            self.init(resource: resource)
+        } else {
+            return nil
+        }
+#else
+        return nil
+#endif
+    }
+
+}
+#endif
+```
+
+这样，添加到 Assets.xcassets 中的颜色和图片资源文件就成功转成了相应的  `resource`，通过 `extension` 来新增 `UIKit` 和 `SwiftUI` 初始化方法，使得传入 `resource` 进行初始化得以实现，于是我们就能在代码中利用苹果自动生成的 `symbols` 常量做相应的处理了。
+
+注意，如果是 `Color Set`，命名中带有 `Color`，那么在创建 `symbols` 时，`Color` 会被忽略，比如：
+
+```swift
+bgColor => bg
+background(Color.bg) √
+background(Color.bgColor) X
+```
 
 ## 更简洁的 Xcode
 
