@@ -464,7 +464,7 @@ if let animation = try? AnimationResource.generate(with: orbit) {
 
 现在月亮实体会绕著地球做公转，有了 Animation 的加持，整个场景又更加生动了！
 
-![](./images/animation_demo.gif)
+![动画示范](./images/animation_demo.gif)
 
 ### 空間音頻 (Spatial Audio)
 
@@ -472,22 +472,22 @@ if let animation = try? AnimationResource.generate(with: orbit) {
 
 RealityKit 总共提供了三种音频类型：1. Spatial 2. Ambient 3. Channel
 
-![](./images/spatial_audio_type.png)
+![实体的音频种类](./images/spatial_audio_type.png)
 
 1. Spatial Audio 空间音频
 
 	RealityKit 的音频默认就是此类型的，它能让你感觉这些声音彷佛就在身旁。你可以使用 Spatial Audio Component订制一个空间中的物体如何发出声音，让他们更具真实性 更具"艺术性"！
-	![](./images/spatial_audio_demo.png)
+	![空间音频](./images/spatial_audio_demo.png)
 2. Ambient Audio 环绕音频
 
 	如果你的音频文件是多声道(multichannel)的，那种在真实环境采集出来的音频，那么就非常适合使用这种类型播放。每个声道都会从不同的方向传到用户耳里。
 	
-	![](./images/ambient_audio_demo.png)
+	![环绕音频](./images/ambient_audio_demo.png)
 3. Channel Audio 声道音频
 
 	基础的音频模式，不经过修饰直接使用扬声器播放音频，适合一些跟物件无关的场景背景音乐。
 	
-	![](./images/channel_audio_demo.png)
+	![声道音频](./images/channel_audio_demo.png)
 
 #### 添加音频组件 (Audio Component)
 
@@ -572,7 +572,7 @@ struct PointOfInterestComponent: Component, Codable {
 
 Entities, Components, Systems (简称 ECS) 是决定你整个 3D 体验外观和行为 的重要工具。Systems 可以用来组织(strucure)App 行为的实现代码。
 
-![](./images/system_component_entity.png)
+![ECS](./images/system_component_entity.png)
 
 说完可能还是比较模糊，我们直接上代码看看。
 我们声明了一个 TraceSystem 它遵守了 System 协议，这个系统的作用是为我们 Demo 中的人工卫星(绕著地球做公转的那个实体) 添加一个轨迹(类似尾巴)。在每一次 Update 时，从 context 获取 Entity，并将 Entity 当前的位置保存到 Trace 。
