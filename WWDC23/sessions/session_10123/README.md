@@ -2,7 +2,7 @@
 session_ids: [10123]
 ---
 
-# Session 10123 - 把你的游戏移植到 Mac 上，第一部分：制定移植方案
+# Session 10123 - 把你的游戏移植到 Mac 上（一）
 
 本文基于 [Session 10123] ([Bring your game to Mac, Part 1: Make a game plan](https://developer.apple.com/videos/play/wwdc2023/10123/?time=127))梳理。
 
