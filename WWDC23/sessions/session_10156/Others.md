@@ -4,7 +4,7 @@ session_ids: [10156]
 
 ## 个人介绍
 
-zddhub(张东东)，iOS 开发，MacOS App：[**PixelsMeasure**](https://apps.apple.com/cn/app/pixelsmeasure/id1638740542) 开发者。
+zddhub(张东东)，移动开发，MacOS App：[**PixelsMeasure**](https://apps.apple.com/cn/app/pixelsmeasure/id1638740542) 开发者。
 
 ## 审核介绍
 
@@ -16,4 +16,4 @@ Jake Lin，在 REA Group 担任 Senior Mobile Tech Lead，负责公司的移动�
 
 ## 公众号/小专栏图文头图
 
-![banner](./images/SwiftOldDriver.png)
+![banner](./images/banner.png)
