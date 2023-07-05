@@ -28,33 +28,25 @@ session_ids: [10188]
 
 很开心第二次参与到 `WWDC 内参`，并再次负责对 `iCloud` 相关的 `Session`。`CKSyncEngine` 的发布我觉得是近三年 `iCloud` 相关最具实用价值的更新。前两年的 `WWDC` 更多的集中在对 `CloudKit` 后台自动化等一些不痛不痒的点的更新。`CKSyncEngine` 让 `iCloud` 同步方案的实现更加灵活。
 
-### 2. 一点分享
+### 2. iCloud 实战项目分享
 
-我还想分享的一些我的 `iCloud` 实战场景，在我自己的[独立应用](https://apps.apple.com/cn/developer/rongqing-wang/id1264542103)开发过程中，主要有用到三种 `iCloud` 功能开发方案。在我实际开发中同一个应用中会根据具体场景使用不同的方案实现。
+首先我想分享一下我的一些 `iCloud` 实战项目，可以帮助大家对 `CKSyncEngine` 的应用场景有更具体的认识。
 
-#### 方案一： 直接通过 CKRecord 数据流交互，无本地数据
+在我自己的[独立应用](https://apps.apple.com/cn/developer/rongqing-wang/id1264542103)开发过程中，主要有用到三种 `iCloud` 功能开发方案，并且实际开发中同一个应用中也会根据具体场景存在多种方案。
+
+了解完 `CKSyncEngine` 之后我们再看一下 `CKSyncEngine` 对于我现有的应用场景是否存在可以切入的优化点。
+
+#### 案例一：扫雷 - 直接通过 CKRecord 数据流交互，无本地数据
 
 ![扫雷Elic](./images/MyApp01.jpeg)
 
-这个应用是我最早进行 `CloudKit` 功能尝试的作品。为了构建一个所有用户都可参与的排行榜功能，按照平时做需求的思维，想要通过接口数据驱动应用展示与交互。而基于 `CloudKit` 构建适当的数据结构，完全能够实现这个功能。
-
-**数据结构之间的关系**
+这个应用是我最早进行 `CloudKit` 功能尝试的作品。基础数据包含两部分：用户数据与排行榜数据。在传统认知里 `iCloud` 数据是只有当前用户可以访问的。但基于 `CloudKit` 的 `publicCloudDatabase`，可以实现全用户可访问的数据。并通过 `CKQueryOperation` 实现类似通过服务端接口请求返回 `JSON` 数据的形式的数据获取逻辑，不过返回的数据变为了 `CKRecord 数据流`。
 
 ![数据结构](./images/ElicRankDataFlow.png)
 
-**核心数据结构**
-
-![用户表](./images/ElicUserTable.png)
-
-![排行榜表](./images/ElicRankTable.png)
-
-![头像资源表](./images/ElicAvatarTable.png)
-
-在这里 `CloudKit` 就充当了`服务端`的角色，`CKRecord 数据流`充当了 `JSON 数据流`的角色。最终基于这个思路实现了一套较为完善的用户体系与排行榜等一系列功能。
-
 > 更多细节可以查看：[纯客户端基于 iCloud 构建排行榜功能](https://juejin.cn/post/6989918320224895012)
 
-#### 方案二： 本地数据库 + FileManager 实现云备份
+#### 案例二：记账 - 本地数据库 + FileManager 实现云备份
 
 ![梦见账本](./images/MyApp02.jpeg)
 
@@ -64,7 +56,7 @@ session_ids: [10188]
 
 最终这款基于 `iCloud` 的应用在不同场景下使用了不同的方案。
 
-#### 方案三： CoreData + NSPersistentCloudKitContainer 自动同步
+#### 案例三：色卡 - CoreData + NSPersistentCloudKitContainer 自动同步
 
 ![一色](./images/MyApp03.jpeg)
 
@@ -475,11 +467,33 @@ func testSyncConflict() async throws {
 
 这些步将有助于使用 `CKSyncEngine` 创建和维护可靠、持久的应用程序。
 
+## 六、 可行性分析
+
+那么对于文章开头分享的个人项目案例，`CKSyncEngine` 是否有可以发挥的地方呢？
+
+### 1. 扫雷
+
+无本地数据库，所有数据都通过 `CloudKit API` 直接进行增删改查。
+
+由于核心数据都是需要全体用户都能访问的，所以如果在个人设备上进行同步会导致大量没必要的同步发生，例如：排行榜表数据是用户完成游戏后 `App` 自动上传的，所有用户都会更新自己的记录，如果做了同步，那么即使我不访问排行榜页面，其他用户做了修改我的设备也会发生同步，所以还是按照现有的方式需要的时候通过 `CKQueryOperation` 直接拉取数据展示更加合理。
+
+### 2. 记账
+
+持久化采用的是本地数据库，可以切换到 `CKSyncEngine` 进行同步。当前是整个数据库全量上传下载，效率较低。
+
+改造思路：新版本读取到老数据库，将本地数据库所有数据通过 `CKSyncEngine` 同步到 `iCloud`，之后的增删改也通过 `CKSyncEngine` 同步，这样可以实现了类似于 `CoreData + NSPersistentCloudKitContainer` 的增量同步方案，但无需切换到 `CoreData`。
+
+### 3. 色卡
+
+这个项目已经使用了 `CoreData + NSPersistentCloudKitContainer` 方案，正如本 `Session` 有提到过的，没有切换的必要。这已经是集成度非常高非常成熟的一套同步方案了。
+
 ## 总结
 
-通过本 `Session` 了解 `CKSyncEngine` 后，我认为，`CKSyncEngine` 其实是将 `NSPersistentCloudKitContainer` 内部对 `CoreData` 数据进行同步的功能抽了出来，更加灵活通用。解决了 `NSPersistentCloudKitContainer` 强绑定 `CoreData` 的缺点，对于不使用 `CoreData` 又想方便的进行 `iCloud` 云备份的开发者来说是极大的利好。
+相信通过本 `Session` 以及我个人项目可行性分析，大家对于 `CKSyncEngine` 一定有了一个更加具体的认知。
 
-对于已经采用了 `CoreData + NSPersistentCloudKitContainer` 方案的项目来说没有必要进行切换。就我个人的项目而言，那款记账软件是比较适合切换到 `CKSyncEngine` 的，因为持久化方案没有使用 `CoreData`，而是 `SQLite`，并通过 `FileManager` 进行对文件整体进行 `iCloud` 备份的。我需要做的就是在更改数据的时候将对应的更改同步提交给 `CKSyncEngine`，并在适当的时候处理引擎相关的事件。
+按照我的理解，`CKSyncEngine` 其实是将 `NSPersistentCloudKitContainer` 内部对 `CoreData` 数据进行同步的功能抽了出来，更加灵活通用。解决了 `NSPersistentCloudKitContainer` 强绑定 `CoreData` 的缺点，对于不使用 `CoreData` 又想方便的进行 `iCloud` 云备份的开发者来说是极大的利好，也是近两三年 `iCloud` 相关更新中非常使用的新特性。
+
+如果你对对 `iCloud` 开发有兴趣，欢迎多多交流。
 
 ## 推荐阅读
 
