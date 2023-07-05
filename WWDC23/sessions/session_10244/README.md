@@ -7,6 +7,13 @@ session_ids: [10244]
 > 作者：
 >
 > 叶絮雷，Swift Documentation Workgroup 成员，目前就职于字节西瓜视频团队
+> 
+> 审核：
+>
+> SeaHub：目前任职于腾讯 TEG 计费平台部，负责搭建服务于腾讯系业务的支付系统，主导国内 IAP 前后端相关内容，对 IAP 整体设计有一定的经验；
+>
+>  黄骋志：老司机技术轮值主编，目前就职于字节跳动，参与西瓜视频质量与稳定性工作。对 OOM/Watchdog 较为了解并长期投入
+
 
 本文是根据 WWDC23 中的 [Create rich documentation with Swift-DocC](https://developer.apple.com/videos/play/wwdc2023/10244/) 撰写，主要是引导如何利用 DocC 的新功能构建更丰富的框架文档。
 
