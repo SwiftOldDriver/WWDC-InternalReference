@@ -4,7 +4,7 @@ session_ids: [10167]
 
 ---
 
-# WWDC23 10167 - 展开聊聊 Swift 宏
+# WWDC23 10167 - 初见 Swift 宏
 
 > 本文基于 [Session 10167](https://developer.apple.com/videos/play/wwdc2023/10167/) 梳理。原 session 中详细提到了如何实现一个宏，以及错误诊断、测试方面的内容，但限于篇幅，本文不会涉及这些，而将偏重于介绍 Swift 宏的基础概念。如果你希望解如何编写、实现宏，可以阅读内参的这篇文章（链接待补充）。
 
