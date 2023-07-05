@@ -9,6 +9,7 @@ session_ids: [10156]
 动画是现代应用设计的关键组成部分，恰当地使用动画可以使用户界面更加清晰并富有活力。初学者通常会惊叹于 SwiftUI 动画功能的强大，但当深入使用时却会发现并不容易掌握。开发者通常会由于动画效果因为这样或者那样的问题无法到达预期而苦恼，这是对 SwiftUI 动画机制不了解而造成的。本文将结合 [WWDC23 10156][10156] 和自己的实验，概述 SwiftUI 强大的动画功能以及它们如何协同工作来产生令人印象深刻的视觉效果。
 
 全文分为五个部分：
+
 - SwiftUI 动画的基本知识
 - 动画过渡函数 Animation
 - 可动画属性 Animatable
@@ -23,7 +24,7 @@ session_ids: [10156]
 
 ![book-animation](./images/book-animation.gif)
 
-### SwiftUI 动画是什么？
+### SwiftUI 动画是什么
 
 SwiftUI 自己也对动画做了定义：创建流畅的视觉更新去响应状态变化（Create smooth visual updates in response to state changes）。即当状态变化时，动画会使视图更新更加平滑、流畅。
 
@@ -213,7 +214,7 @@ Binding<Value>.animation(.linear(duration: 1).delay(2.0), value: property) // Wa
 
 为了行文方便，以下将 Animation 称作动画过渡函数，突出其插值算法的本质。
 
-### 动画过渡函数 Animation
+### 动画过渡函数
 
 SwiftUI 内置了大量的动画过渡函数，主要分为四类：
 
@@ -232,6 +233,7 @@ SwiftUI 内置了大量的动画过渡函数，主要分为四类：
 - easeInOut
 
 其它的使用 `timingCurve` 函数来实现，通过二次曲线，或者 Bézier 曲线，来实现插值函数：
+
 - `static func timingCurve(Double, Double, Double, Double, duration: TimeInterval) -> Animation`
 - `static func timingCurve(UnitCurve, duration: TimeInterval) -> Animation` `New`
 
@@ -792,6 +794,7 @@ struct BindingAvatar: View {
 - 动画上下文 Transaction，携带足够的信息，在视图层级上传播动画上下文
 
 ## 参考资料
+
 - [WWDC23 10156][10156]
 - [WWDC23 10157][10157]
 - [WWDC23 10158][10158]
