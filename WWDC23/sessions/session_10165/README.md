@@ -26,9 +26,12 @@ session_ids: [10165]
     - [Swift DocC](#swift-docc)
     - [Swift Macros](#swift-macros)
   - [更高效的 Xcode](#更高效的-xcode)
-    - [UIKit 实时预览](#uikit-实时预览)
+    - [实时预览优化](#实时预览优化)
+      - [基于 `#preview` 宏快速创建预览实例](#基于-preview-宏快速创建预览实例)
+      - [AppKit、UIKit 实时预览](#appkituikit-实时预览)
+      - [Widget 预览支持](#widget-预览支持)
     - [书签](#书签)
-    - [源代码托管](#源代码托管)
+    - [源代码托管优化](#源代码托管优化)
     - [Privacy Manifest](#privacy-manifest)
     - [App 发布](#app-发布)
   - [其他功能更新](#其他功能更新)
@@ -252,9 +255,10 @@ background(Color.bgColor) X
 Xcode 15 引入了一个新的本地化资源的管理方式 `string catalog`，通过 `string catalog` 我们可以更方便的管理本地化资源。
 首先假设我们已有的项目中已经有本地化资源，如图所示
 ![string_catalog](./images/string_catalog_1.png)
-在没有 `string catalog` 之前，我们通常需要创建不同语言的目录，然后进行本地化处理，操作起来还是比较繁琐的，Xcode 15 为我们提供了便捷的迁移方式，我们只需找到 Xcode 菜单栏的 `Edit -> Convert -> To String Catalogs`
+在没有 `string catalog` 之前，我们通常需要创建不同语言的目录（或者是不同的 `*.string` 文件），然后进行本地化处理，操作起来还是比较繁琐的。
+Xcode 15 为我们提供了便捷的迁移方式，我们只需找到 Xcode 菜单栏的 `Edit -> Convert -> To String Catalogs`，Xcode 便会自动搜索工程内的本地化资源（`.strings`、`.stringsdict`）
 ![string_catalog](./images/string_catalog_2.png)
-Xcode 便会自动搜索工程内的本地化资源（`.strings`、`.stringsdict`），并将它们整合到 `Localization` 中，后续我们只需维护该文件即可，我们还能查阅不同语言的翻译进度：
+并将它们整合到 `Localization` 中，后续我们只需维护该文件即可，我们还能查阅不同语言的翻译进度：
 ![string_catalog](./images/string_catalog_3.png)
 此外，Xcode 15 为我们提供了一个更加简便的方式去维护 `string catalog`，每一次构建，Xcode 都会自动提取代码中所有的字符串，如果新增或者删除某个字符串，Xcode 会自动在本地化目录中标记该字符串的状态，方便我们根据该状态对此维护：
 ![string_catalog](./images/string_catalog_4.png)
@@ -308,17 +312,74 @@ Swift Macros 允许我们创建自定义的宏包（macro package）以便共享
 
 ## 更高效的 Xcode
 
-### UIKit 实时预览
+### 实时预览优化
 
-TODO:
+#### 基于 `#preview` 宏快速创建预览实例
+
+写过 `RN` 的同学一定很喜欢 `RN` 代码编辑完后实时预览的能力，相应的苹果也推出了 `SwiftUI`，得以让 iOS 原生开发的同学也能及时预览自己代码的效果。
+
+但是要实时进行预览，我们每次都要创建一个 `PreviewProvider` 预览实例。得益于 `Swift Macro`，现在我们创建一个预览实例会更加容易，我们先来看下如果不用 `Swift Macro` 想要实时预览 `SwiftUI` 需要怎么做：
+![preview](./images/preview_1.png)
+我们需要创建一个 `PreviewProvider` 实例：
+
+```Swift
+struct ContentBackgroundPreview: PreviewProvider {
+    static var previews: some View {
+        ContentBackgroundView()
+    }
+}
+```
+
+下面来看下基于 `Swift Macro` 实时预览该怎么处理：
+![preview](./images/preview_2.png)
+我们可以看到，使用 `#Preview` 宏快速创建了一个预览实例，并且在键入 `#Pre` 的时候会自动弹出代码提示：
+![preview](./images/preview_3.png)
+如果需要创建多个预览实例，我们只要创建一个带有名字的预览实例：
+![preview](./images/preview_4.png)
+然后通过切换预览界面的 tab 即可预览不同的实例。
+
+#### AppKit、UIKit 实时预览
+
+但是对于一些 `UIView`、`UIViewController` UIKit 对象，之前是无法实时
+预览的：
+![preview](./images/preview_5.png)
+需要编译运行才能看到代码的改动效果。现在基于 `#Preview` 宏，苹果把实时预览的能力带到了 `UIKit` 和 `AppKit`，只需要用 `#Preview` 进行包裹即可：
+![preview](./images/preview_6.png)
+这就意味着，针对一些 `UIKit` 写的老项目，我们也能利用 `#Preview` 进行实时预览啦。
+
+#### Widget 预览支持
+
+如果你的 `Widget` 展示的效果会随着时间的变化而变化，那么基于 `#Preview` 的 `Widget` 预览功能将对你的开发很有用，你可以轻松预览不同时间片下 `Widget` 的表现效果：
+![preview](./images/preview_7.gif)
+
+> Tips: 更多关于 programmatic UI 预览参考
+> [Session 10252 - Build programmatic UI with Xcode Previews](https://developer.apple.com/videos/play/wwdc2023/10252)
 
 ### 书签
 
-TODO:
+Xcode 15 新增了一个方便我们快速找到代码的功能，叫做 `bookmark` 支持我们给代码做标记，主要支持如下能力：
 
-### 源代码托管
+- 添加书签
+  - 添加书签，很简单，我们只需选中需要添加书签的代码并且右击，打开菜单栏选择创建书签即可，支持为单一代码行创建书签或者给整个文件创建书签。
+  ![bookmark](./images/bookmark_1.png)
+  - 如果是给代码行创建书签，创建完后会在右边显示一个书签标记，点击书签按钮能够快速为该书签添加描述。
+  - 创建完书签后，会在 Xcode 导航栏中显示（右键可编辑）：
+    ![bookmark](./images/bookmark_2.png)
+- 书签分组，可以给选中的书签创建分组，便于管理，可以设置分组名：
+  ![bookmark](./images/bookmark_3.png)
+- 给所有的搜索结果创建书签，比如我可以给我们代码中所有的 `TODO:` 创建书签：
+  ![bookmark](./images/bookmark_4.gif)
+  如果代码中新增了书签标记的内容，我们可以点几刷新按钮，就能更新书签列表了。
+- TODO List
+  经过上述操作后我们已经有了一个叫做 `TODO:` 的书签组，我们可以把这个书签组当做 TODO List 使用（session 视频中会在书签左边显示一个小圆圈，点击会打勾，我这边实操没有出现，可能是 Xcode 15 beta 版本的一个 bug）
+  ![bookmark](./images/bookmark_5.png)
 
-TODO:
+### 源代码托管优化
+
+现在越来越多的 IDE 集成了 `git` 方便我们进行代码托管，Xcode 15 对这部分能力进行了优化，方便我们在 Xcode 中进行预览代码变更等操作，有种把 source tree 集成到 Xcode 中的感觉：
+![source_control](./images/source_control_1.png)
+
+你可以在 Xcode 15 中进行 `commit`、`push`、`stage` 等操作。工作中已经习惯了 `cmd` 中敲 `git` 命令行了，此处更新我可能会使用下查看改动以及解决冲突的能力。
 
 ### Privacy Manifest
 
@@ -348,7 +409,7 @@ TODO:
 
 ### 终端
 
-TODO:
+TODO
 
 ### 调试
 
@@ -385,6 +446,15 @@ TODO:
 ## 开发者注意事项
 
 - 如果没有安装所需平台的 SDK，那么需要在创建项目或者需要使用的时候下载，否则无法编译运行。
+- asset catalog 编译自动生成 symbols，新增的扩展都是 `@available(iOS 17.0)` 不向下兼容。
+- `#Preview` 从 iOS 17 开始支持，不向下兼容
+
+```Swift
+@available(iOS 17.0, macOS 14.0, tvOS 17.0, *)
+@freestanding(declaration) public macro Preview(_ name: String? = nil, traits: PreviewTrait<Preview.ViewTraits>..., body: @escaping () -> UIViewController) -> () = #externalMacro(module: "PreviewsMacros", type: "Common")
+```
+
+- test
 
 ## 总结
 
