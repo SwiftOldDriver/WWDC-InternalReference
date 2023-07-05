@@ -134,7 +134,7 @@ class FoodTruckModel: ObservableObject {
 
 在深入讲解 Observation 的具体实现原理之前，我们先了解一下它的开发动机。通过了解这一点，我们可以更好地理解 Observation 带来的提升，以及它解决了哪些具体问题。
 
-### 为什么会有 Observation？
+### 为什么会有 Observation
 
 在开发数据驱动 UI 程序时，我们需要监听一些基础数据的变化，并根据变化更新 UI 展示。为了实现监听，通常需要使用观察者模式。在 Swift 中，官方提供的观察机制只有 KVO 和 Combine 中的 ObservableObject，但它们都有各自的局限性。
 
