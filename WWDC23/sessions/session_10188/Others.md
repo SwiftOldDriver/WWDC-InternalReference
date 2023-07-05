@@ -4,7 +4,7 @@ session_ids: [10188]
 
 ## 个人介绍
 
->> 作者：LabLawliet，iOS 独立开发者，Swift 爱好者，[GitHub](https://github.com/RyukieSama)，[独立作品](https://apps.apple.com/cn/developer/rongqing-wang/id1264542103)。
+>> 作者：LabLawliet，iOS 独立开发者，Swift 爱好者，[GitHub](https://github.com/RyukieSama)，[App Store](https://apps.apple.com/cn/developer/rongqing-wang/id1264542103)。
 
 ## 审核介绍
 
