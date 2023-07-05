@@ -32,6 +32,7 @@ session_ids: [10165]
       - [Widget 预览支持](#widget-预览支持)
     - [书签](#书签)
     - [源代码托管优化](#源代码托管优化)
+    - [测试优化](#测试优化)
     - [Privacy Manifest](#privacy-manifest)
     - [App 发布](#app-发布)
   - [其他功能更新](#其他功能更新)
@@ -61,7 +62,6 @@ Xcode 是每一个 iOS 开发者开发过程中必不可少的工具，纵使 Xc
 1. 更智能的 Xcode：
    - 更加智能的代码补全体验，iOS 开发者也可以用上更加智能好用的代码补全能力了。
    - 在 Assets.xcassets 中添加资源文件，自动生成 Swift symbols，可在编译期进行检查，更加智能安全。
-   - 更智能的测试分析，产出更多内容的测试报告，UI Test 更智能。
 2. 更简洁的 Xcode：
    - IDE 安装包拆分下载。
    - string catalogs 引入 `.xcstrings` 文件格式，管理本地化字符串更简洁高效。
@@ -72,6 +72,7 @@ Xcode 是每一个 iOS 开发者开发过程中必不可少的工具，纵使 Xc
    - UIKit 实时预览。
    - 书签，支持标记代码，快速定位需要访问的代码。
    - 源代码托管，Xcode 15 内置的 source control 终于达到可用状态。
+   - 测试速度更快，测试报告更丰富。
    - Privacy Manifest，支持在 Xcode 中编辑一份隐私清单，有点类似发布 App 时，需要在 App Store Connect 页面上填写的隐私内容。
    - App 发布：
      - 支持选择发布 TestFlight（对内）或者 App Store（对外）
@@ -381,6 +382,18 @@ Xcode 15 新增了一个方便我们快速找到代码的功能，叫做 `bookma
 
 你可以在 Xcode 15 中进行 `commit`、`push`、`stage` 等操作。工作中已经习惯了 `cmd` 中敲 `git` 命令行了，此处更新我可能会使用下查看改动以及解决冲突的能力。
 
+### 测试优化
+
+- 苹果用 Swift 语言重构了测试面板，因此测试速度提升了 45%。
+- 测试报告更丰富
+  - 顶部 Insights：展示测试结果，进行测试内容的分析，给出改进建议。
+  - Tests：展示测试数据，包括测试耗时、成功|失败的数目，测试用机型，测试失败的原因等信息。
+![test](./images/test_1.png)
+- 测试过程展示，方便定位问题
+  - 点击失败的测试用例，进入详情页。
+  - 罗列测试的步骤，点击可以跳转具体代码。
+![test](./images/test_2.png)
+
 ### Privacy Manifest
 
 TODO:
@@ -453,8 +466,6 @@ TODO:
 @available(iOS 17.0, macOS 14.0, tvOS 17.0, *)
 @freestanding(declaration) public macro Preview(_ name: String? = nil, traits: PreviewTrait<Preview.ViewTraits>..., body: @escaping () -> UIViewController) -> () = #externalMacro(module: "PreviewsMacros", type: "Common")
 ```
-
-- test
 
 ## 总结
 
