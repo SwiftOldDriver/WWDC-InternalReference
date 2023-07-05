@@ -108,6 +108,8 @@ struct ContentView {
 就像之前使用 `ObservableObject` 一样，我们可以通过是否将属性标记为 `@Published` 来指定该属性的变化是否应该触发 UI 刷新。
 在 Observation 中，使用上述的两个 Swift 宏可以让我们更细致地控制 SwiftUI 的数据依赖关系。
 
+以下代码展示了如何使用 Observation 和 `ObservableObject` 来指定何时触发 UI 刷新。
+
 ```swift
 class FoodTruckModel: ObservableObject {    
     @Published 
@@ -124,6 +126,25 @@ class FoodTruckModel: ObservableObject {
 }
 ```
 
+可以看到，Observation 默认情况下，所有的属性都可以支持数据驱动 UI。而对于 ObservableObject，我们则需要使用 @Published 标记每个需要被观察的属性。这种改变明显提高了开发体验，因为在实际开发中，需要被观察的属性通常比不需要被观察的属性更多。
+
+此外，Observation 通过根据属性的访问情况来自动构建数据依赖关系的方式还使得开发者不再需要额外思考哪些属性需要支持数据驱动 UI，进而降低了心智负担。
+
+## Observation 开发动机
+在深入讲解 Observation 的具体实现原理之前，我们先了解一下它的开发动机。通过了解这一点，我们可以更好地理解 Observation 带来的提升，以及它解决了哪些具体问题。
+
+### 为什么会有 Observation？
+
+在开发数据驱动 UI 程序时，我们需要监听一些基础数据的变化，并根据变化更新 UI 展示。为了实现监听，通常需要使用观察者模式。在 Swift 中，官方提供的观察机制只有 KVO 和 Combine 中的 ObservableObject，但它们都有各自的局限性。
+
+比如，KVO 只能用于 NSObject 的子类，Combine 只能在 Drawing 平台上工作，同时不支持 Concurrency。通过吸取这两个系统的经验，可以建立一个更通用的系统，使其适用于所有 Swift 类型，而不仅仅是 NSObject；能够跨平台，并支持 async/await 等语言特性。
+
+那就是 Observation。
+
+### KVO / Combine 和 Observation 的对比
+
+
+
 ## Observation 实现原理
 
 接下来简要介绍下 Observation 的实现原理。了解原理可以帮助我们更好地了解其功能的优势和可能带来的问题。
@@ -131,6 +152,8 @@ class FoodTruckModel: ObservableObject {
 ### 宏展开
 
 上面提到 `@Observable` 是一个 Swift 宏。它在编译阶段会通过编译器转译扩展我们的代码
+
+假设这是我们定义的数据模型，如果我们使用 @Observable 宏来修饰它，那么最终它会被转译成什么样子呢？
 
 ```swift
 @Observable class FoodTruckModel {    
@@ -205,12 +228,12 @@ class FoodTruckModel {
 @ObservationIgnored private let _$observationRegistrar = ObservationRegistrar()
 
 internal nonisolated func access<Member>(keyPath: KeyPath<FoodTruckModel , Member>) {
- _$observationRegistrar.access(self, keyPath: keyPath)
+	_$observationRegistrar.access(self, keyPath: keyPath)
 }
 
 internal nonisolated func withMutation<Member, T>(keyPath: KeyPath<FoodTruckModel , Member>,
                    _ mutation: () throws -> T) rethrows -> T {
- try _$observationRegistrar.withMutation(of: self, keyPath: keyPath, mutation)
+	try _$observationRegistrar.withMutation(of: self, keyPath: keyPath, mutation)
 }
 ```
 
@@ -218,49 +241,52 @@ internal nonisolated func withMutation<Member, T>(keyPath: KeyPath<FoodTruckMode
 
 ```swift
 class FoodTruckModel {
- @ObservationIgnored private let _$observationRegistrar = ObservationRegistrar()
+	@ObservationIgnored private let _$observationRegistrar = ObservationRegistrar()
 
- internal nonisolated func access<Member>(keyPath: KeyPath<FoodTruckModel , Member>) {
-  _$observationRegistrar.access(self, keyPath: keyPath)
- }
+	internal nonisolated func access<Member>(keyPath: KeyPath<FoodTruckModel , Member>) {
+		_$observationRegistrar.access(self, keyPath: keyPath)
+	}
 
- internal nonisolated func withMutation<Member, T>(keyPath: KeyPath<FoodTruckModel , Member>,
-                   _ mutation: () throws -> T) rethrows -> T {
- try _$observationRegistrar.withMutation(of: self, keyPath: keyPath, mutation)
- }
+	internal nonisolated func withMutation<Member, T>(keyPath: KeyPath<FoodTruckModel , Member>,
+                                                   _ mutation: () throws -> T) rethrows -> T {
+		try _$observationRegistrar.withMutation(of: self, keyPath: keyPath, mutation)
+	}
  
- var orders: [Order] {
-  get {
-   access(keyPath: \.orders)
-   return _orders
-  }
-  set {
-   withMutation(keyPath: \.orders) {
-    _orders = newValue
-   }
-  }
- }
+	var orders: [Order] {
+  		get {
+			access(keyPath: \.orders)
+			return _orders
+		}
+		set {
+			withMutation(keyPath: \.orders) {
+				_orders = newValue
+			}
+		}
+	}
 
- var donuts: Donut {
-  get {
-   access(keyPath: \.donuts)
-   return _donuts
-  }
+	var donuts: Donut {
+		get {
+			access(keyPath: \.donuts)
+			return _donuts
+		}
          
-  set {
-   withMutation(keyPath: \.donuts) {
-    _donuts = newValue
-   }
-  }
- }
+		set {
+			withMutation(keyPath: \.donuts) {
+			_donuts = newValue
+			}
+		}
+	}
  
- @ObservationIgnored private var _orders: [Order] = []
+	@ObservationIgnored private var _orders: [Order] = []
 
- @ObservationIgnored private var _donuts  = Donut.all
+	@ObservationIgnored private var _donuts  = Donut.all
 }
+
 ```
 
 **简化一下，看重点**：
+
+这是 `@Observable` 宏转译后的核心代码，将模型的存储属性转换成了计算属性，需要特别关注 `getter` 和 `setter` 方法的实现。
 
 ```swift
 class FoodTruckModel {
@@ -291,6 +317,256 @@ class FoodTruckModel {
 >
 > - [0395-oservability.md](https://github.com/apple/swift-evolution/blob/main/proposals/0395-observability.md)
 
+### 更进一步
+
+### _AccessList
+
+上面说到的 `TLS` 中其实存放的是 `_AccessList` 的指针。
+
+```swift 
+public func access<Subject: Observable, Member>( _ subject: Subject,
+							                     keyPath: KeyPath<Subject, Member>) {
+	if let trackingPtr = _ThreadLocal.value?
+      .assumingMemoryBound(to: ObservationTracking._AccessList?.self) {
+		if trackingPtr.pointee == nil {
+			trackingPtr.pointee = ObservationTracking._AccessList()
+		}
+		trackingPtr.pointee?.addAccess(keyPath: keyPath, context: context)
+	}
+}
+  
+public func withMutation<Subject: Observable, Member, T>(
+    of subject: Subject,
+    keyPath: KeyPath<Subject, Member>,
+    _ mutation: () throws -> T) rethrows -> T {
+	willSet(subject, keyPath: keyPath)
+	defer { didSet(subject, keyPath: keyPath) }
+		return try mutation()
+	}
+}
+
+public struct _AccessList: Sendable {
+    internal var entries = [ObjectIdentifier : Entry]()
+
+    internal init() { }
+    
+    internal mutating func addAccess<Subject: Observable>(
+      keyPath: PartialKeyPath<Subject>,
+      context: ObservationRegistrar.Context
+    ) {
+      entries[context.id, default: Entry(context)].insert(keyPath)
+    }
+    
+    internal mutating func merge(_ other: _AccessList) {
+      for (identifier, entry) in other.entries {
+        entries[identifier, default: entry].formUnion(entry.properties)
+      }
+    }
+}
+  
+```
+
+`_AccessList` 管理了一组 `Entry`
+
+```swift 
+struct Entry: @unchecked Sendable {
+    let registerTracking: @Sendable (Set<AnyKeyPath>, @Sendable @escaping () -> Void) -> Int
+    let cancel: @Sendable (Int) -> Void
+    var properties = Set<AnyKeyPath>()
+    
+    init(_ context: ObservationRegistrar.Context) {
+      registerTracking = { properties, observer in
+        context.registerTracking(for: properties, observer: observer)
+      }
+      cancel = { id in
+        context.cancel(id)
+      }
+    }
+    
+    func addObserver(_ changed: @Sendable @escaping () -> Void) -> Int {
+      return registerTracking(properties, changed)
+    }
+    
+    func removeObserver(_ token: Int) {
+      cancel(token)
+    }
+}
+    
+  ```
+
+目前来看，`Entry` 其实是很薄的一层，它是回调闭包到  `ObservationRegistrar.Context` 的透传。因为一个 `@Observable` 数据模型可以被多个线程同时访问，那么各个线程的 `TLS` 中的 `_AccessList` 就会有相同的 `keyPath` 访问记录。需要有一个统一的地方做线程安全的数据回调调度。
+这里看到，`Entry` 其实就是一条该线程的访问信息的记录。通过这条记录回溯到具体数据模型信息。
+
+####  ObservationRegistrar.Context
+
+```swift
+
+struct Context: Sendable {
+    let state = _ManagedCriticalState(State())
+    
+    var id: ObjectIdentifier { state.id }
+    
+    func registerTracking(for properties: Set<AnyKeyPath>, observer: @Sendable @escaping () -> Void) -> Int {
+      state.withCriticalRegion { $0.registerTracking(for: properties, observer: observer) }
+    }
+    
+    func cancel(_ id: Int) {
+      state.withCriticalRegion { $0.cancel(id) }
+    }
+    
+    func willSet<Subject, Member>(
+       _ subject: Subject,
+       keyPath: KeyPath<Subject, Member>
+    ) {
+      let actions = state.withCriticalRegion { $0.willSet(keyPath: keyPath) }
+      for action in actions {
+        action()
+      }
+    }
+}
+  
+```
+  
+刚才说到 `Context` 是来做 `Observation` 多线程调度的。所以它一定要保证线程安全
+  
+ #### 多线程安全
+
+`Context` 内部的操作都是带锁的
+
+```swift 
+internal struct _ManagedCriticalState<State> {
+  final private class LockedBuffer: ManagedBuffer<State, UnsafeRawPointer> { }
+
+  private let buffer: ManagedBuffer<State, UnsafeRawPointer>
+
+  internal init(_ buffer: ManagedBuffer<State, UnsafeRawPointer>) {
+    self.buffer = buffer
+  }
+  
+  internal init(_ initial: State) {
+    let roundedSize = (_lockSize() + MemoryLayout<UnsafeRawPointer>.size - 1) / MemoryLayout<UnsafeRawPointer>.size 
+    self.init(LockedBuffer.create(minimumCapacity: Swift.max(roundedSize, 1)) { buffer in
+      buffer.withUnsafeMutablePointerToElements { _lockInit(UnsafeRawPointer($0)) }
+      return initial
+    })
+  }
+
+  internal func withCriticalRegion<R>(
+    _ critical: (inout State) throws -> R
+  ) rethrows -> R {
+    try buffer.withUnsafeMutablePointers { header, lock in
+      _lockLock(UnsafeRawPointer(lock))
+      defer {
+        _lockUnlock(UnsafeRawPointer(lock))
+      }
+      return try critical(&header.pointee)
+    }
+  }
+}
+
+```
+
+`withCriticalRegion` 是一个开关锁的过程，从中可以看出，`Context` 会通过锁来进行多线程调度，而实际的工作对象是 `State`。
+
+#### ObservationRegistrar.State
+
+我们再来看下 `State`：
+
+```swift 
+struct State: @unchecked Sendable {
+    struct Observation {
+      var properties: Set<AnyKeyPath>
+      var observer: @Sendable () -> Void
+    }
+    
+    var id = 0
+    var observations = [Int : Observation]()
+    var lookups = [AnyKeyPath : Set<Int>]()
+    
+    mutating func generateId() -> Int {
+      defer { id &+= 1 }
+      return id
+    }
+    
+    mutating func registerTracking(for properties: Set<AnyKeyPath>, observer: @Sendable @escaping () -> Void) -> Int {
+      let id = generateId()
+      observations[id] = Observation(properties: properties, observer: observer)
+      for keyPath in properties {
+        lookups[keyPath, default: []].insert(id)
+      }
+      return id
+    }
+    
+    mutating func cancel(_ id: Int) {
+      if let tracking = observations.removeValue(forKey: id) {
+        for keyPath in tracking.properties {
+          if var ids = lookups[keyPath] {
+            ids.remove(id)
+            if ids.count == 0 {
+              lookups.removeValue(forKey: keyPath)
+            } else {
+              lookups[keyPath] = ids
+            }
+          }
+        }
+      }
+    }
+    
+    mutating func willSet(keyPath: AnyKeyPath) -> [@Sendable () -> Void] {
+      var observers = [@Sendable () -> Void]()
+      if let ids = lookups[keyPath] {
+        for id in ids {
+          if let observation = observations[id] {
+            observers.append(observation.observer)
+            cancel(id)
+          }
+        }
+      }
+      return observers
+    }
+  }
+
+```
+
+可以看出，`State` 才是真正处理 `Observation` 核心回调的地方。
+
+State 存储了：
+
+* 访问的 KeyPath 信息
+* 回调的闭包信息
+
+#### ObservationRegistrar
+
+`ObservationRegistrar` 是整个数据信息的管理者，它内部持有 `Context`，而 `Context` 又持有 `State`，作为实际的闭包和访问信息的管理者。
+
+当数据模型被转换后，它会持有一个 `ObservationRegistrar` 结构。所有的监听回调和访问信息都实际存储在其内部。
+
+```swift 
+class FoodTruckModel {
+ @ObservationIgnored private let _$observationRegistrar = ObservationRegistrar()
+ // .... ///
+ }
+
+```
+### 原理小结
+
+先回顾一下 `Observation` 中涉及的角色已经功能定位
+
+* **TLS**: 线程局部存储，存放 `_AccessList` 指针
+* **_AccessList**：`Entry` 管理着所有 `@Observable` 数据模型的访问信息 `Context`，并将这些 `Context` 进行归并和整理。
+* **Entry**：基本透明的访问信息转发代理。
+* **Context**: 持有 `State`，内部操作带锁，完成多线程调度。
+* **State**：存储该 `@Observable` 数据模型的监听回调和访问信息（`keyPath`）
+* **ObservationRegistrar**: 存储 `Context`
+
+再来更加细粒度的看一次数据更新到回调的流程：
+
+![](images/13.png)
+
+当多个线程同时访问 `@Observable` 的属性时，`Observation` 会通过各自线程的 `TLS` 中的 `_AccessList` 找到对应的 `Entry`，并将其注册到 `Registrar` 的 `Context` 中。在 `setter` 调用 `withMutaion` 时，它会直接通过 `Context` 对应 `keyPath` 进行查询并回调。
+
+多个线程同时访问 `@Observable`， `keyPath` 是通过各自 `TLS` 中 `_AccessList` 中对应的 `Entry` 找到 `Registrar` 的 `Context` 进行注册
+在 `setter` 调用 `withMutaion` 时直接通过 `Context` 进行对应 `keyPath` 的查询并回调。
 
 ### 性能提升
 
@@ -299,6 +575,9 @@ class FoodTruckModel {
 从原理上来看，之前使用 `ObservableObject` + `@Published` 的方式是通过在属性的 `willSet` 方法中调用 `objectWillChange` 来触发 SwiftUI 进行 `View` 的 `Diff` 计算，从而尝试更新 UI。然而，这种方式难免会导致 SwiftUI 底层计算引擎进行冗余计算，因为 `willSet` 不等于 `didChange`。
 
 举个🌰：
+
+以下代码简单模拟了一个数据驱动 UI 的场景。使用 `@StateObject` 持有一个 `ObservableObject`，通过修改 `ObservableObject` 数据模型并观察结果，以验证当修改与 UI 视图无关的数据时，是否会触发 UI 刷新。。
+
 
 ```swift
 class FoodTruckModel: ObservableObject {
@@ -327,7 +606,14 @@ struct ContentView: View {
 >
 > 这个方法通常在 `View.body` 中被调用，通过它我们可以清晰地了解到数据变化的具体来源是谁。
 >
-> 更多性能调试技巧可以看这里：  [【WWDC23 10160】Demystify SwiftUI performance](https://developer.apple.com/videos/play/wwdc2023/10160/)
+> 更多 SwiftUI 性能优化技巧可以看这里：  [【WWDC23 10160】Demystify SwiftUI performance](https://developer.apple.com/videos/play/wwdc2023/10160/)
+>
+>  具体包含了
+> 
+> * 使用 _printChanges 感知 UI 尝试刷新的数据变化来源
+> * 了解 SwiftUI 如何通过 graph 组织数据依赖
+> * 了解日常开发中容易踩坑造成 slow update(慢更新) 的错误使用方式
+> * 如何提升 List 和 Tables 的性能
 
 
 所以这里点击按钮修改 `model` 的 orders 属性时。`_printChanges` 会告诉我们 `model` 发生了变化（确实变化了）
@@ -337,6 +623,8 @@ struct ContentView: View {
 但是我们的视图其实并没有依赖 `orders` 的数据用于展示，所以本次 `View` 的 `Diff` 计算完成之后不会有实际 UI 的刷新。但是这次计算是有性能开销的。
 
 相比之下，Observation 是从 `View` 的 `body` 中根据属性的访问情况来建立数据依赖关系。这在一定程度上避免了冗余计算。
+
+将上面的 Demo 代码用 Observation 替换 `ObservableObject` 实现。再次观察结果：
 
 ```swift
 @Observable class FoodTruckModel {
@@ -368,6 +656,8 @@ struct ContentView: View {
 同样，当多个 `View` 共用同一个 `ObservableObject` 模型，但使用不同的 `@Published` 属性时，任何一个 `@Published` 属性的修改都会触发所有 `View` 的 `Diff` 计算来尝试刷新 UI，因为它们是 `View` 到模型之间数据依赖。
 来看例子:
 
+在之前的 Demo 基础上，我们增加了两个子 `View`: `OrderView` 和 `DonutsView`，它们分别使用 `StateObject` 持有同一个 `ObservableObject` 模型，但使用不同的数据。通过修改模型的某个属性，来观察是否会影响所有视图尝试刷新 UI。
+
 ```swift
 struct ContentView: View {
     
@@ -391,6 +681,17 @@ struct OrderView: View {
     
     var body: some View {
         let _ = Self._printChanges()
+        Text("\(model.donuts.count)")
+    }
+}
+
+struct DonutsView: View {
+    
+    @ObservedObject
+    var model: FoodTruckModel
+    
+    var body: some View {
+        let _ = Self._printChanges()
         Text("\(model.orders.count)")
     }
 }
@@ -401,6 +702,8 @@ struct OrderView: View {
 ![](images/6.png)
 
 其实 `DonutsView` 根本没有用到 `orders`，这是**额外的性能开销**。之前 SwiftUI 推荐我们规避这种性能开销的方式是：每个子视图使用独立的 `ViewModel`。
+
+我们将 `FoodTruckModel` 拆分为两个 `ViewModel`，分别对应 `OrderView` 和 `DonutsView`。接下来，我们将重复之前的步骤，修改模型的某个属性，以观察是否会触发所有视图尝试刷新 UI。
 
 ```swift
 class FoodTruckModel: ObservableObject {
@@ -438,8 +741,9 @@ struct ContentView: View {
 
 我们不需要拆分一堆额外的 `ViewModel`。所有视图共用一个 `Model` 就可以。
 
-```swift
+下面使用 `Observation` 替换 `ObservableObject`，重复之前的步骤。
 
+```swift
 @Observable class FoodTruckModel {
     var orders: [Order] = []
     var donuts = Donut.all
@@ -469,21 +773,22 @@ struct ContentView: View {
 
 基于对原理的分析，我们可以参考 `@Observable` 转换属性的第二步。对于本身就是计算属性的属性，我们无需进行额外的工作。只需要在计算属性的 `getter` 和 `setter` 方法中同样加入 `access`（属性被访问）和 `withMutation`（属性被修改）即可实现数据驱动。
 
+我们为 Donut 模型新增了一个名为 name 的计算属性，并使其支持数据驱动 UI。
 
 ```swift
 @Observable class Donut {
- var name: String {
-  get {
-   access(keyPath: \.name)
-   return someNonObservableLocation.name
-  }
+	var name: String {
+		get {
+			access(keyPath: \.name)
+			return someNonObservableLocation.name
+		}
   
-  set {
-   withMutation(keyPath: \.name) {
-    someNonObservableLocation.name = newValue
-   }
-  }
- }
+		set {
+			withMutation(keyPath: \.name) {
+				someNonObservableLocation.name = newValue
+			}
+		}
+ 	}
 }
 ```
 
