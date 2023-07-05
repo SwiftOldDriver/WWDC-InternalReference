@@ -244,7 +244,7 @@ Apple Maps 可以帮助你规划行程，包括电车充电站停靠。在获取
 
 为了支持电车路线规划，Apple Maps 需要了解你的电车的一些特性，以个性化定制电车路线规划的体验。因此，你需要提供这些信息。
 
-此外，你需要支持接口来提供汽车的电池电量状态信息。如果你有一款汽车厂商的 app，应实现 SiriKit intents，包括 “List Cars” 和 “Get Car Power Level Status” ，以便用户在车内或车外使用电车路线规划。另外，你应该支持 iAP2 消息，以在驾驶过程中实时传递电池电量状态信息。
+此外，你需要支持接口来提供汽车的电池电量状态信息。如果你有一款汽车厂商的 app，应实现 SiriKit intents，包括 "List Cars" 和 "Get Car Power Level Status" ，以便用户在车内或车外使用电车路线规划。另外，你应该支持 iAP2 消息，以在驾驶过程中实时传递电池电量状态信息。
 
 ![](./images/EV_routing_1.png)
 
