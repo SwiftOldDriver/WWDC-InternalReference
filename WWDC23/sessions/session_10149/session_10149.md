@@ -131,6 +131,7 @@ class FoodTruckModel: ObservableObject {
 此外，Observation 通过根据属性的访问情况来自动构建数据依赖关系的方式还使得开发者不再需要额外思考哪些属性需要支持数据驱动 UI，进而降低了心智负担。
 
 ## Observation 开发动机
+
 在深入讲解 Observation 的具体实现原理之前，我们先了解一下它的开发动机。通过了解这一点，我们可以更好地理解 Observation 带来的提升，以及它解决了哪些具体问题。
 
 ### 为什么会有 Observation？
@@ -228,12 +229,12 @@ class FoodTruckModel {
 @ObservationIgnored private let _$observationRegistrar = ObservationRegistrar()
 
 internal nonisolated func access<Member>(keyPath: KeyPath<FoodTruckModel , Member>) {
-	_$observationRegistrar.access(self, keyPath: keyPath)
+ _$observationRegistrar.access(self, keyPath: keyPath)
 }
 
 internal nonisolated func withMutation<Member, T>(keyPath: KeyPath<FoodTruckModel , Member>,
                    _ mutation: () throws -> T) rethrows -> T {
-	try _$observationRegistrar.withMutation(of: self, keyPath: keyPath, mutation)
+ try _$observationRegistrar.withMutation(of: self, keyPath: keyPath, mutation)
 }
 ```
 
@@ -241,45 +242,45 @@ internal nonisolated func withMutation<Member, T>(keyPath: KeyPath<FoodTruckMode
 
 ```swift
 class FoodTruckModel {
-	@ObservationIgnored private let _$observationRegistrar = ObservationRegistrar()
+ @ObservationIgnored private let _$observationRegistrar = ObservationRegistrar()
 
-	internal nonisolated func access<Member>(keyPath: KeyPath<FoodTruckModel , Member>) {
-		_$observationRegistrar.access(self, keyPath: keyPath)
-	}
+ internal nonisolated func access<Member>(keyPath: KeyPath<FoodTruckModel , Member>) {
+  _$observationRegistrar.access(self, keyPath: keyPath)
+ }
 
-	internal nonisolated func withMutation<Member, T>(keyPath: KeyPath<FoodTruckModel , Member>,
+ internal nonisolated func withMutation<Member, T>(keyPath: KeyPath<FoodTruckModel , Member>,
                                                    _ mutation: () throws -> T) rethrows -> T {
-		try _$observationRegistrar.withMutation(of: self, keyPath: keyPath, mutation)
-	}
+  try _$observationRegistrar.withMutation(of: self, keyPath: keyPath, mutation)
+ }
  
-	var orders: [Order] {
-  		get {
-			access(keyPath: \.orders)
-			return _orders
-		}
-		set {
-			withMutation(keyPath: \.orders) {
-				_orders = newValue
-			}
-		}
-	}
+ var orders: [Order] {
+    get {
+   access(keyPath: \.orders)
+   return _orders
+  }
+  set {
+   withMutation(keyPath: \.orders) {
+    _orders = newValue
+   }
+  }
+ }
 
-	var donuts: Donut {
-		get {
-			access(keyPath: \.donuts)
-			return _donuts
-		}
+ var donuts: Donut {
+  get {
+   access(keyPath: \.donuts)
+   return _donuts
+  }
          
-		set {
-			withMutation(keyPath: \.donuts) {
-			_donuts = newValue
-			}
-		}
-	}
+  set {
+   withMutation(keyPath: \.donuts) {
+   _donuts = newValue
+   }
+  }
+ }
  
-	@ObservationIgnored private var _orders: [Order] = []
+ @ObservationIgnored private var _orders: [Order] = []
 
-	@ObservationIgnored private var _donuts  = Donut.all
+ @ObservationIgnored private var _donuts  = Donut.all
 }
 
 ```
@@ -323,26 +324,26 @@ class FoodTruckModel {
 
 上面说到的 `TLS` 中其实存放的是 `_AccessList` 的指针。
 
-```swift 
+```swift
 public func access<Subject: Observable, Member>( _ subject: Subject,
-							                     keyPath: KeyPath<Subject, Member>) {
-	if let trackingPtr = _ThreadLocal.value?
+                            keyPath: KeyPath<Subject, Member>) {
+ if let trackingPtr = _ThreadLocal.value?
       .assumingMemoryBound(to: ObservationTracking._AccessList?.self) {
-		if trackingPtr.pointee == nil {
-			trackingPtr.pointee = ObservationTracking._AccessList()
-		}
-		trackingPtr.pointee?.addAccess(keyPath: keyPath, context: context)
-	}
+  if trackingPtr.pointee == nil {
+   trackingPtr.pointee = ObservationTracking._AccessList()
+  }
+  trackingPtr.pointee?.addAccess(keyPath: keyPath, context: context)
+ }
 }
   
 public func withMutation<Subject: Observable, Member, T>(
     of subject: Subject,
     keyPath: KeyPath<Subject, Member>,
     _ mutation: () throws -> T) rethrows -> T {
-	willSet(subject, keyPath: keyPath)
-	defer { didSet(subject, keyPath: keyPath) }
-		return try mutation()
-	}
+ willSet(subject, keyPath: keyPath)
+ defer { didSet(subject, keyPath: keyPath) }
+  return try mutation()
+ }
 }
 
 public struct _AccessList: Sendable {
@@ -368,7 +369,7 @@ public struct _AccessList: Sendable {
 
 `_AccessList` 管理了一组 `Entry`
 
-```swift 
+```swift
 struct Entry: @unchecked Sendable {
     let registerTracking: @Sendable (Set<AnyKeyPath>, @Sendable @escaping () -> Void) -> Int
     let cancel: @Sendable (Int) -> Void
@@ -397,7 +398,7 @@ struct Entry: @unchecked Sendable {
 目前来看，`Entry` 其实是很薄的一层，它是回调闭包到  `ObservationRegistrar.Context` 的透传。因为一个 `@Observable` 数据模型可以被多个线程同时访问，那么各个线程的 `TLS` 中的 `_AccessList` 就会有相同的 `keyPath` 访问记录。需要有一个统一的地方做线程安全的数据回调调度。
 这里看到，`Entry` 其实就是一条该线程的访问信息的记录。通过这条记录回溯到具体数据模型信息。
 
-####  ObservationRegistrar.Context
+#### ObservationRegistrar.Context
 
 ```swift
 
@@ -429,11 +430,11 @@ struct Context: Sendable {
   
 刚才说到 `Context` 是来做 `Observation` 多线程调度的。所以它一定要保证线程安全
   
- #### 多线程安全
+#### 多线程安全
 
 `Context` 内部的操作都是带锁的
 
-```swift 
+```swift
 internal struct _ManagedCriticalState<State> {
   final private class LockedBuffer: ManagedBuffer<State, UnsafeRawPointer> { }
 
@@ -472,7 +473,7 @@ internal struct _ManagedCriticalState<State> {
 
 我们再来看下 `State`：
 
-```swift 
+```swift
 struct State: @unchecked Sendable {
     struct Observation {
       var properties: Set<AnyKeyPath>
@@ -532,8 +533,8 @@ struct State: @unchecked Sendable {
 
 State 存储了：
 
-* 访问的 KeyPath 信息
-* 回调的闭包信息
+- 访问的 KeyPath 信息
+- 回调的闭包信息
 
 #### ObservationRegistrar
 
@@ -541,23 +542,24 @@ State 存储了：
 
 当数据模型被转换后，它会持有一个 `ObservationRegistrar` 结构。所有的监听回调和访问信息都实际存储在其内部。
 
-```swift 
+```swift
 class FoodTruckModel {
  @ObservationIgnored private let _$observationRegistrar = ObservationRegistrar()
  // .... ///
  }
 
 ```
+
 ### 原理小结
 
 先回顾一下 `Observation` 中涉及的角色已经功能定位
 
-* **TLS**: 线程局部存储，存放 `_AccessList` 指针
-* **_AccessList**：`Entry` 管理着所有 `@Observable` 数据模型的访问信息 `Context`，并将这些 `Context` 进行归并和整理。
-* **Entry**：基本透明的访问信息转发代理。
-* **Context**: 持有 `State`，内部操作带锁，完成多线程调度。
-* **State**：存储该 `@Observable` 数据模型的监听回调和访问信息（`keyPath`）
-* **ObservationRegistrar**: 存储 `Context`
+- **TLS**: 线程局部存储，存放 `_AccessList` 指针
+- **_AccessList**：`Entry` 管理着所有 `@Observable` 数据模型的访问信息 `Context`，并将这些 `Context` 进行归并和整理。
+- **Entry**：基本透明的访问信息转发代理。
+- **Context**: 持有 `State`，内部操作带锁，完成多线程调度。
+- **State**：存储该 `@Observable` 数据模型的监听回调和访问信息（`keyPath`）
+- **ObservationRegistrar**: 存储 `Context`
 
 再来更加细粒度的看一次数据更新到回调的流程：
 
@@ -608,12 +610,12 @@ struct ContentView: View {
 >
 > 更多 SwiftUI 性能优化技巧可以看这里：  [【WWDC23 10160】Demystify SwiftUI performance](https://developer.apple.com/videos/play/wwdc2023/10160/)
 >
->  具体包含了
-> 
-> * 使用 _printChanges 感知 UI 尝试刷新的数据变化来源
-> * 了解 SwiftUI 如何通过 graph 组织数据依赖
-> * 了解日常开发中容易踩坑造成 slow update(慢更新) 的错误使用方式
-> * 如何提升 List 和 Tables 的性能
+> 具体包含了
+>
+> - 使用 _printChanges 感知 UI 尝试刷新的数据变化来源
+> - 了解 SwiftUI 如何通过 graph 组织数据依赖
+> - 了解日常开发中容易踩坑造成 slow update(慢更新) 的错误使用方式
+> - 如何提升 List 和 Tables 的性能
 
 
 所以这里点击按钮修改 `model` 的 orders 属性时。`_printChanges` 会告诉我们 `model` 发生了变化（确实变化了）
@@ -777,18 +779,18 @@ struct ContentView: View {
 
 ```swift
 @Observable class Donut {
-	var name: String {
-		get {
-			access(keyPath: \.name)
-			return someNonObservableLocation.name
-		}
+ var name: String {
+  get {
+   access(keyPath: \.name)
+   return someNonObservableLocation.name
+  }
   
-		set {
-			withMutation(keyPath: \.name) {
-				someNonObservableLocation.name = newValue
-			}
-		}
- 	}
+  set {
+   withMutation(keyPath: \.name) {
+    someNonObservableLocation.name = newValue
+   }
+  }
+  }
 }
 ```
 
