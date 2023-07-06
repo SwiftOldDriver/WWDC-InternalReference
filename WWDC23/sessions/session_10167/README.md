@@ -539,7 +539,7 @@ macro stringify<T>(_ expr: T) -> (T， String) = #externalMacro(
 
 ## 使用宏的注意事项
 
-### 多个宏展开之间无法互相看见展开的结果
+### 1. 多个宏展开之间无法互相看见展开的结果
 
 ```swift
 @DictionaryStorage
@@ -556,17 +556,23 @@ struct Person {
 
 ![](./images/invisible_to_others.png)
 
-### Swift 宏默认不阻止命名冲突
+### 2. Swift 宏默认不阻止命名冲突
 
 部分语言通过卫生宏（hygienic）的机制避免宏实现内部意外捕获外部的变量，而在 Swift 宏实现中，是可以访问外部的参数的，例如在 `@DictionaryStorage` 中使用了 `@attached(accessor)` 自动生成 get 和 set 方法，访问 `@attached(member, names: named(dictionary), named(init(dictionary:)))` 生成的 dictionary 存储属性。如果想要避免参数命名冲突的情况，可以使用 `context.makeUniqueName()`，它会确保生成一个外部未使用的变量名来保证唯一性（context 是宏实现方法声明的入参，类型是 some MacroExpansionContext）。
 
 ![](./images/unique_name.png)
 
-### 不要使用编译器没有提供的信息
+### 3. 不要使用编译器没有提供的信息
 
 编译器会假定宏的实现是**纯函数（pure function）**，这意味着在数据源没有发生改变的情况下，宏的展开结果也不应该有改变。如果使用了编译器提供之外的信息，例如在实现中获取编译时间，会导致展开结果出错（编译器不知道在什么时候应该重新生成新的展开结果）。
 
 为了避免这种情况，编译器插件是运行在独立沙盒之中的，阻止宏在实现内部访问文件系统和网络。但沙盒没法阻止不好的使用，比如获取时间，或者生成一个随机数，也可以在一个实现中存储一个全局变量供另外一个宏展开使用。如果这么做了，你的宏可能和你预想的表现会有出入，所以千万不要这么做。
+
+### 4. 宏的实现要尽可能考虑所有语法可能性
+
+宏的实现依赖于源码解析后的 AST 结构，在开发中我们需要尽可能考虑所有的语法可能性，即是是官方的实现也容易在这个问题上踩坑。下图展示了在变量连写的情况下，get 和 set 生成异常的情况（原推地址：https://twitter.com/realWeZZard/status/1676588090574639104）：
+
+![](./images/expand_error.png)
 
 ## 最后
 
