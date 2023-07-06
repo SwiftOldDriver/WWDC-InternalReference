@@ -11,7 +11,20 @@ session_ids: [10122]
 
 多年以来，GIF、JPEG 和 PNG 等图像格式一直是互联网上最常用的图像格式。这些格式被广泛支持，可以在各种设备和浏览器上显示。然而，随着技术的不断进步，出现了新的更出色的图像格式，这些技术能够提供更好的视觉体验。
 
-![](./images/image_summary.png)
+我们将按照时间顺序来进行介绍，并且对比 desktop（Chrome、Safari 和 IE）以及 mobile（Chrome for Android、Safari on iOS 和 Android Browser）的支持性进行说明。
+
+> 我们以 * 表示不支持，最低版本是完全支持版本，括号中为不完全支持。
+>
+> 根据已知 [Can I use](https://caniuse.com/) 上的数据整理。GIF 和 JEPG 默认都支持。
+
+|                    | GIF(1987)   | JPEG(1992)  | PNG(1996)   | WebP(2015)           | HEIC/HEIF(2015) | AVIF(2019)             | JPEG-XL(2021) |
+| ------------------ | ----------- | ----------- | ----------- | -------------------- | --------------- | ---------------------- | ------------- |
+| Chrome             | 4           | 4           | 4           | Chrome  32（9-31）   | *               | Chrome  85             | *             |
+| Safari             | Safari3.1   | Safari3.1   | Safari3.1   | Safari 16（14-15.6） | Safari 17       | Safari 16.4（16-16.3） | Safari 17     |
+| IE                 | 6           | 6           | 7           | *                    | *               | *                      | *             |
+| Chrome for Android | 114         | 114         | 114         | 114                  | *               | 114                    | *             |
+| Safari on iOS      | iOS 3.2     | iOS 3.2     | iOS 3.2     | iOS 14               | iOS 17          | iOS 14                 | iOS 17        |
+| Android Browser    | Android 2.1 | Android 2.1 | Android 2.1 | Android 4.2（4-4.1） | *               | Android 5              | *             |
 
 接下来让我们简单的了解一下这些图像格式。
 
