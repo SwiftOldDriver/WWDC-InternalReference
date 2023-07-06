@@ -144,6 +144,13 @@ class FoodTruckModel: ObservableObject {
 
 ### KVO / Combine 和 Observation 的对比
 
+|      | KVO  | Combine  | Observation  |
+|  ----  | ----  | ----  | ----  |
+| 数据类型  | `NSObject` 子类 | 遵守 `ObservableObject` 协议 | Swift 基础 Class 类型  |
+| 属性特殊处理  | 字符串指定属性名 | @Published 修饰需要被观察的属性 | @ObservationIgnored 修饰不需要被观察的属性 |
+| 数据依赖构建方式  | 手动 `addObserver` | 手动 `sink` 或在 SwiftUI 内部使用 | 全自动 根据被访问的属性构建依赖 |
+| 事件来源 | `didSet` | `willSet` | `willSet` |
+| 观察者限制 | `NSObject` 子类 & 依赖 `OC runtime` | `sink` API 调用 + `token` 管理 | 无 |
 
 
 ## Observation 实现原理
