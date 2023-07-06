@@ -65,7 +65,7 @@ session_ids: [10137]
 - 曝光控制，调节数码曝光值/亮度值。
 - 闪光灯控制。
 
-![iPhone 屏幕上显示了处于电影效果视频模式、准备录制视频的“相机”App，拍摄对象是一个看向摄像头的人](images/ios15-iphone13-pro-camera-take-cinematic-video.png)
+![](images/ios15-iphone13-pro-camera-take-cinematic-video.png)
 
 点录制按钮开始录制，录制过程可以进行这些控制：
 
@@ -84,26 +84,26 @@ session_ids: [10137]
 照片 App 就能对电影效果模式视频进行编辑。在要调整的视频下，点“编辑”进入编辑状态，支持以下编辑：
 
 - 景深控制，调节光圈 ƒ 值。景深修改会应用到**整个**视频长度中。
-  ![iPhone 屏幕上显示了“照片”App，以及用于编辑视频景深的控制项](images/ios15-iphone13-pro-camera-adjust-depth-of-field.png)
+  ![](images/ios15-iphone13-pro-camera-adjust-depth-of-field.png)
 
 - 焦点控制，支持的修改与录制中的手势控制与操作一致，只是可以基于时间线与关键帧进行分段控制。点击 ƒ 左侧的对焦按钮，切换自动对焦跟踪和手动选择焦点。
 
-  ![iPhone 屏幕上显示了“照片”App，以及用于编辑视频焦点的控制项](images/ios15-iphone13-pro-camera-adjust-focal-points.png)
+  ![](images/ios15-iphone13-pro-camera-adjust-focal-points.png)
 
 拍摄和编辑中出现的 UI 比较通用，广泛应用在支持电影效果模式编辑的 App，如：照片、iMovie、Final Cut Pro、Motion 等，下面简单进行说明。
 
 编辑时间线上：由相机 App 自动创建的焦点显示为白点，由用户手动添加的焦点显示为带圆环的黄点。
 
-![时间线中的电影效果编辑器，显示自动焦点（白点）和手动焦点（黄点）。](images/e6d20aee70bcc74f0efe7dd3420877d7.png)
+![](images/e6d20aee70bcc74f0efe7dd3420877d7.png)
 
 屏幕手势控件：
 
 | 屏幕控件                                                               | 名称             | 描述                                                                                                                                                           |
 | :--------------------------------------------------------------------- | :--------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ![当前对焦指示器](images/de755c309ad6e6a7c361227d59438790.png)         | 当前对焦指示器   | 黄色括号表示摄像机自动跟踪的当前对焦主体或区域。                                                                                                               |
-| ![建议对焦指示器](images/b744894f348c3b0e5dc0fa2b3380ee59.png)         | 建议焦点指示器   | 白色框表示摄像机自动跟踪的潜在对焦主体。                                                                                                                       |
-| ![自动对焦跟踪锁定指示器](images/db203b3114933b8c19c1aad4632abd61.png) | 自动对焦跟踪锁定 | 黄色框表示手动设定（录制期间或后期编辑）的当前对焦主体或区域。“自动对焦跟踪锁定”对焦在一个主体上并跟随其移动，即使视频中出现其他潜在的对焦主体也不受影响。     |
-| ![自动对焦锁定指示器](images/34a82f297437b1b50a83c800ad97ddf9.png)     | 自动对焦锁定     | 带刻度标记的黄色小方形表示手动设定（录制期间或后期编辑）的固定焦点。“自动对焦锁定”对焦于离摄像机特定距离处，且忽略片段中的所有元素（直到下一个手动焦点出现）。 |
+| ![](images/de755c309ad6e6a7c361227d59438790.png)         | 当前对焦指示器   | 黄色括号表示摄像机自动跟踪的当前对焦主体或区域。                                                                                                               |
+| ![](images/b744894f348c3b0e5dc0fa2b3380ee59.png)         | 建议焦点指示器   | 白色框表示摄像机自动跟踪的潜在对焦主体。                                                                                                                       |
+| ![](images/db203b3114933b8c19c1aad4632abd61.png) | 自动对焦跟踪锁定 | 黄色框表示手动设定（录制期间或后期编辑）的当前对焦主体或区域。“自动对焦跟踪锁定”对焦在一个主体上并跟随其移动，即使视频中出现其他潜在的对焦主体也不受影响。     |
+| ![](images/34a82f297437b1b50a83c800ad97ddf9.png)     | 自动对焦锁定     | 带刻度标记的黄色小方形表示手动设定（录制期间或后期编辑）的固定焦点。“自动对焦锁定”对焦于离摄像机特定距离处，且忽略片段中的所有元素（直到下一个手动焦点出现）。 |
 
 而本文介绍的 Cinematic API，提供了之前官方 App 中电影效果的播放和编辑能力，现在广大开发者也可以集成到自己的 App 中。
 
@@ -308,7 +308,7 @@ Input #0, mov,mp4,m4a,3gp,3g2,mj2, from 'IMG_1960.MOV':
 
 我们将使用 AVFoundation 实现 Cinematic asset 的播放与编辑。在进入具体 API 讲解前，我们先简单梳理下 AVFoundation 播放和编辑的核心类及其关系。
 
-![A diagram of four rectangular items. The rectangle on the left represents AVAsset. A line connects it to three stacked rectangles on the right that represent AVAssetTrack (Video), AVAssetTrack (Audio), and AVAssetTrack (Subtitles) from top to bottom.](https://docs-assets.developer.apple.com/published/052d037bdf/rendered2x-1678221624.png)
+![](https://docs-assets.developer.apple.com/published/052d037bdf/rendered2x-1678221624.png)
 
 AVAsset 是具体音视频文件的数据模型类，包含了媒体资源的静态信息，如元数据、轨道对象抽象，但这些信息都是访问时才去读取文件加载信息。AVAsset 是抽象类和不可变类，一般使用 AVURLAsset 实例化，即从 URL 本地或远程加载音视频资源。
 
