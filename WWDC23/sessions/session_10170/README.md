@@ -4,7 +4,17 @@ session_ids: [10170]
 
 # Swift 结构化并发进阶
 
+> 摘要：本文将基于 Swift 并发的取消和优先级传递，TaskLocal 绑定值，全链路并发性能调优等方面讨论结构化并发任务的各种优势。
+
 本文章基于 WWDC23 中 [Beyond the basics of structured concurrency](https://developer.apple.com/videos/play/wwdc2023/10170/) 进行创作
+
+> 作者：
+>
+> MiG：在新加坡从事金融行业 iOS 开发。爱好：看电影、摄影、探索旅行。
+>
+> 审核：
+>
+> kemchenj：老司机核心技术成员 / 开源爱好者 / 最近在做 3D 重建相关的开发工作
 
 由于本课程是进阶类课程，在阅读本文之前，您需要对 `Swift Concurrency` 并发框架有所了解。您可以通过以下 Session 来掌握 Swift 并发的基础。
 [Meet async/await in Swift](https://developer.apple.com/videos/play/wwdc2021/10132/) / [Protect mutable state with Swift actors](https://developer.apple.com/videos/play/wwdc2021/10133/) / [Explore structured concurrency in Swift](https://developer.apple.com/videos/play/wwdc2021/10134/) / [认识 Swift 中的异步与并发(该文章包含以上三个 Session)](https://xiaozhuanlan.com/topic/8627905413)
