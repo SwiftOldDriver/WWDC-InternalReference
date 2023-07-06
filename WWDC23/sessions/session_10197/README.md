@@ -304,7 +304,7 @@ imgView.removeSymbolEffect(ofType: .variableColor)
 ![4Protocols](images/4Protocols.png)
 
 
-##  定制属于你的 Symbols
+## 定制属于你的 Symbols
 
 当我们觉得系统提供的 5000 个 symbols 不能满足我们需求的时候，我们也可以自己绘制属于自己的 symbol，或是在系统 symbol 的基础上进行修改，导入到 SF Symbols App 中，通过一些简单的调整渲染模式的预设颜色、调整动画的图层等，就可以导出到我们的 app 中使用，更多的定制 symbols 的基础介绍可以在 [WWDC 21 内参：定制属于你的 Symbols](https://xiaozhuanlan.com/topic/4807632591) 中详细了解。
 
