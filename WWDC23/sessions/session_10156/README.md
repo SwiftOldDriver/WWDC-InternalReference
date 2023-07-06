@@ -473,7 +473,7 @@ SwiftUI 会根据动画过渡函数生成的插值数据来不断的调用 anima
 
 ### 使用 Animatable 来修改插值的对象
 
-下面的代码使用环形布局 RadialLayout，当 offset 改变时 (从 0 度改变到 180 度)，Avatar 的位置会发生变化。
+下面的代码使用环形布局 RadialLayout (参考 [WWDC22-10056][wwdc2022-10056])，当 offset 改变时 (从 0 度改变到 180 度)，Avatar 的位置会发生变化。
 
 ```swift
 struct Podium: View {
