@@ -4,11 +4,19 @@ session_ids: [10149]
 
 # WWDC23 10149 - Discover Observation in SwiftUI
 
-## 摘要
+> 摘要：Observation 是基于 Swift 5.9 宏系统推出的全新特性，它可以帮助开发者简化数据模型并提高应用程序性能，让 SwiftUI 的数据驱动 UI 体验更加出色。本文将介绍 Observation 的基础知识和实现原理，并通过一些案例来感受 Observation 的实际应用体验，以及了解如何将现有的 `ObservableObject` 迁移到 `@Observable`。
 
-Observation 是基于 Swift 5.9 宏系统推出的全新特性，它可以帮助开发者简化数据模型并提高应用程序性能，让 SwiftUI 的数据驱动 UI 体验更加出色。本文将介绍 Observation 的基础知识和实现原理，并通过一些案例来感受 Observation 的实际应用体验，以及了解如何将现有的 `ObservableObject` 迁移到 `@Observable`。
+本文基于 [Session 10149](https://developer.apple.com/videos/play/wwdc2023/10149/) 梳理
 
-> 本文基于 [Session 10149](https://developer.apple.com/videos/play/wwdc2023/10149/) 梳理
+> 作者：
+>
+> 万圣(Khala-wan)：字节跳动抖音基础技术 iOS 开发、SwiftGG 翻译组成员
+>
+> 审核：
+>
+> 戴铭，极客时间《iOS 开发高手课》和纸书《跟戴铭学 iOS 编程》作者
+>
+> 叶絮雷，Swift Documentation Workgroup 成员，目前就职于字节西瓜视频团队
 
 ## Observation 概述
 
