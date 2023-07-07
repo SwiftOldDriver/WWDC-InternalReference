@@ -8,6 +8,10 @@ session_ids: [10149]
 
 ## 审核介绍
 
+戴铭，极客时间《iOS 开发高手课》和纸书《跟戴铭学 iOS 编程》作者
+
+叶絮雷，Swift Documentation Workgroup 成员，目前就职于字节西瓜视频团队
+
 
 ## 不超过 120 个字的文章简介
 
