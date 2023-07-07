@@ -408,7 +408,7 @@ struct Entry: @unchecked Sendable {
     }
 }
     
-  ```
+```
 
 目前来看，`Entry` 其实是很薄的一层，它是回调闭包到  `ObservationRegistrar.Context` 的透传。因为一个 `@Observable` 数据模型可以被多个线程同时访问，那么各个线程的 `TLS` 中的 `_AccessList` 就会有相同的 `keyPath` 访问记录。需要有一个统一的地方做线程安全的数据回调调度。
 这里看到，`Entry` 其实就是一条该线程的访问信息的记录。通过这条记录回溯到具体数据模型信息。
