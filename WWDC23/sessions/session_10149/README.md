@@ -582,9 +582,6 @@ class FoodTruckModel {
 
 当多个线程同时访问 `@Observable` 的属性时，`Observation` 会通过各自线程的 `TLS` 中的 `_AccessList` 找到对应的 `Entry`，并将其注册到 `Registrar` 的 `Context` 中。在 `setter` 调用 `withMutaion` 时，它会直接通过 `Context` 对应 `keyPath` 进行查询并回调。
 
-多个线程同时访问 `@Observable`， `keyPath` 是通过各自 `TLS` 中 `_AccessList` 中对应的 `Entry` 找到 `Registrar` 的 `Context` 进行注册
-在 `setter` 调用 `withMutaion` 时直接通过 `Context` 进行对应 `keyPath` 的查询并回调。
-
 ### 性能提升
 
 #### 单视图冗余计算
