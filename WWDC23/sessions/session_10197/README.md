@@ -66,12 +66,6 @@ Image(systemName: "thermometer.sun.fill")
 
 在 SF Symbols 中，有许多符号的意象在现实生活中已经深入人心，比如：太阳应该是橙色的，警告应该是黄色的，叶子应该是绿色的的等等。所以 SF Symbols 也提供了与现实世界色彩相契合的颜色模式：多色渲染模式。当你使用多色模式的时候，就能看到预设的橙色太阳符号，红色的闹铃符号，而你不需要指定任何颜色。
 
-#### 自动渲染模式 Automatic
-
-谈论完了四种渲染模式，可以发现每次设置 symbol 的渲染模式其实也是一件费心的事情。为了解决这个问题，每个 symbol 都有一个自动渲染模式，这意味着该符号在代码中使用时，假如你不去特意配置他的渲染模式，那么他将使用默认的渲染模式，例如 shareplay 这个符号将会使用分层模式作为默认表现。
-
-> 你可以在 SF Symbols App 中查询和预览到所有符号的默认渲染模式是什么。如果你想了解关于更多关于渲染模式的内容，可以看这篇 [WWDC 2021 内参：SF Symbols 使用指南](https://xiaozhuanlan.com/topic/9214865730)。
-
 ```swift
 // Monochrome
 Image(systemName: "thermometer.sun.fill")
@@ -91,6 +85,12 @@ Image(systemName: "thermometer.sun.fill")
     .symbolRenderingMode(.multicolor)
 ```
 
+#### 自动渲染模式 Automatic
+
+谈论完了四种渲染模式，可以发现每次设置 symbol 的渲染模式其实也是一件费心的事情。为了解决这个问题，每个 symbol 都有一个自动渲染模式，这意味着该符号在代码中使用时，假如你不去特意配置他的渲染模式，那么他将使用默认的渲染模式，例如 shareplay 这个符号将会使用分层模式作为默认表现。
+
+> 你可以在 SF Symbols App 中查询和预览到所有符号的默认渲染模式是什么。如果你想了解关于更多关于渲染模式的内容，可以看这篇 [WWDC 2021 内参：SF Symbols 使用指南](https://xiaozhuanlan.com/topic/9214865730)。
+
 ### 可变颜色
 
 在有的时候，符号并不单单代表一个单独的概念或者意象，他也可以代表一些数值、比例或者程度，例如 Wi-Fi 强度或者铃声音量，为了解决这个问题，SF Symbols 引入了可变颜色这个概念。
@@ -102,6 +102,12 @@ Image(systemName: "thermometer.sun.fill")
 在代码中，我们只需要在初始化 symbol 时增加一个 `Double` 类型的 `variableValue` 参数，就可以实现可变颜色在不同程度下的不同形态。值得注意的是，假如你的可变颜色（例如上图 Wi-Fi 符号）可变部分有三层，那么这个 `variableValue` 的判定将会三等分：在 0% 时将不高亮信号，在 0%～33% 时，将高亮一格信号，在 34%～67 % 时，将高亮 2 格信号，在 68% 以上时，将会显示满格信号。值得注意的是，可变颜色的可变部分是利用不透明度来实现的，当可变颜色和不同的渲染模式结合后，也会有很好的效果。
 
 ```swift
+// SwiftUI
+Image(systemName: "wifi", variableValue: 0.2)
+Image(systemName: "wifi", variableValue: 0.5)
+Image(systemName: "wifi", variableValue: 0.8)
+
+// AppKit
 let img = NSImage(symbolName: "wifi", variableValue: 0.2)
 ```
 
