@@ -25,6 +25,7 @@ session_ids: [10165]
     - [string catalog](#string-catalog)
     - [Swift DocC](#swift-docc)
     - [Swift Macros](#swift-macros)
+    - [OSLog](#oslog)
   - [更高效的 Xcode](#更高效的-xcode)
     - [实时预览优化](#实时预览优化)
       - [基于 `#preview` 宏快速创建预览实例](#基于-preview-宏快速创建预览实例)
@@ -33,9 +34,12 @@ session_ids: [10165]
     - [书签](#书签)
     - [源代码托管优化](#源代码托管优化)
     - [测试优化](#测试优化)
-    - [Privacy Manifest](#privacy-manifest)
     - [App 发布](#app-发布)
-  - [其他功能更新](#其他功能更新)
+      - [Xcode Cloud App 发布更新](#xcode-cloud-app-发布更新)
+      - [框架签名](#框架签名)
+      - [Privacy Manifest](#privacy-manifest)
+      - [TestFlight 支持仅发布到内部](#testflight-支持仅发布到内部)
+  - [其他功能更新（基于 Xcode 15 beta2 release notes）](#其他功能更新基于-xcode-15-beta2-release-notes)
     - [Clang 编译器 \& 链接](#clang-编译器--链接)
     - [Assets Catalogs](#assets-catalogs)
     - [构建系统](#构建系统)
@@ -73,15 +77,15 @@ Xcode 是每一个 iOS 开发者开发过程中必不可少的工具，纵使 Xc
    - 书签，支持标记代码，快速定位需要访问的代码。
    - 源代码托管，Xcode 15 内置的 source control 终于达到可用状态。
    - 测试速度更快，测试报告更丰富。
-   - Privacy Manifest，支持在 Xcode 中编辑一份隐私清单，有点类似发布 App 时，需要在 App Store Connect 页面上填写的隐私内容。
    - App 发布：
-     - 支持选择发布 TestFlight（对内）或者 App Store（对外）
+     - Xcode Cloud App 发布支持查看 TestFlight 报告
+     - XCFramework 签名 & 验签支持
+     - Privacy Manifest，支持在 Xcode 中编辑一份隐私清单
      - TestFlight internal only：只对内发布测试
 4. 其他功能更新：
    - TODO
 5. 开发者注意事项：罗列 Xcode 15 更新后开发者需要注意的事项
 ![summary](./images/summary.png)
-TODO: 文章完成后更新
 
 ## 更智能的 Xcode
 
@@ -311,6 +315,44 @@ Swift Macros 允许我们创建自定义的宏包（macro package）以便共享
 > [Session 10167 - Expand on Swift macros](https://developer.apple.com/videos/play/wwdc2023/10167)
 > [Session 10166 - Write Swift macros](https://developer.apple.com/videos/play/wwdc2023/10166)
 
+### OSLog
+
+今年 Xcode 15 在 Debug 方面的更新主要在 `OSLog`，`OSLog` 是目前苹果力推的日志记录解决档案，`OSLog` 能够统一日志记录，能够很好地捕获运行时的信息，功能十分强大。在 Xcod 15 中，苹果将 `OSLog` 集成至 Xcode，在终端中能够输出结构化的日志信息。下面我们先来看下官方的一个例子：
+
+```Swift
+import OSLog
+
+let logger = Logger(subsystem: "BackyardBirdsData", category: "Account")
+
+func login(password: String) -> Error? {
+    var error: Error? = nil
+    logger.info("Logging in user '\(username)'...")
+
+    // ...
+
+    if let error {
+        logger.error("User '\(username)' failed to log in. Error: \(error)")
+    } else {
+        loggedIn = true
+        logger.notice("User '\(username)' logged in successfully.")
+    }
+    return error
+}
+```
+
+上述代码向我们简单展示了 `OSLog` 的使用方式，今年的主要变化集中在终端的日志输出上：
+![OSLog](./images/oslog_1.png)
+我们可以看到，终端日志的输出上会根据日志的严重程度展示成不同的颜色：`info`、`notice`、`error`，同时我们只能看日志粗略的信息（开发者代码中展示的信息），具体的日志信息是隐藏的，但是我们可以选择日志分类以展开日志的具体信息（元信息）：
+![OSLog](./images/oslog_2.png)
+比如我们勾选 `Type`、`Library`、`Subsystem` 选项，那么属于该三分类的日志将会被展开。
+此外，当日志输出很多的时候，找到关键日志的所在有时候会变得很困难。集成了 `OSLog` 的 Xcode 可以让你很方便得找到你所想要的日志，你只需要根据日志的严重程度进行筛选即可：
+![OSLog](./images/oslog_3.png)
+有了日志，定位日志的代码能更有助于提升我们 Debug 的效率，现在 Xcode 15 支持支持快速定位日志代码，我们只需要选中需要跳转代码的日志，右键选择 `Jump To Source` 即可。
+![OSLog](./images/oslog_4.png)
+
+> Tips: 更多关于 OSLog 参考
+> [Session 10226 - Debug with structured logging](https://developer.apple.com/videos/play/wwdc2023/10226)
+
 ## 更高效的 Xcode
 
 ### 实时预览优化
@@ -394,15 +436,50 @@ Xcode 15 新增了一个方便我们快速找到代码的功能，叫做 `bookma
   - 罗列测试的步骤，点击可以跳转具体代码。
 ![test](./images/test_2.png)
 
-### Privacy Manifest
-
-TODO:
+> Tips: 更多关于测试优化参考
+> [Session 10175 - Fix failures faster whith Xcode test reports](https://developer.apple.com/videos/play/wwdc2023/10175)
   
 ### App 发布
 
-TODO:
+#### Xcode Cloud App 发布更新
 
-## 其他功能更新
+由于 Xcode Cloud 对国内的开发者不是很友好，因此这里简要描述下在 App 发布中，Xcode Cloud 的相关更新：
+
+- 引入 TestFlight test 详细信息
+- 支持公正 Mac App。
+
+#### 框架签名
+
+现在支持对 XCFramework 进行签名和验签，可以展示框架的来源等信息，可以保障框架的完整性：
+![distribution](./images/distribution_1.png)
+XCFramework 的签名方式有两种：
+
+- self-signed（重签名）：比较 XCFramework 的哈希值和刚加入工程时的哈希值是否一致。
+- 开发者证书签名：苹果会校验开发者证书是否有效。
+
+> Tips: 更多关于框架签名参考
+> [Session 10161 - Verify app dependencies with digital signatures](https://developer.apple.com/videos/play/wwdc2023/10061)
+
+#### Privacy Manifest
+
+现在，框架的作者可以给自己的框架添加隐私清单，说明框架会使用到的隐私能力（创建一个 `PrivacyInfo.xcprivacy` 文件），隐私清单会和框架捆绑签名。
+![distribution](./images/distribution_2.png)
+
+基于框架内的隐私清单，Xcode 15 在 App 发布的时候会自动生成一份
+完整的隐私报告，这份隐私报告可以填写 App 发布时需要再 App Store Connect 中要填写的隐私内容。
+
+> Tips: 更多关于隐私清单参考
+> [Session 10060 - Get started with privacy manifest](https://developer.apple.com/videos/play/wwdc2023/10060)
+
+#### TestFlight 支持仅发布到内部
+
+有时候我们只希望将测试包发布给内部员工进行测试使用，而不需要发布给用户，比如修复了一个问题后，这时候在 Archive 之后选择发布渠道，我们只需要勾选 `TestFlight internal testing only` 即可。这样我么的 TestFlight 只会分发给公司内部的成员，避免用户被分发到测试包的风险。
+![distribution](./images/distribution_5.png)
+
+> Tips: 更多关于 App 发布参考
+> [Session 10224 - Simplify distribution in Xcode and Xcode Cloud](https://developer.apple.com/videos/play/wwdc2023/10224)
+
+## 其他功能更新（基于 Xcode 15 beta2 release notes）
 
 ### Clang 编译器 & 链接
 
