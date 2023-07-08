@@ -10,7 +10,7 @@ session_ids: [10028]
 
 ![小组件发展时间轴](./images/widget_timeline.png)
 
-WWDC20 在主屏幕上引入了桌面小组件，WWDC22 在锁屏上引入锁屏小组件。而在 WWDC23 扩展了四个可放置 **小组件（Widget）** 的区域，分别是 **Mac 的桌面**、**iPad 的锁屏**、**iPhone 的 StandBy** 以及 **Apple Watch 的 Smart Stack**。同时，小组件将支持全新的 **交互** 和 **动画**，用户可以直接对小组件操作来执行应用中一些重要的功能，并且可以通过动画来观察小组件中内容的变化效果。开发者可以使用 **WidgetKit** 开发上述任意一种小组件。本文将从 **UI** **布局**、**动画** 和 **交互** 三个部分，讲述 WWDC23 中小组件更新的主要内容。
+WWDC20 在主屏幕上引入了桌面小组件，WWDC22 在锁屏上引入锁屏小组件。而在 WWDC23 扩展了四个可放置 **小组件（Widget）** 的区域，分别是 **Mac 的桌面**、**iPad 的锁屏**、**iPhone 的 StandBy** 以及 **Apple Watch 的 Smart Stack**。同时，小组件将支持全新的 **交互** 和 **动画**，用户可以直接对小组件操作来执行应用中一些重要的功能，并且可以通过动画来观察小组件中内容的变化效果。开发者可以使用 **WidgetKit** 开发上述任意一种小组件。本文将从 **小组件位置**、**UI** **布局**、**动画** 和 **交互** 四个部分，讲述 WWDC23 中小组件更新的主要内容。
 
 ![小组件新扩展区域](./images/widget_location.png)
 
@@ -20,7 +20,7 @@ WWDC20 在主屏幕上引入了桌面小组件，WWDC22 在锁屏上引入锁屏
 
 自 WWDC20 支持小组件后，小组件可放置的区域从 iPhone 桌面延伸到 Mac 桌面等。但并不是所有的小组件都适合在这些区域上显示，例如涉及到隐私的小组件放在 iPhone 的 StandBy 上并不是一个好的选择。
 
-iOS 17 的 API 中新增加了四种小组件显示区域，分别是 `homeScreen`， `lockScreen`， `standBy` 和 `iPhoneWidgetsOnMac`，结合这些区域可搭配 `.disfavoredLocations(locations:, for:)` 进行使用，开发者进而可以设置在某些区域中取消显示某一尺寸的小组件。但遗憾的是，Apple 并没有提供环境变量告知开发者小组件目前正在哪个区域中显示。
+iOS 17 的 API 中新增加了四种小组件显示区域，分别是 `homeScreen`、 `lockScreen`、 `standBy` 和 `iPhoneWidgetsOnMac`，结合这些区域可搭配 `.disfavoredLocations(locations:, for:)` 进行使用，开发者进而可以设置在某些区域中取消显示某一尺寸的小组件。但遗憾的是，Apple 并没有提供环境变量告知开发者小组件目前正在哪个区域中显示。
 
 ```Swift
 extension WidgetLocation {
@@ -77,7 +77,7 @@ struct ContentMarginWidget: Widget {
 
 
 
-有趣的是，在老版本的实现里，只有在 WatchOS 9 的小组件才有 `Safe Area` 的概念。若通过 `GeometryReader` 去读取其他系统的小组件的 `Safe Area`，对应的数值都为 0。在新版本中，全部小组件的 `Safe Area` 都被设置为 0，且统一修改使用 `Content Margin` 作为安全距离。
+有趣的是，在老版本的实现里，只有在 watchOS 9 的小组件才有 `Safe Area` 的概念。若通过 `GeometryReader` 去读取其他系统的小组件的 `Safe Area`，对应的数值都为 0。在新版本中，全部小组件的 `Safe Area` 都被设置为 0，且统一修改使用 `Content Margin` 作为安全距离。
 
 | < iOS 17, < watchOS 10                      | = iOS 17, = watchOS 10                |
 | ------------------------------------------- | ------------------------------------- |
@@ -101,11 +101,45 @@ var body: some View {
 
 
 
+若你的小组件在 watchOS 9 中使用到了 Safe Area 去调整你的视图，可以通过以下图片显示的方式进行适配，同样能够达到相同的效果。
+
+![](./images/watch_safe_area.png)
+
+
+
 ### 全新的背景设置
 
-在新版本中，开发者需要更加明确小组件的背景，并且必须通过 `.containerBackground` 来进行定义， 否则会编译错误。究其原因是 iOS 17 新增了 iPad 锁屏小组件和 iPhone StandBy 模式，为了能够在上述两种区域中更好地显示小组件，小组件的背景会被强制隐藏。
+在 iOS 17 和 watchOS 10 中，开发者需要更加明确小组件的背景，且必须通过 `.containerBackground` 来进行定义， 否则会编译错误。究其原因是 iOS 17 新增了 iPad 锁屏小组件和 iPhone StandBy 模式，为了能够在上述两种区域中更好地显示小组件，小组件的背景会被强制隐藏。
 
 ![小组件背景设置](./images/widget_background.png)
+
+开发者们要注意的是，若你的 App 已经支持了小组件，在 iOS 17 正式发布后，你需要及时修改小组件的背景设置。具体可以参考以下代码，根据版本来区分不同的背景设置方式。
+
+```swift
+extension View {
+     func widgetBackground() -> some View {
+         if #available(iOSApplicationExtension 17.0, *) {
+             return containerBackground(for: .widget) {
+                 Color.blue
+             }
+         } else {
+             return background {
+                 Color.blue
+             }
+         }
+    }
+}
+
+struct MyWidgetEntryView: View {
+    var entry: SimpleEntry
+    
+    var body: some View {
+        VStack {
+            Text(" My Widget")
+        }.widgetBackground()
+    }
+}
+```
 
 当然，开发者们可以通过环境变量可 `\.showsWidgetContainerBackground`  了解当前小组件的背景是否被去除，从而调整 UI 的位置。
 
@@ -113,7 +147,9 @@ var body: some View {
 @Environment(\.showsWidgetContainerBackground) var isShowingBackground
 ```
 
-但是，并不是所有的小组件背景都是可被隐藏的，对于像是照片这样需要依赖背景展示的小组件，小组件的背景要设置为不可移除。这样做也有一定的坏处，当小组件修改为如下代码的配置，这样的小型号（System Small）小组件将不可在 iPad 的锁屏中出现，因为 **iPad 锁屏侧边栏只支持可移除背景的小型号小组件**。
+但是，并不是所有的小组件背景都是可被隐藏的，对于像是照片这样需要依赖背景展示的小组件，小组件的背景要通过 `containerBackgroundRemovable()` 设置为不可移除。
+
+这样做也有一定的坏处，笔者在 iPad 模拟器上运行后发现，当小组件修改为如下代码的配置，小型号（System Small）小组件将消失在 iPad 锁屏桌面添加小组件的菜单中。笔者猜测是 iPad 锁屏侧边栏只允许添加可移除背景的小型号小组件，而对于强制性将背景设置为不可移除的小组件，在 iPad 锁屏桌面的小组件添加菜单中将会被隐藏。
 
 ```Swift
 struct MyWidget: Widget {
