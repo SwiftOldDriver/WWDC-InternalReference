@@ -209,7 +209,15 @@ struct MyWidget: Widget {
 
 该项目可以追踪用户咖啡因的摄入量，项目中小组件的总视图由两个主要部分组成，上半部分显示的是摄入的咖啡因的总量，下半部分显示的是最后一次饮用的饮品。
 
-在 Xcode15 中，调试小组件的动画效果可以更加方便。开发者并不需要等到 timeline 所设置的时间点，而是可以利用 Xcode15 的 Preview 能力，通过点击不同的预览视图直接观察不同节点间的转换效果。
+在 Xcode 15 中，调试小组件的动画效果可以更加方便。开发者并不需要等到 timeline 所设置的时间点，而是可以利用 Xcode 15 的 Preview 能力，通过点击不同的预览视图直接观察不同节点间的转换效果。
+
+在这之前，开发者们只能在 Preview 中传入 View 视图进行预览，而现在开发者可以在 Preview 中传入更抽象的结构 `Widget` 和 设置好节点的 timeline，直接预览到不同节点对应的小组件视图。比较遗憾的是，standBy 作为新的区域而不是新的尺寸，只能通过多选菜单中的 Widget Context Variants 进行预览。
+
+![小组件 Preview 菜单](./images/preview_more_option.png)
+
+
+
+以下对例子中的小组件使用 Preview 能力
 
 ```Swift
 /**
@@ -217,7 +225,7 @@ struct MyWidget: Widget {
     大小为 systemSmall，并且设置一条包含四个节点的 timeline
 **/ 
 #Preview(as: WidgetFamily.systemSmall) {
-    CaffeineTrackerWidget ()
+    CaffeineTrackerWidget()
 } timeline: {
     CaffeineLogEntry.log1
     CaffeineLogEntry.log2
@@ -283,7 +291,7 @@ struct LastDrinkView: View {
 
 ![转场效果](./images/transition.gif)
 
-当然，还有很多细节和坑点，需要在实际开发中一一发掘。例如，对视图的动画并不能直接修饰在最外层的视图，而是要和官方的例子一样修饰到里层的视图中。
+当然，还有很多细节和坑点，需要在实际开发中一一发掘。例如，笔者发现对视图的动画并不能直接修饰在最外层的视图，而是要和官方的例子一样修饰到里层的视图中，否则在节点切换时并不会产生修饰在最外层视图的动画效果。
 
 ```Swift
 /// ❌ 错误示例
