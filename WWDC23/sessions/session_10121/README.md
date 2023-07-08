@@ -727,29 +727,29 @@ CSS Counters 不仅可以用来设置 ol 有序列表的计数器样式，还可
 
 Safari 所支持的新 CSS 特性远远不止我们今天所谈到的这些，Apple 十分乐于倾听来自于开发者的建议和 bug 反馈。
 
-* 如果开发者发现了有关于 Webkit 的 bug，或者希望支持其它新的特性，可以到 [webkit bug 反馈](bugs.webkit.org) 中提交。
+- 如果开发者发现了有关于 Webkit 的 bug，或者希望支持其它新的特性，可以到 [webkit bug 反馈](bugs.webkit.org) 中提交。
 
-* 如果是关于 iOS、iPadOS 和 macOS 中的 Safari 的问题，请通过 [反馈助理](http://feedbackassistant.apple.com) 进行反馈。
+- 如果是关于 iOS、iPadOS 和 macOS 中的 Safari 的问题，请通过 [反馈助理](http://feedbackassistant.apple.com) 进行反馈。
 
-* 开发者可以通过 [Can i use](https://caniuse.com/) 来查询新特性在 Safari 上的兼容性从而避免反馈已经支持的 CSS 新特性。
+- 开发者可以通过 [Can i use](https://caniuse.com/) 来查询新特性在 Safari 上的兼容性从而避免反馈已经支持的 CSS 新特性。
 
-* Safari Technogoly Preview 每隔两周便会更新一个版本，开发者可以在其中体验到 Webkit 的最新功能。
+- Safari Technogoly Preview 每隔两周便会更新一个版本，开发者可以在其中体验到 Webkit 的最新功能。
 
-* Safari 17 开始，开发者可以在 Features Flags 中打开未默认开启的特性进行测试。
+- Safari 17 开始，开发者可以在 Features Flags 中打开未默认开启的特性进行测试。
 
-  * Safari 17 还支持下载模拟器进行调试
+  - Safari 17 还支持下载模拟器进行调试
 
     ![14-1](./images/14-1.png)
 
-  * Safari 17 带来了全新设计的响应式开发设计菜单
+  - Safari 17 带来了全新设计的响应式开发设计菜单
 
     <img src="./images/14-2.png" alt="14-2" style="zoom:50%;" />
 
 > 更多细节请参考 [WWDC23 - Rediscover Safari developer features](https://developer.apple.com/wwdc23/10262)。
 
-* Web apps 也在 Mac 中得到了更好的支持，更多内容请查看 [WWDC23 - What’s new in web apps ](https://developer.apple.com/wwdc23/10120 )。
+- Web apps 也在 Mac 中得到了更好的支持，更多内容请查看 [WWDC23 - What’s new in web apps ](https://developer.apple.com/wwdc23/10120)。
 
-* Safari 和 Webkit 中即将支持的图片格式，包括 `JEPG XL` 、`HEIC` 和 `AVIF` 以及全新的 `Managed Media Source API`
+- Safari 和 Webkit 中即将支持的图片格式，包括 `JEPG XL` 、`HEIC` 和 `AVIF` 以及全新的 `Managed Media Source API`
 
   ![14-3](./images/14-3.png)
 
