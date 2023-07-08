@@ -259,7 +259,7 @@ PhotogrammetrySession.isSupported
 截止到 2023 年 6 月，支持使用 Object Capture 的移动设备：
 
 | 设备名 | 发布年份 |
-| --- | --- | --- |
+| --- | --- |
 | iPhone 12 Pro | 2020 |
 | iPhone 12 Pro Max | 2020 |
 | iPhone 13 Pro | 2021 |
