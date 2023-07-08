@@ -8,9 +8,40 @@ session_ids: [10028]
 
 
 
+![小组件发展时间轴](./images/widget_timeline.png)
+
 WWDC20 在主屏幕上引入了桌面小组件，WWDC22 在锁屏上引入锁屏小组件。而在 WWDC23 扩展了四个可放置 **小组件（Widget）** 的区域，分别是 **Mac 的桌面**、**iPad 的锁屏**、**iPhone 的 StandBy** 以及 **Apple Watch 的 Smart Stack**。同时，小组件将支持全新的 **交互** 和 **动画**，用户可以直接对小组件操作来执行应用中一些重要的功能，并且可以通过动画来观察小组件中内容的变化效果。开发者可以使用 **WidgetKit** 开发上述任意一种小组件。本文将从 **UI** **布局**、**动画** 和 **交互** 三个部分，讲述 WWDC23 中小组件更新的主要内容。
 
 ![小组件新扩展区域](./images/widget_location.png)
+
+
+
+## 小组件位置
+
+自 WWDC20 支持小组件后，小组件可放置的区域从 iPhone 桌面延伸到 Mac 桌面等。但并不是所有的小组件都适合在这些区域上显示，例如涉及到隐私的小组件放在 iPhone 的 StandBy 上并不是一个好的选择。
+
+iOS 17 的 API 中新增加了四种小组件显示区域，分别是 `homeScreen`， `lockScreen`， `standBy` 和 `iPhoneWidgetsOnMac`，结合这些区域可搭配 `.disfavoredLocations(locations:, for:)` 进行使用，开发者进而可以设置在某些区域中取消显示某一尺寸的小组件。但遗憾的是，Apple 并没有提供环境变量告知开发者小组件目前正在哪个区域中显示。
+
+```Swift
+extension WidgetLocation {
+    public static let homeScreen: WidgetLocation
+    public static let lockScreen: WidgetLocation
+    public static let standBy: WidgetLocation
+    public static let iPhoneWidgetsOnMac: WidgetLocation
+}
+
+struct ContentMarginWidget: Widget {
+    let kind: String = "contentMarginWidget"
+
+    var body: some WidgetConfiguration {
+        AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
+            ContentMarginWidgetEntryView(entry: entry)
+        }
+        /// 在 StandBy 中取消显示 systemSmall 尺寸的该小组件
+        .disfavoredLocations([.standBy], for: [.systemSmall])
+    }
+}
+```
 
 
 
@@ -22,7 +53,7 @@ WWDC20 在主屏幕上引入了桌面小组件，WWDC22 在锁屏上引入锁屏
 
 **内容边距（Content Margin）** 是小组件主要内容到四个边框之间的距离。内容边距的值会随着设备和组件类型变化，主要目的是避免主体内容距离边框过近导致内容的可读性下降。
 
-在新版本的平台中，小组件不再使用 `Safe Area`，而是使用 `Content Margin` 作为内容与边框的“安全区域”，原来的 `Safe Area` 的相关修饰将会在小组件中失效。若要在小组件中实现 `.ignoresSafeArea()` 的效果，则需要使用 `.contentMarginsDisabled()` 对 `WidgetConfiguration` 进行修饰。
+在新版本的所有平台中，小组件不再使用 `Safe Area`，而是使用 `Content Margin` 作为内容与边框的“安全区域”，原来的 `Safe Area` 的相关修饰将会在小组件中失效。若要在小组件中实现 `.ignoresSafeArea()` 的效果，则需要使用 `.contentMarginsDisabled()` 对 `WidgetConfiguration` 进行修饰。
 
 ```Swift
 struct ContentMarginWidget: Widget {
@@ -46,9 +77,9 @@ struct ContentMarginWidget: Widget {
 
 
 
-有趣的是，在老版本的实现里，只有在 WatchOS9 的小组件才有 `Safe Area` 的概念。若通过 `GeometryReader` 去读取其他系统的小组件的 `Safe Area`，对应的数值都为 0。在新版本中，全部小组件的 `Safe Area` 都被设置为 0，且统一修改使用 `Content Margin` 作为安全距离。
+有趣的是，在老版本的实现里，只有在 WatchOS 9 的小组件才有 `Safe Area` 的概念。若通过 `GeometryReader` 去读取其他系统的小组件的 `Safe Area`，对应的数值都为 0。在新版本中，全部小组件的 `Safe Area` 都被设置为 0，且统一修改使用 `Content Margin` 作为安全距离。
 
-| < iOS17, < watchOS10                        | = iOS 17, = watchOS10                 |
+| < iOS 17, < watchOS 10                      | = iOS 17, = watchOS 10                |
 | ------------------------------------------- | ------------------------------------- |
 | ![低版本安全距离](./images/safe_area_1.png) | ![安全距离](./images/safe_area_2.png) |
 
