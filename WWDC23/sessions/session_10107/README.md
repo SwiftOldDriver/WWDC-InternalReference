@@ -18,7 +18,7 @@ session_ids: [10107]
 
 ### 公共
 
-在 `PHPickerViewController` 中使用 `PHPickerResult` 作为原始照片资产（ImageAsset，下同），而在 `PhotosPicker` 中则使用 `PhotosPickerItem` 作为原始照片资产。除了 Item 的类型不相同，其他照片选择和展示的逻辑相同，因此抽取通用的 `ListViewModel` 和 `ItemViewModel` 进行封装，避免模板代码。
+在 `PHPickerViewController` 中使用 `PHPickerResult` 作为原始照片资源（ImageAsset，下同），而在 `PhotosPicker` 中则使用 `PhotosPickerItem` 作为原始照片资源。除了 Item 的类型不相同，其他照片选择和展示的逻辑相同，因此抽取通用的 `ListViewModel` 和 `ItemViewModel` 进行封装，避免模板代码。
 
 #### ImageStatus
 
@@ -109,7 +109,7 @@ extension AVURLAsset: Transferable {
 
 #### ListViewModel
 
-`ListViewModel` 为照片列表的 ViewModel，指定泛型 `ItemViewModel` 和其约束条件。`items` 为照片选择器选中的原始照片资产，`itemViewModels` 为视图所需要的照片 ViewModel。
+`ListViewModel` 为照片列表的 ViewModel，指定泛型 `ItemViewModel` 和其约束条件。`items` 为照片选择器选中的原始照片资源，`itemViewModels` 为视图所需要的照片 ViewModel。
 
 当 `items` 更新后，属性观察器执行，复用或创建 `itemViewModels`，并更新 `cache` 缓存。创建 `ItemViewModel` 借助 `ItemViewModelInitializable` 协议里面声明的 `init(_:)` 构造器实现。
 
@@ -140,7 +140,7 @@ protocol ItemViewModelInitializable<Item> {
 
 #### ImageViewModel
 
-`ImageViewModel` 为照片的 ViewModel，因为原始照片资产在 UIKit 和 SwiftUI 中使用不同的类型且处理逻辑有部分不相同，因此指定泛型 `Item`。
+`ImageViewModel` 为照片的 ViewModel，因为原始照片资源在 UIKit 和 SwiftUI 中使用不同的类型且处理逻辑有部分不相同，因此指定泛型 `Item`。
 
 `loadImage()` 方法为加载照片，借助 `loadTransferableProviding` 访问统一的接口。`calculateVideoSize()` 方法和 `playOrStopVideo()` 方法为视频播放相关的方法。
 
@@ -625,7 +625,7 @@ extension SwiftUIVersionView {
 
 `init(selection:maxSelectionCount:selectionBehavior:matching:preferredItemEncoding:photoLibrary:label:)` 构造器参数很多，一个一个来解析。
 
-1. `selection: Binding<[PhotosPickerItem]>`，已选中的原始照片资产。当用户第一次选择后，再次打开照片选择器，会在当前展示的照片列表中选中之前的照片，当用户更新选中项且确认后，该绑定将自动更新；
+1. `selection: Binding<[PhotosPickerItem]>`，已选中的原始照片资源。当用户第一次选择后，再次打开照片选择器，会在当前展示的照片列表中选中之前的照片，当用户更新选中项且确认后，该绑定将自动更新；
 2. `maxSelectionCount: Int?`，最大选择数，默认为 `nil`，由系统自动管理；
 3. `selectionBehavior: PhotosPickerSelectionBehavior`，选中行为，默认为 `default`，还有 `ordered` / `continuous` / `continuousAndOrdered` 可选。`continuous(*)` 将在选中后自动更新 `selection`；
 4. `matching: PHPickerFilter?`，过滤器，默认为 `nil`，不过滤。指定过滤器后，不符合条件的照片会被过滤，支持多种方式进行过滤。单一条件如 `.images` 显示所以照片，复合条件如 `.any(of: [.images, .not(.livePhotos)])` 显示除实况照片以外的所有照片；
