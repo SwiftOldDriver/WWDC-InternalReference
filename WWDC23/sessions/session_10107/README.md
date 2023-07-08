@@ -11,7 +11,7 @@ session_ids: [10107]
 > 作者：
 >
 > nuomi1，SHEIN 高级研发工程师，Swift with iOS，果粉 / 米家粉。
-> 
+>
 > 审核：
 >
 > Vong，iOS 开发者，擅长 App 性能调优，目前从事直播领域研发
@@ -34,7 +34,7 @@ session_ids: [10107]
 
 #### ImageStatus
 
-`ImageStatus` 为照片展示过程的各种状态，分为 _加载中_ / _照片_ / _实况照片_ / _视频_ / _失败_ 这五种，并提供各个状态对应的计算属性进行快速判断 / 取值。另外提供 `ImageLoadingError` 表示加载错误。
+`ImageStatus` 为照片展示过程的各种状态，分为 *加载中* / *照片* / *实况照片* / *视频* / *失败* 这五种，并提供各个状态对应的计算属性进行快速判断 / 取值。另外提供 `ImageLoadingError` 表示加载错误。
 
 > 使用关联值可有效地进行管理，同时在视图中可以直接使用。
 
@@ -58,7 +58,7 @@ enum ImageLoadingError: Error {
 
 `NSItemProvider` 提供的 `loadTransferable(type:completionHandler:)` 方法没有异步版本，借助 `withCheckedThrowingContinuation(function:_:)` 方法进行封装。通过 `LoadTransferableProviding` 协议复用接口，以便 `ItemViewModel` 进行调用。
 
-> `UIImage` / `AVURLAsset` 实现 `Transferable` 协议为演示 App 简化处理。一般不给 _系统类型_ 实现 _系统协议_。
+> `UIImage` / `AVURLAsset` 实现 `Transferable` 协议为演示 App 简化处理。一般不给 *系统类型* 实现 *系统协议*。
 >
 > `canLoadObject(ofClass: AVURLAsset.self)` 会返回 `false`。
 >
@@ -158,7 +158,7 @@ protocol ItemViewModelInitializable<Item> {
 
 > 使用 `Image.self` 作为接收类型时仅支持 PNG 格式。
 >
-> `PHPickerResult` / `PhotosPickerItem` 实现 `Identifiable` 协议为演示 App 简化处理。一般不给 _系统类型_ 实现 _系统协议_。
+> `PHPickerResult` / `PhotosPickerItem` 实现 `Identifiable` 协议为演示 App 简化处理。一般不给 *系统类型* 实现 *系统协议*。
 
 ```swift
 @MainActor class ImageViewModel<Item: Identifiable>: ObservableObject, Identifiable, ItemViewModelInitializable {
@@ -738,7 +738,7 @@ iOS 17 新增的配置 API，需要多个参数 / 方法一起使用，否则会
 
 ## 总结
 
-通过 UIKit 和 SwiftUI 两种接入方式的比较，可以看到 SwiftUI 使用少量代码即可实现相同的效果。即使部分视图没有 SwiftUI 的版本，也可以通过 `UIViewRepresentable` 协议进行封装。如果仍然需要大量使用 UIKit，也建议参考 Apple 近年来推荐的 `configuration` API 风格进行代码编写，通过 _配置描述视图_，可以更好地进行状态还原和单元测试。同时可以看到，Apple 在隐私方面的保护力度是逐年加大的，今年也有相关的 session 总结，希望大家可以重视起来。
+通过 UIKit 和 SwiftUI 两种接入方式的比较，可以看到 SwiftUI 使用少量代码即可实现相同的效果。即使部分视图没有 SwiftUI 的版本，也可以通过 `UIViewRepresentable` 协议进行封装。如果仍然需要大量使用 UIKit，也建议参考 Apple 近年来推荐的 `configuration` API 风格进行代码编写，通过 *配置描述视图*，可以更好地进行状态还原和单元测试。同时可以看到，Apple 在隐私方面的保护力度是逐年加大的，今年也有相关的 session 总结，希望大家可以重视起来。
 
 ## 参考
 
