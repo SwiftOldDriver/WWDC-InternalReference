@@ -4,7 +4,19 @@ session_ids: [10107]
 
 # WWDC23 10107 - 在 App 中接入照片选择器
 
+> 摘要：在 App 中使用 MVVM 架构接入照片选择器，对比 UIKit 与 SwiftUI 在实现上的异同点。
+
 本文基于 Session [10107](https://developer.apple.com/videos/play/wwdc2023/10107/)、Xcode 15.0 beta 2 (15A5161b) 撰写，简析在 App 中使用 SwiftUI 和 UIKit 接入照片选择器，后续版本可能存在 API 变更，请读者朋友们留意。可在 [nuomi1/TestPhotosPicker](https://github.com/nuomi1/TestPhotosPicker) 仓库中获取本文的全部代码。
+
+> 作者：
+>
+> nuomi1，SHEIN 高级研发工程师，Swift with iOS，果粉 / 米家粉。
+> 
+> 审核：
+>
+> Vong，iOS 开发者，擅长 App 性能调优，目前从事直播领域研发
+>
+> 黄骋志，老司机技术轮值主编，目前就职于字节跳动，参与西瓜视频质量与稳定性工作。对 OOM/Watchdog 较为了解并长期投入
 
 ## 照片选择器的前世今生
 
