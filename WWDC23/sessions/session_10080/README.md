@@ -477,23 +477,12 @@ RealityKit 总共提供了三种音频类型：1. Spatial 2. Ambient 3. Channel
 
 ![实体的音频种类](./images/spatial_audio_type.png)
 
-1. [Spatial Audio](https://developer.apple.com/documentation/realitykit/spatialaudiocomponent)
-
- RealityKit 的音频默认就是此类型的，它能让你感觉这些声音彷佛就在身旁。你可以使用 Spatial Audio Component 订制一个空间中的物体如何发出声音，让他们更具真实性 更具"艺术性"！
-
- ![空间音频](./images/spatial_audio_demo.png)
-
-2. [Ambient Audio](https://developer.apple.com/documentation/realitykit/ambientaudiocomponent)
-
- 如果你的音频文件是多声道(multichannel)的，那种在真实环境采集出来的音频，那么就非常适合使用这种类型播放。每个声道都会从不同的方向传到用户耳里。
-
- ![环绕音频](./images/ambient_audio_demo.png)
-
-3. [Channel Audio](https://developer.apple.com/documentation/realitykit/channelaudiocomponent)
-
- 基础的音频模式，不经过修饰直接使用扬声器播放音频，适合一些跟物件无关的场景背景音乐。
-
- ![声道音频](./images/channel_audio_demo.png)
+1. [Spatial Audio](https://developer.apple.com/documentation/realitykit/spatialaudiocomponent)：RealityKit 的音频默认就是此类型的，它能让你感觉这些声音彷佛就在身旁。你可以使用 Spatial Audio Component 订制一个空间中的物体如何发出声音，让他们更具真实性 更具"艺术性"！
+	![空间音频](./images/spatial_audio_demo.png)
+2. [Ambient Audio](https://developer.apple.com/documentation/realitykit/ambientaudiocomponent)：如果你的音频文件是多声道(multichannel)的，那种在真实环境采集出来的环绕音频，那么就非常适合使用这种类型播放。每个声道都会从不同的方向传到用户耳里。
+	![环绕音频](./images/ambient_audio_demo.png)
+3. [Channel Audio](https://developer.apple.com/documentation/realitykit/channelaudiocomponent): 基础的音频模式，不经过修饰直接使用扬声器播放音频，适合一些跟物件无关的场景背景音乐。
+	![声道音频](./images/channel_audio_demo.png)
 
 #### 添加音频组件 (Audio Component)
 
