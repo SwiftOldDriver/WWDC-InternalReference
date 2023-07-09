@@ -2,13 +2,21 @@
 session_ids: [10197]
 ---
 
-# SF Symbols 5 使用指南
+# WWDC23 10197 - SF Symbols 5 使用指南
 
-> 作者：Mim0sa，iOS 开发者，`iOS 摸鱼周报` 联合编辑，掘金主页：[Mim0sa](https://juejin.cn/user/1433418892590136)，橘猫/橘狗爱好者。
+> 摘要：为了更方便没有 SF Symbols 经验的读者理解，也将往年的 SF Symbols 相关内容归纳整理。本文从 SF Symbols 的特性切入，讨论 SF Symbols 这款由系统字体支持的符号库有哪些优点以及该如何使用。在这次 WWDC 2023 中，除了符号的数量增加到了 5000+ 之外，还有能让符号们“动”起来的新功能，让 SF Symbols 这把利器变得又又更加趁手和锋利了。
+
+本文基于 WWDC 2023 [Session 10197](https://developer.apple.com/videos/play/wwdc2023/10197/)、[Session 10257](https://developer.apple.com/videos/play/wwdc2023/10257) 和 [Session 10258](https://developer.apple.com/videos/play/wwdc2023/10258) 梳理。
+
+> 作者：
+>
+> Mim0sa，iOS 开发者，`iOS 摸鱼周报` 联合编辑，掘金主页：[Mim0sa](https://juejin.cn/user/1433418892590136)，橘猫/橘狗爱好者。
 >
 > 审核：
-
-本文基于 WWDC 2023 [Session 10197](https://developer.apple.com/videos/play/wwdc2023/10197/)、[Session 10257](https://developer.apple.com/videos/play/wwdc2023/10257) 和 [Session 10258](https://developer.apple.com/videos/play/wwdc2023/10258) 梳理，为了更方便没有 SF Symbols 经验的读者理解，也将往年的 SF Symbols 相关内容归纳整理。本文从 SF Symbols 的特性切入，讨论 SF Symbols 这款由系统字体支持的符号库有哪些优点以及该如何使用。在这次 WWDC 2023 中，除了符号的数量增加到了 5000+ 之外，还有能让符号们“动”起来的新功能，让 SF Symbols 这把利器变得又又更加趁手和锋利了。
+>
+> 戴铭，极客时间《iOS 开发高手课》和纸书《跟戴铭学 iOS 编程》作者。
+>
+> 黄骋志，老司机技术轮值主编，目前就职于字节跳动，参与西瓜视频质量与稳定性工作。对 OOM/Watchdog 较为了解并长期投入。
 
 ![WWDC23History](images\WWDC23History.png)
 
