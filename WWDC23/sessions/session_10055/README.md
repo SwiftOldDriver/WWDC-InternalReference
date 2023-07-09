@@ -1,15 +1,22 @@
 ---
 session_ids: [10055]
 ---
-![banner](./images/What's%20new%20in%20UIKit.png)
 
-# Session 10055 - UIKit 中的新功能
+# WWDC23 10055 - UIKit 中的新功能
+
+> 摘要：本文主要介绍了 UIKit 在 iOS 17 中的新功能、核心架构改进和 iPad OS 应用程序的改进，并且提供了多项常规增强功能，例如 Xcode 预览支持、自定义特征、交互式文本操作等。 这些增强功能为应用程序开发人员提供了更好的设计和用户体验，同时还改进了语言支持和性能。
 
 本文基于 [Session 10055](https://developer.apple.com/videos/play/wwdc2023/10055/) 梳理。
 
-> 作者: Sharker
+> 作者: 
+>
+> Sharker，Newcomer iOSer
 >
 > 审核:
+>
+> 戴铭，极客时间《iOS 开发高手课》和纸书《跟戴铭学 iOS 编程》作者。
+>
+> 黄骋志，老司机技术轮值主编，目前就职于字节跳动，参与西瓜视频质量与稳定性工作。对 OOM/Watchdog 较为了解并长期投入。
 
 UIKit 作为一个强大的框架来支撑我们的开发应用，在 iOS 17 中它也有了一些相关的升级与新功能的支持。本文基于 [WWDC-Session-10055](https://developer.apple.com/videos/play/wwdc2023/10055/) ，主要介绍了 UIKit 在 iOS 17 中的新功能、核心架构改进和 iPad OS 应用程序的改进，并且提供了多项常规增强功能。例如 Xcode 预览支持、自定义特征、交互式文本操作、改进语言支持和提升 CollectionView 性能等。 这些增强功能为应用程序开发人员提供了更好的设计和用户体验。
 
