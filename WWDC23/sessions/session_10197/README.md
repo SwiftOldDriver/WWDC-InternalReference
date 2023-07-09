@@ -16,11 +16,13 @@ session_ids: [10197]
 
 符号的实现和使用方式多种多样，但设计和使用符号时有一个亘古不变的问题，那就是将符号与用户界面的另一个基本元素——「文本」很好地配合。符号和文字在用户界面中以各种不同的大小被使用，他们之间的排列形式、对齐方式、符号颜色、文本字重与符号粗细的协调、本地化配置以及无障碍设计都需要开发者和设计师来细心配置和协调。
 
+![newSymbols](images/newSymbols.png)
+
 为了方便开发者更便捷、轻松地使用符号，Apple 在 iOS 13 中开始引入他们自己设计的海量高质量符号，称之为 SF Symbols。SF Symbols 拥有超过 5000 个符号，是一个图标库，旨在与 Apple 平台的系统字体 San Francisco 无缝集成。每个符号有 9 种字重和 3 种比例，以及四种渲染模式，拥有可变颜色和动画的功能，它们的默认设计都与文本标签对齐。同时这些符号是矢量的，这意味着它们是可以被拉伸的，使得他们在无论用什么大小时都会呈现出很好的效果。如果你想基于已有的符号去创造属于你自己的自定义符号，它们也可以被导出并在矢量图形编辑工具中进行编辑以创建新的符号。
 
 对于开发者来说，这套 SF Symbols 无论是在 UIKit，AppKit 还是 SwiftUI 中都能运作良好，且使用方式也很简单方便，寥寥数行代码就可以实现。对于设计师来说，你只需要为符号做三个字重的版本，SF Symbols 就会自动帮你生成其余 9 种字重和 3 种比例的符号，你就制作好了一份可以有预设动画、有四种颜色渲染模式、良好适配整个 Apple 生态的自定义符号。
 
-![newSymbols](images/newSymbols.png)
+![WWDC23History](images\WWDC23History.png)
 
 ## 如何使用 SF Symbols
 
@@ -46,44 +48,58 @@ Image(systemName: "thermometer.sun.fill")
 
 通过之前的图片你可能已经注意到了，SF Symbols 可以拥有多种颜色，有一些 symbol 还有预设的配色，例如代表天气、肺部、电池的符号等等。如果要使用这些带有自定义颜色的符号，你需要知道，SF Symbols 在渲染模式的颜色逻辑上是预先分层的（如下图的温度计符号就分为三层），根据每一层的路径，我们可以根据渲染模式来调整颜色，而每个 SF Symbols 都有四种渲染模式。
 
-![RenderingModes](images/RenderingModes.png)
+![RenderingModes](images\RenderingModes.png)
 
 #### 单色模式 Monochrome
 
 在 iOS 15 / macOS 11 之前，单色模式是唯一的渲染模式，顾名思义，单色模式会让符号有一个单一的颜色。要设置单色模式的符号，我们只需要设置视图的 tint color 等属性就可以完成。
 
+```swift
+// Monochrome
+Image(systemName: "thermometer.sun.fill")
+    .foregroundStyle(.blue)
+```
+
+![Monochrome](images\Monochrome.png)
+
 #### 分层模式 Hierarchical
 
-每个符号都是预先分层的，如下图所示，符号按顺序最多分成三个层级：Primary，Secondary，Tertiary。**SF Symbols 的分层设定不仅在分层模式下有效，在后文别的渲染模式下也是有作用的**。
+每个符号都是预先分层的，如下图所示，符号按顺序最多分成三个层级：Primary，Secondary，Tertiary。**SF Symbols 的分层设定不仅在分层模式下有效，在别的渲染模式下也是有作用的**。
 
 分层模式和单色模式一样，可以设置一个颜色。但是分层模式会以该颜色为基础，生成降低主颜色的不透明度而衍生出来的其他颜色（如上图中的**温度计符号**看起来是由三种灰色组合而成）。在这个模式中，层级结构很重要，如果缺少一个层级，相关的派生颜色将不会被使用。
+
+```swift
+// Hierarchical
+Image(systemName: "thermometer.sun.fill")
+    .foregroundStyle(.gray)
+    .symbolRenderingMode(.hierarchical)
+```
+
+![Hierarchical](images\Hierarchical.png)
 
 #### 调色盘模式 Palette
 
 调色盘模式和分层模式很像，但也有些许不同。和分层模式一样是，调色盘模式也会对符号的各个层级进行上色，而不同的是，调色盘模式允许你自由的分别设置各个层级的颜色。
+
+```swift
+// Palette
+Image(systemName: "thermometer.sun.fill")
+    .foregroundStyle(.gray, .cyan, .teal)
+```
+
+![Palette](images\Palette.png)
 
 #### 多色模式 Muticolor
 
 在 SF Symbols 中，有许多符号的意象在现实生活中已经深入人心，比如：太阳应该是橙色的，警告应该是黄色的，叶子应该是绿色的的等等。所以 SF Symbols 也提供了与现实世界色彩相契合的颜色模式：多色渲染模式。当你使用多色模式的时候，就能看到预设的橙色太阳符号，红色的闹铃符号，而你不需要指定任何颜色。
 
 ```swift
-// Monochrome
-Image(systemName: "thermometer.sun.fill")
-    .foregroundStyle(.blue)
-
-// Hierarchical
-Image(systemName: "thermometer.sun.fill")
-    .foregroundStyle(.gray)
-    .symbolRenderingMode(.hierarchical)
-
-// Palette
-Image(systemName: "thermometer.sun.fill")
-    .foregroundStyle(.gray, .cyan, .teal)
-
 // Muticolor
 Image(systemName: "thermometer.sun.fill")
     .symbolRenderingMode(.multicolor)
 ```
+
+![Muticolor](images\Muticolor.png)
 
 #### 自动渲染模式 Automatic
 
