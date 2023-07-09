@@ -4,6 +4,18 @@ session_ids: [10188]
 
 # Session 10188 - 使用 CKSyncEngine 同步 iCloud
 
+> 摘要：本文将结合多个实际基于 `iCloud` 的项目，带大家了解 `CKSyncEngine` 如何帮助您将人们的 `CloudKit` 数据同步到 `iCloud`。了解当您让系统处理同步操作的调度时，如何减少应用程序中的代码量。并分析 `CKSyncEngine` 接入现有项目的可行性。
+
+本文基于[Session 10188: Sync to iCloud with CKSyncEngine](https://developer.apple.com/videos/play/wwdc2023/10188/)梳理。
+
+> 作者：
+>
+> LabLawliet，iOS 独立开发者，Swift 爱好者，[GitHub](https://github.com/RyukieSama)，[App Store](https://apps.apple.com/cn/developer/rongqing-wang/id1264542103)。
+>
+> 审核：
+>
+> 苍耳，iOS 开发者，现就职于字节跳动，负责客户端架构工作，[GitHub](https://github.com/djs66256) ，[博客](https://djs66256.github.io/)
+
 ## 前言
 
 ![目录](./images/目录.jpeg)
@@ -14,8 +26,6 @@ session_ids: [10188]
 
 首先，我们将了解在 `Apple` 平台上与 `CloudKit` 同步的状态。然后将了解 `CKSyncEngine` 是什么以及其工作原理。然后，将了解如何在自己的项目中使用 `CKSyncEngine`。一旦设置完成，将学习如何使用同步引擎在设备之间同步数据。最后，将学习有关测试和调试与 `CKSyncEngine` 集成的最佳实践。
 
-> 本文基于[Session 10188: Sync to iCloud with CKSyncEngine](https://developer.apple.com/videos/play/wwdc2023/10188/)梳理。
->
 > 通过本文您将了解 `CKSyncEngine` 如何帮助您将人们的 `CloudKit` 数据同步到 `iCloud`。了解当您让系统处理同步操作的调度时，如何减少应用程序中的代码量。
 >
 > 本 `Session` 将分享如何自动受益于随着 `CloudKit` 的发展而提高的性能，探索同步实现的测试等内容。
