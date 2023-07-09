@@ -4,17 +4,15 @@ session_ids: [10121]
 
 ## 个人介绍
 
->> Sample：
+leejunhui，就职于杭州云梯科技公司，iOS / React Native / React 开发者，目前专注于大前端技术栈，曾参与 [WWDC21 内参 - 探索 Foundation 新增功能](https://mp.weixin.qq.com/s/pNICAta3qsgFJXGwJ6QKcg) 、[WWDC22 内参 - App 包大小优化和 Runtime 上的性能提升](https://mp.weixin.qq.com/s/9rBlEvwFOEVznN_WbRu3ng)的创作。
 
 ## 审核介绍
 
->> Sample：
+> > Sample：
 
 ## 不超过 120 个字的文章简介
 
-TODO: 待定
-
-本文介绍了CSS在Safari和WebKit中的新功能和未来发展。作者着重介绍了CSS中一些令人兴奋的新特性，包括与布局相关的全新可能性、充分利用今天出色显示效果的一整套颜色工具、通过新的伪类解决棘手问题的高效方式，以及能够将排版提升到新水平的CSS。文章中提到了已经发布的功能、即将在Safari 17中发布的功能，以及未来工作中的计划。其中，特别介绍了在Safari Technology Preview中可供下载的Masonry Layout，该功能为网页设计师提供了一种更灵活的布局方式。此外，文章还提到了新的margin-trim属性，可以方便地移除与容器相接触的元素的外边距。作者表示这些功能仍在不断改进中，并期待在完全准备就绪后将其发布到Safari浏览器中。
+Web 上的发展日新月异，CSS 也不例外。Apple 今年在 Safari 上支持了许多的 CSS 新特性。本文主要介绍了四个维度的 CSS 新特性，分别是布局、颜色、选择器和字体排版。与此同时本文还介绍了 Safari Technology Preview 中可以体验到的 WebKit 新特性，以及全新改版的 Safari 开发者菜单。
 
 ## 公众号/小专栏图文头图
 
