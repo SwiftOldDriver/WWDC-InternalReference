@@ -8,7 +8,7 @@ session_ids: [10080]
 
 本文基于 [Session 10080](https://developer.apple.com/videos/play/wwdc2023/10080/) 梳理。
 
-现在你可以使用全新推出的 [RealityView](https://developer.apple.com/documentation/realitykit/realityview)，一个能够展示 3D 模型的 **SwiftUI View**，在模型上添加手势互动，动画和空间音频，为你的 visionOS app 打造完整的空间体验！
+今年 WWDC 推出了全新的 [RealityView](https://developer.apple.com/documentation/realitykit/realityview)，它是一个可以用于展示 3D 模型的 **SwiftUI View**，在模型上添加手势互动，动画和空间音频，为你的 visionOS app 打造完整的空间体验！
 
 本文将会围绕新发布的 RealityView 与 [RealityKit](https://developer.apple.com/documentation/realitykit/) 框架中原有的实体 (Entity)和组件 (Component) 做介绍，并通过 Demo 演示如何让 3D 的地球和月亮模型在沉浸式空间中展示、环绕。
 
@@ -33,7 +33,7 @@ session_ids: [10080]
 
 ![RealityKit](./images/realitykit_logo.png)
 
-让我们将时间拉回今年，有了 vision pro 带来的沉浸式空间，开发者除了可以将 3D 的内容呈现在使用者身处的空间中，还能藉由 RealityKit 的其他功能，把用户和周围的环境融合打造真正的沉浸式体验。
+让我们将时间拉回今年，有了 Vision Pro 带来的沉浸式空间，开发者除了可以将 3D 的内容呈现在使用者身处的空间中，还能藉由 RealityKit 的其他功能，把用户和周围的环境融合打造真正的沉浸式体验。
 
 ![RealityKit 包含概念](./images/realitykit_concept.png)
 
@@ -83,7 +83,7 @@ struct GlobeModule: View {
 
 ### 展示 3D 模型
 
-那如果我想要使用 3D 的地球模型替换掉这张 2D 图片呢？我可以 `import RealityKit`，并使用 Model3D 这个 View 然后指定"Globe"模型 ("Globe"是一个放在我的 project 中的 USD 文件)，现在可以看到 3D 的地球模型展示在画面右侧。
+那如果我想要使用 3D 的地球模型替换掉这张 2D 图片呢？我可以 `import RealityKit`，并使用 Model3D 这个 View 然后指定"Globe"模型 ("Globe"是一个放在项目空间中的 USD 文件)，现在可以看到 3D 的地球模型展示在画面右侧。
 
 ```swift
 import SwiftUI
@@ -142,11 +142,13 @@ Button("View Globe") {
 
 ### 沉浸式空间 (ImmersiveSpace)
 
-如果我们想要进一步提升感官体验，我们需要的是**「Immersion (沉浸)」**。在 Demo 的第二个环节中，你彷佛置身在地球, 月亮的天体轨道中，这就是使用了 [immersive space](https://developer.apple.com/documentation/swiftui/immersivespace) ，一个新的 SwiftUI 无边界 Scene ，这种场景可以让你将 3D 物件摆在用户身处空间的任意位置，跳脱传统 Window 的限制。
+如果我们想要进一步提升感官体验，我们需要的是**「Immersion (沉浸)」**。[Immersive space](https://developer.apple.com/documentation/swiftui/immersivespace) 是一个新的 SwiftUI 无边界 Scene，当你的 App 打开一个 immersive space 时，系统会将所有其他可视的 Apps 全部隐藏，这种场景可以让你将 3D 物件摆在用户身处空间的任意位置。
 
-> 需要有边界的场景，使用 Window Group, 文件夹相关的应用场景，使用 DocumentGroup
+> 注意：SwiftUI 同一时间只允许一个 immersive space 是被打开的。在你打开另一个 immersive space 之前，你应该关闭当前开启的空间。
 
 ![Immersive Space](./images/immersive_space_intro.png)
+
+> 需要有边界的场景，使用 Window Group, 文件夹相关的应用场景，使用 DocumentGroup
 
 跟添加 Window Group 类似，我们在 App 中声明一个 ImmersiveSpace 命名为 *"objects-in-orbit"* ，并且这里我要使用另一个新的视图 RealityView 替代 Model3D 当做这个 Scene 的根视图，它能让我们在提供更多 RealityKit 的能力，稍后我们在后面的章节会介绍更多 RealityView 的能力。
 
@@ -207,7 +209,7 @@ Entity 是 RealityKit 推出(2019)时就具备的概念。它是一个 3D 容器
 
 - Transform component：决定该实体在 3D 空间中的位置，包括旋转, 和大小等属性都能通过这个组件设置。
 
- 需要注意的是 Transform 组件的座标是同 ARKit 等 3D 引擎的座标系，Origin 点位于是最外层 RealityView 的中心，Y 轴跟 SwiftUI (UIKit) 的座标系是相反地。
+ 需要注意的是 Transform 组件的坐标是同 ARKit 等 3D 引擎的坐标系，Origin 点位于是最外层 RealityView 的中心，Y 轴跟 SwiftUI (UIKit) 的坐标系是相反地。
 
  > 官方有提供这两者的转换 API，在下章节讲手势的时候会使用到。
 
@@ -303,9 +305,9 @@ struct RotatedModel: View {
 }
 ```
 
-### SwiftUI 座标系 与 Entity 座标系转换
+### SwiftUI 坐标系 与 Entity 坐标系转换
 
-在上一章节介绍 Entity 的时候，我们提到了 SwiftUI 和 RealityKit 实体两者的座标系是不同的，在 RealityView 的 content 对象中就提供了可以将 Points, Bounding Boxes, Transform 等座标相关属性从 SwiftUI 系转换到 Entity 系。
+在上一章节介绍 Entity 的时候，我们提到了 SwiftUI 和 RealityKit 实体两者的坐标系是不同的，在 RealityView 的 content 对象中就提供了可以将 Points, Bounding Boxes, Transform 等坐标相关属性从 SwiftUI 系转换到 Entity 系。
 
 ```swift
 import SwiftUI
@@ -384,7 +386,7 @@ struct AnimatedModel: View {
 
 #### 实体添加 Input 组件 和 Collstion 组件
 
-這裡我们使用 [Reality Composer Pro](https://developer.apple.com/augmented-reality/tools/) 工具为我们的 Entity 添加几个组件。
+這里我们使用 [Reality Composer Pro](https://developer.apple.com/augmented-reality/tools/) 工具为我们的 Entity 添加几个组件。
 
 > 如果你想要更进一步学习 Reality Composer Pro，可以参考 Session:
 > 💠 [Meet Reality Composer Pro](https://developer.apple.com/videos/play/wwdc2023/10083/)
@@ -429,7 +431,7 @@ struct DraggableModel: View {
 }
 ```
 
-你仍然需要注意上面提到的两个框架的座标系转换，使用 API 做一次转换。
+你仍然需要注意上面提到的两个框架的坐标系转换，使用 API 做一次转换。
 
 现在我可以在 visionOS 设备上，透过捏合拖动手势来移动这颗地球。
 
@@ -469,22 +471,25 @@ if let animation = try? AnimationResource.generate(with: orbit) {
 
 ### 空間音頻 (Spatial Audio)
 
-虽然有了 Animation 已经可以让我们的 3D 内容栩栩如生，不过如果有了空间音频，那就能让你感觉自身其中。
+通过添加 Animation 使我们的 3D 内容更加栩栩如生；在其之上再添加空间音频效果，就更能让你感觉置身其中。
 
 RealityKit 总共提供了三种音频类型：1. Spatial 2. Ambient 3. Channel
 
 ![实体的音频种类](./images/spatial_audio_type.png)
 
-1. Spatial Audio 空间音频
+1. [Spatial Audio](https://developer.apple.com/documentation/realitykit/spatialaudiocomponent)
 
  RealityKit 的音频默认就是此类型的，它能让你感觉这些声音彷佛就在身旁。你可以使用 Spatial Audio Component 订制一个空间中的物体如何发出声音，让他们更具真实性 更具"艺术性"！
+ 
  ![空间音频](./images/spatial_audio_demo.png)
-2. Ambient Audio 环绕音频
+ 
+2. [Ambient Audio](https://developer.apple.com/documentation/realitykit/ambientaudiocomponent)
 
  如果你的音频文件是多声道(multichannel)的，那种在真实环境采集出来的音频，那么就非常适合使用这种类型播放。每个声道都会从不同的方向传到用户耳里。
 
  ![环绕音频](./images/ambient_audio_demo.png)
-3. Channel Audio 声道音频
+ 
+3. [Channel Audio](https://developer.apple.com/documentation/realitykit/channelaudiocomponent)
 
  基础的音频模式，不经过修饰直接使用扬声器播放音频，适合一些跟物件无关的场景背景音乐。
 
