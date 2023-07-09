@@ -4,7 +4,7 @@ session_ids: [10055]
 
 ## 个人介绍
 
-Sharker，Newcomer iOSer
+Sharker，iOS 新人刚刚毕业的小白一枚 🐶，曾在字节跳动、快手实习过，马上入职北京某国企，对于 Apple 生态较为感兴趣~
 
 ## 审核介绍
 
