@@ -210,7 +210,7 @@ View().animation(.linear(duration: 1).delay(2.0), value: property) // Way two
 Binding<Value>.animation(.linear(duration: 1).delay(2.0), value: property) // Way three
 ```
 
-你可能已经发现，除了写法不同，所有的参数都是一模一样的。这样会不会好理解一些了呢？
+您可能已经发现，除了写法不同，所有的参数都是一模一样的。这样会不会好理解一些了呢？
 
 为了行文方便，以下将 Animation 称作动画过渡函数，突出其插值算法的本质。
 
@@ -273,7 +273,7 @@ public protocol CustomAnimation : Hashable {
 }
 ```
 
-这里实现一个简单的 Linear 动画函数：
+这里实现一个简单的 `Linear` 动画函数：
 
 ```swift
 
@@ -321,7 +321,7 @@ struct MyCustomLinearAnimation: View {
 }
 ```
 
-效果如下图所示，绿色为 CustomAnimation 实现的动画：
+效果如下图所示，绿色为 `CustomAnimation` 实现的动画：
 
 ![custom-animation](./images/custom-animation.gif)
 
@@ -354,7 +354,7 @@ struct Avatar: View {
 
 在代码中，`selected` 是一个状态（State），而 `position` 是一个属性（Property）（在此使用同名修饰符将视图与属性进行关联）。当状态发生变化时，属性也会相应地改变，而可动画属性的变化则会触发动画效果的产生。
 
-在 SwiftUI 中，许多内置的视图修饰符都可以视作可动画属性，并使用它们进行动画处理。例如，前文提到的 `position` 修饰符。若想使得自定义视图具备动画能力，可以让其遵循 `Animatable` 协议并实现其 `animatableData` 属性，该属性会接收来自 `Animation` 动画过渡函数生成的插值数据，并将该数据传递给视图，从而刷新视图并实现动画效果。值得注意的是，`animatableData` 必须遵循 `VectorArithmetic` 协议。
+在 SwiftUI 中，许多内置的视图修饰符都可以视作可动画属性，并使用它们进行动画处理。例如，前文提到的 `position` 修饰符。若想使得自定义视图具备动画能力，可以让其符合 `Animatable` 协议并实现其 `animatableData` 属性，该属性会接收来自 `Animation` 动画过渡函数生成的插值数据，并将该数据传递给视图，从而刷新视图并实现动画效果。值得注意的是，`animatableData` 必须符合 `VectorArithmetic` 协议。
 
 ```swift
 protocol Animatable {
@@ -363,11 +363,11 @@ protocol Animatable {
 }
 ```
 
-`VectorArithmetic` 符合数学课本中对向量的定义，支持向量加法和标量乘法。如果你对向量感到陌生或不太熟悉，请不要灰心。向量本质上只是一系列固定长度的数字列表。在 SwiftUI 动画中，处理向量的主要目的是为了将该列表的长度进行抽象化。例如，`CGFloat` 和 `Double` 是一维向量，而 `CGPoint` 和 `CGSize` 定义了二维向量，`CGRect` 定义了四维向量。通过处理向量，SwiftUI 能够使用统一的实现来处理所有这些类型以及其他更多类型的动画。
+`VectorArithmetic` 符合数学课本中对向量的定义，支持向量加法和标量乘法。如果您对向量感到陌生或不太熟悉，请不要灰心。向量本质上只是一系列固定长度的数字列表。在 SwiftUI 动画中，处理向量的主要目的是为了将该列表的长度进行抽象化。例如，`CGFloat` 和 `Double` 是一维向量，而 `CGPoint` 和 `CGSize` 定义了二维向量，`CGRect` 定义了四维向量。通过处理向量，SwiftUI 能够使用统一的实现来处理所有这些类型以及其他更多类型的动画。
 
 ### 自定义 Animatable Data
 
-由于 Circle 的 `position` 修饰符本身就具备了动画的能力，所以在之前的例子中，我们并没有显式地遵守 Animatable 协议。让我们自定义一个 MyCircle 视图，用来画圆，使用 position 参数 (而非 `position` 修饰符) 来控制圆的位置：
+由于 Circle 的 `position` 修饰符本身就具备了动画的能力，所以在之前的例子中，我们并没有显式地遵守 `Animatable` 协议。让我们自定义一个 MyCircle 视图，用来画圆，使用 position 参数 (而非 `position` 修饰符) 来控制圆的位置：
 
 ```swift
 struct MyPosition: Equatable {
@@ -391,7 +391,7 @@ struct MyCircle: View {
 }
 ```
 
-SwiftUI 在实现 `path.addArc` 时，并没有给它添加处理动画的能力，所以我们需要自己来实现。同时，也定义了一个没有遵循 `VectorArithmetic` 协议的 `MyPosition` 数据结构。使用和之前类似的代码来产生动画：
+SwiftUI 在实现 `path.addArc` 时，并没有给它添加处理动画的能力，所以我们需要自己来实现。同时，也定义了一个没有符合 `VectorArithmetic` 协议的 `MyPosition` 数据结构。使用和之前类似的代码来产生动画：
 
 ```swift
 struct MyAnimatableView: View {
@@ -409,7 +409,7 @@ struct MyAnimatableView: View {
 }
 ```
 
-你会发现，小球直接跑到了终点，没有任何动画。那接下来，我们让 MyCircle 遵循 Animatable 协议，使其能接收插值数据，并传递给 `path.addArc` 的 `center` 参数，这样，小球就动起来了。代码如下：
+您会发现，小球直接跑到了终点，没有任何动画。那接下来，我们让 MyCircle 符合 `Animatable` 协议，使其能接收插值数据，并传递给 `path.addArc` 的 `center` 参数，这样，小球就动起来了。代码如下：
 
 ```swift
 extension MyCircle: Animatable {
@@ -423,13 +423,13 @@ extension MyCircle: Animatable {
 }
 ```
 
-你会发现，由于 MyPosition 不符合 `VectorArithmetic` 协议，所以它不能作为 animatableData 的类型。SwiftUI 提供了一个符合 `VectorArithmetic` 协议的数据结构 `struct AnimatablePair<First, Second> where First : VectorArithmetic, Second : VectorArithmetic`，它将两个符合 `VectorArithmetic` 的数据类型组合成一个，作为返回值。而且 AnimatablePair 也是可以嵌套的。比如 CGRect 的 AnimationData 类型为：
+您会发现，由于 `MyPosition` 不符合 `VectorArithmetic` 协议，所以它不能作为 `animatableData` 的类型。SwiftUI 提供了一个符合 `VectorArithmetic` 协议的数据结构 `struct AnimatablePair<First, Second> where First : VectorArithmetic, Second : VectorArithmetic`，它将两个符合 `VectorArithmetic` 的数据类型组合成一个，作为返回值。而且 `AnimatablePair` 也是可以嵌套的。比如 `CGRect` 的 `AnimationData` 类型为：
 
 ```swift
 AnimatablePair<AnimatablePair<CGFloat, CGFloat>, AnimatablePair<CGFloat, CGFloat>>
 ```
 
-如果 MyPosition 遵循了 `VectorArithmetic` 协议，那么它就可以作为 animatableData 的类型了。下面是一个简单的实现：
+如果 MyPosition 符合了 `VectorArithmetic` 协议，那么它就可以作为 animatableData 的类型了。下面是一个简单的实现：
 
 ```swift
 extension MyPosition: VectorArithmetic {
@@ -471,7 +471,7 @@ extension MyCircle: Animatable {
 
 在 SwiftUI 中，动画过渡函数生成的插值数据将不断调用 `animatableData` 的 `set` 方法。然后，`animatableData` 将插值数据传递给 `position` 属性，当 `position` 属性发生变化时，视图的位置也会随之改变，从而实现动画效果的产生。
 
-之所以要让 animatableData 遵循 `VectorArithmetic` 协议，是因为 SwiftUI 仅知道如何对 `VectorArithmetic` 做插值。
+之所以要让 animatableData 符合 `VectorArithmetic` 协议，是因为 SwiftUI 仅知道如何对 `VectorArithmetic` 做插值。
 
 ### 使用 Animatable 来修改插值的对象
 
@@ -532,16 +532,16 @@ struct Avatar: View {
 
 当点击事件发生时， SwiftUI 会执行以下操作：
 
-1. 打开一个更新事务 (Transaction)。
+1. 开启一个更新事务 (`Transaction`)。
 2. 状态改变，`selected` 的值由 `false` 变成 `true`。
 3. 将当前视图标记为无效，为重新渲染做准备。
 4. SwiftUI 调用 `body` 方法，重新获取各属性的值（即 View Value），例如本例中 `scaleEffect` 的值从 1.0 更新为 1.5。
 5. 根据新的属性值，逐层更新 SwiftUI 后台维护的属性图。
-6. 丢弃 body 的值。
+6. 丢弃 `body` 的值。
 7. 通过后台属性图来调用底层绘制命令渲染视图。
 8. 结束当前事务，更新完成。
 
-下图展示了属性图的生命周期：创建一个更新事务，状态更新，调用 `body`，刷新属性图，事务关闭。通过这种方式，图表中每个属性的当前值随时间演变。
+下图展示了属性图的生命周期：开启一个更新事务，状态更新，调用 `body`，刷新属性图，事务结束。通过这种方式，图表中每个属性的当前值随时间演变。
 
 ![time-avatar](./images/time-avatar.gif)
 
@@ -555,17 +555,17 @@ struct Avatar: View {
 
 ![time-avatar-animation](./images/time-avatar-animation.gif)
 
-SwiftUI 能够判断属性图中是否存在正在运行的动画，并相应地调用可动画属性来生成下一帧。对于内置的可动画属性，如 `scaleEffect`，SwiftUI 在处理上非常高效。它能够在主线程之外完成动画的计算工作，而无需调用你的视图代码。对于像 `scaleEffect` 这种的内置可动画属性，SwiftUI 的效率非常高。它能够在主线程之外完成这项工作，并且无需调用任何你的视图代码。
+SwiftUI 能够判断属性图中是否存在正在运行的动画，并相应地调用可动画属性来生成下一帧。对于内置的可动画属性，如 `scaleEffect`，SwiftUI 在处理上非常高效。它能够在主线程之外完成动画的计算工作，而无需调用您的视图代码。对于像 `scaleEffect` 这种的内置可动画属性，SwiftUI 的效率非常高。它能够在主线程之外完成这项工作，并且无需调用任何您的视图代码。
 
 ### 使用 animatableData 传递插值数据
 
 现在，我们已经对 SwiftUI 视图的渲染机制有了一定的了解，接下来，让我们来理解一下为什么我们可以使用 `animatableData` 来改变动画效果。
 
-Podium 视图由一个环形布局的 RadialLayout 组件和三个头像组件 Avatar 构成。当 offset 改变时，会通过 RadialLayout 布局来刷新 Avatar 的位置。
+`Podium` 视图由一个环形布局的 `RadialLayout` 组件和三个头像组件 Avatar 构成。当 `offset` 改变时，会通过 `RadialLayout` 布局来刷新 Avatar 的位置。
 
 ![radial-attribute-graph](./images/radial-attribute-graph.png)
 
-在默认情况下，`position` 属性在 SwiftUI 中接收动画插值数据。位置信息以 `CGPoint(x:y:)` 的形式存储，并在笛卡尔坐标空间中进行插值计算。插值数据遵循线性函数，这意味着每个头像都会沿直线移动，就像下图左侧图示所示。然而，在自定义版本中，当我让 `Podium` 视图遵循 `Animatable` 协议时，`body` 变成了可动画属性，并且偏移角度成为了它的可动画数据。这意味着我们可以通过改变偏移角度来实现自定义的动画效果，如下图右侧图所示。
+在默认情况下，`position` 属性在 SwiftUI 中接收动画插值数据。位置信息以 `CGPoint(x:y:)` 的形式存储，并在笛卡尔坐标空间中进行插值计算。插值数据符合线性函数，这意味着每个头像都会沿直线移动，就像下图左侧图示所示。然而，在自定义版本中，当我让 `Podium` 视图符合 `Animatable` 协议时，`body` 变成了可动画属性，并且偏移角度成为了它的可动画数据。这意味着我们可以通过改变偏移角度来实现自定义的动画效果，如下图右侧图所示。
 
 ![offset-animation-graph](./images/offset-animation-graph.png)
 
@@ -579,7 +579,7 @@ Podium 视图由一个环形布局的 RadialLayout 组件和三个头像组件 A
 
 ## 动画上下文 Transaction
 
-你一定注意到了，在 SwiftUI 中，当状态更新时会开启一个事务。该事务将持续到当前视图更新完成。事务是一个字典（`Transaction(plist: [])`），它包含了在视图刷新过程中所需的上下文信息，目前主要用于保存和传递动画过渡函数。在 SwiftUI 中，存在两个常见的字典：`Environment` 和 `Preferences`。`Environment` 将数据从父视图传递给子视图，而 `Preferences` 则将数据从子视图传递给父视图。类似地，事务会隐式地将数据向下和向上传递到视图层次结构中。
+您一定注意到了，在 SwiftUI 中，当状态更新时会开启一个事务。该事务将持续到当前视图更新完成。事务是一个字典（`Transaction(plist: [])`），它包含了在视图刷新过程中所需的上下文信息，目前主要用于保存和传递动画过渡函数。在 SwiftUI 中，存在两个常见的字典：`Environment` 和 `Preferences`。`Environment` 将数据从父视图传递给子视图，而 `Preferences` 则将数据从子视图传递给父视图。类似地，事务会隐式地将数据向下和向上传递到视图层次结构中。
 
 多数情况下，Transaction 的数据是沿着属性图逐层向下传播的。当在任意层级使用全局函数 `withAnimation(_:_:)` 或者 `withTransaction(_:_:)` 来关联动画时，SwiftUI 会将其放在属性图的根节点，这样就实现了向上传递的效果。
 
@@ -689,7 +689,7 @@ struct BindingAvatar: View {
 }
 ```
 
-带 `body` 参数的 `.animation`，动画过渡函数只在 `body` 内部定义的属性上生效，这时你会发现，`position` 上的动画不见了。相同功能的 API 还有 `.transaction` 版本：
+带 `body` 参数的 `.animation`，动画过渡函数只在 `body` 内部定义的属性上生效，这时您会发现，`position` 上的动画不见了。相同功能的 API 还有 `.transaction` 版本：
 
 ```swift
 struct BindingAvatar: View {
@@ -726,7 +726,7 @@ struct BindingAvatar: View {
 
 ### 给 Transaction 自定义更多上下文信息
 
-如果你之前有自定义过 `EnvironmentKey` 或 `PreferenceKey`，那么自定义 `TransactionKey` 的过程非常类似。只需要创建你自己的 `TransactionKey`，使其遵循 `TransactionKey` 协议。然后，通过对 `Transaction` 进行扩展，你可以从事务的字典中获取或修改当前键所对应的值。
+如果您之前有自定义过 `EnvironmentKey` 或 `PreferenceKey`，那么自定义 `TransactionKey` 的过程非常类似。只需要创建您自己的 `TransactionKey`，使其符合 `TransactionKey` 协议。然后，通过对 `Transaction` 进行扩展，您可以从事务的字典中获取或修改当前键所对应的值。
 
 继续使用之前头像的例子，假设我们有以下需求：当用户点击头像时添加动画，当用户点击按钮时不添加动画。为了实现这个需求，我们需要跟踪记录当前刷新周期中头像是否被点击过。通过自定义 `TransactionKey`，我们可以实现这个功能。以下是示例代码：
 
@@ -791,7 +791,7 @@ struct BindingAvatar: View {
 
 ### 阶段动画
 
-接下来，首先我将介绍阶段动画。通过使用阶段动画，SwiftUI 能够自动在一组预先计划的状态之间进行转换，从而形成你的动画。
+接下来，首先我将介绍阶段动画。通过使用阶段动画，SwiftUI 能够自动在一组预先计划的状态之间进行转换，从而形成您的动画。
 
 #### 状态可以分阶段
 
@@ -915,21 +915,21 @@ struct ReactionView: View {
 
 ![phase-animation](./images/phase-animation.png)
 
-阶段动画定义了多个离散状态。SwiftUI 使用你已经了解的相同动画类型在这些状态之间进行动画处理，这对于可以建模为离散状态的动画非常有效。当发生状态转换时，所有属性将同时进行动画处理。然后，在动画完成后，SwiftUI 会动画处理到下一个状态。这个过程会在动画的所有阶段中持续进行。
+阶段动画定义了多个离散状态。SwiftUI 使用您已经了解的相同动画类型在这些状态之间进行动画处理，这对于可以建模为离散状态的动画非常有效。当发生状态转换时，所有属性将同时进行动画处理。然后，在动画完成后，SwiftUI 会动画处理到下一个状态。这个过程会在动画的所有阶段中持续进行。
 
 但是，如果我们想独立地对每个属性进行动画处理怎么办？这就是关键帧（keyframes）动画发挥作用的地方。接下来我们看看如何使用关键帧动画来创建更加复杂的动画效果。
 
 ### 关键帧动画
 
-关键帧允许你在动画中的特定时间点定义值。如下图所示：
+关键帧允许您在动画中的特定时间点定义值。如下图所示：
 
 ![keyframes-animation](./images/keyframes-animation.png)
 
 图中的点表示关键帧，可以看到，每个属性的关键帧个数和时间都没有关系，是相互独立的。当动画回放时，SwiftUI 在这些关键帧之间插值计算值，然后我们可以使用这些值来应用修饰符到视图上。
 
-通过定义单独的轨迹，并为每个轨迹指定独立的时间，关键帧允许你同时独立地对多个效果进行动画处理。你可以使用关键帧来驱动 SwiftUI 中的任何修饰符。
+通过定义单独的轨迹，并为每个轨迹指定独立的时间，关键帧允许您同时独立地对多个效果进行动画处理。您可以使用关键帧来驱动 SwiftUI 中的任何修饰符。
 
-在接下来的例子中，和之前阶段动画一样，我们使用关键帧来驱动 `.scaleEffect` 和 `.offset`。第一步，我们先创建一个新的结构体，其中包含将独立进行动画处理的各种属性。关键帧可以对符合 "Animatable" 协议的任何属性值进行动画处理。请注意，几个属性使用了 "Double"，它现在符合 "Animatable"。在动画进行中，SwiftUI 将在每一帧为你提供此类型的值，以便你可以更新视图。
+在接下来的例子中，和之前阶段动画一样，我们使用关键帧来驱动 `.scaleEffect` 和 `.offset`。第一步，我们先创建一个新的结构体，其中包含将独立进行动画处理的各种属性。关键帧可以对符合 `Animatable` 协议的任何属性值进行动画处理。请注意，几个属性使用了 "Double"，它现在符合 `Animatable`。在动画进行中，SwiftUI 将在每一帧为您提供此类型的值，以便您可以更新视图。
 
 ```swift
 struct AnimationValues {
@@ -966,7 +966,7 @@ struct KeyframeAnimationView: View {
 }
 ```
 
-正如之前提到的，关键帧允许你为不同的属性构建复杂的动画，为不同的属性指定不同的关键帧。为了实现这一点，使用 `KeyframeTrack` 来为跟踪每个属性的变化轨迹，在动画时，属性按照你提供的轨迹而变化。在这里，我们为缩放属性添加关键帧。我们首先添加一个线性关键帧，重复初始缩放值并保持 0.36 秒。如果你想知道我是如何确定 0.36 的，我是通过尝试不同的值来改变动画的感觉，这是关键帧的一个重要点。创建适合你应用的动画可能需要一些试验。利用 Xcode 的预览功能实时地微调动画是一个很好的方式。接下来，我们添加一个 SpringKeyframe。它使用弹簧函数将值拉向目标值。我们还指定了一个持续时间。对于设置了持续时间的弹簧关键帧，这意味着弹簧函数只会在该持续时间内对值进行动画处理。之后，将开始插值到下一个关键帧。最后，我将添加另一个弹簧关键帧，将缩放动画返回到 1.0。不同类型的关键帧控制值的插值方式。好了，我们已经见过了 `LinearKeyframe` 和`SpringKeyframe`。实际上，有四种不同类型的关键帧:
+正如之前提到的，关键帧允许您为不同的属性构建复杂的动画，为不同的属性指定不同的关键帧。为了实现这一点，使用 `KeyframeTrack` 来为跟踪每个属性的变化轨迹，在动画时，属性按照您提供的轨迹而变化。在这里，我们为缩放属性添加关键帧。我们首先添加一个线性关键帧，重复初始缩放值并保持 0.36 秒。如果您想知道我是如何确定 0.36 的，我是通过尝试不同的值来改变动画的感觉，这是关键帧的一个重要点。创建适合您应用的动画可能需要一些试验。利用 Xcode 的预览功能实时地微调动画是一个很好的方式。接下来，我们添加一个 `SpringKeyframe`。它使用弹簧函数将值拉向目标值。我们还指定了一个持续时间。对于设置了持续时间的弹簧关键帧，这意味着弹簧函数只会在该持续时间内对值进行动画处理。之后，将开始插值到下一个关键帧。最后，我将添加另一个弹簧关键帧，将缩放动画返回到 1.0。不同类型的关键帧控制值的插值方式。好了，我们已经见过了 `LinearKeyframe` 和 `SpringKeyframe`。实际上，有四种不同类型的关键帧:
 
 - `LinearKeyframe`
 - `SpringKeyframe`
@@ -979,15 +979,15 @@ struct KeyframeAnimationView: View {
 
 本文旨在展示对关键帧的使用，实际使用时，不一定非得使用到所有类型的关键帧。
 
-关键帧是预定义的动画。当动画发生时，它将按照预定轨迹运行。这意味着它们并不是在需要流畅和交互式的用户界面的情况下替代普通的 SwiftUI 动画。相反，将关键帧视为可以播放的视频剪辑。它们提供了大量的控制，但也有一些权衡。因为你精确指定了动画的进展方式，关键帧动画无法像弹簧动画那样优雅地重新定位，所以通常最好避免在动画进行中更改关键帧。
+关键帧是预定义的动画。当动画发生时，它将按照预定轨迹运行。这意味着它们并不是在需要流畅和交互式的用户界面的情况下替代普通的 SwiftUI 动画。相反，将关键帧视为可以播放的视频剪辑。它们提供了大量的控制，但也有一些权衡。因为您精确指定了动画的进展方式，关键帧动画无法像弹簧动画那样优雅地重新定位，所以通常最好避免在动画进行中更改关键帧。
 
-关键帧对你定义的值进行动画处理，然后你可以使用这些值应用修饰符到视图上。你可以使用单个关键帧轨道来驱动单个修饰符，或者使用不同修饰符的组合。这都取决于你。由于动画是基于你定义的值进行的，因此更新将在每一帧上发生，因此在将关键帧动画应用于视图时，请避免执行任何耗时的操作。
+关键帧对您定义的值进行动画处理，然后您可以使用这些值应用修饰符到视图上。您可以使用单个关键帧轨道来驱动单个修饰符，或者使用不同修饰符的组合。这都取决于您。由于动画是基于您定义的值进行的，因此更新将在每一帧上发生，因此在将关键帧动画应用于视图时，请避免执行任何耗时的操作。
 
 #### KeyframeTimeline
 
-我们已经见过了 `.keyframeAnimator` 修饰符。在修饰符之外，你可以使用 `KeyframeTimeline` 类型来捕获一组关键帧和。你可以使用一个初始值和定义动画的关键帧轨道来初始化这个类型，就像使用视图修饰符一样。
+我们已经见过了 `.keyframeAnimator` 修饰符。在修饰符之外，您可以使用 `KeyframeTimeline` 类型来捕获一组关键帧和。您可以使用一个初始值和定义动画的关键帧轨道来初始化这个类型，就像使用视图修饰符一样。
 
-使用 `KeyframeTimeline` 提供的 API，你可以获得持续时间，该持续时间等于最长轨道的持续时间。你可以计算动画范围内任何时间点的值。这使得使用 Swift Charts 可视化关键帧变得容易，之前展示过的曲线可视化就是使用它实现的。这也意味着你可以按照自己的方式使用关键帧定义的曲线，或者将关键帧与其他 API 进行创造性结合，例如使用 `GeometryProxy` 根据滚动位置调整关键帧驱动的效果，或者使用 `TimelineView` 根据时间进行更新。
+使用 `KeyframeTimeline` 提供的 API，您可以获得持续时间，该持续时间等于最长轨道的持续时间。您可以计算动画范围内任何时间点的值。这使得使用 Swift Charts 可视化关键帧变得容易，之前展示过的曲线可视化就是使用它实现的。这也意味着您可以按照自己的方式使用关键帧定义的曲线，或者将关键帧与其他 API 进行创造性结合，例如使用 `GeometryProxy` 根据滚动位置调整关键帧驱动的效果，或者使用 `TimelineView` 根据时间进行更新。
 
 ```swift
 let keyframes = KeyframeTimeline(initialValue: AnimationValues()) {
@@ -1011,13 +1011,13 @@ let duration: TimeInterval = keyframes.duration
 let value = keyframes.value(time: 1.2)
 ```
 
-只要有点想象力，它就能被用到任何地方。如果你不确定何时使用它，那也没关系，这是一个高级工具，大多数开发人员都希望坚持使用视图修饰符。但它作为一个基础模块，我很期待看到你如何创造性地将其整合到你的应用程序中。
+只要有点想象力，它就能被用到任何地方。如果您不确定何时使用它，那也没关系，这是一个高级工具，大多数开发人员都希望坚持使用视图修饰符。但它作为一个基础模块，我很期待看到您如何创造性地将其整合到您的应用程序中。
 
 请记住：使用阶段动画 `.phaseAnimator` 处理链式动画。使用关键帧动画 `.keyframeAnimator` 处理更复杂的动画。
 
 ## 总结
 
-在本文中，我们首先介绍了 SwiftUI 实现动画的基本方式，然后深入探讨了支撑 SwiftUI 动画效果的三个核心要素：动画过渡函数 Animation、可动画属性 Animatable 和动画上下文 Transaction。同时，结合 SwiftUI 视图渲染机制，帮助你更好地理解和运用 SwiftUI 的动画功能。最后介绍了 SwiftUI 新引入的两个高级动画功能，帮你的应用更上一层楼。通过深入理解这些概念和工具，我们能够更好地应用 SwiftUI 的动画功能，并创建出令人印象深刻的用户界面效果。希望本文对你在学习和运用 SwiftUI 动画方面有所帮助。
+在本文中，我们首先介绍了 SwiftUI 实现动画的基本方式，然后深入探讨了支撑 SwiftUI 动画效果的三个核心要素：动画过渡函数 Animation、可动画属性 Animatable 和动画上下文 Transaction。同时，结合 SwiftUI 视图渲染机制，帮助您更好地理解和运用 SwiftUI 的动画功能。最后介绍了 SwiftUI 新引入的两个高级动画功能，帮您的应用更上一层楼。通过深入理解这些概念和工具，我们能够更好地应用 SwiftUI 的动画功能，并创建出令人印象深刻的用户界面效果。希望本文对您在学习和运用 SwiftUI 动画方面有所帮助。
 
 ### 对 SwiftUI 动画的一些建议
 
