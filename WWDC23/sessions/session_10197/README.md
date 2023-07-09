@@ -18,7 +18,7 @@ session_ids: [10197]
 >
 > 黄骋志，老司机技术轮值主编，目前就职于字节跳动，参与西瓜视频质量与稳定性工作。对 OOM/Watchdog 较为了解并长期投入。
 
-![WWDC23History](images\WWDC23History.png)
+![WWDC23History](images/WWDC23History.png)
 
 ## 什么是 SF Symbols
 
@@ -56,7 +56,7 @@ Image(systemName: "thermometer.sun.fill")
 
 通过之前的图片你可能已经注意到了，SF Symbols 可以拥有多种颜色，有一些 symbol 还有预设的配色，例如代表天气、肺部、电池的符号等等。如果要使用这些带有自定义颜色的符号，你需要知道，SF Symbols 在渲染模式的颜色逻辑上是预先分层的（如下图的温度计符号就分为三层），根据每一层的路径，我们可以根据渲染模式来调整颜色，而每个 SF Symbols 都有四种渲染模式。
 
-![RenderingModes](images\RenderingModes.png)
+![RenderingModes](images/RenderingModes.png)
 
 #### 单色模式 Monochrome
 
@@ -68,7 +68,7 @@ Image(systemName: "thermometer.sun.fill")
     .foregroundStyle(.blue)
 ```
 
-![Monochrome](images\Monochrome.png)
+![Monochrome](images/Monochrome.png)
 
 #### 分层模式 Hierarchical
 
@@ -83,7 +83,7 @@ Image(systemName: "thermometer.sun.fill")
     .symbolRenderingMode(.hierarchical)
 ```
 
-![Hierarchical](images\Hierarchical.png)
+![Hierarchical](images/Hierarchical.png)
 
 #### 调色盘模式 Palette
 
@@ -95,7 +95,7 @@ Image(systemName: "thermometer.sun.fill")
     .foregroundStyle(.gray, .cyan, .teal)
 ```
 
-![Palette](images\Palette.png)
+![Palette](images/Palette.png)
 
 #### 多色模式 Muticolor
 
@@ -107,7 +107,7 @@ Image(systemName: "thermometer.sun.fill")
     .symbolRenderingMode(.multicolor)
 ```
 
-![Muticolor](images\Muticolor.png)
+![Muticolor](images/Muticolor.png)
 
 #### 自动渲染模式 Automatic
 
