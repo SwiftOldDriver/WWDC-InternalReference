@@ -22,7 +22,7 @@ session_ids: [10121]
 
 > Masonry Layout 目前仅在 [Safari Technology Preview 163 版本](https://developer.apple.com/documentation/safari-technology-preview-release-notes/stp-release-163)及以上可用，Chrome 和 Edge 不可用，而 FireFox 中则需要开启 `layout.css.grid-template-masonry-value.enabled` 的 Flag。
 
-#### 什么是 Masonry Layout?
+#### 什么是 Masonry Layout
 
 砖石布局（Masonry Layout）是一种在网页设计中常用的布局方式，也称为瀑布流布局（Waterfall Flow Layout）或砌砖式布局。它的特点是以不规则的方式将内容块排列在页面上，就像是用砖块砌墙一样。这种布局可以使得网页呈现出自适应和动态的外观。
 
@@ -32,7 +32,7 @@ session_ids: [10121]
 
 总之，砖石布局是一种流行的网页设计布局方式，通过不规则排列的砖块形式展示内容，具有适应性强、动态美观等特点。
 
-#### 如何实现 Mansonry Layout?
+#### 如何实现 Mansonry Layout
 
 ##### 自顶向下、自左往右
 
@@ -69,7 +69,7 @@ session_ids: [10121]
 >
 >   尽管`maximum-scale`和`minimum-scale`属性在禁用用户缩放时可能看起来多余，但为了保持一致性和清晰度，建议仍然设置这些属性。
 >
-> 更多视口相关内容请参考 [Viewport - MDN]https://developer.mozilla.org/zh-CN/docs/Web/CSS/Viewport_concepts)
+> 更多视口相关内容请参考 [Viewport - MDN](https://developer.mozilla.org/zh-CN/docs/Web/CSS/Viewport_concepts)
 
 对于这种内容从上往下，从左至右排列的场景可以通过 `CSS MultiColumn` 实现。
 
@@ -743,14 +743,14 @@ Safari 所支持的新 CSS 特性远远不止我们今天所谈到的这些，Ap
 
   - Safari 17 带来了全新设计的响应式开发设计菜单
 
-    <img src="./images/14-2.png" alt="14-2" style="zoom:50%;" />
+    ![14-2](./images/14-2.png)
 
 > 更多细节请参考 [WWDC23 - Rediscover Safari developer features](https://developer.apple.com/wwdc23/10262)。
 
-- Web apps 也在 Mac 中得到了更好的支持，更多内容请查看 [WWDC23 - What’s new in web apps ](https://developer.apple.com/wwdc23/10120)。
+- Web apps 也在 Mac 中得到了更好的支持，更多内容请查看 [WWDC23 - What’s new in web apps](https://developer.apple.com/wwdc23/10120)。
 
 - Safari 和 Webkit 中即将支持的图片格式，包括 `JEPG XL` 、`HEIC` 和 `AVIF` 以及全新的 `Managed Media Source API`
 
   ![14-3](./images/14-3.png)
 
-> 更多细节请参考 [WWDC23 - Explore media formats for the web ](https://developer.apple.com/wwdc23/10122)
+> 更多细节请参考 [WWDC23 - Explore media formats for the web](https://developer.apple.com/wwdc23/10122)
