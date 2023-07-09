@@ -10,19 +10,19 @@ session_ids: [10197]
 
 本文基于 WWDC 2023 [Session 10197](https://developer.apple.com/videos/play/wwdc2023/10197/)、[Session 10257](https://developer.apple.com/videos/play/wwdc2023/10257) 和 [Session 10258](https://developer.apple.com/videos/play/wwdc2023/10258) 梳理，为了更方便没有 SF Symbols 经验的读者理解，也将往年的 SF Symbols 相关内容归纳整理。本文从 SF Symbols 的特性切入，讨论 SF Symbols 这款由系统字体支持的符号库有哪些优点以及该如何使用。在这次 WWDC 2023 中，除了符号的数量增加到了 5000+ 之外，还有能让符号们“动”起来的新功能，让 SF Symbols 这把利器变得又又更加趁手和锋利了。
 
+![WWDC23History](images\WWDC23History.png)
+
 ## 什么是 SF Symbols
 
 符号在界面中起着非常重要的作用，它们能有效地传达意义，它们可以表明你选择了哪些项目，它们可以用来从视觉上区分不同类型的内容，他们还可以节约空间、整洁界面，而且符号出现在整个视觉系统的各处，这使整个用户界面营造了一种熟悉的感觉。
 
 符号的实现和使用方式多种多样，但设计和使用符号时有一个亘古不变的问题，那就是将符号与用户界面的另一个基本元素——「文本」很好地配合。符号和文字在用户界面中以各种不同的大小被使用，他们之间的排列形式、对齐方式、符号颜色、文本字重与符号粗细的协调、本地化配置以及无障碍设计都需要开发者和设计师来细心配置和协调。
 
-![newSymbols](images/newSymbols.png)
-
 为了方便开发者更便捷、轻松地使用符号，Apple 在 iOS 13 中开始引入他们自己设计的海量高质量符号，称之为 SF Symbols。SF Symbols 拥有超过 5000 个符号，是一个图标库，旨在与 Apple 平台的系统字体 San Francisco 无缝集成。每个符号有 9 种字重和 3 种比例，以及四种渲染模式，拥有可变颜色和动画的功能，它们的默认设计都与文本标签对齐。同时这些符号是矢量的，这意味着它们是可以被拉伸的，使得他们在无论用什么大小时都会呈现出很好的效果。如果你想基于已有的符号去创造属于你自己的自定义符号，它们也可以被导出并在矢量图形编辑工具中进行编辑以创建新的符号。
 
 对于开发者来说，这套 SF Symbols 无论是在 UIKit，AppKit 还是 SwiftUI 中都能运作良好，且使用方式也很简单方便，寥寥数行代码就可以实现。对于设计师来说，你只需要为符号做三个字重的版本，SF Symbols 就会自动帮你生成其余 9 种字重和 3 种比例的符号，你就制作好了一份可以有预设动画、有四种颜色渲染模式、良好适配整个 Apple 生态的自定义符号。
 
-![WWDC23History](images\WWDC23History.png)
+![newSymbols](images/newSymbols.png)
 
 ## 如何使用 SF Symbols
 
