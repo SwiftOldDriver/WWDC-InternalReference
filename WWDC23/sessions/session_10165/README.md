@@ -43,15 +43,10 @@ session_ids: [10165]
     - [Clang 编译器 \& 链接](#clang-编译器--链接)
     - [Assets Catalogs](#assets-catalogs)
     - [构建系统](#构建系统)
-    - [C++ 标准库](#c-标准库)
-    - [终端](#终端)
     - [调试](#调试)
-    - [设备](#设备)
     - [文档](#文档)
     - [Instruments](#instruments)
-    - [预览](#预览)
-    - [模拟器](#模拟器)
-    - [Swift](#swift)
+    - [测试](#测试)
     - [其他](#其他)
   - [开发者注意事项](#开发者注意事项)
   - [总结](#总结)
@@ -83,7 +78,7 @@ Xcode 是每一个 iOS 开发者开发过程中必不可少的工具，纵使 Xc
      - Privacy Manifest，支持在 Xcode 中编辑一份隐私清单
      - TestFlight internal only：只对内发布测试
 4. 其他功能更新：
-   - TODO
+   - Quick Action
 5. 开发者注意事项：罗列 Xcode 15 更新后开发者需要注意的事项
 ![summary](./images/summary.png)
 
@@ -371,6 +366,7 @@ struct ContentBackgroundPreview: PreviewProvider {
         ContentBackgroundView()
     }
 }
+// Xcode 15 beta 3 支持右键 PreviewProvider 自动更新为 #Preview
 ```
 
 下面来看下基于 `Swift Macro` 实时预览该怎么处理：
@@ -483,51 +479,69 @@ XCFramework 的签名方式有两种：
 
 ### Clang 编译器 & 链接
 
-TODO:
+- 新增一个 C++ 支持参考页面 <https://developer.apple.com/xcode/cpp/>
+- Clang 和构建系统支持一种新的构建模块依赖关系的模式：`explicit modules`，它可以提高构建的性能，提升可靠和正确性。新模式默认不打开，可以通过配置`_EXPERIMENTAL_CLANG_EXPLICIT_MODULES` 编译选项打开。
+- 新的链接器，加快静态链接的速度，使用 `Mergeable Libraries` 功能以及所有的 iOS 二进制都由心的链接器进行链接。如果想要使用原来的连接器，可以使用 `-ld64`。
 
 ### Assets Catalogs
 
-TODO:
+- Xcode 15 为 Assets Catalogs 下的图片和颜色资源自动生成 `Swift` 和 `Objective-C` 符号。提供一个更安全的方式进行引用，支持编译检查。
+- 编译选项设置：
+  - 设置 `ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS` 为 `YES` 可以通过 `Image` 或者 `Color` 类访问资源，比如 `Color` `UIColor` `NSColor`。
+  - 设置 `ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS` 为 `YES` 会自动生成符号，设置为 `NO` 不再生成。
+  - 设置 `ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOL_FRAMEWORKS` 设置需要自动生成符号的框架，比如 `UIKit AppKit` 或者 `UIKit`。
+- `Objective-C` 也能自动生成符号，自动生成的符号是字符串常量，可以通过 `GeneratedAssetSymbols.h` 头文件引入。
 
 ### 构建系统
 
-TODO:
-
-### C++ 标准库
-
-TODO:
-
-### 终端
-
-TODO
+- Archive 构建现在支持一组编译优化，能够提高编译性能。
+- Xcode 现在可以自动为项目中的动态库和 `framework` 生成 `TBD`（基于文本的动态库），能够加快增量编译的速度。
+- 支持编译 `Swift Macro`。
 
 ### 调试
 
-TODO:
+- `LLDB` 现在能够省略类型摘要中的默认模板参数，比如：
 
-### 设备
+```shell
+(lldb) frame variable
+ (std::vector<std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::allocator<std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator <char> > > > > >) nested = size=0 {}
+```
 
-TODO:
+优化成：
+
+```shell
+ (lldb) frame variable
+ (std::vector<std::vector<std::string> >) nested = size=0 {}
+```
+
+如果想查看默认的参数，可以使用 `--raw-output` 选项。
+
+- `LLDB` 现在支持在表达式求值的过程中引入泛型：
+  
+```Swift
+func use<T>(_ t: T) { 
+   print(t) // Break here 
+ }
+  
+ use(5)
+ use("Hello!”)
+```
 
 ### 文档
 
-TODO:
+- Xcode 现在内建一个预览器，可以实时预览编写的 `Swift DocC` 文档。
+- 预览器可以支持预览 `Swift` `Objective-C` 头文件以及文档标记。
 
 ### Instruments
 
-TODO:
+- Instruments 15 包含一个新的 `RealityKit Trace` 模板，用于在 `VisionOS` 上分析应用程序和游戏。支持 CoreAnimation 数据、3D 渲染数据等统计。
+- 支持在 `Allocations` `Leaks` 以及 `VM Tracker` Instruments 中打开 `.memgraph` 文件，支持查看 Instruments 捕获的 `.memgraph` 文件。
+- 新的 `dyld` 活动监视器，可以可视化 `dlopen`、`dlclose`、静态初始化等。
+- 新增了一个音频系统追踪模板，可视化了应用程序是如何和音频服务交互的，可以让你深入了解音频线程 I/O 周期和其他的一些性能指标。
 
-### 预览
+### 测试
 
-TODO:
-
-### 模拟器
-
-TODO:
-
-### Swift
-
-TODO:
+watchOS 上的 UI 测试现在将自动消除未处理的告警。
 
 ### 其他
 
@@ -543,6 +557,8 @@ TODO:
 @available(iOS 17.0, macOS 14.0, tvOS 17.0, *)
 @freestanding(declaration) public macro Preview(_ name: String? = nil, traits: PreviewTrait<Preview.ViewTraits>..., body: @escaping () -> UIViewController) -> () = #externalMacro(module: "PreviewsMacros", type: "Common")
 ```
+
+但是在 Xcode 15 beta 3 中，支持通过 `@available(iOS 16.0, macOS 13.0, *)` 标注来支持低于 iOS 17 系统版本的预览。
 
 ## 总结
 
