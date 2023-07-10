@@ -18,7 +18,17 @@ WWDC20 在主屏幕上引入了桌面小组件，WWDC22 在锁屏上引入锁屏
 
 ## 小组件位置
 
-自 WWDC20 支持小组件后，小组件可放置的区域从 iPhone 桌面延伸到 Mac 桌面等。但并不是所有的小组件都适合在这些区域上显示，例如涉及到隐私的小组件放在 iPhone 的 StandBy 上并不是一个好的选择。
+自 WWDC20 支持小组件后，小组件可放置的区域从 iPhone 桌面延伸到 Mac 桌面、iPhone standBy 和 Apple Watch Smart Stack 等。
+
+当 iPhone 升级到 iOS 17 后，standBy 模式会在正在充电的水平放置的 iPhone 上自动激活，你可以全屏体验一些适合一目了然的信息片段，例如时间、天气、日历、音乐控制等。
+
+![standBy 模式](./images/standBy.png)
+
+Smart Stack 会在 Apple Watch 升级到 watchOS 10 后扭动侧边旋钮出现，让用户可以直接从表盘快速获取主动和相关信息。
+
+![Smart Stack](./images/smart_stack.png)
+
+但并不是所有的小组件都适合在这些区域上显示，例如涉及到隐私的小组件放在 iPhone 的 StandBy 上并不是一个好的选择。
 
 iOS 17 的 API 中新增加了四种小组件显示区域，分别是 `homeScreen`、 `lockScreen`、 `standBy` 和 `iPhoneWidgetsOnMac`，结合这些区域可搭配 [.disfavoredLocations(locations:, for:)](https://developer.apple.com/documentation/swiftui/widgetconfiguration/disfavoredlocations(_:for:)/) 进行使用，开发者进而可以设置在某些区域中取消显示某一尺寸的小组件。但遗憾的是，Apple 并没有提供环境变量告知开发者小组件目前正在哪个区域中显示。
 
