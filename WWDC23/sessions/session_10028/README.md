@@ -195,11 +195,11 @@ struct MyWidget: Widget {
 
 若使用 Xcode15 编译旧工程中的小组件，你会惊喜地发现在每次小组件数据刷新时，系统会自动在内容变化的部分增加动画效果。
 
-在常规的 SwiftUI 项目中，开发者通常使用  `@State` 包装器来实现视图与状态的双向绑定。并且使用 `withAnimation` 修饰符来声明具体的动画。但小组件动画的实现方式却并非如此，小组件静态视图的特性使其无法支持 State 强大的功能。而作为替代，**`timeline`** 成为了小组件中驱使视图刷新展示动画的主要方式。
+在常规的 SwiftUI 项目中，开发者通常使用  `@State` 包装器来实现视图与状态的双向绑定。并且使用 `withAnimation` 修饰符来声明具体的动画。但小组件动画的实现方式却并非如此，小组件静态视图的特性使其无法支持 State 强大的功能。而作为替代，**`timeline`** 成为了小组件中驱使视图刷新展示动画的主要方式。关于 timeline 的更多有效信息，可以学习 [WWDC21 - Session 10048 - Principles of great widgets](https://developer.apple.com/videos/play/wwdc2021/10048/)。
 
 一条完整的 timeline 由一组时间和数据组成的 **节点（entry）** 构成，小组件在每次接收到新的 timeline 时，会将节点中的时间作为刷新的时机，将节点中的数据作为视图内容更新的内容。而这个刷新的时机，恰是驱使小组件对视图中的内容进行动画的时机。每次刷新时，小组件会判断与上次内容不一致的部分，并且对这部分变化的内容加入动画效果。
 
-默认情况下，小组件会隐式选择弹簧动画。当然，开发者也可以在小组件中支持添加 SwiftUI 中多样的 **转场（Transition）**、**动画（Animation）** 和 **内容过渡（Content Transition）** 效果，具体可以学习 [Session 10156 - Explore SwiftUI animation](https://developer.apple.com/videos/play/wwdc2023/10156/) 。
+默认情况下，小组件会隐式选择弹簧动画。当然，开发者也可以在小组件中支持添加 SwiftUI 中多样的 **转场（Transition）**、**动画（Animation）** 和 **内容过渡（Content Transition）** 效果，具体可以学习 [Session 10156 - Explore SwiftUI animation](https://developer.apple.com/videos/play/wwdc2023/10156/)。
 
 
 
@@ -212,6 +212,8 @@ struct MyWidget: Widget {
 在 Xcode 15 中，调试小组件的动画效果可以更加方便。开发者并不需要等到 timeline 所设置的时间点，而是可以利用 Xcode 15 的 Preview 能力，通过点击不同的预览视图直接观察不同节点间的转换效果。
 
 在这之前，开发者们只能在 Preview 中传入 View 视图进行预览，而现在开发者可以在 Preview 中传入更抽象的结构 `Widget` 和 设置好节点的 timeline，直接预览到不同节点对应的小组件视图。比较遗憾的是，standBy 作为新的区域而不是新的尺寸，只能通过多选菜单中的 Widget Context Variants 进行预览。
+
+Preview 能力的提升归功于 Swift macros 的提出，其中的细节本文不再赘述，具体可以学习 [Session 10252 - Build programmatic UI with Xcode Previews](https://developer.apple.com/videos/play/wwdc2023/10252)。
 
 ![小组件 Preview 菜单](./images/preview_more_option.png)
 
