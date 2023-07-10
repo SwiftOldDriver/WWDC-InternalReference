@@ -20,7 +20,7 @@ WWDC20 在主屏幕上引入了桌面小组件，WWDC22 在锁屏上引入锁屏
 
 自 WWDC20 支持小组件后，小组件可放置的区域从 iPhone 桌面延伸到 Mac 桌面等。但并不是所有的小组件都适合在这些区域上显示，例如涉及到隐私的小组件放在 iPhone 的 StandBy 上并不是一个好的选择。
 
-iOS 17 的 API 中新增加了四种小组件显示区域，分别是 `homeScreen`、 `lockScreen`、 `standBy` 和 `iPhoneWidgetsOnMac`，结合这些区域可搭配 `.disfavoredLocations(locations:, for:)` 进行使用，开发者进而可以设置在某些区域中取消显示某一尺寸的小组件。但遗憾的是，Apple 并没有提供环境变量告知开发者小组件目前正在哪个区域中显示。
+iOS 17 的 API 中新增加了四种小组件显示区域，分别是 `homeScreen`、 `lockScreen`、 `standBy` 和 `iPhoneWidgetsOnMac`，结合这些区域可搭配 [.disfavoredLocations(locations:, for:)](https://developer.apple.com/documentation/swiftui/widgetconfiguration/disfavoredlocations(_:for:)/) 进行使用，开发者进而可以设置在某些区域中取消显示某一尺寸的小组件。但遗憾的是，Apple 并没有提供环境变量告知开发者小组件目前正在哪个区域中显示。
 
 ```Swift
 extension WidgetLocation {
@@ -53,7 +53,7 @@ struct ContentMarginWidget: Widget {
 
 **内容边距（Content Margin）** 是小组件主要内容到四个边框之间的距离。内容边距的值会随着设备和组件类型变化，主要目的是避免主体内容距离边框过近导致内容的可读性下降。
 
-在新版本的所有平台中，小组件不再使用 `Safe Area`，而是使用 `Content Margin` 作为内容与边框的“安全区域”，原来的 `Safe Area` 的相关修饰将会在小组件中失效。若要在小组件中实现 `.ignoresSafeArea()` 的效果，则需要使用 `.contentMarginsDisabled()` 对 `WidgetConfiguration` 进行修饰。
+在新版本的所有平台中，小组件不再使用 `Safe Area`，而是使用 `Content Margin` 作为内容与边框的“安全区域”，原来的 `Safe Area` 的相关修饰将会在小组件中失效。若要在小组件中实现 `.ignoresSafeArea()` 的效果，则需要使用 [.contentMarginsDisabled()](https://developer.apple.com/documentation/swiftui/widgetconfiguration/contentmarginsdisabled()) 对 `WidgetConfiguration` 进行修饰。
 
 ```Swift
 struct ContentMarginWidget: Widget {
@@ -141,13 +141,13 @@ struct MyWidgetEntryView: View {
 }
 ```
 
-当然，开发者们可以通过环境变量可 `\.showsWidgetContainerBackground`  了解当前小组件的背景是否被去除，从而调整 UI 的位置。
+当然，开发者们可以通过环境变量 [\.showsWidgetContainerBackground](https://developer.apple.com/documentation/swiftui/environmentvalues/showswidgetcontainerbackground)  了解当前小组件的背景是否被去除，从而调整 UI 的位置。
 
 ```Swift
 @Environment(\.showsWidgetContainerBackground) var isShowingBackground
 ```
 
-但是，并不是所有的小组件背景都是可被隐藏的，对于像是照片这样需要依赖背景展示的小组件，小组件的背景要通过 `containerBackgroundRemovable()` 设置为不可移除。
+但是，并不是所有的小组件背景都是可被隐藏的，对于像是照片这样需要依赖背景展示的小组件，小组件的背景要通过 [containerBackgroundRemovable(_:)](https://developer.apple.com/documentation/swiftui/widgetconfiguration/containerbackgroundremovable(_:)) 设置为不可移除。
 
 这样做也有一定的坏处，笔者在 iPad 模拟器上运行后发现，当小组件修改为如下代码的配置，小型号（System Small）小组件将消失在 iPad 锁屏桌面添加小组件的菜单中。笔者猜测是 iPad 锁屏侧边栏只允许添加可移除背景的小型号小组件，而对于强制性将背景设置为不可移除的小组件，在 iPad 锁屏桌面的小组件添加菜单中将会被隐藏。
 
@@ -183,7 +183,7 @@ struct MyWidget: Widget {
 
 ![渲染模式例子](./images/rendering_mode_example.png)
 
-对于开发者来说，可以通过环境变量可 `\.widgetRenderingMode`  了解当前小组件的渲染模式，从而调整 UI 的显示。
+对于开发者来说，可以通过环境变量 [\.widgetRenderingMode](https://developer.apple.com/documentation/swiftui/environmentvalues/widgetrenderingmode)  了解当前小组件的渲染模式，从而调整 UI 的显示。
 
 ```Swift
 @Environment(\.widgetRenderingMode) var renderingMode
@@ -415,7 +415,7 @@ struct LogDrinkView: View {
 
 ![包含按钮的小组件](./images/caffeine_widget_with_button.png)
 
-小组件重新加载 timeline 带来的视图变化会有延迟，这种延迟在 Mac 上运行的 iPhone 小组件更加明显。为了解决数据刷新和视图刷新不一致的问题，官方提供了一个方法，在数据信息更新时对应的视图才进行刷新。对于例子中咖啡因总量的视图，可以使用 `invalidatabelContent` 进行修饰。
+小组件重新加载 timeline 带来的视图变化会有延迟，这种延迟在 Mac 上运行的 iPhone 小组件更加明显。为了解决数据刷新和视图刷新不一致的问题，官方提供了一个方法，在数据信息更新时对应的视图才进行刷新。对于例子中咖啡因总量的视图，可以使用 [invalidatableContent(:_)](https://developer.apple.com/documentation/swiftui/view/invalidatablecontent(_:)) 进行修饰。
 
 ```Swift
 struct TotalCaffeineView: View {
