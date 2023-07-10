@@ -70,8 +70,74 @@ iOS 17 之后，我们可以开启延迟照片处理，整体的时间线都会�
 > 注：有些内容是通过官方文档获取的，可能跟视频有点点出入
 > Add the in-memory proxy file data representation to the photo library as quickly as possible after this call to ensure that the photo library can begin background processing. It’s also important so that the intermediates aren’t removed by a periodic clean-up job looking for abandoned intermediates produced by using the deferred photo processing APIs.
 
+```swift
 
-![image.png](./images/code1.png)
+private let sessionQueue = DispatchQueue(label: "sessionQueue", qos: .userInteractive)
+private let session: AVCaptureSession = AVCaptureSession()
+private let photoOutput: AVCapturePhotoOutput = AVCapturePhotoOutput()
+
+private func configureCameraView() {
+    contentView.videoPreviewLayer.session = session
+    contentView.videoPreviewLayer.videoGravity = .resizeAspectFill
+    contentView.videoPreviewLayer.connection?.videoOrientation = .portrait
+
+    sessionQueue.async {
+        self.session.beginConfiguration()
+        self.session.sessionPreset = .photo
+        self.addInputVideo()
+        self.addPhotoOutput()
+        self.session.commitConfiguration()
+        // 启动相机
+        self.startRunning()
+    }
+}
+
+private func addInputVideo() {
+    if let backCamera = defaultCameraDevice() {
+        try? backCamera.lockForConfiguration()
+        if backCamera.isLowLightBoostEnabled,
+           !backCamera.automaticallyEnablesLowLightBoostWhenAvailable {
+            backCamera.automaticallyEnablesLowLightBoostWhenAvailable = true
+        }
+
+        if backCamera.isSmoothAutoFocusSupported {
+            backCamera.isSmoothAutoFocusEnabled = true
+        }
+        if backCamera.isFocusModeSupported(.continuousAutoFocus) {
+            backCamera.focusMode = .continuousAutoFocus
+        }
+        backCamera.unlockForConfiguration()
+
+        guard let videoInput = try? AVCaptureDeviceInput(device: backCamera),
+              session.canAddInput(videoInput),
+              !self.session.inputs.contains(videoInput) else { return }
+        session.addInput(videoInput)
+    }
+}
+
+private func addPhotoOutput() {
+    photoOutput.maxPhotoQualityPrioritization = .quality
+    photoOutput.isHighResolutionCaptureEnabled = true
+
+    if #available(iOS 17.0, *) {
+        // 开启延迟处理
+        if photoOutput.isAutoDeferredPhotoDeliverySupported {
+            photoOutput.isAutoDeferredPhotoDeliveryEnabled = true
+        }
+    } else { }
+    guard !session.outputs.contains(photoOutput),
+          session.canAddOutput(photoOutput) else { return }
+    session.addOutput(photoOutput)
+}
+
+private func defaultCameraDevice() -> AVCaptureDevice? {
+    if let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) {
+        return device // 0.5 - 0.6s，默认广角
+    }
+    return nil
+}
+```
+
 通过代理拿到 proxy Photo，即可开始新一轮的拍摄
 
 ```swift
@@ -210,7 +276,25 @@ iOS 17 提供了一个 API 可以开启 "零延迟模式" ，当开启时，相�
 状态分别为：未运行、就绪、未就绪、等待捕获、等待处理，根据前面的描述我们了解到，在后面三种状态下，调用 `capturePhoto`，在拍摄和拿到照片之间会需要等待更长时间，因此在 not ready 下，强烈建议禁用按钮的交互事件，避免用户长时间的等待。
 
 代码实现如下：
-![image.png](./images/state2.png)![image.png](./images/state3.png)
+```swift
+if #available(iOS 17.0, *) {
+    let readinessCoordination = AVCapturePhotoOutputReadinessCoordinator(photoOutput: photoOutput)
+    readinessCoordination.delegate = self
+    
+    let photoSettings = AVCapturePhotoSettings()
+    // 开启追踪
+    readinessCoordination.startTrackingCaptureRequest(using: photoSettings)
+    photoOutput.capturePhoto(with: photoSettings, delegate: self)
+}
+
+@available(iOS 17.0, *)
+extension CameraViewController: AVCapturePhotoOutputReadinessCoordinatorDelegate {
+
+    func readinessCoordinator(_ coordinator: AVCapturePhotoOutputReadinessCoordinator, captureReadinessDidChange captureReadiness: AVCapturePhotoOutput.CaptureReadiness) {
+        // 根据 captureReadiness 值更新拍摄按钮的状态
+    }
+}
+```
 
 ## Video Effects 视频效果
 
