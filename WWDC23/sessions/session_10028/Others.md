@@ -8,7 +8,9 @@ Raydon：现就职于 TikTok 音乐团队
 
 ## 审核介绍
 
+士土 Edmond 木，对 CocoaPods 有一点了解，对 Rust 和 Swift 比较感兴趣。[Github Page](https://looseyi.github.io/)
 
+黄骋志，老司机技术轮值主编，目前就职于字节跳动，参与西瓜视频质量与稳定性工作。对 OOM/Watchdog 较为了解并长期投入。
 
 ## 不超过 120 个字的文章简介
 
