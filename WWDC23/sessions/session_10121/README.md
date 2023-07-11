@@ -341,7 +341,7 @@ Safari 16.2 开始，你可以在 CSS 中混合颜色了，用法很简单，使
 
 ![06-4](./images/06-4.png)
 
-更加方便的是，如果我们想要设置混合的颜色的透明度，只需要设置要混合颜色的比例不超过 100%，那么透明度就等于要混合颜色的比例之合。如上图所示，白色和蓝色的混合比例各自 30%，最后得到的颜色就会拥有 60% 的透明度。
+更加方便的是，如果我们想要设置混合的颜色的透明度，只需要设置要混合颜色的比例不超过 100%，那么透明度就等于要混合颜色的比例之和。如上图所示，白色和蓝色的混合比例各自 30%，最后得到的颜色就会拥有 60% 的透明度。
 
 ![06-5](./images/06-5.png)
 
@@ -418,7 +418,7 @@ label:has(+ input:invalid)::before {
 
 ![07-4](./images/07-4.png)
 
-不过现在我们可以通过 `:user-invalid` 和 `user-valid` 来解决这个问题，因为这两个伪类选择器在底层使用了更加复杂的算法来确定一个表单字段是有效还是无效的。
+不过现在我们可以通过 `:user-invalid` 和 `:user-valid` 来解决这个问题，因为这两个伪类选择器在底层使用了更加复杂的算法来确定一个表单字段是有效还是无效的。
 
 ![07-5](./images/07-5.gif)
 
@@ -715,7 +715,7 @@ CSS Counters 不仅可以用来设置 ol 有序列表的计数器样式，还可
 
 > [counter-reset MDN](https://developer.mozilla.org/zh-CN/docs/Web/CSS/counter-reset)
 
-然后设置 h2 元素的 `::before` 伪元素的 `counter-increment` 为 `numbering`，最后设置伪元素的内容为 `"Chapter " counter(numbering) "：";` ，最终在 h2 元素原本的内容上显示了第几章的效果。
+然后设置 h2 元素的 `::before` 伪元素的 `counter-increment` 为 `numbering`，最后设置伪元素的内容为 `"Chapter " counter(numbering) ":";` ，最终在 h2 元素原本的内容上显示了第几章的效果。
 
 > [counter-increment MDN](https://developer.mozilla.org/zh-CN/docs/Web/CSS/counter-increment)
 >
@@ -741,7 +741,7 @@ Safari 所支持的新 CSS 特性远远不止我们今天所谈到的这些，Ap
 | [Relative Color syntax](https://www.w3.org/TR/css-color-5/#relative-colors) | 基于一个基底色设置新的颜色值                                 | 16.4                   | -      | -    | -                                                       |
 | [Color-interpolation](https://developer.mozilla.org/en-US/docs/Web/CSS/color-interpolation-method) | 设置渐变色时可以指定色彩空间来得到不同的渐变效果             | 16.2                   | 111    | 111  | -                                                       |
 | [Color mix](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color-mix) | 指定色彩空间来混合两个颜色值后得到一个新的颜色值             | 16.2                   | 111    | 111  | 113                                                     |
-| [user-valid](https://developer.mozilla.org/en-US/docs/Web/CSS/:user-valid) & [user-invalid](https://developer.mozilla.org/en-US/docs/Web/CSS/:user-invalid) | 基于用户所填充的内容是否有效对 form 进行样式的设置，底层采用了更加复杂的算法来决定一个 form 输入项是否有效 | 16.5                   | -      | -    | 88                                                      |
+| [:user-valid](https://developer.mozilla.org/en-US/docs/Web/CSS/:user-valid) & [:user-invalid](https://developer.mozilla.org/en-US/docs/Web/CSS/:user-invalid) | 基于用户所填充的内容是否有效对 form 进行样式的设置，底层采用了更加复杂的算法来决定一个 form 输入项是否有效 | 16.5                   | -      | -    | 88                                                      |
 | 增强的 `:has()` 伪类选择器                                   | 可以与 `:lang` 伪类选择器一起使用实现国际化的效果；还可以与音视频的状态的多媒体伪类选择器一起使用 | 16.4                   | -      | -    | -                                                       |
 | [:dir()](https://developer.mozilla.org/zh-CN/docs/Web/CSS/:dir) | `:dir()` 伪类选择器很好的填补了 CSS 中支持语言方向的空白     | 16.4                   | -      | -    | 49                                                      |
 | 新的长度单位                                                 | 可以通过 `svh`、`lvh`、`cqb`、`cqi`、`ex`、`ch`、`ic`、`rlh` 和 `lh` 这些不同种类的单位来定义长度 | 16.4                   | 109    | 109  | -                                                       |
