@@ -20,7 +20,7 @@ session_ids: [10121]
 
 ![Masonry](./images/MasonryLayout.png)
 
-> Masonry Layout 目前仅在 [Safari Technology Preview 163 版本 ](https://developer.apple.com/documentation/safari-technology-preview-release-notes/stp-release-163)及以上可用，Chrome 和 Edge 不可用，而 FireFox 中则需要开启 `layout.css.grid-template-masonry-value.enabled` 的 Flag。
+> Masonry Layout 目前仅在 [Safari Technology Preview 163 版本 ](https://developer.apple.com/documentation/safari-technology-preview-release-notes/stp-release-163) 及以上可用，Chrome 和 Edge 不可用，而 FireFox 中则需要开启 `layout.css.grid-template-masonry-value.enabled` 的 Flag。
 
 #### 什么是 Masonry Layout
 
