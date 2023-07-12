@@ -2,7 +2,7 @@
 session_ids: [10121]
 ---
 
-# WWDC23 - What's new in CSS
+# WWDC23 10121 - What's new in CSS
 
 > 摘要：Web 上的发展日新月异，CSS 也不例外。Apple 今年在 Safari 上支持了许多的 CSS 新特性。本文主要介绍了四个维度的 CSS 新特性，分别是布局、颜色、选择器和字体排版。与此同时本文还介绍了 Safari Technology Preview 中可以体验到的 WebKit 新特性，以及全新改版的 Safari 开发者菜单。
 
