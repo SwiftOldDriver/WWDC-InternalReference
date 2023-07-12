@@ -1,7 +1,7 @@
 ---
 session_ids: [10119]
 ---
-Session 10119 - Safari Web 插件开发
+Session 10119 - 在 Safari 上开发浏览器插件
 
 本文基于[Session 10119](https://developer.apple.com/videos/play/wwdc2023/10119/)梳理。
 
@@ -15,10 +15,10 @@ Session 10119 - Safari Web 插件开发
     - [2.2.4. injected iframe与content](#224-injected-iframe与content)
 - [3. Safari 插件发展历程](#3-safari-插件发展历程)
   - [3.1. Safari App 插件](#31-safari-app-插件)
-  - [3.2. WWDC 2020 Safari Web 插件](#32-wwdc-2020-safari-web-插件)
-  - [3.3. WWDC 2021 Safari Web 插件 on iOS](#33-wwdc-2021-safari-web-插件-on-ios)
-  - [3.4. WWDC 2022 Safari Web 插件 Manifest V3 and declarative net request](#34-wwdc-2022-safari-web-插件-manifest-v3-and-declarative-net-request)
-  - [3.5. Content Blocker（内容拦截器）](#35-content-blocker内容拦截器)
+  - [3.2. WWDC 2020 Safari Web Extension](#32-wwdc-2020-safari-web-extension)
+  - [3.3. WWDC 2021 Safari Web Extension on iOS](#33-wwdc-2021-safari-web-extension-on-ios)
+  - [3.4. Content Blocker（内容拦截器）](#34-content-blocker内容拦截器)
+  - [3.5. WWDC 2022 Safari Web Extension Manifest V3](#35-wwdc-2022-safari-web-extension-manifest-v3)
 - [4. What's new in WWDC 2023 Safari 插件](#4-whats-new-in-wwdc-2023-safari-插件)
   - [4.1. 全新的API](#41-全新的api)
   - [4.2. per-site peermissions](#42-per-site-peermissions)
@@ -147,10 +147,85 @@ window.parent.postMessage({
 苹果生态的浏览器插件经历了Safari Extension， Safari App Extension到Safari Web Extension的发展， 其中除了Safari Exttension已经废弃了， Safari App Extension和Safari Web Extension仍然都苹果生态中的浏览器插件支持的实现方式。这两者的区别主要在于Safari App Extension使用苹果原生技术在实现插件的主要功能，而不是JavaScript。 但是如果想要支持开发一款支持苹果全家桶（iOS，macOS，iPadOS，xrOS）的浏览器插件，或者把其他平台的浏览器插件带到苹果生态中， Safari Web Extension是唯一的选择。除此之外，Safari还支持Content Blocker（内容拦截器）， 这也是一种浏览器插件， 但是其功能有限， 只能拦截网络请求， 这也是Safari 上绝大多数的广告拦截器的实现方式。
 
   ### 3.1. Safari App 插件
-  ### 3.2. WWDC 2020 Safari Web 插件
-  ### 3.3. WWDC 2021 Safari Web 插件 on iOS
-  ### 3.4. WWDC 2022 Safari Web 插件 Manifest V3 and declarative net request
-  ### 3.5. Content Blocker（内容拦截器）
+  > [Safari App Extension](https://developer.apple.com/documentation/safariservices/safari_app_extensions)官方文档
+  
+  Safari App Extension可以通过读取和修改网页内容来为Safari添加新功能。Safari App Extension的独特之处在于它可以与宿主App进行通信，可以将应用程序内容整合到Safari中，或将Web数据发送回应用程序，
+![](https://docs-assets.developer.apple.com/published/2d08988dd8/renderedDark2x-1639507688.png)
+上图是Safari应用扩展在包含应用程序和Safari浏览器之间进行通信的情况。一个标有"Safari App Extension"的方框嵌套在一个标有"Containing app"的方框中。箭头表示Safari App Extension和主App通过共享资源相互传递信息。另一个箭头表示应用扩展和Safari之间相互传递信息。这里的通讯方式相较于Safari Web Extension更简单。
+
+Safari App Extension最大的不同点就在于其Extension部分主要运用的都是苹果的原生技术，即Swift和Objective-C， 也就是说可以使用很多原生接口，不需要掌握很多JavaScript的技术， 这对苹果的开发者很友好， 但事实上，熟悉 JavaScript、HTML 和 CSS 的 web 开发者要比熟悉 Objective-C 或者 Swift 的开发者多的多。苹果需要吸收更多的血液。
+
+当然，如果你不熟悉苹果的原生技术，或者已经有一款其他平台的浏览器插件， Safari Web Extension应该还是更适合的选择。
+同时，如果你已经有一款Safari App Extension， 想要把它转化成Safari Web Extension， 苹果也提供了[方案](https://developer.apple.com/documentation/safariservices/safari_web_extensions/converting_a_safari_app_extension_to_a_safari_web_extension)， 可以将Safari App Extension转化为Safari Web Extension。
+
+  ### 3.2. WWDC 2020 Safari Web Extension
+  > WWDC 2020 session 10665 [Meet Safari Web Extensions ](https://developer.apple.com/videos/play/wwdc2020/10665/)<br>WWDC 2020内参 [用 Web 技术为 Safari 编写扩展](https://xiaozhuanlan.com/topic/2746058139)
+  
+  2020年的WWDC上，苹果首次将Safari Web Extension引入的macOS上，苹果应该是希望以此为契机，拯救其多年来停滞不前的浏览器插件生态，吸引更多的开发者来增强Safari。 但事实上，三年过去了，Safari 上好用的插件依然屈指可数，且很多仍然是Safari App extension。想想看， 主要的原因可能还是即使使用了Web Extension技术，苹果仍然有过多的限制，有些实用的API都被禁止使用，且由于苹果对隐私的严格把控（这不是坏事），开发者在开发的过程中总有种处处被掣肘的感觉。条条框框的原属很难吸引很多更hack 的浏览器插件开发者，更不用说每年99美元的开发者费用（相比下， Chrome的费用是5美元永久）。 
+
+  可以在这里查看Safari 对Web Extension的API限制。 [Safari Web Extensionde API使用](https://developer.apple.com/documentation/safariservices/safari_web_extensions/assessing_your_safari_web_extension_s_browser_compatibility)
+  ### 3.3. WWDC 2021 Safari Web Extension on iOS
+  > WWDC21 sessions [10027: Explore Safari Web Extension Improvements](https://developer.apple.com/wwdc21/10027/) 和 [10104: Meet Safari Web Extensions on iOS](https://developer.apple.com/wwdc21/10104/).
+  <br>WWDC 2021内参 [iOS Safari Web Extensions 实践小记](https://xiaozhuanlan.com/topic/4926530871)
+
+  在WWDC 2021上，苹果顺理成章的将Safari Web Extension带到了iOS和iPad OS上，几乎换汤不换药，和Mac上一样的开发流程，一样的分发方式，甚至不需要太多的修改，一款macOS Safari的插件就可以在iOS上发布， 也就是一份代码可以分别分发到macOS和iOS上。
+
+  同时，在WWDC 2021上， 苹果引进了三个API, 非持久性后台页, declarative net request 与自定义选项卡。
+
+  非持久性后台页就是在2.1 中提到的non-persistent background。这是为了降低内存和CPU的消耗，尤其是在iSO设备上。
+  
+  declarative net request是一种拦截网络请求的方式，因为苹果在Safari Web Extension上限制了webRequest API的使用，这使得浏览器插件的一个大门类，Ad Block类插件想用原生方式实现非常困难。declarative net request 可以让用户只提供一份符合要求的规则JSON，即刻拦截网络请求， 并且这一规则可以在Chrome上使用。但其实，Chrome 上的Ad Block类插件几乎没有使用这种方式来实现，因为这一API的限制十分大，并且只能通过有限的正则表达式拦截网络请求，完全无法拦截网络上形形色色的广告。这是关于这一API的[文档](https://developer.apple.com/documentation/safariservices/safari_web_extensions/blocking_content_with_your_safari_web_extension)。
+
+  自定义选项卡允许扩展接管 Safari 中的新 tab 页并对其进行完全定制, 且使用起来非常简单。只需要在manifest文件中指定和自定义选项卡的html文件即可。
+  ```json
+  "browser_url_overrides": {
+    "newtab": "new_tab_page.html"
+  }
+  ```
+
+  虽然全新的Safari Web extension在Safari上体验不够完美，Safari的插件也没能像Chrome FireFox上那样百花齐放，但仍然有一些插件可以让Safari的使用体验更加友善。如类似油猴的[Stay](https://apps.apple.com/cn/app/stay-safari%E6%B5%8F%E8%A7%88%E5%99%A8%E4%BC%B4%E4%BE%A3/id1591620171), 使所有网页支持暗黑模式的[Dark reader](https://apps.apple.com/cn/app/dark-reader-for-safari/id1438243180)等等
+  ### 3.4. Content Blocker（内容拦截器）
+  上面提到，苹果在WWDC 2021上， 才在Safari 上开发declarative net request的使用，从而实现内容拦截的功能， 但这并不意味着Safari上没有Ad Block类的内容拦截器。相反，苹果开放了一些自己独有的插件， Content Blocker（内容拦截器）来支持这一功能。
+
+  Content Blocker也是一种插件，和上面提到的Safari App Extension一样，是一种包在主App内的扩展，
+  ![](https://docs-assets.developer.apple.com/published/770d94fb14/renderedDark2x-1656359277.png)
+
+  它也是基于规则的拦截器，在使用时，只需要在其回调中，指明包括所有规则的JSON文件位置即可。在这份规则文件中，需要包含拦截触发的条件（如某个url的正则表达式）和拦截的行为（block，ignore或者css-display-none等。示例：
+  ```json
+  [
+    {
+        "trigger": {
+            "url-filter": ".*",
+            "resource-type": ["image", "style-sheet"],
+            "unless-domain": ["your-content-server.com", "trusted-content-server.com"]
+        },
+        "action": {
+            "type": "css-display-none",
+            "selector": "#newsletter, :matches(.main-page, .article) .news-overlay"
+        }
+    },
+    {
+        "trigger": {
+            ...
+        },
+        "action": {
+            ...
+        }
+    }
+]
+  ```
+相比于使用declarative net request 和 更常用的webRequest API拦截广告，content blocker的的优势在于更简单，只需要找到一份可以使用的规则即可，几乎没有门槛。另外，在一份规则中，content blocker同时兼顾了 网络请求的拦截和css 样式的隐藏， 满足了绝大多数场景下Ad Block的使用。并且因为规则是从本地加载，无需直接包在主App的package内，所以可以进行热更新，不需要更新App。最后，Content Blocker还可以通过API直接与Safari App Extension和宿主App进行数据共享和状态展示，从而使UI上的展现更加方便。
+
+但是它的缺点也有，一是只能在Safari上使用，无法做到跨平台开发，另外， 每一个Content Blocker支持的规则数是有限的，大概只能支持三万条规则（据AdGuard的开发者在论坛内说，经过他们与苹果的不断交涉，这一数量提高到了十五万），且每条规则的长度也有限。 所以开发者们会在一款App内包上很多Content Blocker，这就是为什么几乎Safari上的Ad Block类应用，都会在一开始让你在Safari内打无数的勾。如Adguard：
+![](./images/adguard.png)
+
+但即使如此，绝大多数Safari上（无论macOS还是iOS）的Ad Block类软件，都使用了Content Blocker作为实现形式。如 [AdGuard](https://apps.apple.com/cn/app/adguard-for-safari/id1440147259)， [AdBlock Pro](https://apps.apple.com/cn/app/adblock-pro-safari-ad-blocker/id1018301773) , [Ad Block One](https://link.zhihu.com/?target=https%3A//apps.apple.com/app/apple-store/id1491889901%3Fpt%3D444218%26ct%3Ddriver%26mt%3D8)， [1Blocker](https://apps.apple.com/cn/app/1blocker-ad-blocker/id1365531024)等
+  ### 3.5. WWDC 2022 Safari Web Extension Manifest V3
+  Manifest V3
+  丰富declarative net reques API， 支持更多的规则， update rules
+  externally_connectable
+  unlimited storage
+  syncing extensions
 ## 4. What's new in WWDC 2023 Safari 插件
 
 ### 4.1. 全新的API
