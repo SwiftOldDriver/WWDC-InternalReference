@@ -4,7 +4,7 @@ session_ids: [10028]
 
 ## 个人介绍
 
-Raydon：现就职于 TikTok 音乐团队
+Raydon：现就职于 TikTok 音乐团队，参与了 TikTok Music 小组件的开发。热爱音乐，Live house 和音乐节常驻者。
 
 ## 审核介绍
 
