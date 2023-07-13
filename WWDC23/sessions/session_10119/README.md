@@ -348,6 +348,7 @@ Declarative net request 也迎来更新。首先是支持对请求的 header 进
 ## 5. 发布 Safari Extension
 
 > Apple Tech talk [Build and deploy Safari Extensions for iOS](https://developer.apple.com/videos/play/tech-talks/110148/)
+
 对于不了解 safari extension 的苹果开发者来说，更多需要做的是熟悉 JavaScript 等前端技术，其他的流程就与开发 iOS App 类似了，同时也非常建议去选择 Safari Web Extension， 因为其跨平台的属性，基本上能保证一套代码同时发布在所有平台上，包括 Chrome， Firefox 和 Edge。
 但这里需要注意的是，如果需要接入收费的功能，插件内不要包含 web 端的付费功能，要做付费功能的话需要在宿主 app 通过 IAP 实现, 这一点自然很符合苹果的一贯策略。
 
