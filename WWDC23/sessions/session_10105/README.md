@@ -48,8 +48,8 @@ public enum QualityPrioritization : Int, @unchecked Sendable {
 
 iOS 17 之后，我们可以开启延迟照片处理，整体的时间线都会缩短。对比看下效果：
 
-![](./images/camera.gif)
-![](./images/camera_new.gif)
+| ![](./images/camera.gif) | ![](./images/camera_new.gif) |
+|--------------------------|------------------------------|
 
 系统新增了一个 `Proxy Photo` 临时照片的概念，主要作用是加快相机拍照速度和延迟真实照片处理。
 > 通过生成 Proxy Photo，相机无需等待高质量照片处理完成就可以进行下一张照片的拍摄，大大缩短了拍照间隔，提高了相机捕获速度。
@@ -204,7 +204,10 @@ Final 最后生成的高质量的清晰大图
 
 延迟处理，除了体验上的优化，在内存方面也有了明显的优化。
 整体实验流程是拍摄照片后立即存储到相册内，通过对比是否开启延迟处理，发现虽然我们 App 内存没有明显变化，但是整体系统内存明显降低，其中 mediaServerd 进程发生了大幅度的内存变化。
-> 注：以下数据和测试基于 iPhone 14 Pro Max， iOS 17 beta2 版本，数据工具 Xcode Instrument ActivityMonitor
+> 注：以下数据和测试基于 iPhone 14 Pro Max， iOS 17 beta2 版本，数据工具 Xcode Instrument ActivityMonitor。
+> 
+> mediaServer：主要负责音视频的编解码工作，也包含对照片数据的编解码工作。
+> backBoard：iOS 6 引入的守护进程，用于减轻 [SpringBoard](https://iphonedev.wiki/index.php/SpringBoard) 的部分工作量，主要目的是处理来自硬件的事件并将其转发到对应进程。[详情](https://iphonedev.wiki/index.php/Backboardd)
 
 ![](./images/Instrument.jpg)
 ![](./images/media.jpg)
@@ -235,7 +238,9 @@ Final 最后生成的高质量的清晰大图
 
 iOS 17 提供了一个 API 可以开启 "零延迟模式" ，当开启时，相机的图像管道会保持之前的帧作为缓冲区。这样在我们点击拍摄时，相机就可以直接从缓冲区中读取最近的一个帧，然后对其进行处理以生成我们想要的照片。效果对比如下：
 
-![lag](./images/lag.gif)![lag](./images/lag_new.gif)
+| ![](./images/lag.gif) | ![](./images/lag_new.gif) |
+|--------------------------|------------------------------|
+
 
 代码上怎么来实现呢？跟延迟处理一样，一个属性来判断是否支持，一个属性来开启零延迟。
 
@@ -310,7 +315,7 @@ iOS 17 新增 `Reactions` 效果类型，在视频通话中表达想法或竖起
 
 ## 总结
 
-1. 延迟照片处理可以生成 Proxy 临时照片，让下一张照片的拍摄不再需要等待上一张照片的处理完成,从而加快拍摄速度，减少拍摄间隔。
+1. 延迟照片处理可以生成 Proxy 临时照片，让下一张照片的拍摄不再需要等待上一张照片的处理完成，从而加快拍摄速度，减少拍摄间隔。同时对整个 iOS 内存也有明显的优化，预计会降低 300M 左右的内存占用。
 2. 快门零延迟通过维持图像帧缓冲区读取历史帧实现，能在我们点击拍摄瞬间近乎零延迟地捕获照片。
 3. 响应捕获通过并行执行拍摄任务，快速连续拍多张照片，以获取更多完美时刻。
 4. 可以通过监听拍摄状态来管理拍摄按钮，避免用户长时间等待。
