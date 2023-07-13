@@ -205,7 +205,6 @@ Final 最后生成的高质量的清晰大图
 延迟处理，除了体验上的优化，在内存方面也有了明显的优化。
 整体实验流程是拍摄照片后立即存储到相册内，通过对比是否开启延迟处理，发现虽然我们 App 内存没有明显变化，但是整体系统内存明显降低，其中 mediaServerd 进程发生了大幅度的内存变化。
 > 注：以下数据和测试基于 iPhone 14 Pro Max， iOS 17 beta2 版本，数据工具 Xcode Instrument ActivityMonitor。
-> 
 > mediaServer：主要负责音视频的编解码工作，也包含对照片数据的编解码工作。
 > backBoard：iOS 6 引入的守护进程，用于减轻 [SpringBoard](https://iphonedev.wiki/index.php/SpringBoard) 的部分工作量，主要目的是处理来自硬件的事件并将其转发到对应进程。[详情](https://iphonedev.wiki/index.php/Backboardd)
 
