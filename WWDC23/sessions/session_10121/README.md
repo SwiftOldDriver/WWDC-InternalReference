@@ -743,18 +743,18 @@ Safari 所支持的新 CSS 特性远远不止我们今天所谈到的这些，Ap
 
 - Layout
 
-  * [Masonry Layout](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Masonry_layout)： 结合 Grid 布局实现瀑布流效果
+  - [Masonry Layout](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Masonry_layout)： 结合 Grid 布局实现瀑布流效果
 
-  * [Margin Trim](https://developer.mozilla.org/en-US/docs/Web/CSS/margin-trim)：消除容器元素中子元素多余的外边距
+  - [Margin Trim](https://developer.mozilla.org/en-US/docs/Web/CSS/margin-trim)：消除容器元素中子元素多余的外边距
 
 - Color
 
-  * [P3 Color Gamut](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/color-gamut)：通过 `@media (color-gamut: p3) {}` 语句来包含想要在支持 P3 色域的设备上执行的样式
-  * [lch](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/lch)、[oklch](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/oklch)、[lab](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/lab)、[oklab](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/oklab)：这四种色值定义方法可以呈现包含 P3 色域在内的任何色域中的颜色
-  * [color()](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color)：指定在某个色域下的颜色值
-  * [Relative Color syntax](https://www.w3.org/TR/css-color-5/#relative-colors)：基于一个基底色设置新的颜色值
-  * [Color-interpolation](https://developer.mozilla.org/en-US/docs/Web/CSS/color-interpolation-method)：设置渐变色时可以指定色彩空间来得到不同的渐变效果
-  * [Color mix](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color-mix)：指定色彩空间来混合两个颜色值后得到一个新的颜色值
+  - [P3 Color Gamut](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/color-gamut)：通过 `@media (color-gamut: p3) {}` 语句来包含想要在支持 P3 色域的设备上执行的样式
+  - [lch](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/lch)、[oklch](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/oklch)、[lab](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/lab)、[oklab](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/oklab)：这四种色值定义方法可以呈现包含 P3 色域在内的任何色域中的颜色
+  - [color()](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color)：指定在某个色域下的颜色值
+  - [Relative Color syntax](https://www.w3.org/TR/css-color-5/#relative-colors)：基于一个基底色设置新的颜色值
+  - [Color-interpolation](https://developer.mozilla.org/en-US/docs/Web/CSS/color-interpolation-method)：设置渐变色时可以指定色彩空间来得到不同的渐变效果
+  - [Color mix](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color-mix)：指定色彩空间来混合两个颜色值后得到一个新的颜色值
 
 - Selectors
 
