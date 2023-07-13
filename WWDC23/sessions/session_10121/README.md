@@ -741,24 +741,59 @@ Safari 所支持的新 CSS 特性远远不止我们今天所谈到的这些，Ap
 
 ### CSS 新特性
 
-| 特性                                                         | 简介                                                         | Safari                 | Chrome | Edge | Firefox                                                 |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ---------------------- | ------ | ---- | ------------------------------------------------------- |
-| [Masonry Layout](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Masonry_layout) | 结合 Grid 布局实现瀑布流效果                                 | Technology Preview 163 | -      | -    | 需开启 `layout.css.grid-template-masonry-value.enabled` |
-| [Margin Trim](https://developer.mozilla.org/en-US/docs/Web/CSS/margin-trim) | 消除容器元素中子元素多余的外边距                             | 16.4                   | -      | -    | -                                                       |
-| [P3 Color Gamut](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/color-gamut) | 通过 `@media (color-gamut: p3) {}` 语句来包含想要在支持 P3 色域的设备上执行的样式 | 10.0                   | 58     | 79   | 110                                                     |
-| [lch](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/lch)、[oklch](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/oklch)、[lab](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/lab)、[oklab](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/oklab) | 这四种色值定义方法可以呈现包含 P3 色域在内的任何色域中的颜色 | 15.4                   | 111    | 111  | 113                                                     |
-| [color()](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color) | 指定在某个色域下的颜色值                                     | 10.1                   | 111    | 111  | 113                                                     |
-| [Relative Color syntax](https://www.w3.org/TR/css-color-5/#relative-colors) | 基于一个基底色设置新的颜色值                                 | 16.4                   | -      | -    | -                                                       |
-| [Color-interpolation](https://developer.mozilla.org/en-US/docs/Web/CSS/color-interpolation-method) | 设置渐变色时可以指定色彩空间来得到不同的渐变效果             | 16.2                   | 111    | 111  | -                                                       |
-| [Color mix](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color-mix) | 指定色彩空间来混合两个颜色值后得到一个新的颜色值             | 16.2                   | 111    | 111  | 113                                                     |
-| [:user-valid](https://developer.mozilla.org/en-US/docs/Web/CSS/:user-valid) & [:user-invalid](https://developer.mozilla.org/en-US/docs/Web/CSS/:user-invalid) | 基于用户所填充的内容是否有效对 form 进行样式的设置，底层采用了更加复杂的算法来决定一个 form 输入项是否有效 | 16.5                   | -      | -    | 88                                                      |
-| 增强的 `:has()` 伪类选择器                                   | 可以与 `:lang` 伪类选择器一起使用实现国际化的效果；还可以与音视频的状态的多媒体伪类选择器一起使用 | 16.4                   | -      | -    | -                                                       |
-| [:dir()](https://developer.mozilla.org/zh-CN/docs/Web/CSS/:dir) | `:dir()` 伪类选择器很好的填补了 CSS 中支持语言方向的空白     | 16.4                   | -      | -    | 49                                                      |
-| 新的长度单位                                                 | 可以通过 `svh`、`lvh`、`cqb`、`cqi`、`ex`、`ch`、`ic`、`rlh` 和 `lh` 这些不同种类的单位来定义长度 | 16.4                   | 109    | 109  | -                                                       |
-| [font-size-adjust](https://developer.mozilla.org/zh-CN/docs/Web/CSS/font-size-adjust) | `font-size-adjust` CSS 属性定义字体大小应取决于小写字母，而不是大写字母。在字体较小时，字体的可读性主要由小写字母的大小决定，通过此选项即可进行调整 | 16.4                   | -      | -    | 3                                                       |
-| [size-adjust](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/size-adjust) | 声明自定义字体的时候设置 `size-adjust` 属性来实现字体缩放效果 | 17.0                   | 92     | 92   | 92                                                      |
-| [text box trim](https://www.w3.org/TR/css-inline-3/#leading-trim) | 消除文字容器中的多余的上下间距                               | Technology Preview 163 | -      | -    | -                                                       |
-| [@counter-style](https://developer.mozilla.org/zh-CN/docs/Web/CSS/@counter-style) | `@counter-style` 是一个 [CSS](https://developer.mozilla.org/zh-CN/docs/Web/CSS) [at-rule](https://developer.mozilla.org/zh-CN/docs/Web/CSS/At-rule) ，它让开发者可以自定义 counter 的样式。一个 `@counter-style` 规则定义了如何把一个计数器的值转化为字符串表示。 | 17.0                   | 91     | 91   | 33                                                      |
+- Layout
+
+  * [Masonry Layout](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Masonry_layout)： 结合 Grid 布局实现瀑布流效果
+
+  * [Margin Trim](https://developer.mozilla.org/en-US/docs/Web/CSS/margin-trim)：消除容器元素中子元素多余的外边距
+
+- Color
+
+  * [P3 Color Gamut](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/color-gamut)：通过 `@media (color-gamut: p3) {}` 语句来包含想要在支持 P3 色域的设备上执行的样式
+  * [lch](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/lch)、[oklch](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/oklch)、[lab](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/lab)、[oklab](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/oklab)：这四种色值定义方法可以呈现包含 P3 色域在内的任何色域中的颜色
+  * [color()](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color)：指定在某个色域下的颜色值
+  * [Relative Color syntax](https://www.w3.org/TR/css-color-5/#relative-colors)：基于一个基底色设置新的颜色值
+  * [Color-interpolation](https://developer.mozilla.org/en-US/docs/Web/CSS/color-interpolation-method)：设置渐变色时可以指定色彩空间来得到不同的渐变效果
+  * [Color mix](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color-mix)：指定色彩空间来混合两个颜色值后得到一个新的颜色值
+
+- Selectors
+
+  - [:user-valid](https://developer.mozilla.org/en-US/docs/Web/CSS/:user-valid) & [:user-invalid](https://developer.mozilla.org/en-US/docs/Web/CSS/:user-invalid)：基于用户所填充的内容是否有效对 form 进行样式的设置，底层采用了更加复杂的算法来决定一个 form 输入项是否有效
+  - 增强的 [:has()](https://developer.mozilla.org/zh-CN/docs/Web/CSS/:has) 伪类选择器：可以与 `:lang` 伪类选择器一起使用实现国际化的效果；还可以与音视频的状态的多媒体伪类选择器一起使用
+  - [:dir()](https://developer.mozilla.org/zh-CN/docs/Web/CSS/:dir)：`:dir()` 伪类选择器很好的填补了 CSS 中支持语言方向的空白
+
+- Typography
+
+  - 新的长度单位：可以通过 `svh`、`lvh`、`cqb`、`cqi`、`ex`、`ch`、`ic`、`rlh` 和 `lh` 这些不同种类的单位来定义长度
+  - [font-size-adjust](https://developer.mozilla.org/zh-CN/docs/Web/CSS/font-size-adjust)：`font-size-adjust` CSS 属性定义字体大小应取决于小写字母，而不是大写字母。在字体较小时，字体的可读性主要由小写字母的大小决定，通过此选项即可进行调整
+  - [size-adjust](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/size-adjust)：声明自定义字体的时候设置 `size-adjust` 属性来实现字体缩放效果
+  - [text box trim](https://www.w3.org/TR/css-inline-3/#leading-trim)：消除文字容器中的多余的上下间距
+  - [@counter-style](https://developer.mozilla.org/zh-CN/docs/Web/CSS/@counter-style)：`@counter-style` 是一个 [CSS](https://developer.mozilla.org/zh-CN/docs/Web/CSS) [at-rule](https://developer.mozilla.org/zh-CN/docs/Web/CSS/At-rule) ，它让开发者可以自定义 counter 的样式。一个 `@counter-style` 规则定义了如何把一个计数器的值转化为字符串表示。
+
+
+
+下面是每个特性的兼容性：
+
+|                             特性                             |         Safari         | Chrome | Edge |                         Firefox                         |
+| :----------------------------------------------------------: | :--------------------: | :----: | :--: | :-----------------------------------------------------: |
+| [Masonry Layout](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Masonry_layout) | Technology Preview 163 |   -    |  -   | 需开启 `layout.css.grid-template-masonry-value.enabled` |
+| [Margin Trim](https://developer.mozilla.org/en-US/docs/Web/CSS/margin-trim) |          16.4          |   -    |  -   |                            -                            |
+| [P3 Color Gamut](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/color-gamut) |          10.0          |   58   |  79  |                           110                           |
+| [lch](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/lch)、[oklch](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/oklch)、[lab](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/lab)、[oklab](https://developer.mozilla.org/zh-CN/docs/Web/CSS/color_value/oklab) |          15.4          |  111   | 111  |                           113                           |
+| [color()](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color) |          10.1          |  111   | 111  |                           113                           |
+| [Relative Color syntax](https://www.w3.org/TR/css-color-5/#relative-colors) |          16.4          |   -    |  -   |                            -                            |
+| [Color-interpolation](https://developer.mozilla.org/en-US/docs/Web/CSS/color-interpolation-method) |          16.2          |  111   | 111  |                            -                            |
+| [Color mix](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color-mix) |          16.2          |  111   | 111  |                           113                           |
+| [:user-valid](https://developer.mozilla.org/en-US/docs/Web/CSS/:user-valid) & [:user-invalid](https://developer.mozilla.org/en-US/docs/Web/CSS/:user-invalid) |          16.5          |   -    |  -   |                           88                            |
+|                     增强的 `:has()` 伪类                     |          16.4          |   -    |  -   |                            -                            |
+| [:dir()](https://developer.mozilla.org/zh-CN/docs/Web/CSS/:dir) |          16.4          |   -    |  -   |                           49                            |
+|                         新的长度单位                         |          16.4          |  109   | 109  |                            -                            |
+| [font-size-adjust](https://developer.mozilla.org/zh-CN/docs/Web/CSS/font-size-adjust) |          16.4          |   -    |  -   |                            3                            |
+| [size-adjust](https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/size-adjust) |          17.0          |   92   |  92  |                           92                            |
+| [text box trim](https://www.w3.org/TR/css-inline-3/#leading-trim) | Technology Preview 163 |   -    |  -   |                            -                            |
+| [@counter-style](https://developer.mozilla.org/zh-CN/docs/Web/CSS/@counter-style) |          17.0          |   91   |  91  |                           33                            |
+
+
 
 - 如果开发者发现了有关于 Webkit 的 bug，或者希望支持其它新的特性，可以到 [webkit bug 反馈](bugs.webkit.org) 中提交。
 
