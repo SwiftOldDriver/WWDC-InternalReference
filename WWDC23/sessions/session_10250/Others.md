@@ -18,4 +18,4 @@ session_ids: [10250]
 
 ## 公众号/小专栏图文头图
 
-![Banner](./images/Banner.png)
+![Banner](./images/banner.png)

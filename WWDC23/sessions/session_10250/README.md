@@ -37,15 +37,15 @@ session_ids: [10250]
 
 在已有的工程中，不应该对之前的工程有所改动影响，所以这里依旧使用 iOS 模版，在过滤器栏中键入 `Playground` ，然后选择一个 `Blank Playground`
 
-![create_playground](./Images/create_playground00.png)
+![create_playground](./images/create_playground00.png)
 
 在这种情况下，因为是为了快速验证新代码的效果，创建的 "Playground"在验证后可能会被删除，所以我可以保留默认的 `MyPlayground` 名称即可。如下是创建好的工程：
 
-![create_playground](./Images/create_playground01.png)
+![create_playground](./images/create_playground01.png)
 
 删除默认的 `var greeting = "Hello, playground"`代码后，长按底部栏上的运行按钮时显示的菜单中切换到 `Automatically Run` 以便更快地迭代验证。
 
-![create_playground](./Images/create_playground02.png)
+![create_playground](./images/create_playground02.png)
 
 这会导致 `Playground` 在停止进行更改时自动执行整个代码。请注意，添加到工程的游乐场默认启用两个设置：构建活动方案和导入应用程序类型。他们将确保在每次操场执行之前构建活动方案，并自动导入应用程序目标模块。这使得使用项目中定义的类型变得更加容易。
 
@@ -61,7 +61,7 @@ let owlsToFind = birdsToFind.filter { $0.family == .owls }
 
 在 `MyPlayground` 中添加如上代码后，右侧将自动展示 `birdProvider、birdsToFind、owlsToFind` 在没有添加任何辅助代码前效果。这里也展示一下分别使用 `Xcode14、Xcode15beta` 的对比：
 
-![use_playground00](./Images/use_playground00.png)
+![use_playground00](./images/use_playground00.png)
 
 很明显使用 `Xcode15beta` 版本可视化的信息更多，包含 `birdProvider` 的类名、属性名+值及其类型，当然也可以一一展开获取更多信息，譬如将鼠标停留在 类名上，将扩展显示完整的信息。
 
@@ -96,13 +96,13 @@ extension Bird: CustomStringConvertible {
 
 因为会显示我们自定义的 `description` ，这样更加方便我们在 `Playground` 识别每一个元素。
 
-![use_playground00](./Images/use_playground01.png)
+![use_playground00](./images/use_playground01.png)
 
 ##### 1.3.2、自定义对象的可视化描述
 
 每一个 `Bird` 对象中，包含了鸟类的图片，默认情况下，当我单击其行时，我的自定义 `Bird` 类型没有这样的预览。需要点击到 `Bird` 中的 `photo` 才能查看，像这样：
 
-![use_playground00](./Images/use_playground02.png)
+![use_playground00](./images/use_playground02.png)
 
 虽然可以通过这个方式查看到想要的图片信息，但是显得过于麻烦，幸运的是 `CustomPlaygroundDisplayConvertible` 协议可以帮我们解决。正如协议的名称所暗示的那样，这种一致性只影响操场表示，并且可以在点击到 `bird` 即可展示你想要的信息（而非继续从 `bird ` 中点击 `photo`）
 
@@ -116,7 +116,7 @@ extension Bird: CustomPlaygroundDisplayConvertible {
 
 再次回到 `MyPlayground` ，稍等一会将自动刷新后，单击其行后，照片将显示在新的基于拆分视图的用户界面中，这使我可以看到对象的结构以及预览。
 
-![use_playground00](./Images/use_playground03.png)
+![use_playground00](./images/use_playground03.png)
 
 ##### 1.3.4、视图的扩展
 
@@ -131,11 +131,11 @@ for bird in owlsToFind {
 
 `ChecklistView` 作为 `UIView` 子类，`Xcode15beta` 现在还显示一些属性以及快照信息：
 
-![use_playground00](./Images/use_playground04.png)
+![use_playground00](./images/use_playground04.png)
 
 点击 `Value History` 可以查看数值历史记录模式：
 
-![use_playground00](./Images/use_playground05.png)
+![use_playground00](./images/use_playground05.png)
 
 ##### 3.5、MapKit 和 CoreLocation 的扩展
 
@@ -161,11 +161,11 @@ if let bird = owlsToFind.first {
 
 显示 `CLLocationCoordinate2D` 的预览：
 
-![use_playground00](./Images/use_playground06.png)
+![use_playground00](./images/use_playground06.png)
 
 使用 `PlaygroundPage.current.liveView` 设置视图，然后点击右上角的 `Adjust Editor opertions` 勾选 `Live View` 就可以实时看到视图的布局了。
 
-![use_playground00](./Images/use_playground07.png)
+![use_playground00](./images/use_playground07.png)
 
 以上便是本 `session` 的实战内容了。
 
