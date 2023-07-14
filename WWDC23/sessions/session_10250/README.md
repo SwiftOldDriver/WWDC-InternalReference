@@ -2,7 +2,7 @@
 session_ids: [10250]
 ---
 
-# Session 10250 - 使用Xcode Playgrounds原型设计
+# Session 10250 - 使用 Xcode Playgrounds 原型设计
 
 本文基于 [Session 10250](https://developer.apple.com/videos/play/wwdc2023/10250) 梳理。
 
@@ -10,9 +10,9 @@ session_ids: [10250]
 
 跟随本文指引一起来学习一下吧。
 
-### 一、实战篇
+## 一、实战篇
 
-#### 1.1、下载源码
+### 1.1、下载源码
 
 因为该 session 的源码官网并没有找到，所以本文根据视频内容简单的创建了 [HDPlaygroundsDemo](https://github.com/erduoniba/HDPlaygroundsDemo) 工程来分享该 session 对应的关键知识点。
 
@@ -33,7 +33,7 @@ session_ids: [10250]
 
 使用 `Xcode15beta` 打开 `HDPlaygroundsDemoStart.xcodeproj` 即可进行下一步。
 
-#### 1.2、创建 Playground 
+### 1.2、创建 Playground 
 
 在已有的工程中，不应该对之前的工程有所改动影响，所以这里依旧使用 iOS 模版，在过滤器栏中键入 `Playground` ，然后选择一个 `Blank Playground`
 
@@ -49,7 +49,7 @@ session_ids: [10250]
 
 这会导致 `Playground` 在停止进行更改时自动执行整个代码。请注意，添加到工程的游乐场默认启用两个设置：构建活动方案和导入应用程序类型。他们将确保在每次操场执行之前构建活动方案，并自动导入应用程序目标模块。这使得使用项目中定义的类型变得更加容易。
 
-#### 1.3、使用 Playground 实时验证
+### 1.3、使用 Playground 实时验证
 
 ```swift
 let birdProvider = BirdProvider(region: .northAmerica)
@@ -57,7 +57,7 @@ let birdsToFind = birdProvider.birds.filter { $0.photo == nil }
 let owlsToFind = birdsToFind.filter { $0.family == .owls }
 ```
 
-##### 1.3.1、更详细的信息展示
+#### 1.3.1、更详细的信息展示
 
 在 `MyPlayground` 中添加如上代码后，右侧将自动展示 `birdProvider、birdsToFind、owlsToFind` 在没有添加任何辅助代码前效果。这里也展示一下分别使用 `Xcode14、Xcode15beta` 的对比：
 
@@ -65,7 +65,7 @@ let owlsToFind = birdsToFind.filter { $0.family == .owls }
 
 很明显使用 `Xcode15beta` 版本可视化的信息更多，包含 `birdProvider` 的类名、属性名+值及其类型，当然也可以一一展开获取更多信息，譬如将鼠标停留在 类名上，将扩展显示完整的信息。
 
-##### 1.3.2、自定义对象的字符描述
+#### 1.3.2、自定义对象的字符描述
 
 现在，我们看到了 `region` 和 `birds` 属性的摘要。但默认情况下，展开 `birds` 后的每一行只告诉我们数组索引。这是因为自定义 `Bird` 类型未定义描述。我们可以通过使 `Bird` 类型符合 `CustomStringConvertible` 协议来改进这一点。
 
@@ -98,7 +98,7 @@ extension Bird: CustomStringConvertible {
 
 ![use_playground00](./images/use_playground01.png)
 
-##### 1.3.2、自定义对象的可视化描述
+#### 1.3.2、自定义对象的可视化描述
 
 每一个 `Bird` 对象中，包含了鸟类的图片，默认情况下，当我单击其行时，我的自定义 `Bird` 类型没有这样的预览。需要点击到 `Bird` 中的 `photo` 才能查看，像这样：
 
@@ -118,7 +118,7 @@ extension Bird: CustomPlaygroundDisplayConvertible {
 
 ![use_playground00](./images/use_playground03.png)
 
-##### 1.3.4、视图的扩展
+#### 1.3.4、视图的扩展
 
 在 `MyPlayground` 继续添加视图：
 
@@ -137,7 +137,7 @@ for bird in owlsToFind {
 
 ![use_playground00](./images/use_playground05.png)
 
-##### 3.5、MapKit 和 CoreLocation 的扩展
+#### 3.5、MapKit 和 CoreLocation 的扩展
 
 对于地图视图等复杂的用户界面元素，我们可以使用 `Playground` 实时视图来查看大型的完全交互式预览。要使用它，我首先需要导入 `PlaygroundSupport` 框架。
 
@@ -173,23 +173,23 @@ if let bird = owlsToFind.first {
 
 
 
-### 二、总结篇
+## 二、总结篇
 
 在本 `session` 中，我们使用 `Xcode Playgrounds`  快速制作项目的新功能原型。
 
-#### 2.1、Customize Playground Representation
+### 2.1、Customize Playground Representation
 
 我们使用 `CustomStringConvertible` 和 `CustomPlaygroundDisplayConvertible` 协议来自定义自定义类型的表示形式。更快更详细的展示我们期望的数据。
 
-#### 2.2、Take Advantage of execution modes
+### 2.2、Take Advantage of execution modes
 
 我们了解了调整 `Palyground` 执行模式如何加快您的工作流程。
 
-#### 2.3、Use Value History mode
+### 2.3、Use Value History mode
 
 使用值历史记录模式使我们能够快速查看类对多个输入的反应。
 
-#### 3.4、Work with Live Views
+### 3.4、Work with Live Views
 
 最后，我们使用  `Palyground`  的实时视图仔细观察了复杂的用户界面元素。
 
