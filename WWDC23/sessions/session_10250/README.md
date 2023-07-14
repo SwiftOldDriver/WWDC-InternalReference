@@ -33,7 +33,7 @@ session_ids: [10250]
 
 使用 `Xcode15beta` 打开 `HDPlaygroundsDemoStart.xcodeproj` 即可进行下一步。
 
-### 1.2、创建 Playground 
+### 1.2、创建 Playground
 
 在已有的工程中，不应该对之前的工程有所改动影响，所以这里依旧使用 iOS 模版，在过滤器栏中键入 `Playground` ，然后选择一个 `Blank Playground`
 
@@ -104,7 +104,7 @@ extension Bird: CustomStringConvertible {
 
 ![use_playground00](./images/use_playground02.png)
 
-虽然可以通过这个方式查看到想要的图片信息，但是显得过于麻烦，幸运的是 `CustomPlaygroundDisplayConvertible` 协议可以帮我们解决。正如协议的名称所暗示的那样，这种一致性只影响操场表示，并且可以在点击到 `bird` 即可展示你想要的信息（而非继续从 `bird ` 中点击 `photo`）
+虽然可以通过这个方式查看到想要的图片信息，但是显得过于麻烦，幸运的是 `CustomPlaygroundDisplayConvertible` 协议可以帮我们解决。正如协议的名称所暗示的那样，这种一致性只影响操场表示，并且可以在点击到 `bird` 即可展示你想要的信息（而非继续从 `bird` 中点击 `photo`）
 
 ```swift
 extension Bird: CustomPlaygroundDisplayConvertible {
