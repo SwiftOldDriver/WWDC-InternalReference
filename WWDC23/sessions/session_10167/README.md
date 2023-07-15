@@ -70,48 +70,54 @@ struct Person {
 
 了解了什么是 Swift 宏，让我们一起看看苹果在设计宏这个新特性时所遵循的 4 个原则：
 
-1. 区分使用场景
+### 1. 按照不同使用场景区分宏的类型
 
-    为区分不同的使用场景，苹果将宏分成两个大类：独立宏（freestanding macro） 和关联宏（attached macro）：
+按照不同使用场景区分宏的类型，苹果将宏分成两个大类：独立宏（freestanding macro） 和关联宏（attached macro）。
 
-    **独立宏**可以在代码中独立存在，用于替换一个表达式或者是类型声明，使用这类宏时需以「#」号开头，例如：
+#### 独立宏（freestanding macro）
 
-    ```swift
-    return #unwrap(icon, message:"should be in the app bundle")
-    ```
+在代码中，一个独立宏就是一支“军队”，它既能用于替换一个表达式，又可以独立声明一个类型，使用时需以「#」号开头。以下面这段代码为例，`#unwrap` 声明了一个用于解包可选入参 icon 并返回解包后结果的表达式：
 
-    **关联宏**就如它的名字描述的那样，必须和另一个类型或者是声明关联，使用这类宏时需以「@」号开头，例如：
+```swift
+return #unwrap(icon, message:"should be in the app bundle")
+```
 
-    ```swift
-    @AddCompletionHandler
-    func sendRequest() async throws -> Response
-    ```
+这里的所说的独立（freestanding），是指这类宏不需要和一个已有类型关联便可直接使用，和关联（attached）相对。
 
-2. 类型完备，有合法性校验
+#### 关联宏（attached macro）
 
-    宏的实现依赖于 SwiftSyntax（用于解析和结构化 Swift 源码的工具），而它能够很好约束宏，在出现使用错误时，给出精准的编译警告/报错。
+这类宏必须和另一个已存在的类型或者是声明相关联，不可单独使用，使用这类宏时需以「@」号开头。例如如下代码，`@AddCompletionHandler` 与方法 `sendRequest` 关联，为其新增一个包含了成功回调的新方法声明：
 
-    ![](./images/validate.png)
+```swift
+@AddCompletionHandler
+func sendRequest() async throws -> Response
+```
 
-3. 可预期的添加结果
+### 2. 类型完备，有合法性校验
 
-    宏不能修改或者删除已有代码，在下面的例子中，即便不清楚 `#someUnknownMacro()` 做了什么事情，我们也能确定，它无法删除 `finishDoingThingy()` 调用，或者将它移动到另一个方法中。
+宏的实现依赖于 SwiftSyntax（用于解析和结构化 Swift 源码的工具），而它能够很好约束宏，在出现使用错误时，给出精准的编译警告/报错。
 
-    ```swift
-    func doThingy() {
-        startDoingThingy()
+![](./images/validate.png)
 
-        #someUnknownMacro()
+### 3. 可预期的添加结果
 
-        finishDoingThingy()
-    }
-    ```
+宏不能修改或者删除已有代码，在下面的例子中，即便不清楚 `#someUnknownMacro()` 做了什么事情，我们也能确定，它无法删除 `finishDoingThingy()` 调用，或者将它移动到另一个方法中。
 
-4. 宏不是魔法
+```swift
+func doThingy() {
+    startDoingThingy()
 
-    宏仅仅是为你的工程添加了更多代码，而 Xcode 提供的宏展开能力让它不再是一个黑盒，通过右键点击即可展开宏的声明，也可以添加断点进行调试，
+    #someUnknownMacro()
 
-    ![](./images/not_magic.png)
+    finishDoingThingy()
+}
+```
+
+### 4. 宏不是魔法
+
+宏仅仅是为你的工程添加了更多代码，而 Xcode 提供的宏展开能力让它不再是一个黑盒，通过右键点击即可展开宏的声明，也可以添加断点进行调试，
+
+![](./images/not_magic.png)
 
 ## 宏的角色（role）
 
