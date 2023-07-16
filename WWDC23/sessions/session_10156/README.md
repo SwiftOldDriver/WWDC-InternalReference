@@ -4,9 +4,19 @@ session_ids: [10156, 10157]
 
 # WWDC23 10156 & 10157 - SwiftUI 动画篇
 
-本文基于 Session [10156][10156]、[10157][10157] 梳理。
+> 摘要：本文先以 SwiftUI 动画的基础知识为起点，逐步剖析了支撑 SwiftUI 动画效果的三大核心组成部分：Animation、Animatable 和 Transaction。同时，结合 SwiftUI 的视图渲染机制，旨在帮助读者更深刻地理解和有效地应用 SwiftUI 的动画功能。在文章的尾声，我们会介绍 SwiftUI 最新加入的两个高级动画功能。一起开启探索之旅吧！
 
-动画是现代应用设计中至关重要的组成部分，通过恰当地运用动画，可以使用户界面更加清晰并富有活力。初学者通常会对 SwiftUI 动画功能的强大之处感到惊叹，但深入使用后却会发现并不容易掌握。开发者常常因为动画效果与预期效果不符而感到困惑和挫败，这往往是由于对 SwiftUI 动画机制的不熟悉所致。本文将结合 [WWDC23 10156][10156]、[WWDC23 10157][10157] 的内容以及作者的实验，概述 SwiftUI 强大的动画功能，并介绍它们如何协同工作，以创造令人印象深刻的视觉效果。
+本文基于 Session [10156][https://developer.apple.com/videos/play/wwdc2023/10156]、[10157][https://developer.apple.com/videos/play/wwdc2023/10157] 梳理。
+
+> 作者：
+>
+> zddhub(张东东)，移动开发，MacOS App：[**PixelsMeasure**](https://apps.apple.com/cn/app/pixelsmeasure/id1638740542) 开发者。
+>
+> 审核：
+>
+> Jake Lin，在 REA Group 担任 Senior Mobile Tech Lead，负责公司的移动研发和团队建设。喜欢研究 iOS 和 Android 两平台的架构，爱折腾声明式 UI 和响应式编程范式。并编写了 [iOS 开发进阶](https://t2.lagounews.com/lR59RGRBct5E3) 课程。
+
+动画是现代应用设计中至关重要的组成部分，通过恰当地运用动画，可以使用户界面更加清晰并富有活力。初学者通常会对 SwiftUI 动画功能的强大之处感到惊叹，但深入使用后却会发现并不容易掌握。开发者常常因为动画效果与预期效果不符而感到困惑和挫败，这往往是由于对 SwiftUI 动画机制的不熟悉所致。本文将结合 WWDC23 10156、WWDC23 10157 的内容以及作者的实验，概述 SwiftUI 强大的动画功能，并介绍它们如何协同工作，以创造令人印象深刻的视觉效果。
 
 全文分为六个部分：
 
