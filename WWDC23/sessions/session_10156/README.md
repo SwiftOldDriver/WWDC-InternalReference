@@ -207,7 +207,7 @@ withAnimation(.linear(duration: 1).delay(2.0)) {
 
 View().animation(.linear(duration: 1).delay(2.0), value: property) // Way two
 
-Binding<Value>.animation(.linear(duration: 1).delay(2.0), value: property) // Way three
+Binding<Value>.animation(.linear(duration: 1).delay(2.0)) // Way three
 ```
 
 您可能已经发现，除了写法不同，所有的参数都是一模一样的。这样会不会好理解一些了呢？
@@ -694,7 +694,7 @@ struct BindingAvatar: View {
 ```swift
 struct BindingAvatar: View {
   var pet: Pet
-  @Binding var selected: Bool // new
+  @Binding var selected: Bool
 
   var body: some View {
     Image(pet.type)
