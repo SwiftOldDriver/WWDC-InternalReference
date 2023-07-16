@@ -4,6 +4,20 @@ session_ids: [10164]
 
 # Session 10164 - What's new in Swift
 
+> 摘要：这个 Session 涉及了 Swift 的新语法特性和 Swift Macro 的话题，这些功能对于编写更加灵活和健壮的 API 以及高质量代码起到了很大的帮助。此外，也深入探讨了在受限环境下使用 Swift 的优势，并讨论了 Swift 在适配多种平台设备和语言方面的灵活性。
+
+本文基于[Session 10164](https://developer.apple.com/videos/play/wwdc2023/10164/)梳理。
+
+> 作者：
+>
+> 冬瓜：冬瓜：iOS 开发，[个人博客](https://www.desgard.com/) 。
+>
+> 审核：
+>
+> stevapple：学生，Swift/Vapor 社区贡献者
+>
+> kemchenj：老司机技术核心成员 / 开源爱好者 / 最近在做 3D 重建相关的开发工作
+
 [TOC]
 
 今年是 Swift 的一次重大更新，这个 Session 将和大家一起聊聊 Swift 语言今年的一些改进、简洁的语法糖以及一些强大的新 API 的使用。一年前，Swift 项目的核心团队宣布了成立 Language Steering Group ，主要负责监督 Swift 语言和标准库的修改。从这之后，Language Steering Group 已经审核了 40 多个新的提案，这些会覆盖到我们今天所要讨论的几个。

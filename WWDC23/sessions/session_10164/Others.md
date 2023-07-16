@@ -4,11 +4,13 @@ session_ids: [10164]
 
 ## 个人介绍
 
->> 冬瓜：iOS 开发，个人博客 https://www.desgard.com/。
+>> 冬瓜：iOS 开发，[个人博客](https://www.desgard.com/) 。
 
 ## 审核介绍
 
->> Sample：
+>> stevapple：学生，Swift/Vapor 社区贡献者
+>>
+>> kemchenj：老司机技术核心成员 / 开源爱好者 / 最近在做 3D 重建相关的开发工作
 
 ## 不超过 120 个字的文章简介
 
