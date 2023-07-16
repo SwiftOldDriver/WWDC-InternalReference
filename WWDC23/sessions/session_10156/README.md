@@ -33,7 +33,7 @@ session_ids: [10156, 10157]
 
 我最早接触的动画，便是小时候玩耍的手翻书。我们常在书页的边角处绘制连续的动作图案，当快速翻动书页时，借助视觉暂留现象，图像仿佛动了起来，这给我的童年增添了无尽的乐趣。
 
-![book-animation](./images/book-animation.gif)
+![](./images/book-animation.gif)
 
 ### 什么是 SwiftUI 动画
 
@@ -77,7 +77,7 @@ struct TimerAnimation: View {
 
 这样我们就得到了一个非常简单的动画效果：
 
-![manual-manimation](./images/manual-animation.gif)
+![](./images/manual-animation.gif)
 
 需要注意的是，我们在这里使用异步方法来终止定时器，但这并不能严格保证在一秒内能精准刷新 30 帧，因此我们采用了 `times` 来限制刷新次数。另外，每次刷新时，小球的位置向右移动 5 个单位，形成一个线性匀速的动画效果。
 
@@ -184,7 +184,7 @@ struct SubCircleView: View {
 
 效果如下图所示，图中黄色小球使用定时器版本的动画，蓝色小球使用 SwiftUI 提供的三种动画的方式实现。
 
-![animation-ways](./images/animation-ways.gif)
+![](./images/animation-ways.gif)
 
 通过示例可以发现，SwiftUI 提供的三种动画方式都可以实现相同的效果，但是它们的使用方式不同。
 
@@ -333,7 +333,7 @@ struct MyCustomLinearAnimation: View {
 
 效果如下图所示，绿色为 `CustomAnimation` 实现的动画：
 
-![custom-animation](./images/custom-animation.gif)
+![](./images/custom-animation.gif)
 
 另外，官方文档上也实现了一个自定义的 `ElasticEaseInEaseOutAnimation`, 大家可以自行研习一番。
 
@@ -502,7 +502,7 @@ struct Podium: View {
 
 默认情况下，SwiftUI 将插值数据传递给 Avatar 的位置。如下图 (Before) 所示，Avatar 沿直线运动到新的位置。如果想要让 Avatar 沿圆周运动，如下图 (After) 所示，则需要将插值信息传递给 `offset` 参数。
 
-![animation-data](./images/animation-data.gif)
+![](./images/animation-data.gif)
 
 代码非常简单：
 
@@ -538,7 +538,7 @@ struct Avatar: View {
 
 `Avatar` 视图的 `body` 由一个点击手势 `onTapGesture`、一个缩放效果 `scaleEffect` 和一个图像 `Image` 组成。在幕后，SwiftUI 维护着一个持久存在的属性图，用来管理视图及其数据的生命周期。属性图中的每个节点对应 UI 的一个细粒度部分，称为属性。当状态发生改变时，每个下游属性的值都会变为过时。然后，它们会逐层展开，获取新的属性值，并进行刷新操作。
 
-![attribute-graph](./images/attribute-graph.png)
+![](./images/attribute-graph.png)
 
 当点击事件发生时， SwiftUI 会执行以下操作：
 
@@ -553,17 +553,17 @@ struct Avatar: View {
 
 下图展示了属性图的生命周期：开启一个更新事务，状态更新，调用 `body`，刷新属性图，事务结束。通过这种方式，图表中每个属性的当前值随时间演变。
 
-![time-avatar](./images/time-avatar.gif)
+![](./images/time-avatar.gif)
 
 ### 带动画的视图渲染
 
 现在，让我们使用 `withAnimation` 来添加动画效果。当点击事件发生时，动画会被设置到事务中，然后 SwiftUI 重新渲染视图。不同之处在于，`scaleEffect` 是一个可动画属性，它是一种特殊属性，可以接收插值数据。当可动画属性的值发生变化时，它会检查事务中是否设置了动画。如果设置了动画，它会创建一个拷贝，并不断获取插值数据。
 
-![time-avatar-animation png](./images/time-avatar-animation.png)
+![](./images/time-avatar-animation.png)
 
 需要注意的是，可动画属性在概念上具有**模型值和展示值**。起初它们是相同的。然后事件发生，事务开启，这次有动画。状态改变，调用 body 刷新过时的模型值。因为模型值发生了变化，SwiftUI 会在本地创建动画的拷贝来计算当前的展示值。视图根据展示值的变化而不断刷新产生了动画。
 
-![time-avatar-animation](./images/time-avatar-animation.gif)
+![](./images/time-avatar-animation.gif)
 
 SwiftUI 能够判断属性图中是否存在正在运行的动画，并相应地调用可动画属性来生成下一帧。对于内置的可动画属性，如 `scaleEffect`，SwiftUI 在处理上非常高效。它能够在主线程之外完成动画的计算工作，而无需调用您的视图代码。
 
@@ -573,15 +573,15 @@ SwiftUI 能够判断属性图中是否存在正在运行的动画，并相应地
 
 `Podium` 视图由一个环形布局的 `RadialLayout` 组件和三个头像组件 Avatar 构成。当 `offset` 改变时，会通过 `RadialLayout` 布局来刷新 Avatar 的位置。
 
-![radial-attribute-graph](./images/radial-attribute-graph.png)
+![](./images/radial-attribute-graph.png)
 
 在默认情况下，`position` 属性在 SwiftUI 中接收动画插值数据。位置信息以 `CGPoint(x:y:)` 的形式存储，并在笛卡尔坐标空间中进行插值计算。插值数据符合线性函数，这意味着每个头像都会沿直线移动，就像下图左侧图所示。然而，在自定义版本中，当我让 `Podium` 视图符合 `Animatable` 协议时，`body` 变成了可动画属性，并且偏移角度成为了它的可动画数据。这意味着我们可以通过改变偏移角度来实现自定义的动画效果，如下图右侧图所示。
 
-![offset-animation-graph](./images/offset-animation-graph.png)
+![](./images/offset-animation-graph.png)
 
 头像如何沿圆周移动呢？在自定义版本中，对于动画的每一帧，SwiftUI 会通过插值来更新偏移角度，然后利用这个偏移角度重新计算 Avatar 的位置。由于偏移角度是沿着圆周移动的，并且每次移动的角度非常小，因此计算出来的 Avatar 位置也将按照圆周路径移动。
 
-![circle-avatar-animation](./images/circle-avatar-animation.gif)
+![](./images/circle-avatar-animation.gif)
 
 这是非常强大的，有时我们必须使用这种方式来实现所期望的动画效果。
 
@@ -675,7 +675,7 @@ struct BindingAvatarView: View {
 
 甚至 `BindingAvatar` 的使用者可能都不知道 `position` 属性被添加了移动效果，这可能并不是他们最初期望的。
 
-![implicit-animation](./images/implicit-animation.gif)
+![](./images/implicit-animation.gif)
 
 为了解决这个问题，SwiftUI 提供了一组新的作用域 API，可以用来显式地控制动画的范围和传播。以下是一些示例：
 
@@ -838,7 +838,7 @@ struct PhaseTrafficLightView: View {
 
 通过利用 `.phaseAnimator`，SwiftUI 能够在红、黄、绿这三种状态间自动切换，而在状态变化过程中，颜色的变化构成了动画。我们在这里采用 `easeInOut` 来进行插值，它可以根据动画的不同阶段设定各自的过渡函数。
 
-![single-traffic-light](./images/single-traffic-light.gif)
+![](./images/single-traffic-light.gif)
 
 在状态变化时，可以设置多个属性值的改变，比如添加偏移来模拟三个灯的红绿灯效果。如下代码所示：
 
@@ -867,13 +867,13 @@ struct PhaseThreeTrafficLightView: View {
 
 每当状态发生变化，就会触发预设的偏移变化。在这里，我们使用自定义的动画过渡函数，目的是取消灯的平滑移动效果。
 
-![three-traffic-lights](./images/three-traffic-lights.gif)
+![](./images/three-traffic-lights.gif)
 
 还有一点不同的是，这里使用了带 `trigger` 参数的 `.phaseAnimator` 修饰符。SwiftUI 会监听 `trigger` 的值，只有当它的值改变时，才会生成动画。不带 `trigger` 参数的 `.phaseAnimator` 修饰符，会在视图出现时，循环播放动画。
 
 #### 动画效果可分阶段
 
-![reaction-example](./images/reaction-example.gif)
+![](./images/reaction-example.gif)
 
 上图是某 App 交互状态的动画效果。当用户点击喜欢按钮时，心形图案由起初的静止状态，然后向上移动，接着放大，随后又回到初始位置，然后不断循环。这样一个复杂的动画，我们也可以人为的将其拆解成多个阶段：初始阶段、移动阶段和缩放阶段。定义成枚举型如下所示：
 
@@ -923,7 +923,7 @@ struct ReactionView: View {
 
 当状态改变时，我们使用了不同的动画过渡函数，来实现不同的动画效果。值得注意的是，状态发生变化的时候，属性 `.scaleEffect` 和 `.offset` 将使用相同的动画过渡函数。
 
-![phase-animation](./images/phase-animation.png)
+![](./images/phase-animation.png)
 
 阶段动画定义了多个离散状态。SwiftUI 使用您已经了解的相同动画类型在这些状态之间进行动画处理，这对于可以建模为离散状态的动画非常有效。当发生状态转换时，所有属性将使用相同的动画过渡函数插值到下一个状态的值。然后，在动画完成后，SwiftUI 会自动处理到下一个状态。
 
@@ -933,7 +933,7 @@ struct ReactionView: View {
 
 关键帧允许您在动画中的任意时间点指定值。如下图所示：
 
-![keyframes-animation](./images/keyframes-animation.png)
+![](./images/keyframes-animation.png)
 
 图中的点表示关键帧，可以看到，每个属性的关键帧个数和时间都没有关系，是相互独立的。当动画回放时，SwiftUI 在这些关键帧之间插值计算值，然后我们可以把这些值通过修饰符应用到视图上。
 
@@ -985,7 +985,7 @@ struct KeyframeAnimationView: View {
 
 前三种关键帧，如其名称所示，使用不同的动画过渡函数进行插值，而最后一种 `MoveKeyframe` 则立即跳转到指定值，无需插值。每一种关键帧都支持自定义，为您提供了完全的控制权，并允许您在动画中混合和匹配不同类型的关键帧。SwiftUI 会自动处理关键帧之间的过渡，以确保动画的流畅性。正如代码所示，我们使用不同类型的关键帧来为 `verticalOffset` 创建动画路径。
 
-![keyframes-animation-example](./images/keyframes-animation-example.gif)
+![](./images/keyframes-animation-example.gif)
 
 本文为了展示对关键帧的使用，而使用了四种不同的类型的关键帧。实际使用时，不一定非得使用到所有类型的关键帧。
 
