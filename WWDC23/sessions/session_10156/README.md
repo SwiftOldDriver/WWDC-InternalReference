@@ -6,7 +6,7 @@ session_ids: [10156, 10157]
 
 > 摘要：本文先以 SwiftUI 动画的基础知识为起点，逐步剖析了支撑 SwiftUI 动画效果的三大核心组成部分：Animation、Animatable 和 Transaction。同时，结合 SwiftUI 的视图渲染机制，旨在帮助读者更深刻地理解和有效地应用 SwiftUI 的动画功能。在文章的尾声，我们会介绍 SwiftUI 最新加入的两个高级动画功能。一起开启探索之旅吧！
 
-本文基于 Session [10156][https://developer.apple.com/videos/play/wwdc2023/10156]、[10157][https://developer.apple.com/videos/play/wwdc2023/10157] 梳理。
+本文基于 Session [10156](https://developer.apple.com/videos/play/wwdc2023/10156)、[10157](https://developer.apple.com/videos/play/wwdc2023/10157) 梳理。
 
 > 作者：
 >
