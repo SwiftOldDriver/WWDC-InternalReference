@@ -2,7 +2,7 @@
 session_ids: [10141]
 ---
 
-# WWDC23 - App Store server APIs 新特性
+# WWDC23 - App Store server API 新特性
 
 ```
 摘要：本文对 WWDC23 在 App Store Server API 提供的新特性进行梳理总结，并提供迁移到新的 App Store Server API 的升级指引，无论你是目前在使用 App Store Receipts 的 verifyReceipt 还是已经升级到 App Store Server API，相信本文都能给到你一些帮助。
