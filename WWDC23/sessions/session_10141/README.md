@@ -71,6 +71,7 @@ SeaHub：目前任职于腾讯 TEG 计费平台部，负责搭建服务于腾讯
 但是，在大部分情况下我们其实只需要获取某个 transactionId 对应的 Transaction 信息。在本次更新之前，我们需要先拿到 originalTransactionId，接着调用 `GET Transaction History` 接口后筛选出我们需要的 Transaction 信息，如果在历史订阅记录较多的情况下，我们甚至需要多次调用该接口进行翻页查询、筛选，即使苹果在 WWDC22 推出了 “条件过滤器” 特性，但是用起来依然没有特别顺手。还有重要一点是该接口无法查询已经在客户端上 `finish` 掉的 `消耗型商品` 的交易。  
 
 本次更新提供了一个新的接口用于解决上述问题
+
 * **[Get Transaction Info](https://developer.apple.com/documentation/appstoreserverapi/get_transaction_info)**
 
 通过这个接口，我们可以获得任何 transactionId（包括 originalTransactionId） 的所有已签名的交易信息，并且支持所有应用内购买类型，包括消耗型、非消耗型、非续订订阅和自动续订订阅，以及在客户端上通过 StoreKit 接口 [finish](https://developer.apple.com/documentation/storekit/transaction/3749694-finish) 和 [finishTransaction(_:)](https://developer.apple.com/documentation/storekit/skpaymentqueue/1506003-finishtransaction) 标记为已完成的交易。
