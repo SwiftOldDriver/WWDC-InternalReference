@@ -8,7 +8,7 @@ session_ids: [10165]
 
 > 作者：Noah，现就职于米哈游，从事游戏 iOS SDK 的研发工作。
 >
-> 审核：TODO
+> 审核：皮拉夫大王，目前就职于抖音基础技术团队，负责iOS稳定性相关工作。
 
 > **注：本文使用 Xcode 15.0 beta 2(15A5161b) 版本，由于本文撰写时，Xcode 15 处于 beta 阶段，苹果会不断进行更新，后续如有更多功能上的新增或改进，我们将会更新本文内容。**
 
@@ -248,7 +248,7 @@ background(Color.bgColor) X
 ![need_download_ios](./images/need_download_ios_1.png)
 如果我们继续执行 next 创建工程（这里我们创建一个 swiftUI 的工程），我们将会看到如下界面：
 ![need_download_ios](./images/need_download_ios_2.png)
-可以看到 SwiftUI 的预览是不可用的，需要先下载安装**即使已经连接真机，也是无法 command + R 运行项目的**。
+可以看到 SwiftUI 的预览是不可用的，需要先下载安装（**即使已经连接真机，也是无法 command + R 运行项目的**）。
 
 ### string catalog
 
@@ -271,7 +271,7 @@ State 有如下四种类型：
 - ✅：Translated
 ![string_catalog](./images/string_catalog_5.png)
 
-`STALE` 这个状态比较有意思，表明你在 string catalog 中新增了这个字符串，但是在代码中没有找到，意味着这个字符串很有可能已经被废弃，可以用于辅助无用代码的检查。
+`STALE` 这个状态比较有意思，表明你在 string catalog 中新增了这个字符串，但是在代码中没有找到，意味着这个字符串很有可能已经被废弃。
 `NEEDS REVIEW` 当你改动了某个 string，那么这个 string 的状态就是这个了。
 其余的状态就是字面意思理解。
 
@@ -312,7 +312,7 @@ Swift Macros 允许我们创建自定义的宏包（macro package）以便共享
 
 ### OSLog
 
-今年 Xcode 15 在 Debug 方面的更新主要在 `OSLog`，`OSLog` 是目前苹果力推的日志记录解决档案，`OSLog` 能够统一日志记录，能够很好地捕获运行时的信息，功能十分强大。在 Xcod 15 中，苹果将 `OSLog` 集成至 Xcode，在终端中能够输出结构化的日志信息。下面我们先来看下官方的一个例子：
+今年 Xcode 15 在 Debug 方面的更新主要在 `OSLog`，`OSLog` 是目前苹果力推的日志记录解决方案，`OSLog` 能够统一日志记录，能够很好地捕获运行时的信息，功能十分强大。在 Xcod 15 中，苹果将 `OSLog` 集成至 Xcode，在终端中能够输出结构化的日志信息。下面我们先来看下官方的一个例子：
 
 ```Swift
 import OSLog
@@ -481,7 +481,7 @@ XCFramework 的签名方式有两种：
 
 - 新增一个 C++ 支持参考页面 <https://developer.apple.com/xcode/cpp/>
 - Clang 和构建系统支持一种新的构建模块依赖关系的模式：`explicit modules`，它可以提高构建的性能，提升可靠和正确性。新模式默认不打开，可以通过配置`_EXPERIMENTAL_CLANG_EXPLICIT_MODULES` 编译选项打开。
-- 新的链接器，加快静态链接的速度，使用 `Mergeable Libraries` 功能以及所有的 iOS 二进制都由心的链接器进行链接。如果想要使用原来的连接器，可以使用 `-ld64`。
+- 新的链接器，加快静态链接的速度，使用 `Mergeable Libraries` 功能以及所有的 iOS 二进制都由新的链接器进行链接。如果想要使用原来的连接器，可以使用 `-ld64`。
 
 ### Assets Catalogs
 
