@@ -4,6 +4,8 @@ session_ids: [10053]
 
 # WWDC23 10053 - What's new in privacy
 
+> 摘要：本文以概述的形式讲述了过去一年 Apple 在隐私方面的努力成果。主要涵盖三大方向：1.以隐私为中心设计的新的工具和 API ；2.各平台与隐私相关的更新；3.Vision Pro 平台的隐私保护设计范式。
+
 本文基于 [Session 10053](https://developer.apple.com/videos/play/wwdc2023/10053/) 梳理。
 
 > 作者：
