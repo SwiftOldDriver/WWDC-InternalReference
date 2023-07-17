@@ -4,19 +4,7 @@ session_ids: [10141]
 
 # WWDC23 - App Store server API 新特性
 
-```
-摘要：本文对 WWDC23 在 App Store Server API 提供的新特性进行梳理总结，并提供迁移到新的 App Store Server API 的升级指引，无论你是目前在使用 App Store Receipts 的 verifyReceipt 还是已经升级到 App Store Server API，相信本文都能给到你一些帮助。
-```
-
 本文基于 [Session 10141](https://developer.apple.com/videos/play/wwdc2023/10141/) 梳理
-
-```
-作者：
-yt: 就职于荔枝基础研发团队，参与移动端APM、交易、增长等基础组件，内部基础平台、效能工具建设等工作；
-
-审核：
-SeaHub：目前任职于腾讯 TEG 计费平台部，负责搭建服务于腾讯系业务的支付系统，主导国内 IAP 前后端相关内容，对 IAP 整体设计有一定的经验；
-```
 
 ## 前言
 
@@ -62,13 +50,12 @@ SeaHub：目前任职于腾讯 TEG 计费平台部，负责搭建服务于腾讯
 ## 灵活处理交易 - Transaction flexibility
 
 交易（Transaction）是代表 IAP 的核心数据结构，其代表用户在设备上的一次购买，其包含了有关购买的重要信息，例如商品 ID、类型、购买日期等。Transaction 其实就是通过 JWS 签名的 JSON 数据，作为一种安全的标准化格式在 App Store Server API 和 App Store Server Notifications V2 中使用。
-![Transactions](<./images/2023-07-13 21.57.31-1.png>)
 
 在本 WWDC 之前，我们主要通过 App Store Server API 的 `GET Transaction History` 接口获取 Transaction 数据，但这是个获取 originalTransactionId 对应所有的历史交易的接口，通过这个接口我们可以获取该用户的历史购买记录。  
 
-![GET Transactions history](<./images/2023-07-13 22.15.20-1.png>)
-
 但是，在大部分情况下我们其实只需要获取某个 transactionId 对应的 Transaction 信息。在本次更新之前，我们需要先拿到 originalTransactionId，接着调用 `GET Transaction History` 接口后筛选出我们需要的 Transaction 信息，如果在历史订阅记录较多的情况下，我们甚至需要多次调用该接口进行翻页查询、筛选，即使苹果在 WWDC22 推出了 “条件过滤器” 特性，但是用起来依然没有特别顺手。还有重要一点是该接口无法查询已经在客户端上 `finish` 掉的 `消耗型商品` 的交易。  
+
+![GET Transactions history](<./images/2023-07-13 22.15.20-1.png>)
 
 本次更新提供了一个新的接口用于解决上述问题
 
@@ -79,9 +66,37 @@ SeaHub：目前任职于腾讯 TEG 计费平台部，负责搭建服务于腾讯
 ![Get Transaction Info](<./images/2023-07-13 22.24.43-1.png>)
 
 看一下该接口的使用，通过 /inApps/v1/transactions/xxxxxx 发送 GET 请求即可获得已签名的 JWSTranactionInfo 数据
-![Get Transaction Info - request](<./images/2023-07-13 22.29.51-1.png>)
+
+```
+// Get Transaction Info
+ Request
+GET /inApps/v1/transactions/1000998836590
+// Response
+"signedTransactionInfo";"eyJhbGciOiJFUzI1NiIsIng1YyI6...
+```
+
 经过解密后可以查看该交易的所有信息
-![Get Transaction Info - response](<./images/2023-07-13 22.30.00-1.png>)
+```
+// Get Transaction Info response (decoded)
+
+{
+  "transactionId":"1000098836590",
+  "originalTransactionId":"1000098836599",
+  "type":"Consumable",
+  "environment":"Production",
+  "quantity": 1,
+  "bundleId":"com.naturelab.example.backyardbirds",
+  "productId":"birdseed.jumbopack",
+  "purchaseDate": 1683302400000,
+  "originalPurchaseDate": 1683302400000,
+  "inAppOwnershipType": "PURCHASED",
+  "signedDate": 1685980800000,
+  "appAccountToken":"37e0a95b-4455-42e6-bac2-e59259c8aac2",
+  "storefront":"USA",
+  "storefrontId":"143441",
+  "transactionReason":"PURCHASE"
+}
+```
 
 有了这个接口，我们验证交易的流程变得更加简单，下面我们从交易验证这个场景对比这个不同校验方式的不同
 
@@ -136,15 +151,23 @@ SeaHub：目前任职于腾讯 TEG 计费平台部，负责搭建服务于腾讯
 | 4      | Billing Grace Period |
 | 5      | revoked              |
 
-![Notification status field](<./images/2023-07-16 00.15.19-1.png>)
-
 现在我们可以在收到 Notifications V2 通知时就能确定该订阅的状态而不用再调一次 `GET All Subscribtion statues` 接口来确定，按图中例子，我们可以看到 status=1，因此关联的订阅处于 Active 状态。
 
 ![Subscription status](<./images/2023-07-16 12.13.00-1.png>)
 
 另外一个更新内容就是 [Get Notification History](https://developer.apple.com/documentation/appstoreserverapi/get_notification_history) 接口，该接口返回最近 6 个月内的后台通知，当我们的交易服务遇到一些问题导致中断时，我们会在服务恢复时通过 `Get Notification History` 接口获取服务中断期间未收到/处理的苹果发送的后台通知，即使苹果会有重试机制（第 1、12、24、48、72 小时重试），但我们肯定是需要尽快响应用户的订阅状态更新，维护用户的订阅权益。
 
-![Get Subscription history](<./images/2023-07-16 13.56.51-1.png>)
+```
+// Get Notification History request
+
+POST
+/inApps/v1/notifications/history
+
+{
+"startDate": 168330240000,
+"endDate": 1685980800000
+}
+```
 
 该接口的参数是需要指定获取某个时间段内的通知历史，但是我们并不是所有情况下都能明确知道服务中断的时间段，所以可能有大量的筛选工作，过滤掉那些我们已经接收过的通知。针对这个问题，苹果对这个接口引入了一个新的请求字段 "onlyFailures"。
 
@@ -156,7 +179,18 @@ SeaHub：目前任职于腾讯 TEG 计费平台部，负责搭建服务于腾讯
 
 在 [NotificationHistoryRequest](https://developer.apple.com/documentation/appstoreserverapi/notificationhistoryrequest) 中新增字段 onlyFailures 并设置为 true 即可
 
-![Get Notification History - request](<./images/2023-07-16 14.21.25-1.png>)
+```
+// Get Notification History
+
+// Request
+POST /inApps/v1/notifications/history
+
+{
+"startDate": 168330240000,
+"endDate": 1685980800000,
+"onlyFailures": true
+}
+```
 
 设置了 onlyFailures=true 的 Response 结构
 
@@ -166,7 +200,28 @@ SeaHub：目前任职于腾讯 TEG 计费平台部，负责搭建服务于腾讯
 
 可以说 `onlyFailures` 的支持简化了我们在处理未接收到苹果通知的逻辑。
 
-![Get Notification History - response](<./images/2023-07-16 14.23.34-1.png>)
+```
+// Get Notification History response
+{
+"notificationHistory": [
+    {
+        "signedPayload": "eyJhbGciOiJFUzI1NiIsIng1YyI6...",
+        "sendAttempts": [
+            {
+                "attemptDate": 1685970800000,
+                "sendAttemptResult": "NO_RESPONSE"
+            },
+            {
+                "attemptDate": 1685974400000,
+                "sendAttemptResult": "TIMED_OUT"
+            }
+        ]
+    },
+    ...
+    ],
+    ...
+}
+```
 
 ## API 对比迁移
 
@@ -204,8 +259,6 @@ SeaHub：目前任职于腾讯 TEG 计费平台部，负责搭建服务于腾讯
 2. 为每个购买保存一个 transactionId
 3. 每次调用 App Store Server API （获取历史交易记录、获取所有订阅状态、获取交易信息）时都提供此 transactionId 作为请求参数
 
-![Migration workflow](<./images/2023-07-16 15.43.27-1.png>)
-
 通过这两个步骤我们已经达到 verifyReceipt 接口的迁移升级。  
 
 从 App Store Server Notifications V1 迁移到 V2 更加简单。
@@ -213,8 +266,6 @@ SeaHub：目前任职于腾讯 TEG 计费平台部，负责搭建服务于腾讯
 1. 准备您的服务器来解析新的 V2 格式，App Store Server Notifications V2 使用与 V1 相同的 JWS 事务格式。
 2. 访问 App Store Connect 将设置从 V1 更改为 V2 通知
 3. 测试功能我们可以设置先仅在沙箱中接收版本 V2 通知。
-
-![Migration workflow](<./images/2023-07-16 15.44.55-2.png>)
 
 切换设置后，App Store 服务器将开始以 V2 格式发送新通知。如果在重试过程中收到任何 V1 通知，最多可能会在三天内继续收到这些通知。
 App Store Server API 和 App Store Server Notifications V2 在沙盒环境中可用，因此我们可以在将其投入生产之前测试功能的实现。
