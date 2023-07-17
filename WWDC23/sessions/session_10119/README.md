@@ -10,7 +10,7 @@ Session 10119 - 在 Safari 上开发浏览器插件
 
 ## 前言
 
-在 WWDC 2020 和 WWDC 2021，苹果宣布了支持 Chrome 风格的 Safari Web 插件。开发者现在可以在 macOS 和 iOS 的 Safari 上使用 Chrome 插件。在 WWDC 2022 上，Safari Web 插件又有了新的变化，引入了 Manifest V3，并且支持了 declarative net request。这使得 Safari Web 插件越来越接近 Chrome 插件。本文将介绍 WWDC 2023 Safari Web 插件的新特性，以及 Safari Web 插件的发展历程。最后，我们将介绍 Safari Web Extension 和 Chrome Extension 之间的区别。本文将基于实现一个简单的macOS上的 Safari Web Extension 来介绍 Safari Web Extension 的开发流程，这个插件的功能是在网页上添加一个按钮，点击按钮后，可以前往网页的最顶端，暂时命名为autoScroll
+在 WWDC 2020 和 WWDC 2021，苹果宣布了支持 Chrome 风格的 Safari Web 插件。开发者现在可以在 macOS 和 iOS 的 Safari 上使用 Chrome 插件。在 WWDC 2022 上，Safari Web 插件又有了新的变化，引入了 Manifest V3，并且支持了 declarative net request。这使得 Safari Web 插件越来越接近 Chrome 插件。本文将介绍 WWDC 2023 Safari Web 插件的新特性，以及 Safari Web 插件的发展历程。最后，我们将介绍 Safari Web Extension 和 Chrome Extension 之间的区别。本文将实现一个简单的 macOS 上的 Safari Web Extension，这个插件的功能是在网页上添加一个按钮，点击按钮后，可以前往网页的最顶端，暂时命名为 autoScroll
 
 ## 什么是 Safari Web Extension
 
@@ -21,7 +21,7 @@ Safari Web Extension 使用和 Google Chrome、Mozilla Firefox 和 Microsoft Edg
 - 将现有其他平台的插件转换为 Safari Web Extension，以便在 macOS 和 iOS 的 Safari 中使用，并在 App Store 中分发。Xcode 包含了一个命令行工具，可简化此过程。
 - 在 Xcode 中使用内置模板构建新的 Safari Web Extension。
 
-目前在macOS上，Safari 14 之后的版本都支持 Safari Web Extension，而在 iOS 上，Safari 15 之后的版本才支持 Safari Web Extension。
+目前在 macOS 上，Safari 14 之后的版本都支持 Safari Web Extension，而在 iOS 上，Safari 15 之后的版本才支持 Safari Web Extension。
 
 在开发 Safari Web Extension 的过程中，完全可以参考[Mozilla 的文档](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions) 或者[Google 的文档](https://developer.chrome.com/docs/extensions/)来了解相关 API，虽然可能有一些差异（主要是 Safari Web Extension 支持的 API 更少），但是使用方法基本会保持一致。
 
@@ -58,7 +58,8 @@ func beginRequest(with context: NSExtensionContext) {
 }
 
 ```
-这里的功能是接受来自 Extension 的消息，并返回一个 response。并把message以oslog的形式打印出来。
+
+这里的功能是接受来自 Extension 的消息，并返回一个 response。并把 message 以 oslog 的形式打印出来。
 
 Extension 是整个架构中最重要的部分。它通过 JavaScript 与网页进行交互，实现了改变网页内容、丰富网页功能、自定义网页 UI、修改网页请求内容等功能，这也是用户需要浏览器插件的原因之一。同时，Extension 还可以提供一个可交互的弹出式界面（popup），这是一个独立的网页，也是每个 Safari Web Extension 与用户进行交互的页面。这个弹出式界面通过基础的前端技术（HTML、CSS、JavaScript）来实现。
 
@@ -99,16 +100,17 @@ function setSettings(config, successHandler) {
 
 这是一个监听消息的事件，可以监听其他模块发送的消息，当接收到消息时，background 会被加载，当其中的逻辑被处理完之后，则会被销毁。
 这种模式下，即使是全局变量，也会在页面被销毁时被销毁，所以关键的全局变量，需要及时通过 Storage API 写入磁盘。
-在autoscroll中，用户可以自由选择是否要添加这个前往网页顶端的按钮，所以我把网页的状态保存在本地的storage中。每次用户打开网页的时候，就会给 background 发送一个消息，询问当前网页的状态，然后根据返回的状态，决定是否添加按钮。或者当用户设定当前状态的时候，也会给 background 发送一个消息，告诉 background 当前的状态，background 把这个状态保存其他。background 就通过 ```browser.runtime.onMessage.addListener``` 来监听这些消息。
+
+在 autoscroll 中，用户可以自由选择是否要添加这个前往网页顶端的按钮，所以我把网页的状态保存在本地的 storage 中。每次用户打开网页的时候，就会给 background 发送一个消息，询问当前网页的状态，然后根据返回的状态，决定是否添加按钮。或者当用户设定当前状态的时候，也会给 background 发送一个消息，告诉 background 当前的状态，background 把这个状态保存其他。background 就通过 ```browser.runtime.onMessage.addListener``` 来监听这些消息。
 
 
 content.js 本身是 extension 的一部分，但可以运行在指定的网页当中，与 background 不同，可以通过指定 URL 或者 Domain，使不同网页运行完全不同的 content。
 因为 background 虽然可以使用全部的 WebExtension JavaScript API，但不能直接访问网页的内容。 这时候，就需要通过 content 来实现这一功能，就像网页中被 ```<script>``` 元素加载的脚本一样，content 可以使用 DOM API，并且修改网页的内容。但是相较于 background，content 可以使用的 WebExtension JavaScript API 比较少。
 
-在 autoscroll 中，content主要负责当用户点击按钮时，把网页翻页至最顶端或最底端，当按钮的状态发生变化时，设置按钮的状态。这些操作都是通过修改网页的 DOM 来实现的。
+在 autoscroll 中，content 主要负责当用户点击按钮时，把网页翻页至最顶端或最底端，当按钮的状态发生变化时，设置按钮的状态。这些操作都是通过修改网页的 DOM 来实现的。
 
 popup 就是当用户点击浏览器中 extension 的图标时，会出现的弹窗页面。 popup.js 就是在这个页面中加载的脚本，主要用于处理用户在这个页面上操作逻辑。
-如下图，这就是autoscroll的 popup 页面，用户可以在这个页面上选择是否添加按钮。
+如下图，这就是 autoscroll 的 popup 页面，用户可以在这个页面上选择是否添加按钮。
 
 ![popup](./images/popup.png)
 
@@ -133,7 +135,7 @@ popup 就是当用户点击浏览器中 extension 的图标时，会出现的弹
 
 这种通信方式是一种重要的通信方式，主要作用是把插件内的配置等同步给 Extension，进而同步给宿主 App，实现在 UI 上展现等功能，这种通信方式是其他平台的 Web Extension 所不具备的。
 
-在使用时，popup 和 background 需要使用 
+在使用时，popup 和 background 需要使用 ```browser.runtime.sendNativeMessage``` API
 
 ```js
 
@@ -147,9 +149,10 @@ browser.runtime.sendNativeMessage("application.id", {
 
 #### content 与 background、 content 与 popup
 
-在 autoscroll 中，content ，background 和 popup 需要相互通信，从而共享当前按钮的状态，是否要把按钮展示在页面上，以及在popup中设置是否显示这个按钮。
+在 autoscroll 中，content ，background 和 popup 需要相互通信，从而共享当前按钮的状态，是否要把按钮展示在页面上，以及在 popup 中设置是否显示这个按钮。
 
 这是在 backgroud 中接受到的消息，用于查询和设置存储中的按钮状态。
+
 ```js
 
 browser.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -215,7 +218,7 @@ browser.runtime.sendMessage({
 
 #### injected iframe 与 content
 
-injected iframe 与 content的通信，autoscroll 没有使用到这个场景，这也不完全算是 Safari Web Extension 的内部通信。 主要涉及到的API是下面两种
+injected iframe 与 content 的通信，autoscroll 没有使用到这个场景，这也不完全算是 Safari Web Extension 的内部通信。 主要涉及到的 API 是下面两种
 
 content 通过 contentWindow.postMessage 向 iframe 发送消息。
 
@@ -238,7 +241,7 @@ window.parent.postMessage({
 
 ```
 
-这部分内容可以参考[这篇博客](https://greenfavo.github.io/blog/docs/05.html) 或者 具体的 [MDN文档](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage). 
+这部分内容可以参考[这篇博客](https://greenfavo.github.io/blog/docs/05.html) 或者 具体的 [MDN 文档](https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage)
 
 ## WWDC 2023 上的 Safari Web Extension
 
@@ -274,7 +277,7 @@ Declarative net request 也迎来更新。首先是支持对请求的 header 进
 
 ![](./images/permission.png)
 
-### Profiles 和 隐私浏览对Safari Web Extension的支持
+### Profiles 和隐私浏览对 Safari Web Extension 的支持
 
 针对隐私浏览，主要的更新点在于，对于可以读取网页内容和植入脚本的插件，当用户开启隐私览器时，将不再有权限直接开启，而是需要得到用户的授权，但是对于类似于 content blocker 这样的插件，因为不可以读取网页内容，所以可以默认开启，但用户依然可以关闭其权限。
 
@@ -430,11 +433,11 @@ xcrun safari-web-extension-converter /path/to/extension
 
 ## 开发经验
 
-笔者曾经参与开发过 macOS 和 iOS 上的一款 AdBlock 类应用 [Ad Block One](https://link.zhihu.com/?target=https%3A//apps.apple.com/app/apple-store/id1491889901%3Fpt%3D444218%26ct%3Ddriver%26mt%3D8)。 其中，mac端由于开发较早，使用的是Safari App extension，iOS端则第一时间支持了 Safari Web Extension。
+笔者曾经参与开发过 macOS 和 iOS 上的一款 AdBlock 类应用 [Ad Block One](https://link.zhihu.com/?target=https%3A//apps.apple.com/app/apple-store/id1491889901%3Fpt%3D444218%26ct%3Ddriver%26mt%3D8)。 其中，mac 端由于开发较早，使用的是 Safari App extension，iOS 端则第一时间支持了 Safari Web Extension。
 
 开发一款 Safari Web Extension 相较于其他的 App，并不会非常复杂，特别是 Chrome 和 Firefox 已经提供了大量的成功样例，单从技术来说，在了解一些前端知识之后并熟悉相关的 API 后，开发起来并不会非常困难。在开发过程中，遇到的比较多的一个问题可能是由于苹果对一些 API 对严格限制，不得不放弃了一部分设想的功能。
 
-除此之外，最困难的点反而不再技术上，而是就是对于苹果用户 ，尤其是 iOS 的用户来说，并没有非常好的使用 Safari 的习惯，Mac 的用户更倾向于使用Chrome，iOS 的用户不会重度使用 Safari 。所以如何推广自己的应用反而是最困难的一部分。
+除此之外，最困难的点反而不再技术上，而是就是对于苹果用户 ，尤其是 iOS 的用户来说，并没有非常好的使用 Safari 的习惯，Mac 的用户更倾向于使用 Chrome，iOS 的用户不会重度使用 Safari 。所以如何推广自己的应用反而是最困难的一部分。
 
 最终我们的想法是在 macOS 上，把拦截广告作为另外产品的一个功能，把插件作为丰富已有应用的一个重要手段。在 iOS 上，把 Safari 拦截广告作为一个主要功能，但提供更为强大的全局拦截功能，同时也基于 Safari Web Extension 实现类似于网页深色模式等功能，不断吸引用户。但从最终效果而看，仍然不是很理想。
 
