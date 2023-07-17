@@ -31,11 +31,15 @@ session_ids: [10142]
 WWDC 20 苹果引入了  [StoreKit Testing in Xcode](https://developer.apple.com/videos/play/wwdc2020/10659) ，主要为了方便我们无需依赖 App Stroe 服务器，在模拟器和真机上都能够在本地进行 App 内购买的测试。通过 Xcode 中的 StoreKit Configuration File 文件，让我们可以在本地就能模拟商品购买的整套流程，如新增货品码、购买、退订、续订、退款、首月优惠资格、优惠码等等。如需了解具体内容可以参考文章：[WWDC20 10659 - 介绍 Xcode 中的 StoreKit 测试](https://xiaozhuanlan.com/topic/1950472863)。
 
 - 这种方式对于开发的早期阶段还是很方便的，新接入 `In-App Purchase` 的 App，当我们还未在 App Store Connect 配置好商品信息或者无网络情况下，我们将 StoreKit API 购买流程的相关代码码完就可以开始测试了，在模拟器和真机都可以进行测试。这种方式还提供了沙盒测试不能覆盖的功能：
-  1、模拟 StoreKit Error 返回 
+  
+  1、模拟 StoreKit Error 返回
+  
   2、优惠码兑换
-  3、自动续费价格上涨
-  4、询问是否批准交易的情形（如家庭共享的儿童购买的时候需要通过家长同意这种）
 
+  3、自动续费价格上涨
+  
+  4、询问是否批准交易的情形（如家庭共享的儿童购买的时候需要通过家长同意这种）
+  
 - 另外对于已经在 App Store Connect 配置了内购项目的 App，从 Xcode 14 开始，我们可以在创建 `StoreKit Configuration File` 文件的时候勾选同步选项，将配置的项目同步下来。不过这个文件是不能编辑的，需要通过菜单 `Editor` 里面的选项将文件转换成可编辑的本地文件，转换后的文件就不能从 App Store Connect 中同步了。详细的测试功能介绍，可参考往期的文章[【WWDC22 10039】Xcode StoreKit 测试的新功能](https://xiaozhuanlan.com/topic/5842093617)。
 
 我们再来看上面的流程图，这种方式相当于代替了 Apple Store 的功能，但现在我们还只是测试了红色虚框的部分，为了保证交易合法，一般我们会将生成的 `receipt` / `jws` （StoreKit 2 新的收据类型）上传我们的服务器，服务器会在本地校验收据同时会去请求苹果的接口进行二次校验。但这种方式生成的 `receipt` / `jws`  是通过 Xcode 签名生成的，是不能通过 [verifyReceipt](https://developer.apple.com/documentation/appstorereceipts/verifyreceipt) 校验和 [Get Transaction History](https://developer.apple.com/documentation/appstoreserverapi/get_transaction_history) 及 [Get Transaction Info](https://developer.apple.com/documentation/appstoreserverapi/get_transaction_info)（这个接口苹果今年 6.5 新出，通过 `transactionId` 可以查询单个收据信息） 查询的。虽然 `StoreKit 2` 苹果一直在强调 `jws` 收据不需要远程校验，但是我们这边和服务端几次交流之后，他们还是强烈要求我们把收据上传，同时服务端会调用苹果接口异步进行二次校验，这个 [Get Transaction Info](https://developer.apple.com/documentation/appstoreserverapi/get_transaction_info) 怀疑也是后面苹果考虑这种情况加上的。
