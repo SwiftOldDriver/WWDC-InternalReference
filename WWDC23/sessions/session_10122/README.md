@@ -13,7 +13,7 @@ session_ids: [10122]
 
 我们将按照时间顺序来进行介绍，并且对比 desktop（Chrome、Safari 和 IE）以及 mobile（Chrome for Android、Safari on iOS 和 Android Browser）的支持性进行说明。
 
-> 我们以 * 表示不支持，最低版本是完全支持版本，括号中为*不完全*支持。
+> 我们以 *表示不支持，最低版本是完全支持版本，括号中为*不完全*支持。
 >
 > 根据已知 [Can I use](https://caniuse.com/) 上的数据整理。GIF 和 JEPG 默认都支持。
 
@@ -74,7 +74,7 @@ WebP 旨在取代传统的三种图像格式。与 PNG 相比，同样大小的 
 
 AVIF 和  [JPEG XL](https://jpeg.org/jpegxl/index.html) 是旨在取代 WebP 的新一代图像格式。在 Safari 17 中，支持 JPEG-XL 是一个令人兴奋的新功能。JPEG-XL 旨在提供高压缩率和图像质量。它采用一种称为 [模块熵编码](https://zh.wikipedia.org/wiki/%E7%86%B5%E7%BC%96%E7%A0%81) 的新压缩算法，使得可以更灵活地调整压缩比。这使得 JPEG-XL 特别适合在网络连接缓慢的情况下加载图像，用户可以在整个图像完全加载之前就能看到部分内容。JPEG-XL 的一个关键特性是无损转换，也就是说，将现有的 JPEG 文件转换为 JPEG-XL 不会丢失任何数据，并且可以显著减小文件大小高达 60％。
 
-> JPEG-XL 是一个相对较新的图像格式，目前在支持它的浏览器中的使用率还比较低。根据 [Can I Use ](https://caniuse.com/?search=image%2Favi%27f)上的数据，目前只有 Safari 17 支持该格式，而 Chrome 在去年停止了对 JPEG-XL 的支持。[外界猜测](https://www.phoronix.com/news/Chrome-Dropping-JPEG-XL-Reasons) 这主要是因为 Chrome 希望将精力集中在 WebP 和 AVIF 这两种图像格式上的发展上。
+> JPEG-XL 是一个相对较新的图像格式，目前在支持它的浏览器中的使用率还比较低。根据 [Can I Use](https://caniuse.com/?search=image%2Favi%27f)上的数据，目前只有 Safari 17 支持该格式，而 Chrome 在去年停止了对 JPEG-XL 的支持。[外界猜测](https://www.phoronix.com/news/Chrome-Dropping-JPEG-XL-Reasons) 这主要是因为 Chrome 希望将精力集中在 WebP 和 AVIF 这两种图像格式上的发展上。
 
 #### AVIF
 
@@ -213,7 +213,7 @@ runwithMSE(async function (source, video) {
 });
 ```
 
-在 `startstreaming` 事件中，通知播放器开始获取新内容并将其添加到托管的 `sourceBuffer` 中。同时，还需要处理 `endstreaming `事件，以告知播放器何时需要停止获取新数据。需要注意的是，与 MSE 不同，你的 `sourceBuffer` 可能会在任何时候发生变化。为了避免可能导致播放暂停的情况，MSE 会定期检查缓冲区是否需要增加，并在附加新数据时增加缓冲范围。这样可以确保视频的平稳播放，同时保持足够的缓冲以应对网络延迟或其他因素引起的播放中断。所以，你还需要添加一个 `bufferedchange` 事件处理程序，以检查哪些数据已从源缓冲区中删除。遵循 MMS API 的规范，只在需要时附加数据，这样可以提高用户体验并延长设备电池的使用寿命。当然，如果你只关心苹果设备上的体验，请使用 HLS。
+在 `startstreaming` 事件中，通知播放器开始获取新内容并将其添加到托管的 `sourceBuffer` 中。同时，还需要处理 `endstreaming`事件，以告知播放器何时需要停止获取新数据。需要注意的是，与 MSE 不同，你的 `sourceBuffer` 可能会在任何时候发生变化。为了避免可能导致播放暂停的情况，MSE 会定期检查缓冲区是否需要增加，并在附加新数据时增加缓冲范围。这样可以确保视频的平稳播放，同时保持足够的缓冲以应对网络延迟或其他因素引起的播放中断。所以，你还需要添加一个 `bufferedchange` 事件处理程序，以检查哪些数据已从源缓冲区中删除。遵循 MMS API 的规范，只在需要时附加数据，这样可以提高用户体验并延长设备电池的使用寿命。当然，如果你只关心苹果设备上的体验，请使用 HLS。
 
 #### 让视频 AirPlay
 
