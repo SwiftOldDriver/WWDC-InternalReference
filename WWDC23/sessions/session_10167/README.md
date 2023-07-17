@@ -6,7 +6,19 @@ session_ids: [10167]
 
 # WWDC23 10167 - 初见 Swift 宏
 
-> 本文基于 [Session 10167](https://developer.apple.com/videos/play/wwdc2023/10167/) 梳理。原 session 中详细提到了如何实现一个宏，以及错误诊断、测试方面的内容，但限于篇幅，本文不会涉及这些，而将偏重于介绍 Swift 宏的基础概念。如果你希望解如何编写、实现宏，可以阅读内参的这篇文章（链接待补充）。
+> 摘要：Swift 宏是今年 Swift 5.9 的新特性，本文偏重于 Swift 宏基本概念的介绍，以及在使用方面需要注意的内容。
+
+本文基于 [Session 10167](https://developer.apple.com/videos/play/wwdc2023/10167/) 梳理。原 session 中详细提到了如何实现一个宏，以及错误诊断、测试方面的内容，但限于篇幅，本文不会涉及这些，而将偏重于介绍 Swift 宏的基础概念。如果你希望解如何编写、实现宏，可以阅读内参的这篇文章（链接待补充）。
+
+> 作者：
+>
+> WAMaker，SwiftGG 翻译组成员，iOS 开发者，目前就职于手淘。
+>
+> 审核：
+>
+> 李卓立(@dreampiggy)：5 年 iOS 领域开发经验，开源项目 SDWebImage 维护者，LLVM 项目贡献者，现就职于字节跳动
+>
+> kemchenj：老司机技术核心成员 / 开源爱好者 / 最近在做 3D 重建相关的开发工作
 
 ## 什么是（Swift）宏
 

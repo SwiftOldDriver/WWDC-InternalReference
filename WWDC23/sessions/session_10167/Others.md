@@ -8,7 +8,9 @@ WAMaker，SwiftGG 翻译组成员，iOS 开发者，目前就职于手淘。
 
 ## 审核介绍
 
-TBD
+李卓立(@dreampiggy)：5 年 iOS 领域开发经验，开源项目 SDWebImage 维护者，LLVM 项目贡献者，现就职于字节跳动
+
+kemchenj：老司机技术核心成员 / 开源爱好者 / 最近在做 3D 重建相关的开发工作
 
 ## 不超过 120 个字的文章简介
 
