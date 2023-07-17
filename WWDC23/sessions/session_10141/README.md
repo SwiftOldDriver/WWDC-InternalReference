@@ -76,6 +76,7 @@ GET /inApps/v1/transactions/1000998836590
 ```
 
 经过解密后可以查看该交易的所有信息
+
 ```
 // Get Transaction Info response (decoded)
 
