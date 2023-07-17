@@ -8,7 +8,7 @@ session_ids: [10165]
 
 > 作者：Noah，现就职于米哈游，从事游戏 iOS SDK 的研发工作。
 >
-> 审核：皮拉夫大王，目前就职于抖音基础技术团队，负责iOS稳定性相关工作。
+> 审核：皮拉夫大王，目前就职于抖音基础技术团队，负责 iOS 稳定性相关工作。
 
 > **注：本文使用 Xcode 15.0 beta 2(15A5161b) 版本，由于本文撰写时，Xcode 15 处于 beta 阶段，苹果会不断进行更新，后续如有更多功能上的新增或改进，我们将会更新本文内容。**
 
@@ -415,7 +415,7 @@ Xcode 15 新增了一个方便我们快速找到代码的功能，叫做 `bookma
 
 ### 源代码托管优化
 
-现在越来越多的 IDE 集成了 `git` 方便我们进行代码托管，Xcode 15 对这部分能力进行了优化，方便我们在 Xcode 中进行预览代码变更等操作，有种把 source tree 集成到 Xcode 中的感觉：
+现在越来越多的 IDE 集成了 `git` 方便我们进行代码托管，Xcode 15 对这部分能力进行了优化，方便我们在 Xcode 中进行预览代码变更等操作，有种把 SourceTree 集成到 Xcode 中的感觉：
 ![source_control](./images/source_control_1.png)
 
 你可以在 Xcode 15 中进行 `commit`、`push`、`stage` 等操作。工作中已经习惯了 `cmd` 中敲 `git` 命令行了，此处更新我可能会使用下查看改动以及解决冲突的能力。
@@ -469,7 +469,7 @@ XCFramework 的签名方式有两种：
 
 #### TestFlight 支持仅发布到内部
 
-有时候我们只希望将测试包发布给内部员工进行测试使用，而不需要发布给用户，比如修复了一个问题后，这时候在 Archive 之后选择发布渠道，我们只需要勾选 `TestFlight internal testing only` 即可。这样我么的 TestFlight 只会分发给公司内部的成员，避免用户被分发到测试包的风险。
+有时候我们只希望将测试包发布给内部员工进行测试，而不需要发布给用户（比如发布的产品在内测阶段），这时候在 Archive 之后选择发布渠道，只需要勾选 `TestFlight internal testing only` 即可。这样我们的 TestFlight 包只会分发给公司内部的成员，避免用户被分发到测试包的风险。
 ![distribution](./images/distribution_5.png)
 
 > Tips: 更多关于 App 发布参考
