@@ -425,7 +425,7 @@ struct TripsApp: App {
 }
 ```
 
-小节一下：
+小结一下：
 
 - 使用宏来修饰 Model 里的字段以满足我们的需求
 - 当 Schema 变更时，用 VersionedSchema 来进行迁移
