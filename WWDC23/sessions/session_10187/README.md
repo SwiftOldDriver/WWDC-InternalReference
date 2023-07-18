@@ -62,12 +62,14 @@ class Trip {
 ```swift
 @Model
 class Trip {
-    @Attribute(.unique) var name: String                               /// 1️⃣
+    @Attribute(.unique)      /// 1️⃣
+    var name: String                               
     var destination: String
     var endDate: Date
     var startDate: Date
  
-    @Relationship(.cascade) var bucketList: [BucketListItem]? = []     /// 2️⃣
+    @Relationship(.cascade)  /// 2️⃣
+    var bucketList: [BucketListItem]? = []
     var livingAccommodation: LivingAccommodation?
 }
 ```
