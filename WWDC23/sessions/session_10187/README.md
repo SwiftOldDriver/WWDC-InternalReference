@@ -4,8 +4,10 @@ session_ids: [10187, 10195, 10189, 10196]
 
 # WWDC23 - SwiftData 全知道
 
-> 本文囊括 WWDC23 中所有的 SwiftData Session（[10187](https://developer.apple.com/wwdc23/10187), [10195](https://developer.apple.com/wwdc23/10195), [10189](https://developer.apple.com/wwdc23/10189), [10196](https://developer.apple.com/wwdc23/10196)），力图在一篇文章内帮助读者建立 SwiftData 的基础认知。你可以在[这里](https://github.com/kukushi/AdoptingSwiftDataForACoreDataApp)下载到本文中所有的代码。
+> 本文囊括 WWDC23 中所有的 SwiftData Session [Meet SwiftData](https://developer.apple.com/wwdc23/10187), [Model your Schema with SwiftData](https://developer.apple.com/wwdc23/10195), [10196 - Dive deeper into SwiftData](https://developer.apple.com/wwdc23/10196), [Migrate to SwiftData](https://developer.apple.com/wwdc23/10189)），力图在一篇文章内帮助读者建立 SwiftData 的基础认知。你可以在[这里](https://github.com/kukushi/AdoptingSwiftDataForACoreDataApp)下载到本文中所有的代码。
 >
+
+
 
 ## 初见 SwiftData
 
@@ -37,7 +39,7 @@ SwiftData 提供了 `@Model` 宏让我们在代码中直接定义数据的 Schem
 - 使用 `@Relationship` 可以设置逆向关系和删除传播规则（Delete Propagation Rule）。
 - 使用 `@Transient` 可以将指定属性不进行持久化。
 
-> [下个章节](##构建我们的 Schema)将有更多关于如何建构 Schema 的内容。
+> [下个小节](##构建我们的 Schema)将有更多关于如何建构 Schema 的内容。
 
 好了，理论部分已经够多了，来看看实际的 🌰。下面是一个简单的 `Trip` 类，包含了一次旅行的基本信息：
 
@@ -165,7 +167,7 @@ let trips = try context.fetch(descriptor)
 
 除了 Predicate 和排序之外，SwiftData 也支持指定关联对象，限制结果数、排除未保存变更等更多查询方式。使用 Model Context，SwiftData 让数据的创建、删除、修改变的十分简单！
 
-> [第四章节](##深入 SwiftData)会继续介绍查询的进阶用户
+> [第三小节](##深入 SwiftData)会继续介绍查询的进阶用户
 
 ```swift
 var myTrip = Trip(name: "Birthday Trip", destination: "New York")
@@ -376,7 +378,7 @@ enum SampleTripsSchemaV3: VersionedSchema {
 }
 ```
 
-接着利用上面的 Schema 来创建一个  `SchemaMigrationPlan`：
+接着利用上面的 Schema 来创建一个 `SchemaMigrationPlan`：
 
 ```swift
 enum SampleTripsMigrationPlan: SchemaMigrationPlan {
@@ -407,9 +409,9 @@ enum SampleTripsMigrationPlan: SchemaMigrationPlan {
 }
 ```
 
-1. 设置所有的 Schema，顺序很重要。
+1. 设置所有的 Schema，顺序很重要，SwiftData 会按照这个顺序进行迁移
 2. 配置每个阶段要如何处理
-3. V1 到 V2 需要自定义迁移，我们把当前 Trip 都取出来做一次去重。
+3. V1 到 V2 需要自定义迁移，我们把当前 Trip 都取出来做一次去重
 4. V2 到 V3 可以轻量迁移
 
 终于配置好了，在 `ModelContainer` 中配置 `migrationPlan` 即可让 App 在启动后开始迁移。通过配置，SwiftData 可以从任一版本的 App 升级到最新版。
@@ -435,148 +437,6 @@ struct TripsApp: App {
 - 使用宏来修饰 Model 里的字段以满足我们的需求
 - 当 Schema 变更时，用 VersionedSchema 来进行迁移
 
-## 迁移到 SwiftData
-
-> 本小节主要基于 [10189 - Migrate to SwiftData](https://developer.apple.com/wwdc23/10189) 编写。
-
-[SwiftData 底层基于 Core Data 实现](https://developer.apple.com/documentation/SwiftData)。如果你的 App 使用了 Core Data，别担心，SwiftData 可以与 Core Data 同时使用。这个小节也将着重介绍如何从 Core Data 迁移到 Swift Data，包括：
-
-- 生成 SwiftData Model Class
-- 实现从 Core Data 到 SwiftData 的全量迁移
-- 让 Core Data 与 SwiftData 共存
-
-### 生成 SwiftData Model Class
-
-在 Core Data 中，我们一般使用 Schema Editor 编辑 Model 文件来生产 Managed Object。在 Schema Editor 中选中 Model 文件后，在 Xcode 菜单栏 `Editor -> Create SwiftData Class` 即可生产文件：
-
-![Create SwiftData Class](./images/SWD_Create.png)
-
-```swift
-@Model final class Trip {
-    var destination: String
-    var endDate: Date
-    var name: String
-    var startDate: Date
-    
-    @Relationship(.cascade, inverse: \BucketListItem.trip)
-    var bucketList: [BucketListItem] = []
-    
-    @Relationship(.cascade, inverse: \LivingAccommodation.trip)
-    var livingAccommodation: LivingAccommodation?
-}
-```
-
-可以看到生产的 `Trip` 遵循了 `Model` 且所有的属性都转换过来了。
-
-### 从 Core Data 到 SwiftData 的全量迁移
-
-Core Data 架构中包含了 Schema、实体、关系等内容。在开始转换之前，需要确认这些配置在 SwiftData 是否都支持。这意味所有的 Entity 以及它的属性都需要有对应的 SwiftData Model。转换完成后也记得要全面测试我们的 Model 确保所有特性都能正常 Work。
-
-接下来，让我们来看看完整迁移过程中的重点。首先，我们在上面已经生产了对应 SwiftData Model，可以删除掉 Core Data 的 Model 文件了。
-
-接着，我们使用 `modelContainer` 修饰器来为整个 `App` 配置 `modelContainer` 和 `modelContext`。
-
-```swift
-@main
-struct TripsApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
-        .modelContainer(
-            for: [Trip.self, BucketListItem.self, LivingAccommodation.self]
-        )
-    }
-}
-```
-
-ModelContext 能够追踪所有设定 Model 的变化。我们可以在所有的 `Scene` 和 `View` 里访问到它。
-
-```swift
-@Environment(\.managedObjectContext) private var viewContext
-```
-
-这样我们就设置好了 SwiftData Stack。接下来可以开始使用了，首先是创建对象。在 Core Data 中，创建对象一般会像是这样：
-
-```swift
-/// Core Data 中需要使用 context 创建对象
-let newTrip = Trip(context: viewContext)
-newTrip.name = name
-newTrip.destination = destination
-newTrip.startDate = startDate
-newTrip.endDate = endDate
-```
-
-而在 SwiftData 中，创建对象变得无比简单：
-
-```swift
-let trip = Trip(name: name, destination: destination, startDate: startDate, endDate: endDate)
-modelContext.insert(object: trip)
-```
-
-这里可能有读者好奇了，SwiftData 是如何保存改动的？SwiftData 拥有隐式保存功能，在 UI 生命周期事件或在 context 发生改变后（如果需要保存的话）来触发保存操作。
-
-查询数据也变得更加简单。
-
-```swift
-// FetchRequest in Core Data
-@FetchRequest(sortDescriptors: [SortDescriptor(\.startDate)])
-private var trips: FetchResults<Trip>
-
-// Fetch with Query in SwiftData
-@Query(sort \.startDate, order: .forward)
-var trips: [Trip]
-```
-
-`@Query` 中使用了 `.forward` 排序，这样日期更近的 `Trip` 会排在更千面。`@Query` 也支持同时使用一个 `Predicate`。
-
-### 同时使用 SwiftData 和 Core Data
-
-或许对于现实开发中，SwiftData 和 Core Data 共存会是许多开发者面临的场景。共存意味着两个不同的持久化架构，同时使用一个持久化存储。这意味着我们在接入 SwiftData 时不需要完全重写 Core Data 代码。
-
-![Model and Context](./images/SWD_coexist_store.png)
-
-这种情况下，Core Data 的配置有些不同：
-
-```swift
-let url = URL(fileURLWithPath: "/path/to/Trips.store")
-
-if let description = container.persistentStoreDescriptions.first {
-    description.url = url                                                            // 1️⃣
-    description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)  // 2️⃣
-}
-```
-
-1. 我们需要给 `container` 设置 Persistent Store URL，确保 Core Data 和 SwiftData 使用的是用一个 Store。
-
-2. SwiftData 默认打开了 Persistent History Tracking，因此这里 Core Data 也需要打开。
-
-   > ⚠️： 必须打开 Persistent History Tracking，否则 Store 会进入只读模式。
-
-在很多场景下，共存都可能是最佳的方案。由于 SwiftData 需要 iOS 17 或 macOS Sonoma，大部分应用需要考虑向后兼容，可以选择共存。此外，现实开发中可能受限于资源或时间，逐步迁移到 SwiftData 是一个更务实的方案。
-
-共存很美，但也有一些限制。为了让 Model 和 Entity 命名不冲突，我们需要在其中一个加上前缀。
-
-在上面的例子中，我们生成了 `Trip` Model，我们可以在代码或模型编辑器中添加前缀（示例中加了 `CD`）：
-
-```swift
-// class Trip: NSManagedObject {              // 1️⃣
-class CDTrip: NSManagedObject {               // 1️⃣
-    // ...
-}
-
-
-@Model final class Trip {
-    // ...
-}
-```
-
-此外，我们需要保持两个 Model 的 Schema 同步。无论是 SwiftData 或 CoreData，两者中无论是新的属性、关系都需要同步修改到另外一方。一旦不同步，Store 可能会认为 Model 发生的改变而触发迁移。
-
-最后，Core Data 和 SwiftData 的 Schema Version 也需要保持一致。
-
-对于使用 UIKit 或 AppKit 的 Swift App，也有几个方式集成上 SwiftData。一种是使用共存的方式，UIKit 绑定到 Core Data 上，其他地方可以使用 SwiftData。另外一种是将 SwiftData Model 当作普通的 Swift 类，在 UIKit 代码中直接使用。
-
 ## 深入 SwiftData
 
 > 本小节主要基于 [10196 - Dive deeper into SwiftData](https://developer.apple.com/wwdc23/10196) 编写。
@@ -600,7 +460,7 @@ final class Trip {
     @Relationship(.cascade)                                               // 1️⃣
     var bucketList: [BucketListItem]? = []
   
-    @Relationship(.cascade)                                                // 1️⃣
+    @Relationship(.cascade)                                               // 1️⃣
     var livingAccommodation: LivingAccommodation?
 }
 ```
@@ -688,7 +548,7 @@ struct ContentView: View {
                     TripListItem(trip: trip)
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {
-                                modelContext.delete(trip)                     // <-
+                                modelContext.delete(trip)                // <-
                             } label: {
                                 Label("Delete", systemImage: "trash")
                             }
@@ -789,6 +649,148 @@ context.enumerate(
    // ...
 }
 ```
+
+## 迁移到 SwiftData
+
+> 本小节主要基于 [10189 - Migrate to SwiftData](https://developer.apple.com/wwdc23/10189) 编写。
+
+[SwiftData 底层基于 Core Data 实现](https://developer.apple.com/documentation/SwiftData)。如果你的 App 使用了 Core Data，别担心，SwiftData 可以与 Core Data 同时使用。这个小节也将着重介绍如何从 Core Data 迁移到 Swift Data，包括：
+
+- 生成 SwiftData Model Class
+- 实现从 Core Data 到 SwiftData 的全量迁移
+- 让 Core Data 与 SwiftData 共存
+
+### 生成 SwiftData Model Class
+
+在 Core Data 中，我们一般使用 Schema Editor 编辑 Model 文件来生产 Managed Object。在 Schema Editor 中选中 Model 文件后，在 Xcode 菜单栏 `Editor -> Create SwiftData Class` 即可生产文件：
+
+![Create SwiftData Class](./images/SWD_Create.png)
+
+```swift
+@Model final class Trip {
+    var destination: String
+    var endDate: Date
+    var name: String
+    var startDate: Date
+    
+    @Relationship(.cascade, inverse: \BucketListItem.trip)
+    var bucketList: [BucketListItem] = []
+    
+    @Relationship(.cascade, inverse: \LivingAccommodation.trip)
+    var livingAccommodation: LivingAccommodation?
+}
+```
+
+可以看到生产的 `Trip` 遵循了 `Model` 且所有的属性都转换过来了。
+
+### 从 Core Data 到 SwiftData 的全量迁移
+
+Core Data 架构中包含了 Schema、实体、关系等内容。在开始转换之前，需要确认这些配置在 SwiftData 是否都支持。这意味所有的 Entity 以及它的属性都需要有对应的 SwiftData Model。转换完成后也记得要全面测试我们的 Model 确保所有特性都能正常 Work。
+
+接下来，让我们来看看完整迁移过程中的重点。首先，我们在上面已经生产了对应 SwiftData Model，可以删除掉 Core Data 的 Model 文件了。
+
+接着，我们使用 `modelContainer` 修饰器来为整个 `App` 配置 `modelContainer` 和 `modelContext`。
+
+```swift
+@main
+struct TripsApp: App {
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+        .modelContainer(
+            for: [Trip.self, BucketListItem.self, LivingAccommodation.self]
+        )
+    }
+}
+```
+
+ModelContext 能够追踪所有设定 Model 的变化。我们可以在所有的 `Scene` 和 `View` 里访问到它。
+
+```swift
+@Environment(\.managedObjectContext) private var viewContext
+```
+
+这样我们就设置好了 SwiftData Stack。接下来可以开始使用了，首先是创建对象。在 Core Data 中，创建对象一般会像是这样：
+
+```swift
+/// Core Data 中需要使用 context 创建对象
+let newTrip = Trip(context: viewContext)
+newTrip.name = name
+newTrip.destination = destination
+newTrip.startDate = startDate
+newTrip.endDate = endDate
+```
+
+而在 SwiftData 中，创建对象变得无比简单：
+
+```swift
+let trip = Trip(name: name, destination: destination, startDate: startDate, endDate: endDate)
+modelContext.insert(object: trip)
+```
+
+这里可能有读者好奇了，SwiftData 是如何保存改动的？SwiftData 拥有隐式保存功能，在 UI 生命周期事件或在 context 发生改变后（如果需要保存的话）来触发保存操作。
+
+查询数据也变得更加简单。
+
+```swift
+// 在 Core Data 中使用 `FetchRequest` 进行查询
+@FetchRequest(sortDescriptors: [SortDescriptor(\.startDate)])
+private var trips: FetchResults<Trip>
+
+// 在 SwiftData 中使用 `Query` 进行查询
+@Query(sort \.startDate, order: .forward)
+var trips: [Trip]
+```
+
+`@Query` 中使用了 `.forward` 排序，这样日期更近的 `Trip` 会排在更千面。`@Query` 也支持同时使用一个 `Predicate`。
+
+### 同时使用 SwiftData 和 Core Data
+
+或许对于现实开发中，SwiftData 和 Core Data 共存会是许多开发者面临的场景。共存意味着两个不同的持久化架构，同时使用一个持久化存储。这意味着我们在接入 SwiftData 时不需要完全重写 Core Data 代码。
+
+![Model and Context](./images/SWD_coexist_store.png)
+
+这种情况下，Core Data 的配置有些不同：
+
+```swift
+let url = URL(fileURLWithPath: "/path/to/Trips.store")
+
+if let description = container.persistentStoreDescriptions.first {
+    description.url = url                                                            // 1️⃣
+    description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)  // 2️⃣
+}
+```
+
+1. 我们需要给 `container` 设置 Persistent Store URL，确保 Core Data 和 SwiftData 使用的是用一个 Store。
+
+2. SwiftData 默认打开了 Persistent History Tracking，因此这里 Core Data 也需要打开。
+
+   > ⚠️： 必须打开 Persistent History Tracking，否则 Store 会进入只读模式。
+
+在很多场景下，共存都可能是最佳的方案。由于 SwiftData 需要 iOS 17 或 macOS Sonoma，大部分应用需要考虑向后兼容，可以选择共存。此外，现实开发中可能受限于资源或时间，逐步迁移到 SwiftData 是一个更务实的方案。
+
+共存很美，但也有一些限制。为了让 Model 和 Entity 命名不冲突，我们需要在其中一个加上前缀。
+
+在上面的例子中，我们生成了 `Trip` Model，我们可以在代码或模型编辑器中添加前缀（示例中加了 `CD`）：
+
+```swift
+// class Trip: NSManagedObject {              // 1️⃣
+class CDTrip: NSManagedObject {               // 1️⃣
+    // ...
+}
+
+
+@Model final class Trip {
+    // ...
+}
+```
+
+此外，我们需要保持两个 Model 的 Schema 同步。无论是 SwiftData 或 CoreData，两者中无论是新的属性、关系都需要同步修改到另外一方。一旦不同步，Store 可能会认为 Model 发生的改变而触发迁移。
+
+最后，Core Data 和 SwiftData 的 Schema Version 也需要保持一致。
+
+对于使用 UIKit 或 AppKit 的 Swift App，也有几个方式集成上 SwiftData。一种是使用共存的方式，UIKit 绑定到 Core Data 上，其他地方可以使用 SwiftData。另外一种是将 SwiftData Model 当作普通的 Swift 类，在 UIKit 代码中直接使用。
 
 ## 总结
 
