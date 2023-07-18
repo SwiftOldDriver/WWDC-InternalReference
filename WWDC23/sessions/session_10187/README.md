@@ -330,7 +330,11 @@ enum SampleTripsSchemaV1: VersionedSchema {
 
     // 这个版本中的其他模型...
 }
+```
 
+在第二版的 Model 中我们为 `name` 添加了唯一性的约束，需要自定义迁移：
+
+```swift
 enum SampleTripsSchemaV2: VersionedSchema {
     static var models: [any PersistentModel.Type] {
         [Trip.self, BucketListItem.self, LivingAccommodation.self]
@@ -348,7 +352,11 @@ enum SampleTripsSchemaV2: VersionedSchema {
 
     // 这个版本中的其他模型...
 }
+```
 
+在第三版中我们将 `start_date`/`end_date` 重命名为 `startDate`/`endDate`，轻量迁移即可：
+
+```swift
 enum SampleTripsSchemaV3: VersionedSchema {
     static var models: [any PersistentModel.Type] {
         [Trip.self, BucketListItem.self, LivingAccommodation.self]
@@ -367,9 +375,6 @@ enum SampleTripsSchemaV3: VersionedSchema {
     // 这个版本中的其他模型...
 }
 ```
-
-1. 第二版的 Model 添加了唯一约束，需要自定义迁移。
-2. 第三版的数据进行了重命名，轻量迁移即可。
 
 接着利用上面的 Schema 来创建一个  `SchemaMigrationPlan`：
 
