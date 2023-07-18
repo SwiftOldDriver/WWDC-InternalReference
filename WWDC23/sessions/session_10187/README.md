@@ -168,9 +168,9 @@ let trips = try context.fetch(descriptor)
 ```swift
 var myTrip = Trip(name: "Birthday Trip", destination: "New York")
 
-context.insert(myTrip)                                       // 1️⃣
-context.delete(myTrip)                                       // 2️⃣
-try context.save()                                           // 3️⃣
+context.insert(myTrip)  // 1️⃣
+context.delete(myTrip)  // 2️⃣
+try context.save()      // 3️⃣
 ```
 
 1. 在创建完 Model 对象后，插入到 context 后就可以开始使用包括数据持久化追踪等特性。
