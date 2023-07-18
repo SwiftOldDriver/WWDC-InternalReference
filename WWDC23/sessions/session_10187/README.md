@@ -485,7 +485,7 @@ struct TripsApp: App {
 }
 ```
 
-ModelContext 能够追踪所有设定 Model 的变化。我们可以再所有的 `Scene` 和 `View` 里访问到它。
+ModelContext 能够追踪所有设定 Model 的变化。我们可以在所有的 `Scene` 和 `View` 里访问到它。
 
 ```swift
 @Environment(\.managedObjectContext) private var viewContext
