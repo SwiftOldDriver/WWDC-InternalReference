@@ -4,7 +4,7 @@ session_ids: [10167]
 
 ## 个人介绍
 
-WAMaker，SwiftGG 翻译组成员，iOS 开发者，目前就职于手淘。
+方舟(WAMaker)：SwiftGG 翻译组成员，iOS 开发者，目前就职于手淘。
 
 ## 审核介绍
 
