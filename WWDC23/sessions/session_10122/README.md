@@ -25,7 +25,7 @@ session_ids: [10122]
 
 我们将按照时间顺序来进行介绍，并且对比 desktop（Chrome、Safari 和 IE）以及 mobile（Chrome for Android、Safari on iOS 和 Android Browser）的支持性进行说明。
 
-> 我们以 *表示不支持，最低版本是完全支持版本，括号中为*不完全*支持。
+> 我们以 \* 表示不支持，\- 表示无数据支撑，最低版本是完全支持版本，括号中为_不完全_ 支持。
 >
 > 根据已知 [Can I use](https://caniuse.com/) 上的数据整理。GIF 和 JEPG 默认都支持。
 
