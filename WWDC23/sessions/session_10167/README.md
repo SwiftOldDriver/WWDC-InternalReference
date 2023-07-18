@@ -84,25 +84,82 @@ struct Person {
 
 ### 1. 按照不同使用场景区分宏的类型
 
-按照不同使用场景区分宏的类型，苹果将宏分成两个大类：独立宏（freestanding macro） 和关联宏（attached macro）。
-
-#### 独立宏（freestanding macro）
-
-在代码中，一个独立宏就是一支“军队”，它既能用于替换一个表达式，又可以独立声明一个类型，使用时需以「#」号开头。以下面这段代码为例，`#unwrap` 声明了一个用于解包可选入参 icon 并返回解包后结果的表达式：
-
-```swift
-return #unwrap(icon, message:"should be in the app bundle")
-```
-
-这里的所说的独立（freestanding），是指这类宏不需要和一个已有类型关联便可直接使用，和关联（attached）相对。
+苹果按照宏不同的使用场景，将宏分成两个大类：关联宏（attached macro）和独立宏（freestanding macro） 。
 
 #### 关联宏（attached macro）
 
-这类宏必须和另一个已存在的类型或者是声明相关联，不可单独使用，使用这类宏时需以「@」号开头。例如如下代码，`@AddCompletionHandler` 与方法 `sendRequest` 关联，为其新增一个包含了成功回调的新方法声明：
+关联宏比较好理解，必须和另一个已有的类型或者是声明关联使用，以「@」号开头，有点类似 Java 的注解（Annotation Processing）或者 Python 的装饰器（Decorator）。例如下面代码中，`@AddCompletionHandler` 与方法 `sendRequest` 关联，为其新增一个包含了成功回调的新方法声明：
 
 ```swift
 @AddCompletionHandler
 func sendRequest() async throws -> Response
+```
+
+编译阶段 Swift 编译器会将宏所关联的类型解析成 AST 后传给宏的实现，下面是一个关联宏协议声明的代码，我们可以看到入参中的 `declaration` 对应了关联类型的 AST 结构信息，AST 具体的结构会在下文中展开介绍：
+
+```swift
+protocol AccessorMacro: AttachedMacro {
+  /// Expand a macro described by the given attribute to
+  /// produce accessors for the given declaration to which
+  /// the attribute is attached.
+  static func expansion(
+    of node: AttributeSyntax,
+    providingAccessorsOf declaration: some DeclSyntaxProtocol,
+    in context: some MacroExpansionContext
+  ) async throws -> [AccessorDeclSyntax]
+}
+```
+
+现在看不懂没关系，目前只需要知道关联宏是如何使用的就可以了。
+
+#### 独立宏（freestanding macro）
+
+与关联宏不同，独立宏在使用上无需和任何类型关联，以「#」号开头。独立宏可以声明一个新的类型，或者作为一段代码（表达式）的替换，例如下面的代码使用独立宏 `#gyb` 按照入参自动生成新的结构体：
+
+```swift
+@available(toasterOS 2.0, *)
+public #gyb(
+  """
+  struct Int${0} { ... }
+  struct UInt${0} { ... }
+  """,
+  [8, 16, 32, 64]
+)
+
+@available(toasterOS 2.0, *)
+public struct Int8 { ... }
+
+@available(toasterOS 2.0, *)
+public struct UInt8 { ... }
+
+@available(toasterOS 2.0, *)
+public struct Int16 { ... }
+
+@available(toasterOS 2.0, *)
+public struct UInt16 { ... }
+
+@available(toasterOS 2.0, *)
+public struct Int32 { ... }
+
+@available(toasterOS 2.0, *)
+public struct UInt32 { ... }
+
+@available(toasterOS 2.0, *)
+public struct Int64 { ... }
+
+@available(toasterOS 2.0, *)
+public struct UInt64 { ... }
+```
+
+从独立宏协议的声明我们也可以发现，方法声明中没有 `declaration`，这和关联宏有明显的不同：
+
+```swift
+public protocol DeclarationMacro: FreestandingMacro {
+  static func expansion(
+    of node: some FreestandingMacroExpansionSyntax,
+    in context: some MacroExpansionContext
+  ) async throws -> [DeclSyntax]
+}
 ```
 
 ### 2. 类型完备，有合法性校验
@@ -139,20 +196,20 @@ func doThingy() {
 
 |  角色   | 描述  |
 | --- | --- |
-| @freestanding(expression) | 创建一个有返回值的表达式 |
-| @freestanding(declaration) | 创建一个或多个声明 |
+| `@freestanding(expression)` | 创建一个有返回值的表达式 |
+| `@freestanding(declaration)` | 创建一个或多个声明 |
 
 关联宏则有五种角色：
 
 |  角色   | 描述  |
 | --- | --- |
-| @attached(peer) | 为关联的声明添加一段新的声明 |
-| @attached(accessor) | 为关联的声明添加存取代码（get、set 等） |
-| @attached(memberAttribute) | 为关联的类型或扩展添加新特性 |
-| @attached(member) | 为关联的类型或扩展添加新的声明 |
-| @attached(conformance) | 为关联的类型或扩展添加新的协议遵循 |
+| `@attached(peer)` | 为关联的声明添加一段新的声明 |
+| `@attached(accessor)` | 为关联的声明添加存取代码（get、set 等） |
+| `@attached(memberAttribute)` | 为关联的类型或扩展添加新特性 |
+| `@attached(member)` | 为关联的类型或扩展添加新的声明 |
+| `@attached(conformance)` | 为关联的类型或扩展添加新的协议遵循 |
 
-### @freestanding(expression)
+### `@freestanding(expression)`
 
 expression 意为表达式，指的是一段可执行且有返回值的代码。`let numPixels = (x + width) * (y + height)` 在这个 let 声明中，等号右边的即是表达式，`(x + width)` 甚至是一个 x 都可以被称为表达式。而 @freestanding(expression) 正是用来创建表达式的。
 
@@ -179,7 +236,7 @@ let image = #unwrap(downloadedImage, message: "was already checked")
 
 ![](./images/downloadedImage.png)
 
-### @freestanding(declaration)
+### `@freestanding(declaration)`
 
 这个角色用来创建声明，声明可以是方法、变量，或者类型的。
 
@@ -255,7 +312,7 @@ macro makeArrayND(n: Int)
 
 至此，我们介绍了独立宏的所有角色以及适用场景，接下来就是关联宏的角色。相比于独立宏仅能通过宏定义的入参获取到想要的信息，关联宏能额外获取到它所关联的类型、名称等信息。
 
-### @attached(peer)
+### `@attached(peer)`
 
 这个角色除了能关联到常见的类型、参数、方法以外，甚至能关联 import 和操作符的声明，并为其添加新的声明。以下面的方法为例，我们对外提供了异步（async）获取用户头像的方法，但不是所有的调用方都支持异步特性，因此也提供了通过 callback 返回头像的方法：
 
@@ -282,7 +339,7 @@ func fetchAvatar(_ username: String) async -> Image? { ... }
 
 ![](./images/fetch_avatar.png)
 
-### @attached(accessor)
+### `@attached(accessor)`
 
 accessor 意为存取器，关联到参数后，可以操作它的 `get`、`set`、`willSet` 和 `didSet` 方法。
 
@@ -335,7 +392,7 @@ struct Person: DictionaryRepresentable {
 
 虽然上面代码优化了字典参数的写法，但也引入了另外一个问题：所有属性前面必须加上 `@DictionaryStorage` 模板代码，这又造成了重复编码，尤其是对含有大量属性的类型声明。要解决这个问题，需要引入下面这个新角色 `@attached(memberAttribute)`。
 
-### @attached(memberAttribute)
+### `@attached(memberAttribute)`
 
 这个角色可以为类型或扩展添加新特性。要解决上面模板代码的问题，我们无需新建一个宏，可以直接在上面宏的基础上做改动：
 
@@ -361,7 +418,7 @@ struct Person: DictionaryRepresentable {
 
 添加完后，`@DictionaryStorage` 自动为 Person 中所有的存储属性添加上宏声明，宏的展开和之前别无二致。
 
-### @attached(member)
+### `@attached(member)`
 
 在上面的代码中有 init 方法和 dictionary 存储属性，对于所有使用了 `@DictionaryStorage` 的类型来说都是必要的，也属于模板代码的范畴，对于这类问题，可以通过这个角色解决。
 
@@ -389,7 +446,7 @@ struct Person: DictionaryRepresentable {
 
 ![](./images/attached_member.png)
 
-### @attached(conformance)
+### `@attached(conformance)`
 
 > 本文在编写阶段，出现了一个新的社区提案 [Generalize conformance macros as extension macros](https://github.com/apple/swift-evolution/blob/main/proposals/0402-extension-macros.md)，后续在 Swift 5.9 正式版本这个角色可能会有变动
 
