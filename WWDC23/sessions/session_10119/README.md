@@ -251,19 +251,76 @@ window.parent.postMessage({
 
 #### Content Blocker 支持新规则
 
-令我感到吃惊的是，苹果竟然更新了 Content Blocker，支持了 ```:has()``` 语法，这是一个非常强大的选择器，可以基于子元素的 css 样式隐藏其父元素。 这将使 content blocker 的拦截更加灵活。可能 Safari 上的 Ad Blocker 更加会坚持使用 Content Blocker 来实现广告拦截。
+令我感到吃惊的是，苹果竟然更新了 Content Blocker，支持了 ```:has()``` 语法，这是一个强大的选择器，可以基于子元素的 css 样式隐藏其父元素。 这将使 content blocker 的拦截更加灵活。可能 Safari 上的 Ad Block 的开发者们更加会坚持使用 Content Blocker 来实现广告拦截。比如下面例子中，如果一个元素的 class 包含 post， 且它有一个子元素的 class 包含 paid-promo，那么这个元素就会被隐藏。
+
+```json
+{
+  "trigger":{
+    "url-filter": ".*"
+  },
+  "action":{
+    "type": "css-display-none",
+    "selector": ".post:has(.paid-promo)"
+  }
+}
+```
 
 #### Declarative net request 的更新
 
-Declarative net request 也迎来更新。首先是支持对请求的 header 进行修改，可以对 HTTP 请求的 header 进行增删改，但是这一功能需要得到用户的授权。其次是支持了```declarativeNetRequest.setExtensionActionOptions```，这一 API 的功能是可以在插件对应的小图标上，获取拦截的请求数量，并以 badge 的形式展示。这一 API 可以丰富拦截的 UI 的展示，但是也限制了展现形式，对于很多有统计功能的插件来说，可能并不是很友好。另外，被拦截的请求有些可能只是一个 ping，这样的请求数量会很多，但是展示的时候并不能过滤掉这些请求，这也会影响用户体验。
+Declarative net request 也迎来更新。首先是支持对请求的 header 进行修改，可以对 HTTP 请求的 header 进行增删改，但是这一功能需要得到用户的授权。比如在下面这个例子中，当用户访问 example.com 的时候，会把 header 中的 User-Agent 修改为 My custom user agent。
+
+```json
+{
+  "id":1,
+  "action":{
+    "type": "modifyHeaders",
+    "requestHeaders":[
+      { "headers": "User-Agent", "operation": "set", "value": "My custom user agent"}
+    ]
+  },
+  "condition":{
+    "urlFilter": "example.com",
+    "resourceTypes": ["main_frame"]
+  }
+}
+```
+
+其次是支持了```declarativeNetRequest.setExtensionActionOptions```，这一 API 的功能是可以在插件对应的小图标上，获取拦截的请求数量，并以 badge 的形式展示。这一 API 可以丰富拦截的 UI 的展示，但是也限制了展现形式，对于很多有统计功能的插件来说，可能并不是很友好。另外，被拦截的请求有些可能只是一个 ping，这样的请求数量会很多，但是展示的时候并不能过滤掉这些请求，从而导致显示的数字非常大，这也会影响用户的观感。下面是这个 API 具体的使用方法
+
+```javascript
+browser.declarativeNetRequest.setExtensionActionOptions({
+  displayActionCountAsBadgeText: true
+})
+```
 
 #### 支持 regiesterContentScript API
 
-这一系列 API 指的是当往网页内植入 content 脚本时，此前只能植入 manifest 中指定的 JS 脚本，不能够修改。用了这一系列 API 后，可以对 content 脚本进行动态注册，修改和删除。这可以大大提高 extension 的扩展性，丰富 extension 的功能。
+这一系列 API 指的是当往网页内植入 content 脚本时，此前只能植入 manifest 中指定的 JS 脚本，不能够修改。用了这一系列 API 后，可以对 content 脚本进行动态注册，修改和删除。这可以大大提高 extension 的扩展性，丰富 extension 的功能。例如下面的样例，可以在执行到某段逻辑时，如用户打开开关时，执行 regiesterContentScript 这个API， 从而在 example.com 网页中植入 content-script.js 这个脚本
+
+```javascript
+let scriptToRegister = {
+  "id": "my-script",
+  "js": ["content-script.js"],
+  "matches": ["https://*.example.com/*"],
+  "persistAcrossSession": true
+}
+
+await browser.scripting.registerContentScript([scriptToRegister]) ;
+```
 
 #### 支持 session storage
 
-因为苹果对非持久化 background 的使用，使得 background 的生命周期不稳定，有些需要存储的全局变量必须得存入 local storage。增加了 session storage 后，可以使得一部分不需要持久化的存储不再存入硬盘，而是在浏览器的 session 周期内存储进内存，既可以减少对硬盘的占用，也可以大大的提高读写速度
+因为苹果对非持久化 background 的使用，使得 background 的生命周期不稳定，有些需要存储的全局变量必须得存入 local storage。增加了 session storage 后，可以使得一部分不需要持久化的存储不再存入硬盘，而是在浏览器的 session 周期内存储进内存，既可以减少对硬盘的占用，也可以大大的提高读写速度。在 Safari 退出时，这些数据会被清除。使用方法如下
+
+```javascript
+
+//store
+await browser.storage.session.set({"key": "value"})
+
+//retrieve
+await browser.storage.session.get("key")
+
+```
 
 #### 统一尺寸的图标
 
