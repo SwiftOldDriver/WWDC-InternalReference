@@ -61,7 +61,7 @@ func beginRequest(with context: NSExtensionContext) {
 
 ```
 
-这里的功能是接受来自 Extension 的消息，同时把 message 以 oslog 的形式打印出来，并返回一个response。
+这里的功能是接受来自 Extension 的消息，同时把 message 以 oslog 的形式打印出来，并返回一个 response。
 
 Extension 是整个架构中最重要的部分。它通过 JavaScript 与网页进行交互，实现了改变网页内容、丰富网页功能、自定义网页 UI、修改网页请求内容等功能，这也是用户需要浏览器插件的原因之一。同时，Extension 还可以提供一个可交互的弹出式界面（popup），这是一个独立的网页，也是每个 Safari Web Extension 与用户进行交互的页面。这个弹出式界面通过基础的前端技术（HTML、CSS、JavaScript）来实现。
 
@@ -116,7 +116,7 @@ popup 就是当用户点击浏览器中 extension 的图标时，会出现的弹
 
 在 autoscroll 中，```popup.js```只负责两段逻辑，一是当用户点开弹窗时，发送 checkStatus 消息，查询用户对按钮是否展示的设置，从而设置开关的状态，另一个是当用户点击开关时，发送 setStatus 消息，改变存储的状态值。
 
-js关于这部分具体的代码，将放在下面介绍不同组件的通信方式时，详细介绍。
+关于这部分具体的代码，将放在下面介绍不同组件的通信方式时，详细介绍。
 
 ### Safari Web Extention 的内部通信
 
@@ -295,7 +295,7 @@ browser.declarativeNetRequest.setExtensionActionOptions({
 
 #### 支持 regiesterContentScript API
 
-这一系列 API 指的是当往网页内植入 content 脚本时，此前只能植入 manifest 中指定的 JS 脚本，不能够修改。用了这一系列 API 后，可以对 content 脚本进行动态注册，修改和删除。这可以大大提高 extension 的扩展性，丰富 extension 的功能。例如下面的样例，可以在执行到某段逻辑时，如用户打开开关时，执行 regiesterContentScript 这个API， 从而在 example.com 网页中植入 content-script.js 这个脚本
+这一系列 API 指的是当往网页内植入 content 脚本时，此前只能植入 manifest 中指定的 JS 脚本，不能够修改。用了这一系列 API 后，可以对 content 脚本进行动态注册，修改和删除。这可以大大提高 extension 的扩展性，丰富 extension 的功能。例如下面的样例，可以在执行到某段逻辑时，如用户打开开关时，执行 regiesterContentScript 这个 API， 从而在 example.com 网页中植入 content-script.js 这个脚本
 
 ```javascript
 let scriptToRegister = {
@@ -333,6 +333,10 @@ await browser.storage.session.get("key")
 如下图，当插件第一次访问某个网页时，会有这样的提示和提供给用户的选项。
 
 ![](./images/permission.png)
+
+当 Safari 打开时， 也可能会在浏览器顶端出现这样的提示，提醒用户是够给某个插件授权。
+
+![](./images/permission2.png)
 
 ### Profiles 和隐私浏览对 Safari Web Extension 的支持
 
