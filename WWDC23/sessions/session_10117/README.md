@@ -40,7 +40,7 @@ App Store Connect 是苹果提供给开发者用来管理 App 信息、提交审
 
 ![WWDC23-10117-04](images/WWDC23-10117-04.png)
 
-使用 App 内购买项目推广功能之前，我们需要在 App Store Connect 为准备推广的 App 内购买项目上传宣传图标，在之前，我们在开发的 App 内，无法直接读取 App Store Connect 配置的推广图标。
+使用 App 内购买项目推广功能之前，我们需要在 App Store Connect 为准备推广的 App 内购买项目上传宣传图标。在之前的 OS 系统中，开发者是无法直接读取 App Store Connect 配置的推广图标的。
 
 现在，利用 [ProductView](https://developer.apple.com/documentation/storekit/productview) API 就可以创建一个商品视图，通过 `prefersPromotionalIcon` 字段设置为 `true` 就可以使用推广图标。
 
