@@ -111,10 +111,10 @@ GET /inApps/v1/transactions/1000998836590
 | ------------------ | ----------------- | ----------------------- | ----------------------- | -------------------- |
 | 元数据          | appReceipt       | jwsRepresentation       | transactionId           | transactionId        |
 | 支持消费型商品交易 | 支持            | 支持                  | 客户端 finish 后无法查询 | 支持               |
-| 验证耗时             | 较慢（700ms）            | 快                     | 一般（280ms）                     | 非常快            
+| 验证耗时             | 较慢            | 快                     | 一般                     | 非常快            
 | 是否弃用       | 弃用            | 否                     | 否                     | 否                  |  
 
-需要注意的是 [verifyReceipt API](https://developer.apple.com/documentation/appstorereceipts/verifyreceipt)  已被苹果**弃用**，而新的接口已经基本满足所有业务场景需求，且，所以建议尽快迁移到 `Get Transaction Info` 校验方式。
+需要注意的是 [verifyReceipt API](https://developer.apple.com/documentation/appstorereceipts/verifyreceipt)  已被苹果**弃用**，而新的接口已经基本满足所有业务场景需求，且 `verifyReceipt` 和 `Get Transaction History` 接口耗时会随着票据/交易规模增长而增加，平均在 1s-500ms 之间，而 `Get Transaction Info` 可以指定 transactionId 进行查询，耗时最少且相对固定，所以建议尽快迁移到 `Get Transaction Info` 校验方式。
 
 除了以上新增的 `Get Transaction Info` 支持 transactionId，本次更新还对其他接口进行灵活性扩展，以下接口均支持了 transactionId 作为查询参数使用，并且原本的 originalTransactionId 同样保留支持。
 
