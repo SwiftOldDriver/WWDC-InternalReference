@@ -34,7 +34,7 @@ session_ids: [10141]
 `Get Transaction History`、`Get All Subscription Statuses` API 在交易确认、订阅等场景下尤其重要，即使目前使用起来也有一些问题，但苹果在本次 WWDC 也针对性的提供了新特性解决这些问题点，后文会提到。  
 而 `Look Up Order ID` API 在推出后对线上补单、部分支付客诉问题提供巨大的帮助，特别是一些旧版本存留用户。
 > **线上补单**  
-在 StoreKit2 推出之前，我们通常使用 [applicationUsername](https://developer.apple.com/documentation/storekit/skmutablepayment/1506088-applicationusername) 来进行绑定关联业务订单，但这个字段存在丢失的问题，加上一些空票据（指客户端从 mainBundle 获取到的appReceipt 解析不到有订单）异常，尽快我们会进行有一些策略关联，仍然无法保证不会产生丢单的情况，即用户付款后没有正常发货。  
+在 StoreKit2 推出之前，我们通常使用 [applicationUsername](https://developer.apple.com/documentation/storekit/skmutablepayment/1506088-applicationusername) 来进行绑定关联业务订单，但这个字段存在丢失的问题，加上一些空票据（指客户端从 mainBundle 获取到的 appReceipt 解析不到有订单）异常，尽快我们会进行有一些策略关联，仍然无法保证不会产生丢单的情况，即用户付款后没有正常发货。  
 有了 `Look Up Order ID` 接口我们可以根据用户提供收据中的 Order ID 进行验证补单发货。
 
 > **支付客诉**  
@@ -111,7 +111,7 @@ GET /inApps/v1/transactions/1000998836590
 | ------------------ | ----------------- | ----------------------- | ----------------------- | -------------------- |
 | 元数据          | appReceipt       | jwsRepresentation       | transactionId           | transactionId        |
 | 支持消费型商品交易 | 支持            | 支持                  | 客户端 finish 后无法查询 | 支持               |
-| 验证耗时             | 较慢（700ms）            | 快                     | 一般（280ms）                     | 非常快            
+| 验证耗时             | 较慢（700ms）            | 快                     | 一般（280ms）                     | 非常快
 | 是否弃用       | 弃用            | 否                     | 否                     | 否                  |  
 
 需要注意的是 [verifyReceipt API](https://developer.apple.com/documentation/appstorereceipts/verifyreceipt)  已被苹果**弃用**，而新的接口已经基本满足所有业务场景需求，且，所以建议尽快迁移到 `Get Transaction Info` 校验方式。
