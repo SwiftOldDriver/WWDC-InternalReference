@@ -6,7 +6,17 @@ session_ids: [10080]
 
 # WWDC23 10080 - 使用 RealityKit 构建空间体验
 
+> 摘要：本文会介绍如何使用 RealityKit 框架中的 Entities 和 Component 在你的 visionOS 应用中玩转 3D 模型，以及全新推出的 RealityView，结合 RealityKit 3D 能力和 SwiftUI 沉浸式空间，带给用户前所未有的体验。
+
 本文基于 [Session 10080](https://developer.apple.com/videos/play/wwdc2023/10080/) 梳理。
+
+> 作者：
+>
+> 郭介騵， JamesDouble：目前就职于字节跳动，负责音视频通话相关 iOS 研发，曾参与抖音底层直播 SDK 开发。
+>
+> 审核：
+>
+> SatanWoo，老司机技术成员，就职于阿里巴巴淘宝，负责 端智能 / AR / VR 等技术。
 
 今年 WWDC 推出了全新的 [RealityView](https://developer.apple.com/documentation/realitykit/realityview)，它是一个可以用于展示 3D 模型的 **SwiftUI View**，在模型上添加手势互动，动画和空间音频，为你的 visionOS app 打造完整的空间体验！
 
