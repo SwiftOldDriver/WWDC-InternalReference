@@ -534,7 +534,7 @@ func use<T>(_ t: T) {
 
 ### Instruments
 
-- Instruments 15 包含一个新的 `RealityKit Trace` 模板，用于在 `VisionOS` 上分析应用程序和游戏。支持 CoreAnimation 数据、3D 渲染数据等统计。
+- Instruments 15 包含一个新的 `RealityKit Trace` 模板，用于在 `visionOS` 上分析应用程序和游戏。支持 CoreAnimation 数据、3D 渲染数据等统计。
 - 支持在 `Allocations` `Leaks` 以及 `VM Tracker` Instruments 中打开 `.memgraph` 文件，支持查看 Instruments 捕获的 `.memgraph` 文件。
 - 新的 `dyld` 活动监视器，可以可视化 `dlopen`、`dlclose`、静态初始化等。
 - 新增了一个音频系统追踪模板，可视化了应用程序是如何和音频服务交互的，可以让你深入了解音频线程 I/O 周期和其他的一些性能指标。
