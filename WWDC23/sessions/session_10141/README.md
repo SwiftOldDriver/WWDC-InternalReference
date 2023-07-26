@@ -142,7 +142,7 @@ GET /inApps/v1/transactions/1000998836590
 | Exipred       | 已过期                               | 否              |
 | Revoked       | 已撤销 1.退款 2.家庭共享权益失效 | 否              |
 
-![Status](./images/Status.png)
+![Status](./images/Subscription_status.png)
 
 先看一下在本次 WWDC 之前我们是如何处理用户订阅状态的，借助 Notifications V2 接收到用户订阅状态发生变化的提示通知，我们在适当的时间更新用户在我们平台上的订阅状态，启用或者禁用用户订阅的相关权益，保持流畅的用户体验，我们可以根据通知的 notificationType 和 subType 来确定用户订阅的状态。
 
