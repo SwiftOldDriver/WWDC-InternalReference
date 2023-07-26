@@ -20,7 +20,7 @@ session_ids: [10141]
 
 苹果在 WWDC21 推出了全新 StoreKit2 以及 App Store Server Notifications V2，而本次 WWDC23 苹果对 App Store Server API 补充了一些新特性，简化交易服务端与苹果服务端之间的流程，以及最后介绍如何迁移到新的 API，还有针对这些 API 提供全新的开源库 App Store Server Library，让迁移升级工作变得更加简便；如果你还不熟悉这这两部分内容，建议先阅读近两年 WWDC IAP 的相关 Session。
 
-![History session](./images/History_session.png)
+![Session history](./images/Session_history.png)
 
 **WWDC21**
 
@@ -128,7 +128,7 @@ GET /inApps/v1/transactions/1000998836590
 
 除了以上新增的 `Get Transaction Info` 支持 transactionId，本次更新还对其他接口进行灵活性扩展，以下接口均支持了 transactionId 作为查询参数使用，并且原本的 originalTransactionId 同样保留支持。
 
-![TransactionId param](./images/TransactionId_param.png)
+![TransactionId](./images/TransactionId.png)
 
 ## 订阅通知更新 - Notification status and results
 
@@ -148,13 +148,13 @@ GET /inApps/v1/transactions/1000998836590
 
 对于 notificationType 是 SUBSCRIBED 或者 EXPIRED，我们可以明确知道其对应的订阅状态是 Active 和 Expired。
 
-![Active status](./images/Active_status.png)
-![Expired status](./images/Expired_status.png)
+![Active status](./images/Active_status_.png)
+![Expired status](./images/Expired_status_.png)
 
 但对于某些通知，订阅的状态可能不是那么清晰，以退款通知为例，当我们应用中进行的 IAP 购买发生退款时，我们会收到此类型通知，并且通知中的 signedTransactionInfo 会携带发生退款对应的交易信息。  
 假设这个通知是自动续订订阅，我们在处理订阅状态更新时还需要考虑最近是否还有其他相同 originalTransactionId 的订阅购买，如果有我们应该保持用户订阅的 active 状态而不是 revoke 状态，因此，通知中的数据不足以用来确定订阅的状态，这让我们在处理订阅通知时比较繁琐，因此我们通常还需要使用另外一个接口 [GET All Subscribtion statues](https://developer.apple.com/documentation/appstoreserverapi/get_all_subscription_statuses) 来确定该订阅的状态。
 
-![Subscription status](./images/Subscription_status.png)
+![Revoked status](./images/Revoked_status.png)
 
 * **[Subscription status](https://developer.apple.com/documentation/appstoreservernotifications/status)**
 
