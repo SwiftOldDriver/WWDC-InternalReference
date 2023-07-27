@@ -134,7 +134,7 @@ popup 就是当用户点击浏览器中 extension 的图标时，会出现的弹
 
 这种通信方式是一种重要的通信方式，主要作用是把插件内的配置等同步给 Extension，进而同步给宿主 App，实现在 UI 上展现等功能，这种通信方式是其他平台的 Web Extension 所不具备的。
 
-在使用时，popup 和 background 需要使用 ```browser.runtime.sendNativeMessage``` API
+在使用时，popup 和 background 需要使用 `browser.runtime.sendNativeMessage` API
 
 ```javascript
 
@@ -478,13 +478,13 @@ await browser.storage.session.get("key")
 
 在 Safari17 上，苹果为 Safari 引入了 Profile 的概念，不同的 Profile 类似于不同的账户，彼此之间的信息时不互通的。所以对于 Safari 上的插件而言，不同 Profile 中的同一个插件，其 UUID，background 以及 存储都是不互通的，是独立的实例。更没有权限去获取其他 Profile 中的网页内容。
 
-这次 WWDC 中关于 Safari 插件的更新可以使其更好用，但苹果这样每一年添加几个 chrome 和 firefox 上一直都存在的 API，很难吸引 Chrome 上优秀的插件开发者。截止到此次 WWDC，safari 上拥有 2000 多款插件，但其中包括了很多一直存在的 Safari Web Extension。所以三年来，Safari 一直不像 Chrome 的插件一样百花齐放。
+这次 WWDC 中关于 Safari 插件的更新可以使其更好用，但苹果这样每一年添加几个 chrome 和 firefox 上一直都存在的 API，很难吸引 Chrome 上优秀的插件开发者。截止到此次 WWDC，Safari 上拥有 2000 多款插件，但其中包括了很多一直存在的 Safari Web Extension。所以三年来，Safari 一直不像 Chrome 的插件一样百花齐放。
   
 ## 发布 Safari Web Extension
 
 > Apple Tech talk [Build and deploy Safari Extensions for iOS](https://developer.apple.com/videos/play/tech-talks/110148/)
 
-对于不了解 safari extension 的苹果开发者来说，更多需要做的是熟悉 JavaScript 等前端技术，其他的流程就与开发 iOS App 类似了，同时也非常建议去选择 Safari Web Extension，因为其跨平台的属性，基本上能保证一套代码同时发布在所有平台上，包括 Chrome，Firefox 和 Edge。
+对于不了解 Safari Extension 的苹果开发者来说，更多需要做的是熟悉 JavaScript 等前端技术，其他的流程就与开发 iOS App 类似了，同时也非常建议去选择 Safari Web Extension，因为其跨平台的属性，基本上能保证一套代码同时发布在所有平台上，包括 Chrome，Firefox 和 Edge。
 但这里需要注意的是，如果需要接入收费的功能，插件内不要包含 web 端的付费功能，要做付费功能的话需要在宿主 app 通过 IAP 实现, 这一点自然很符合苹果的一贯策略。
 
 对于没有接触过 Apple 开发的插件开发者而言，首先需要支付 99 美元每年的开发者账户的费用，然后下载 Xcode，苹果提供一个工具，可以将已有的插件转化为 Safari Web Extension，使用命令
