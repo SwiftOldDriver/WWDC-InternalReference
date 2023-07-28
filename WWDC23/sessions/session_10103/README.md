@@ -512,6 +512,9 @@ EnumerableEntityQuery 和 EntityPropertyQuery 的区别：
 
 总而言之，App Intents 是向系统和用户公开 App 功能的好办法。要了解更多有关如何将 App Intents 转变为 App Shortcuts 以便人们可以立即使用它们的信息，我建议您查看 [Spotlight your app with App Shortcuts](https://developer.apple.com/wwdc23/10102)。
 
+
+![Summary](./images/50.png)
+
 ## 总结
 
 以上是今年对于 App Intents 的主要更新的功能。开发者能够通过 Intent 构建可配置的交互式小组件和实时活动，并更深入的集成到 Shortcuts App 中。整体开发体验也更流畅。
