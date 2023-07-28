@@ -65,23 +65,9 @@ session_ids: [10103]
     }
     ```
 
-    当然如果想同时使用该 Intent 作为可操作的 Intent，也可以实现对应的 `perform()`。可以参考 WidgetConfigurationIntent 定义：
+    当然如果想同时使用该 Intent 作为可操作的 Intent，也可以实现对应的 `perform()`。
 
-    ```swift
-    @available(iOS 17.0, macOS 14.0, watchOS 10.0, *)
-    @available(tvOS, unavailable)
-    public protocol WidgetConfigurationIntent : AppIntent {
-        associatedtype NeverResult where Self.NeverResult == Never
-    }
-
-    @available(iOS 17.0, macOS 14.0, watchOS 10.0, *)
-    @available(tvOS, unavailable)
-    extension WidgetConfigurationIntent {
-        public func perform() async throws -> Self.NeverResult
-    }
-    ```
-
-3. 创建新的 TimelinProvider。新的 TimelinProvider 需要遵守 AppIntentTimelineProvider 协议，而非之前的 IntentTimelineProvider 协议。
+3. 创建新的 TimelineProvider。新的 TimelineProvider 需要遵守 AppIntentTimelineProvider 协议，而非之前的 IntentTimelineProvider 协议。二者的区别主要是 AppIntentTimelineProvider 协议要求 configuration 参数需要遵守 WidgetConfigurationIntent 协议，而非 ConfigurationIntent：
 
     ```swift
     struct Provider: AppIntentTimelineProvider {
@@ -303,7 +289,7 @@ RelevantContext API 也非常适合手表显示复杂情况。要了解有关 wa
 
 ![Framework support now](./images/24.png)
 
-另外一个方案是动态库。在 iOS 17 和 Xcode 15 中，Framework 可以直接公开 App Intents，不再需要编译两次代码。这依赖于苹果提供的新 AppIntentsPackage API。通过实现 AppIntentsPackage 协议，App 和其他 Extentsion 都可以从其他 Framework 中重新导出元数据。
+另外一个方案是动态库。在过去，系统需要在编译时期静态提取 App Intents 的元数据。这使得相关 Intents 的类型必须被定义在主 App 或者 Target 中。而在 iOS 17 和 Xcode 15 中，Framework 可以直接公开 App Intents，不再需要编译两次代码。这依赖于苹果提供的新 AppIntentsPackage API。通过实现 AppIntentsPackage 协议，App 和其他 Extentsion 都可以从其他 Framework 中重新导出元数据。
 
 ```swift
 // Framework support
