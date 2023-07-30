@@ -258,7 +258,7 @@ window.parent.postMessage({
 苹果生态的浏览器插件经历了 Safari Extension，Safari App Extension 到 Safari Web Extension 的发展，其中除了 Safari Extension 已经废弃了，Safari App Extension 和 Safari Web Extension 仍然都苹果生态中的浏览器插件支持的实现方式。除此之外，Safari 还支持 Content Blocker（内容拦截器），这也是一种浏览器插件，虽然其功能有限，只能拦截网络请求，这是 Safari 上绝大多数的广告拦截器的实现方式。
 ![](./images/history.png)
 
-### Safari App 插件
+### Safari App Extension
 
 > [Safari App Extension](https://developer.apple.com/documentation/safariservices/safari_app_extensions)官方文档
   
