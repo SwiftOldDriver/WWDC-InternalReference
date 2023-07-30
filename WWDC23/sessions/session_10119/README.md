@@ -1,9 +1,19 @@
 ---
 session_ids: [10119]
 ---
-Session 10119 - 在 Safari 上开发浏览器插件
+# WWDC23 10119 - 在 Safari 上开发浏览器插件
+
+> 摘要：本文在介绍 WWDC 2023 关于 Safari Web Extension 的同时，也介绍了 Safari Web Extension 从 2020 年开始的更新和发展.
 
 本文基于[Session 10119](https://developer.apple.com/videos/play/wwdc2023/10119/)梳理。
+
+> 作者：
+>
+> Gareth Ng, 任职于 Trend Micro，开发过 Safari 和 Chrome 上的插件的前 iOS 和 macOS 开发者。 即使工作离开了苹果生态，但是对于苹果生态的热爱依然不减。
+>
+> 审核：
+>
+> zhangferry，摸鱼周报编辑，就职于抖音 iOS 基础技术团队，从事研发效能相关工作。
 
 ![](./images/SafariWebExtension.png)
 
