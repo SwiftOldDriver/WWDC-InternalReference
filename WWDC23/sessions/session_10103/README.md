@@ -10,7 +10,7 @@ session_ids: [10103]
 
 >作者：王守楷、刘欢，iOS 开发者。目前任职于京东 App 黄金流程团队。
 
-![banner](./images/banner.png)
+![banner](./images/50.png)
 
 ## 引言
 
@@ -30,7 +30,7 @@ session_ids: [10103]
 
 ![Widget configuaration](./images/2.png)
 
-在过去，开发者必须在 Xcode 中使用意图定义文件声明 Intents。从 iOS 17 开始，Intents 的定义可以直接在 Widget Extension 中通过代码实现。
+在过去，开发者必须在 Xcode 中使用意图定义文件（Intent Definition File）声明 Intents。从 iOS 17 开始，Intents 的定义可以直接在 Widget Extension 中通过代码实现。
 
 1. 首先，使用 AppIntentConfiguration 类型，替换之前配置小组件使用的 IntentConfiguration。
 
@@ -511,9 +511,6 @@ EnumerableEntityQuery 和 EntityPropertyQuery 的区别：
 如图所示，在查询类型中使用 findIntentDescription 属性。如果我们使用 categoryName 对操作进行分类，这将允许我们在 App 支持的操作列表中的所需类别下显示生成的查找操作。
 
 总而言之，App Intents 是向系统和用户公开 App 功能的好办法。要了解更多有关如何将 App Intents 转变为 App Shortcuts 以便人们可以立即使用它们的信息，我建议您查看 [Spotlight your app with App Shortcuts](https://developer.apple.com/wwdc23/10102)。
-
-
-![Summary](./images/50.png)
 
 ## 总结
 
