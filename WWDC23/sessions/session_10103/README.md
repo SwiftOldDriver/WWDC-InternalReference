@@ -87,18 +87,17 @@ session_ids: [10103]
     ```swift
     @main
     struct UpNextWidgetWidgetBundle: WidgetBundle {
-    var body: some Widget {
-        if #available(iOS 17.0, *) {
-            //使用 UpNextAppIntentWidget  用于支持 iOS 17 新特性
-            return UpNextAppIntentWidget()
-        } else {
-            //保留 UpNextWidget、UpNextWidgetLiveActivity 用于兼容旧版本
-            return WidgetBundleBuilder.buildBlock(UpNextWidget(), UpNextWidgetLiveActivity())
+        var body: some Widget {
+            if #available(iOS 17.0, *) {
+                //使用 UpNextAppIntentWidget  用于支持 iOS 17 新特性
+                return UpNextAppIntentWidget()
+            } else {
+                //保留 UpNextWidget、UpNextWidgetLiveActivity 用于兼容旧版本
+                return WidgetBundleBuilder.buildBlock(UpNextWidget(), UpNextWidgetLiveActivity())
+            }
         }
     }
-}
     ```
-
 
 下面例子是公交时刻表 App 的一个小组件，它显示特定站点的下一班预定公交车的时间和路线。这将使人们无需打开完整的应用程序即可快速查看下一班公交车何时到达。使用 App Intents 为小组件提供配置 Intent。首先定义一个符合 WidgetConfigurationIntent 协议，并包含以下参数的结构：
 
