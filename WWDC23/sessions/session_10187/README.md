@@ -204,7 +204,7 @@ struct ContentView: View  {
 }
 ```
 
-对于数据模型的属性，SwiftData 支持所有新的 Observable 特性。SwiftUI 会在这些属性变化时自动刷新 UI。
+SwiftData 中的模型属性默认被 SwiftUI 监听 ，即我们无需再添加 `@ObservableObject` 或 `@Published` 来修饰模型， SwiftUI 会在这些属性变化时自动刷新 UI。
 
 ## 构建我们的 Schema
 
@@ -435,9 +435,9 @@ struct TripsApp: App {
 小结一下：
 
 - 使用宏来修饰 Model 里的字段以满足我们的需求，比较常见的有：
-    - `@Relationship` 指定两个模型之间的关系
-    - `@Attribute` 指定模型的属性的自定义行为
-    - `@Transient` 控制单个属性不被持久化
+  - `@Relationship` 指定两个模型之间的关系
+  - `@Attribute` 指定模型的属性的自定义行为
+  - `@Transient` 控制单个属性不被持久化
 - 当 Schema 变更时，用 `VersionedSchema` 来进行迁移
 
 ## 深入 SwiftData
@@ -574,7 +574,7 @@ struct ContentView: View {
 
 在 SwiftUI 中，`modelContainer` 修饰器提供了 `isUndoEnabled` 参数，它将 Window 的 `undoManager` 绑定到容器的 `mainContext`。在 Main Context 中进行改动时，无需任何代码即可支持系统手势（如三指滑动和摇动）进行撤销或重做。ModelContext 会自动将撤销和重做操作注册为对模型对象的更改。`modelContainer` 修饰器默认使用了由 Window 或 Window Group 提供了 Environment 中的 `undoManager`。
 
-Model Context 支持的另一个系统功能是自动保存。开启自动保存后，Model Context 将在如 App 进入前台或后台等系统事件时进行保存。在 App 使用过程中，Main Context 也会定期保存。App 默认开启了自动保存，也支持用 `modelContainer` 修饰器里的 `isAutosaveEnabled` 来禁用。手动创建的 Model Context 不支持自动保存。
+Model Context 支持的另一个系统功能是自动保存。开启自动保存后，Model Context 将在如 App 进入前台或后台等系统事件时进行保存。在 App 使用过程中，Main Context 也会定期保存。App 默认开启了自动保存，也支持用 `modelContainer` 修饰器里的 `isAutosaveEnabled` 来禁用。从没有绑定到 SwiftUI 的 `ModelContainer` 创建的 Model Context 不支持自动保存。
 
 ```swift
 @main
