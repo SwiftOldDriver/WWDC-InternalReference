@@ -13,7 +13,7 @@ session_ids: [10187, 10195, 10189, 10196]
 
 > 本小节主要基于 [10187 - Meet SwiftData](https://developer.apple.com/wwdc23/10187) 编写。
 
-SwiftData 是 Apple 在 iOS 17／macOS Sonoma 推出的全新数据存储／管理框架。正如 SwiftUI 完全抛弃了 IB，SwiftData 也无需任何额外配置文件。SwiftData 充分利用了 Macro 让使用更加直观顺畅，能够非常自然地集成到了 SwiftUI 中，也能在 CloudKit 和 Widgets 等其他场景使用。
+SwiftData 是 Apple 在 iOS 17／macOS Sonoma 推出的全新数据存储／管理框架。正如 SwiftUI 完全抛弃了 IB，SwiftData 也无需任何额外配置文件。SwiftData 充分利用了宏让使用更加直观顺畅，能够非常自然地集成到了 SwiftUI 中，也能在 CloudKit 和 Widgets 等其他场景使用。
 
 本小节会介绍在 SwiftData 中如何：
 
@@ -76,7 +76,7 @@ class Trip {
 }
 ```
 
-1. `@Attribute(.unique)` 为 `name`  属性添加了一个唯一约束
+1. `@Attribute(.unique)` 为 `name` 属性添加了一个唯一约束，与 Core Data 中的唯一约束效果一致，确保整个表中所有实体的 `name` 都是不同的
 2. `@Relationship(.cascade)` 使得 `Trip` 在数据库里被删除时，同时删除掉所有关联的 `bucketList`
 
 构建完模型，我们要使用 SwiftData 中的两个关键对象 `ModelContainer` 和 `ModelContext` 驱动整个流程。
@@ -94,9 +94,9 @@ let container = try ModelContainer(
 )
 ```
 
-如上所示，我们可以使用 `Schema` 进行简单配置，或用 `ModelConfiguration` 进行更定制化的配置，来修改包括本地 URL、CloudKit 和 Group Container Identifier 、迁移选项等。
+如上所示，我们可以使用 `Schema` 进行简单配置，或用 `ModelConfiguration` 进行更定制化的配置，来修改包括本地 URL、CloudKit 和 Group Container Identifier、迁移选项等。
 
-ModelContainer 配置完成用，我们可以使用 Model Context 来获取和保存数据。SwiftUI 中提供了 View 和 Scene 的修饰器来快速关联一个 Model Container。
+`ModelContainer` 配置完成后，我们可以使用 Model Context 来获取和保存数据。SwiftUI 中提供了 View 和 Scene 的修饰器来快速关联一个 `ModelContainer`。
 
 ```swift
 import SwiftUI
@@ -132,7 +132,7 @@ let context = container.mainContext
 let context = ModelContext(container)
 ```
 
-Model Context 使用了 Swift 原生的 Predicate 宏、 Fetch Descriptor、Sort Descriptor 来进行自定义数据获取。在 iOS 17 中，`Predicate` 支持 Swift 原生类型并利用宏来简化使用。 相较于 `NSPredicate`,  `Predicate`  有完整的类型检查与完善的 Xcode 补全。让我们来看看 `Predicate` 的例子：
+Model Context 使用了 Swift 原生的 Predicate 宏、 Fetch Descriptor、Sort Descriptor 来进行自定义数据获取。在 iOS 17 中，`Predicate` 支持 Swift 原生类型并利用宏来简化使用。相较于 `NSPredicate`, `Predicate` 有完整的类型检查与完善的 Xcode 补全。让我们来看看 `Predicate` 的例子：
 
 ```swift
 let today = Date()
@@ -154,7 +154,7 @@ let descriptor = FetchDescriptor<Trip>(predicate: tripPredicate)
 let trips = try context.fetch(descriptor)
 ```
 
-此外，对结果进行排序也是很常见的需求，`SortDescriptor` 支持了原生 Swift 类型和 KeyPath，完美融合到了 Predicate 中，能够快速对结果进行排序：
+此外，对结果进行排序也是很常见的需求，`SortDescriptor` 支持了原生 Swift 类型和 `KeyPath`，完美融合到了 `Predicate` 中，能够快速对结果进行排序：
 
 ```swift
 let descriptor = FetchDescriptor<Trip>(
@@ -165,7 +165,7 @@ let descriptor = FetchDescriptor<Trip>(
 let trips = try context.fetch(descriptor)
 ```
 
-除了 Predicate 和排序之外，SwiftData 也支持指定关联对象，限制结果数、排除未保存变更等更多查询方式。使用 Model Context，SwiftData 让数据的创建、删除、修改变的十分简单！
+除了 `Predicate` 和排序之外，SwiftData 也支持指定关联对象，限制结果数、排除未保存变更等更多查询方式。使用 `ModelContext`，SwiftData 让数据的创建、删除、修改变的十分简单！
 
 > [第三小节](##深入 SwiftData)会继续介绍查询的进阶用户
 
@@ -179,7 +179,7 @@ try context.save()      // 3️⃣
 
 1. 在创建完 Model 对象后，插入到 context 后就可以开始使用包括数据持久化追踪等特性。
 2. 删除也很简单，调用 `delete` 让 `context` 把模型标记为删除。
-3. SwiftData 支持自动保存，但我们仍可以手动触发保存让所有未保存的改动提交到 Model Container 中。
+3. SwiftData 支持自动保存，但我们仍可以手动触发保存让所有未保存的改动提交到 `ModelContainer` 中。
 
 修改模型的字段和平时修改对象的属性并没有差别，`@Model` 修改了 Model 中存储属性的实现以让 Model Context 能够自动追踪改动并加到下一个 `save` 中。
 
@@ -248,9 +248,9 @@ final class Trip {
 
 1. 回顾一下，添加 `@Attribute(.unique)` 让 SwiftData 保证每个 `Trip` 的 `name` 是唯一的。`@Attribute(.unique)` 可以用来修饰任意包括包括数字、字符串、UUID 在内的原始类型（Primitive Types）和对一的关系。
 
-   > 当我们尝试保存一个 SwiftData 中已有的同名 `Trip` 时，SwiftData 会将新值更新到已经老的 `Trip` 中，也就是 Upsert。
+   > 当我们尝试保存一个 SwiftData 中已有的同名 `Trip` 时，SwiftData 会将新值更新到已有的 `Trip` 中，也就是更新插入（Upsert）。
 
-2. `end_date` 的命名不符合 Swift 的规范，但如果直接修改命名会被 Swift 视为一个新的字段，原有的数据就丢失了 Schema。 使用 `@Attribute(originalName:"")` 让 SwiftData 来进来一次映射，这样也同时保证了下次更新只会发生一次简单迁移。
+2. `end_date` 的命名不符合 Swift 的规范，但如果直接修改命名会被 Swift 视为一个新的字段，原有的数据就丢失了 Schema。 使用 `@Attribute(originalName: "")` 让 SwiftData 来进来一次映射，这样也同时保证了下次更新只会发生一次简单迁移。数据迁移是数据存储框架不可缺少的部分，下一小节会详细介绍 SwiftData 中如何进行迁移。
 
 除了上面介绍的两个功能外，`@Attribute` 还支持：
 
@@ -434,8 +434,11 @@ struct TripsApp: App {
 
 小结一下：
 
-- 使用宏来修饰 Model 里的字段以满足我们的需求
-- 当 Schema 变更时，用 VersionedSchema 来进行迁移
+- 使用宏来修饰 Model 里的字段以满足我们的需求，比较常见的有：
+    - `@Relationship` 指定两个模型之间的关系
+    - `@Attribute` 指定模型的属性的自定义行为
+    - `@Transient` 控制单个属性不被持久化
+- 当 Schema 变更时，用 `VersionedSchema` 来进行迁移
 
 ## 深入 SwiftData
 
@@ -471,7 +474,7 @@ Schema 会告诉 Model Container 数据如何存储。Model Container 会使用 
 
 ![Container & Context](./images/SWD_Model_container.png)
 
-ModelContainer 是我们描述数据被如何在设备中存储（或持久化）的地方。ModelContainer 就像是 Schema 和持久化后台的桥梁。我们可以在 ModelContainer 中设置对象如何存储（是在内存或磁盘上），设定包括版本化、迁移、对象图分离等配置。
+`ModelContainer` 是我们描述数据被如何在设备中存储（或持久化）的地方。`ModelContainer` 就像是 Schema 和持久化后台的桥梁。我们可以在 `ModelContainer` 中设置对象如何存储（是在内存或磁盘上），设定包括版本化、迁移、对象图分离等配置。
 
 初始化 `ModelContainer` 非常简单，我们可以只提供想要存储的 Model Class，SwiftData 会完成剩下的工作，例如：
 
@@ -493,7 +496,7 @@ let container = try ModelContainer(
 )
 ```
 
-此外，SwiftData 提供了 `ModelConfiguration` 让我们可以进行更复杂的配置。`ModelConfiguration` 支持配置 Schema 的持久化方式。它控制了数据的存储位置（如在内存中或磁盘上）。`ModelConfiguration` 支持指定存储文件 URL，也可以使用 App 的 Entitlement（如 Group Container Entitlement）自动生成一个。ModelConfiguration 还可以设定为只读模式，防止写入到敏感或模板数据。使用多个 CloudKit Container 的 App 可以指定其为 ModelContainer Schema 中的一部分。
+此外，SwiftData 提供了 `ModelConfiguration` 让我们可以进行更复杂的配置。`ModelConfiguration` 支持配置 Schema 的持久化方式。它控制了数据的存储位置（如在内存中或磁盘上）。`ModelConfiguration` 支持指定存储文件 URL，也可以使用 App 的 Entitlement（如 Group Container Entitlement）自动生成一个。ModelConfiguration 还可以设定为只读模式，防止写入到敏感或模板数据。使用多个 CloudKit Container 的 App 可以指定其为 `ModelContainer` Schema 中的一部分。
 
 假设我们需要为 `SampleTrip` 加入一些联系人信息，我需要加入 `Person` 和 `Address`。
 
@@ -534,7 +537,7 @@ let container = try ModelContainer(for: fullSchema, trips, people) // 6️⃣
 
 ### 跟踪和持久化变动
 
-当我们在  `Scene` 或 `View` 中使用 `modelContainer` 修饰器时，它会在 `Environment` 中新增一个 `modelContext` key 来访问容器的 `mainContext`。这个 `mainContext` 是一个特殊的用于在 Scene 和 View 中使用的 `MainActor` 绑定的 Context。通过这个 context，View 中的代码可以访问的操作 SwiftData。
+当我们在 `Scene` 或 `View` 中使用 `modelContainer` 修饰器时，它会在 `Environment` 中新增一个 `modelContext` key 来访问容器的 `mainContext`。这个 `mainContext` 是一个特殊的用于在 Scene 和 View 中使用的 `MainActor` 绑定的 Context。通过这个 context，View 中的代码可以访问的操作 SwiftData。
 
 ```swift
 struct ContentView: View {
@@ -565,13 +568,13 @@ struct ContentView: View {
 
 ![SwiftData Scratchpad](./images/SWD_scratchpad.png)
 
-数据在使用时会被获取到 Model Context 中。在 SampleTrips 中，在未来 `Trip` 视图加载列表数据时，每个 Trip 对象都被获取到 Main Context 中。如果对 Trip 进行了编辑，那么改动会被 `ModelContext` 记录为一个快照。当进行其他更改，例如插入／删除一个 `Trip` ，Context 会跟踪和维护这些更改的状态，直到调用 `context.save()` 为止。这意味着即使被删除的 `Trip` 虽然在列表中不可见，但在调用 `save` 之前 仍然会存在于 ModelContext 中。一旦 `save` 被调用，Context 会将所有改动持久化到 ModelContainer 中并清理它的状态。
+数据在使用时会被获取到 Model Context 中。在 SampleTrips 中，在未来 `Trip` 视图加载列表数据时，每个 Trip 对象都被获取到 Main Context 中。如果对 Trip 进行了编辑，那么改动会被 `ModelContext` 记录为一个快照。当进行其他更改，例如插入／删除一个 `Trip` ，Context 会跟踪和维护这些更改的状态，直到调用 `context.save()` 为止。这意味着即使被删除的 `Trip` 虽然在列表中不可见，但在调用 `save` 之前 仍然会存在于 ModelContext 中。一旦 `save` 被调用，Context 会将所有改动持久化到 `ModelContainer` 中并清理它的状态。
 
-如果此时还引用着 Context 中的对象（如在列表中显示它们），那在直到使用完成前这些对象会一直存在 Context 中。在使用完后，这些对象会被释放，且 Context 会清空。Model Context 会跟踪我们在 View 中获取的对象，并在执行 `save` 时传播这些更改。Model Context 还支持回滚或重置等功能，以在需要时清除其缓存状态。
+如果此时还引用着 Context 中的对象（如在列表中展示它们），那直到使用完成前这些对象会一直存在 Context 中。在使用完后，这些对象会被释放，且 Context 会清空。Model Context 会跟踪我们在 View 中获取的对象，并在执行 `save` 时传播这些更改。Model Context 还支持回滚或重置等功能，以在需要时清除其缓存状态。
 
-在 SwiftUI App 中，`modelContainer` 修饰器有 `isUndoEnabled` 参数，它将 Window 的 `undoManager` 绑定到容器的 `mainContext`。在 Main Context 中进行改动时，无需任何代码即可支持系统手势（如三指滑动和摇动）进行撤销或重做。ModelContext 会自动将撤销和重做操作注册为对模型对象的更改。`modelContainer` 修饰器默认使用了由 Window 或 Window Group 提供了 Environment 中的 `undoManager`。
+在 SwiftUI 中，`modelContainer` 修饰器提供了 `isUndoEnabled` 参数，它将 Window 的 `undoManager` 绑定到容器的 `mainContext`。在 Main Context 中进行改动时，无需任何代码即可支持系统手势（如三指滑动和摇动）进行撤销或重做。ModelContext 会自动将撤销和重做操作注册为对模型对象的更改。`modelContainer` 修饰器默认使用了由 Window 或 Window Group 提供了 Environment 中的 `undoManager`。
 
-Model Context 支持的另一个系统功能是自动保存。开启自动保存后，Model Context 将在如 App 进入前台或后台等系统事件时进行保存。在 App 使用过程中，Main Context 也会定期保存。App 默认开启了自动保存，也支持用 modelContainer 修饰器里的 `isAutosaveEnabled` 来禁用。手动创建的 Model Context 不支持自动保存。
+Model Context 支持的另一个系统功能是自动保存。开启自动保存后，Model Context 将在如 App 进入前台或后台等系统事件时进行保存。在 App 使用过程中，Main Context 也会定期保存。App 默认开启了自动保存，也支持用 `modelContainer` 修饰器里的 `isAutosaveEnabled` 来禁用。手动创建的 Model Context 不支持自动保存。
 
 ```swift
 @main
@@ -610,7 +613,7 @@ context.enumerate(FetchDescriptor<Trip>()) { trip in
 }
 ```
 
-`enumerate` 将批量遍历模式将平台的最佳事件封装在一个简单的调用中。
+`enumerate` 将批量遍历模式将平台的最佳实践封装在一个简单的调用中。
 
 ```swift
 let predicate = #Predicate<Trip> { trip in
@@ -687,7 +690,7 @@ context.enumerate(
 
 Core Data 架构中包含了 Schema、实体、关系等内容。在开始转换之前，需要确认这些配置在 SwiftData 是否都支持。这意味所有的 Entity 以及它的属性都需要有对应的 SwiftData Model。转换完成后也记得要全面测试我们的 Model 确保所有特性都能正常 Work。
 
-接下来，让我们来看看完整迁移过程中的重点。首先，我们在上面已经生产了对应 SwiftData Model，可以删除掉 Core Data 的 Model 文件了。
+接下来，让我们来看看完整迁移过程中的重点。首先，我们在上面已经生成了对应 SwiftData Model，可以删除掉 Core Data 的 Model 文件了。
 
 接着，我们使用 `modelContainer` 修饰器来为整个 `App` 配置 `modelContainer` 和 `modelContext`。
 
