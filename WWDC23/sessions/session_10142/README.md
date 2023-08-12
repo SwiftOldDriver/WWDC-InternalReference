@@ -2,10 +2,19 @@
 session_ids: [10142]
 ---
 
-# Session 10142 - 探索应用内购测试
+# WWDC23 10142 - 探索应用内购测试
 
-> 本文基于 [Session 10142](https://developer.apple.com/videos/play/wwdc2023/10142) 梳理，主要简要介绍内购测试的三种方式，帮助你了解每种方式的适用场景和今年引入的新功能。
+> 摘要：主要简要介绍内购测试的三种方式，帮助你了解每种方式的适用场景和今年引入的新功能。
+
+本文基于 [Session 10142](https://developer.apple.com/videos/play/wwdc2023/10142) 梳理，主要简要介绍内购测试的三种方式，帮助你了解每种方式的适用场景和今年引入的新功能。
+
+> 作者：
 >
+> Lin，就职于酷狗音乐，目前负责支付相关工作。
+>
+> 审核：
+>
+> SeaHub，目前任职于腾讯 TEG 计费平台部，负责搭建服务于腾讯系业务的支付系统，主导国内 IAP 前后端相关内容，对 IAP 整体设计有一定的经验。
 
 ![banner](./images/banner.png)
 
@@ -23,7 +32,6 @@ session_ids: [10142]
 ![purchase_process](./images/purchase_process.png)
 
 从上图可知完整的内购需要依赖 App、StoreKit、Apple Store 服务器、我们的支付服务器，所以在测试阶段也需依赖四个方面。其中红色虚框的部分需要依 Apple Store 服务器，起初 Apple 提供了 Apple Store 沙盒环境来让我们测试。后面开始引入了新的测试环境，提供类似 Apple Store 的功能，那就是我们下面讲的。
-
 
 
 ## Xcode 中的 StoreKit 测试 （本地 StoreKit Configuration File）
