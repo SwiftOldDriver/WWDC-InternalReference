@@ -18,7 +18,7 @@ session_ids: [10142]
 
 ![banner](./images/banner.png)
 
-在我们应用接入 `In-App Purchase`  难免要遇到测试的问题，最初我们只能使用 App Store 沙盒进行测试，从 Xcode 12 开始，苹果提供了一种在 Xcode 中创建 Storkit 配置文件本地测试的方式。现在我们有三种测试环境：
+在我们应用接入 `In-App Purchase`  难免要遇到测试的问题，最初我们只能使用 App Store 沙盒进行测试，从 Xcode 12 开始，苹果提供了一种在 Xcode 中创建 Storekit 配置文件本地测试的方式。现在我们有三种测试环境：
 
 - Xcode 中的 StoreKit 测试（本地 StoreKit Configuration file）
 
