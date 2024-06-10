@@ -1,0 +1,21 @@
+{
+  "name": "wwdc24",
+  "type": "module",
+  "scripts": {
+    "lint": "node .github/scripts/lint.js",
+    "fix": "node .github/scripts/fix.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@actions/core": "^1.10.1",
+    "@lint-md/core": "^2.0.0",
+    "chalk": "^5.3.0",
+    "hexo-front-matter": "^4.2.1",
+    "markdownlint": "^0.34.0",
+    "octokit": "^4.0.2",
+    "simple-git": "^3.24.0",
+    "table": "^6.8.2"
+  }
+}

@@ -1,0 +1,76 @@
+name: Handle Comment
+
+on:
+  pull_request_review_comment:
+    types: [created]
+  issue_comment:
+    types: [created]
+
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+
+permissions: write-all
+
+env:
+  PULL_REQUEST_URL: ${{ github.event.pull_request.html_url || github.event.issue.pull_request.html_url }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  wechat-notification:
+    runs-on: self-hosted
+    if: ${{ github.event.comment.body != 'fix format' }}
+    steps:
+    - run: cat $GITHUB_EVENT_PATH
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Install Node.js dependencies
+      run: npm ci
+
+    - name: Target Branch Lookup
+      run: node .github/scripts/ci_comment_branch_lookup.js
+      id: target_branch_lookup
+      if: ${{ github.event_name == 'issue_comment' }}
+    - name: Checkout to branch where the comment happend
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ steps.target_branch_lookup.outputs.TARGET_REF }}
+        fetch-depth: 0
+      if: ${{ github.event_name == 'issue_comment' }}
+    - name: Install Node.js dependencies
+      run: npm ci
+      if: ${{ github.event_name == 'issue_comment' }}
+
+    - name: Comment Notification
+      run: node .github/scripts/ci_comment_notification.js
+      env:
+        PULL_REQUEST_AUTHOR: ${{ github.event.pull_request.user.login }}
+        COMMENT_SENDER: ${{ github.event.sender.login }}
+
+  fix-format:
+    runs-on: self-hosted
+    if: ${{ github.event.comment.body == 'fix format' }}
+    steps:
+    - run: cat $GITHUB_EVENT_PATH
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+    - name: Install Node.js dependencies
+      run: npm ci
+    - name: Target Branch Lookup
+      run: node .github/scripts/ci_comment_branch_lookup.js
+      id: target_branch_lookup
+    - name: Checkout to branch where the comment happend
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+        ref: ${{ steps.target_branch_lookup.outputs.TARGET_REF }}
+    - name: Install Node.js dependencies
+      run: npm ci
+    - name: Fix Format
+      run: node .github/scripts/ci_fix_format.js
+      env:
+        TARGET_REF: ${{ steps.target_branch_lookup.outputs.TARGET_REF }}
+        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
