@@ -1,6 +1,6 @@
 import { Octokit } from "octokit";
 import { getPullRequestIds, getPRTargetFiles, getSessionIds, lint_results, sendMessage, sendGroupMessage, sessionIdsNotFoundMessage } from "./helper.js";
-import { error as annotate_error, setFailed } from "@actions/core";
+import { setFailed } from "@actions/core";
 
 const auth = process.env.GITHUB_TOKEN;
 const prUrl = process.env.PULL_REQUEST_URL;
@@ -13,11 +13,11 @@ const files = (await octokit.rest.pulls.listFiles(prIds)).data;
 const targetFiles = getPRTargetFiles(files);
 const author = pr.user.login;
 
-const sessionsIds = getSessionIds(targetFiles);
+const sessionIds = getSessionIds(targetFiles);
 var message;
-if (sessionsIds.length === 0) {
+if (sessionIds.length === 0) {
   message = `提交的 markdown 文件无法识别出 session_ids，请按照 GitHub 上的提示正确填写。 ${prUrl}`
-  sendMessage(message, [author])
+  await sendMessage(message, [author])
   setFailed(sessionIdsNotFoundMessage());
   process.exit(1);
 }
@@ -25,6 +25,7 @@ if (sessionsIds.length === 0) {
 const results = lint_results(targetFiles);
 var errorCounter = 0;
 
+const annotations = [];
 for (let result of results) {
   if (result.errors.length == 0) {
     continue;
@@ -35,26 +36,25 @@ for (let result of results) {
 
     let { start, end, text, type, description, ruleInformation } = error;
 
-    if (ruleInformation) {
-      message = `规则具体解释请查阅「${ruleInformation} 」`;
-    } else {
-      message = `规则具体解释请查阅「中文技术文档的写作规范 https://github.com/ruanyf/document-style-guide」`
-    }
-
-    var properties = {
-      file: result.file,
+    var annotation = {
+      path: result.file,
       title: description,
-      startLine: start.line,
+      start_line: start.line,
+      start_column: start.column,
+      end_line: end.line,
+      end_column: end.column,
+      annotation_level: "failure"
     };
 
-    if (start.line === end.line) {
-      properties.startColumn = start.column;
-      properties.endColumn = end.column;
+    if (ruleInformation) {
+      annotation.message = `规则具体解释请查阅「${ruleInformation} 」`;
     } else {
-      properties.endLine = end.line;
+      annotation.message = `规则具体解释请查阅「中文技术文档的写作规范 https://github.com/ruanyf/document-style-guide」`
     }
 
-    annotate_error(message, properties);
+    if (annotations.length < 50) {
+      annotations.push(annotation);
+    }
   }
 }
 
@@ -65,10 +65,24 @@ if (errorCounter > 0) {
   } else {
     message = `PR 有新的提交，文章格式存在问题，请尽快根据 GitHub 上的错误标记完成修改。 ${prUrl}/files`
   }
-  sendGroupMessage(message, [author])
-  setFailed(`发现 ${errorCounter} 处格式错误，请修复后重新提交。`)
-  process.exit(1);
+  await sendGroupMessage(message, sessionIds, 1)
+
+  await octokit.rest.checks.create({
+    owner: pr.base.repo.owner.login,
+    repo: pr.base.repo.name,
+    name: "Markdown Lint",
+    head_sha: pr.head.sha,
+    status: "completed",
+    conclusion: "failure",
+    output: {
+      title: `发现 ${errorCounter} 处格式错误，请修复后重新提交。`,
+      summary: "",
+      annotations: annotations,
+    }
+  });
+
+  process.exit(0);
 }
 
-message =  `PR 有新的提交，已通过格式检查，请尽快查阅审核。 ${prUrl}`
-sendGroupMessage(message, [author])
+message = `PR 有新的提交，已通过格式检查，请尽快查阅审核。 ${prUrl}`
+await sendGroupMessage(message, sessionIds, 0)

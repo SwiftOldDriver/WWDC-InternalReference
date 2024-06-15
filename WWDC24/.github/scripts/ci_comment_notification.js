@@ -13,11 +13,11 @@ const pr = (await octokit.rest.pulls.get(prIds)).data;
 const author = pr.user.login;
 const files = (await octokit.rest.pulls.listFiles(prIds)).data;
 const targetFiles = getPRTargetFiles(files);
-const sessionsIds = getSessionIds(targetFiles);
+const sessionIds = getSessionIds(targetFiles);
 
-if (sessionsIds.length === 0) {
+if (sessionIds.length === 0) {
   const message = `提交的 markdown 文件无法识别出 session_ids，请按照 GitHub 上的提示正确填写。 ${prUrl}`
-  sendMessage(message, [author])
+  await sendMessage(message, [author])
   setFailed(sessionIdsNotFoundMessage());
   process.exit(1);
 }
@@ -32,4 +32,4 @@ if (commentFromPRAuthor) {
 }
 
 const type = commentFromPRAuthor ? 0 : 1;
-sendGroupMessage(sessionsIds, message, type);
+await sendGroupMessage(message, sessionIds, type);

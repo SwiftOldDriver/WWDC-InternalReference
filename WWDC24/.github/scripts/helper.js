@@ -7,9 +7,10 @@ import { execSync } from "child_process";
 import { error as annotate_error, isDebug } from "@actions/core";
 import chalk from "chalk";
 import { getBorderCharacters, table } from "table";
+import fetch from "node-fetch";
 
 function debugLog(...args) {
-  if (!isDebug()) return;
+  // if (!isDebug()) return;
   console.log(...args);
 }
 
@@ -48,20 +49,20 @@ function getLocalTargetFiles() {
 }
 
 function getSessionIds(files) {
-  const sessionsIds = [];
+  const sessionIds = [];
   for (const file of files) {
     const str = readFileSync(file, "utf8");
     const fm = parse(str);
     if (fm.session_ids) {
-      sessionsIds.push(...fm.session_ids);
+      sessionIds.push(...fm.session_ids);
     }
   }
-  return sessionsIds;
+  return sessionIds;
 }
 
 async function sendRequest(endpoint, body) {
   try {
-    console.log(content);
+    debugLog(endpoint, body);
 
     const response = await fetch("http://127.0.0.1:4040" + endpoint, {
       method: "POST",
@@ -71,12 +72,15 @@ async function sendRequest(endpoint, body) {
       body: JSON.stringify(body),
     });
 
-    console.log(response);
+    debugLog(response);
 
     if (response.status !== 200) {
       throw new Error(await response.json());
     }
+
+    debugLog(await response.text());
   } catch (error) {
+    debugLog(error);
     annotate_error("通知失败，请联系管理员检查服务器是否正常运行")
   }
 }
@@ -85,8 +89,8 @@ async function sendMessage(message, at_user_list) {
   return sendRequest("/wwdc/mention", { message, at_user_list });
 }
 
-async function sendGroupMessage(message, sessions_ids, type) {
-  return sendRequest("/wwdc/notify", { message, sessions_ids, type });
+async function sendGroupMessage(message, session_ids, type) {
+  return sendRequest("/wwdc/notify", { message, session_ids, type });
 }
 
 function sessionIdsNotFoundMessage() {
@@ -105,6 +109,23 @@ function sessionIdsNotFoundMessage() {
   `;
 }
 
+function defaultTable(data) {
+  return table(data, {
+    border: getBorderCharacters("void"),
+    columnDefault: {
+      paddingLeft: 0,
+      paddingRight: 2,
+    },
+    columns: [
+      {},
+      {},
+      {},
+      { paddingRight: 0 },
+    ],
+    drawHorizontalLine: () => false,
+  });
+}
+
 function fixMarkdownFormat(lintResults) {
   console.log(`Fixing the format of files [${lintResults.map(r => r.file).join(", ")}]...\n`);
 
@@ -119,7 +140,7 @@ function fixMarkdownFormat(lintResults) {
     const originContent = readFileSync(result.file, "utf8");
     let fixedContent = originContent;
     if (result.fixInfos && result.fixInfos.length > 0) {
-      fixedContent = applyFixes(originContent, fixes);
+      fixedContent = applyFixes(originContent, result.fixInfos);
     }
     if (result.fixedResult) {
       fixedContent = lintMarkdown(fixedContent, lintmdOptions, true).fixedResult.result;
@@ -153,14 +174,7 @@ function fixMarkdownFormat(lintResults) {
 
       items.push(item);
     }
-    const output = table(items, {
-      border: getBorderCharacters("void"),
-      columnDefault: {
-        paddingLeft: 0,
-        paddingRight: 4,
-      },
-      drawHorizontalLine: () => false,
-    });
+    const output = defaultTable(items);
     console.log(output);
   }
 
@@ -193,7 +207,7 @@ function lint_results(files) {
       let startColumn = violation.errorRange?.[0] || 0;
       let endColumn = violation.errorRange?.[1] || 0;
       if (violation.fixInfo) {
-        fileLintResult.fixInfos.push(violation.fixInfo);
+        fileLintResult.fixInfos.push(violation);
       }
       fileLintResult.errors.push({
         start: {
@@ -284,6 +298,7 @@ function lint_results(files) {
 
 export {
   debugLog,
+  defaultTable,
   fixMarkdownFormat,
   getPullRequestIds,
   getPRTargetFiles,

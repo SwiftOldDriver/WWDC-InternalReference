@@ -1,9 +1,14 @@
 import chalk from "chalk";
-import { getBorderCharacters, table } from "table";
-import { getLocalTargetFiles, lint_results } from "./helper.js";
+import { defaultTable, getLocalTargetFiles, lint_results } from "./helper.js";
 
 let files = getLocalTargetFiles();
 let results = lint_results(files);
+
+if (results.length <= 0) {
+  console.log(chalk.bgGreen("No lint errors found in the target files."));
+  process.exit(0);
+}
+
 var errorCounter = 0;
 var fixableCounter = 0;
 
@@ -37,14 +42,7 @@ for (let result of results) {
 
     items.push(item);
   }
-  const output = table(items, {
-    border: getBorderCharacters("void"),
-    columnDefault: {
-      paddingLeft: 0,
-      paddingRight: 4,
-    },
-    drawHorizontalLine: () => false,
-  });
+  const output = defaultTable(items);
   console.log(output);
 }
 
@@ -59,15 +57,15 @@ console.log(
 )
 
 console.log(
-  `Lint total ${files.length} files`,
-  chalk.red(`${errorCounter} errors`)
-);
-
-console.log(
-  "\nFor more details about",
+  "For more details about",
   chalk.red("MD0XX"),
   "errors, please refer to https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md",
 )
+
+console.log(
+  `\nLint total ${files.length} files`,
+  chalk.red(`${errorCounter} errors`)
+);
 
 if (errorCounter > 0) {
   process.exit(1);
