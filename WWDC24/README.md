@@ -1,4 +1,8 @@
-# WWDC24 - Go further with Swift Testing
+---
+session_ids: [10195]
+---
+
+# WWDC24: Session 10195 - Go further with Swift Testing
 ## 简介
 Swift Testing 是 Swift 团队推出的一个全新的测试框架。它有以下几个特性：
 * 专为 Swift 设计
