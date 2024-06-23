@@ -6,6 +6,8 @@ session_ids: [10195]
 
 ## 简介
 
+> 这是一篇对 [Meet Swift Testing](https://developer.apple.com/videos/play/wwdc2024/10179/) 和 [Go further with Swift Testing](https://developer.apple.com/videos/play/wwdc2024/10195/) 两个讲座的翻译和总结文章。
+
 Swift Testing 是 Swift 团队推出的一个全新的测试框架。它有以下几个特性：
 
 * 专为 Swift 设计
