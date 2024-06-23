@@ -206,6 +206,9 @@ function lint_results(files) {
       var description = `[${violation.ruleNames[0]}] ${violation.ruleDescription}`;
       let startColumn = violation.errorRange?.[0] || 0;
       let endColumn = violation.errorRange?.[1] || 0;
+      if (startColumn > endColumn) {
+        endColumn = startColumn;
+      }
       if (violation.fixInfo) {
         fileLintResult.fixInfos.push(violation);
       }
