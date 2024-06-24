@@ -115,11 +115,11 @@ func foodTruckExists() async throws { ... }
 这是一个稍微复杂一点的例子，我们依次看一下它的关键字。
 
 * `@MainActor`
-    * 支持测试只能在 **MainActor 上下文**中执行的方法。
+  * 支持测试只能在 **MainActor 上下文**中执行的方法。
 * `async throws`
-    * 支持测试**异步**或者会**抛出异常**的方法。
+  * 支持测试**异步**或者会**抛出异常**的方法。
 * `@available`
-    * 支持测试只能在**特定操作系统**或者 **Swift 版本**上执行的方法。
+  * 支持测试只能在**特定操作系统**或者 **Swift 版本**上执行的方法。
 
 ### 编写测试代码
 
@@ -187,7 +187,7 @@ func makeLargeOrder(of food: Food, count: Int) async throws {
 }
 ```
 
-上面的代码只会执行5次，(.burger, 1), (.iceCream, 2), …, (.kebab, 5)。
+上面的代码只会执行 5 次，(.burger, 1), (.iceCream, 2), …, (.kebab, 5)。
 
 ### 验证测试结果
 
