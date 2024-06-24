@@ -177,7 +177,7 @@ func makeLargeOrder(of food: Food, count: Int) async throws {
 }
 ```
 
-⚠️注意：上面的测试方法会执行 500 次，类似于(.burger, 1) 、 (.burger, 2) 、 (.burger, 3) 、 (.kebab, 99) 、 (.kebab, 100)。如果你只是希望两个参数配对出现，则需要使用 zip 来包装参数。
+⚠️注意：上面的测试方法会执行 500 次，类似于 `(.burger, 1) 、 (.burger, 2) 、 (.burger, 3) 、 (.kebab, 99) 、 (.kebab, 100)` 。如果你只是希望两个参数配对出现，则需要使用 zip 来包装参数。
 
 ```swift
 @Test("Can make large orders", arguments: zip(Food.allCases, 1 ... 100))
@@ -187,7 +187,7 @@ func makeLargeOrder(of food: Food, count: Int) async throws {
 }
 ```
 
-上面的代码只会执行 5 次，(.burger, 1), (.iceCream, 2), …, (.kebab, 5)。
+上面的代码只会执行 5 次, `(.burger, 1), (.iceCream, 2), …, (.kebab, 5)` 。
 
 ### 验证测试结果
 
@@ -227,7 +227,7 @@ func makeLargeOrder(of food: Food, count: Int) async throws {
 }
 ```
 
-我们需要根据测试方法的具体场景来决定使用哪一个宏。一般来说，在获得最终测试结果之前，都使用 `#require` ，毕竟如果要测试的结果都没有，也就没必要执行下去了。而一旦我们获得了执行的结果，需要对结果进行多种验证（比如是否为空、是否大于0、是否为无穷大），就可以使用 `#expect` ，方便我们一次性获得所有结果。
+我们需要根据测试方法的具体场景来决定使用哪一个宏。一般来说，在获得最终测试结果之前，都使用 `#require` ，毕竟如果要测试的结果都没有，也就没必要执行下去了。而一旦我们获得了执行的结果，需要对结果进行多种验证（比如是否为空、是否大于 0 、是否为无穷大），就可以使用 `#expect` ，方便我们一次性获得所有结果。
 
 `#require` 另一个非常常用的场景是对可选值的解包。这也可以用来解释上面的最佳实践：如果 `getOptionalValue()` 是 `nil` 的话，那下面的逻辑都执行不下去了，直接报错并返回是最好的方式。
 
@@ -496,25 +496,25 @@ import Testing
 
 下面的表更加直观的展示了两个测试框架的 API 差异。从两份代码很容易就能发现，Swift Testing 的语法更加简单，也更适配 Swift 。
 
-| XCTest                                       | Swift Testing                                     |
-|----------------------------------------------|---------------------------------------------------|
-| XCTAssert(x), XCTAssertTrue(x)               | #expect(x)                                        |
-| XCTAssertFalse(x)                            | #expect(!x)                                       |
-| XCTAssertNil(x)                              | #expect(x == nil)                                 |
-| XCTAssertNotNil(x)                           | #expect(x != nil)                                 |
-| XCTAssertEqual(x, y)                         | #expect(x == y)                                   |
-| XCTAssertNotEqual(x, y)                      | #expect(x != y)                                   |
-| XCTAssertIdentical(x, y)                     | #expect(x === y)                                  |
-| XCTAssertNotIdentical(x, y)                  | #expect(x !== y)                                  |
-| XCTAssertGreaterThan(x, y)                   | #expect(x > y)                                    |
-| XCTAssertGreaterThanOrEqual(x, y)            | #expect(x >= y)                                   |
-| XCTAssertLessThanOrEqual(x, y)               | #expect(x <= y)                                   |
-| XCTAssertLessThan(x, y)                      | #expect(x < y)                                    |
-| XCTAssertThrowsError(try f())                | #expect(throws: (any Error).self) { try f() }     |
-| XCTAssertThrowsError(try f()) { error in … } | #expect { try f() } throws: { error in return … } |
-| XCTAssertNoThrow(try f())                    | #expect(throws: Never.self) { try f() }           |
-| try XCTUnwrap(x)                             | try #require(x)                                   |
-| XCTFail("…")                                 | Issue.record("…")                                 |
+| XCTest                                         | Swift Testing                                       |
+|------------------------------------------------|-----------------------------------------------------|
+| `XCTAssert(x), XCTAssertTrue(x)`               | `#expect(x)`                                        |
+| `XCTAssertFalse(x)`                            | `#expect(!x)`                                       |
+| `XCTAssertNil(x)`                              | `#expect(x == nil)`                                 |
+| `XCTAssertNotNil(x)`                           | `#expect(x != nil)`                                 |
+| `XCTAssertEqual(x, y)`                         | `#expect(x == y)`                                   |
+| `XCTAssertNotEqual(x, y)`                      | `#expect(x != y)`                                   |
+| `XCTAssertIdentical(x, y)`                     | `#expect(x === y)`                                  |
+| `XCTAssertNotIdentical(x, y)`                  | `#expect(x !== y)`                                  |
+| `XCTAssertGreaterThan(x, y)`                   | `#expect(x > y)`                                    |
+| `XCTAssertGreaterThanOrEqual(x, y)`            | `#expect(x >= y)`                                   |
+| `XCTAssertLessThanOrEqual(x, y)`               | `#expect(x <= y)`                                   |
+| `XCTAssertLessThan(x, y)`                      | `#expect(x < y)`                                    |
+| `XCTAssertThrowsError(try f())`                | `#expect(throws: (any Error).self) { try f() }`     |
+| `XCTAssertThrowsError(try f()) { error in … }` | `#expect { try f() } throws: { error in return … }` |
+| `XCTAssertNoThrow(try f())`                    | `#expect(throws: Never.self) { try f() }`           |
+| `try XCTUnwrap(x)`                             | `try #require(x)`                                   |
+| `XCTFail("…")`                                 | `Issue.record("…")`                                 |
 
 ## Swift Testing 的特性
 
