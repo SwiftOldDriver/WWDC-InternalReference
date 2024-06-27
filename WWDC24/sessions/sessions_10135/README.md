@@ -15,27 +15,27 @@ session_ids: [10135]
 ## TL;DR
 
 - Edit
-	- 为 Swift 代码带来了预测式代码补全，限制 macOS 15 + 16GB 运行内存，大模型约 2GB
-	- Swift 6 编译期提供严格的数据隔离和数据竞争的安全检查
-	- 实时预览优化
-		- `@Previewable` 使用内联动态属性进行预览
-		- `PreviewModifier` 使预览时构建复杂数据以及实现数据复用变得更容易
-		- 预览的性能和响应更快
+  - 为 Swift 代码带来了预测式代码补全，限制 macOS 15 + 16GB 运行内存，大模型约 2GB
+  - Swift 6 编译期提供严格的数据隔离和数据竞争的安全检查
+  - 实时预览优化
+    - `@Previewable` 使用内联动态属性进行预览
+    - `PreviewModifier` 使预览时构建复杂数据以及实现数据复用变得更容易
+    - 预览的性能和响应更快
 - Build
-	- 显式模块构建提供了更高效稳定的构建系统，Swift 需要手动开启 `Explicitly Built Modules`
+  - 显式模块构建提供了更高效稳定的构建系统，Swift 需要手动开启 `Explicitly Built Modules`
 - Debug
-	- 调试器速度更快
-	- 调试符号改进，文件体积更小，符号查找速度更快
-	- 线程性能检查器增加过多磁盘写入的诊断以及应用启动速度缓慢的诊断，组织者报告新增启动缓慢报告
-	- 新增统一回溯视图，更高效预览调用栈附近的代码
-	- 新增 RealityKit 调试器，3D 形式展示层次结构的快照，更高效直观
+  - 调试器速度更快
+  - 调试符号改进，文件体积更小，符号查找速度更快
+  - 线程性能检查器增加过多磁盘写入的诊断以及应用启动速度缓慢的诊断，组织者报告新增启动缓慢报告
+  - 新增统一回溯视图，更高效预览调用栈附近的代码
+  - 新增 RealityKit 调试器，3D 形式展示层次结构的快照，更高效直观
 - Test
-	- 全新开源 Swift Testing 框架
+  - 全新开源 Swift Testing 框架
 - Profile
-	- Instruments 新增火焰图
+  - Instruments 新增火焰图
 - Others
-	- iOS 应用图标新样式
-	- `@DebugDescription` 为 LLDB 提供类型的摘要描述
+  - iOS 应用图标新样式
+  - `@DebugDescription` 为 LLDB 提供类型的摘要描述
 
 ## Edit
 
@@ -71,14 +71,14 @@ Swift 6 带来了一种新的保证并发安全的语言模式，它将通常只
 
 ``` swift
 struct PlayButton: View {
-    @Binding var isPlaying: Bool
-    var body: some View {
-        Button(action: {
-            self.isPlaying.toggle()
-        }) {
-            Image(systemName: isPlaying ? "pause.circle" : "play.circle")
-        }
-    }
+    @Binding var isPlaying: Bool
+    var body: some View {
+        Button(action: {
+            self.isPlaying.toggle()
+        }) {
+            Image(systemName: isPlaying ? "pause.circle" : "play.circle")
+        }
+    }
 }
 ```
 
@@ -86,15 +86,15 @@ struct PlayButton: View {
 
 ``` swift
 struct PlayButtonWrapperView: View {
-    @State var isPlaying = false
+    @State var isPlaying = false
 
-    var body: some View {
-        PlayButton(isPlaying: $isPlaying)
-    }
+    var body: some View {
+        PlayButton(isPlaying: $isPlaying)
+    }
 }
 
 #Preview {
-    PlayButtonWrapperView()
+    PlayButtonWrapperView()
 }
 ```
 
@@ -102,8 +102,8 @@ struct PlayButtonWrapperView: View {
 
 ``` swift
 #Preview {
-    @Previewable @State var isPlaying = true
-    PlayButton(isPlaying: $isPlaying)
+    @Previewable @State var isPlaying = true
+    PlayButton(isPlaying: $isPlaying)
 }
 ```
 
@@ -113,11 +113,11 @@ struct PlayButtonWrapperView: View {
 // Xcode 15
 struct $XXX_XXX_15PreviewRegistryfMu_: DeveloperToolsSupport.PreviewRegistry {
 
-    static func makePreview() throws -> DeveloperToolsSupport.Preview {
-        DeveloperToolsSupport.Preview {
-		    ...
-        }
-    }
+    static func makePreview() throws -> DeveloperToolsSupport.Preview {
+        DeveloperToolsSupport.Preview {
+            ...
+        }
+    }
 }
 ```
 
@@ -125,16 +125,16 @@ struct $XXX_XXX_15PreviewRegistryfMu_: DeveloperToolsSupport.PreviewRegistry {
 /// Xcode 16
 struct $code16_XXX_15PreviewRegistryfMu_: DeveloperToolsSupport.PreviewRegistry {
 
-    static func makePreview() throws -> DeveloperToolsSupport.Preview {
-        DeveloperToolsSupport.Preview {
-            func __b_buildView(@SwiftUI.ViewBuilder body: () -> any SwiftUI.View) -> any SwiftUI.View {
-                body()
-            }
-            return __b_buildView {
-			    ...
-            }
-        }
-    }
+    static func makePreview() throws -> DeveloperToolsSupport.Preview {
+        DeveloperToolsSupport.Preview {
+            func __b_buildView(@SwiftUI.ViewBuilder body: () -> any SwiftUI.View) -> any SwiftUI.View {
+                body()
+            }
+            return __b_buildView {
+                ...
+            }
+        }
+    }
 }
 ```
 
@@ -142,8 +142,8 @@ struct $code16_XXX_15PreviewRegistryfMu_: DeveloperToolsSupport.PreviewRegistry 
 
 ``` swift
 #Preview {
-    PlayButtonWrapperView(isPlaying: true)
-    PlayButtonWrapperView(isPlaying: false)
+    PlayButtonWrapperView(isPlaying: true)
+    PlayButtonWrapperView(isPlaying: false)
 }
 ```
 
@@ -151,8 +151,8 @@ struct $code16_XXX_15PreviewRegistryfMu_: DeveloperToolsSupport.PreviewRegistry 
 
 ``` swift
 #Preview {
-    @Previewable @State var isPlaying = true
-    PlayButton(isPlaying: $isPlaying) // 这里可以省略 return
+    @Previewable @State var isPlaying = true
+    PlayButton(isPlaying: $isPlaying) // 这里可以省略 return
 }
 ```
 
@@ -164,7 +164,7 @@ struct $code16_XXX_15PreviewRegistryfMu_: DeveloperToolsSupport.PreviewRegistry 
 struct RobotNameSelectorView: View {
     @Environment(RobotNamer.self) private var namer
     var body: some View {
-	    ...
+        ...
     }
 }
 ```
@@ -197,7 +197,7 @@ struct SampleRobotNamer: PreviewModifier {
 
 ``` swift
 #Preview(traits: .modifier(SampleRobotNamer())) {
-    RobotNameSelectorView()
+    RobotNameSelectorView()
 }
 ```
 
@@ -347,7 +347,7 @@ import Testing
 @testable import BOTanist
 
 @Test func plantingRoses() {
-	...
+    ...
 }
 ```
 
@@ -357,9 +357,9 @@ import Testing
 
 ``` swift
 @Test func plantingRoses() {
-	let plant = ...
-	let expected = ...
-	#expect(plant == expected)
+    let plant = ...
+    let expected = ...
+    #expect(plant == expected)
 }
 ```
 
@@ -372,7 +372,7 @@ import Testing
 ``` swift
 @Test(arguments: [AnimationState.idle, AnimationState.plant, AnimationState.walkLoop])
 func validToTransitionToCelebrate(from state: AnimationState) async throws {
-    #expect(state.isValidNextState(.celebrate))
+    #expect(state.isValidNextState(.celebrate))
 }
 ```
 
@@ -414,12 +414,12 @@ visionOS 模拟器现在可以测试 FaceTime 和 SharePlay。
 
 ``` swift
 struct Team: CustomDebugStringConvertible {
-    var name: String
-    var wins, losses: Int
+    var name: String
+    var wins, losses: Int
 
-    var debugDescription: String {
-        "\(name) [\(wins)-\(losses)]"
-    }
+    var debugDescription: String {
+        "\(name) [\(wins)-\(losses)]"
+    }
 }
 ```
 
@@ -427,12 +427,12 @@ struct Team: CustomDebugStringConvertible {
 
 ```swift
 struct TeamA: CustomDebugStringConvertible {
-	...
+    ...
 }
 
 @DebugDescription
 struct TeamB: CustomDebugStringConvertible {
-	...
+    ...
 }
 ```
 
