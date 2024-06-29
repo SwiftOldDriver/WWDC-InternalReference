@@ -751,7 +751,7 @@ commandBuffer.commit()
 
 在本 Session 中，介绍了构建了一个交互式空间绘图 App 时使用的 RealityKit 新 API 。RealityKit 新 API 为开发者提供了更强大的工具和功能。利用这些工具可以创造出更真实、引人入胜的空间绘图体验。技术的不断进步将带来更出色的交互和视觉效果。未来，我们期待出现更多创新的空间应用。
 
-Session 与 Apple 文档中，对于更底层的 API 如 `LowLevelMesh` 和 `LowLevelTexture`等，需要有 Metal 相关技术基础，且由于 API 处于 Beta 阶段，其介绍和可供参考的内容极为有限。欢迎各位读者更深入的阅读 Apple 提供的示例项目，共同探讨和分享 RealityKit 的新功能。
+文章主要对 RealityKit 新 API 设计背景和理念做了详细描述。在 Session 与 Apple 文档中，对于更底层的 API 如 `LowLevelMesh` 和 `LowLevelTexture` 等，由于需要 Metal 相关技术基础，且 API 处于 Beta 阶段，其介绍和可供参考的内容极为有限。欢迎各位读者更深入的阅读 Apple 提供的示例项目，共同探讨和分享 RealityKit 的新功能。
 
 > 此外，欢迎查看以下 Session 以详细了解今年 RealityKit 中的新功能：
 >
