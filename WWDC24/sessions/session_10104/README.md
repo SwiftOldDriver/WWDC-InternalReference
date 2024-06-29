@@ -8,7 +8,7 @@ session_ids: [10104]
 
 [RealityKit](https://developer.apple.com/documentation/realitykit) 提供高性能的 3D 模拟和渲染功能，通过利用 [ARKit](https://developer.apple.com/documentation/arkit)，将虚拟对象集成到现实世界中。可用于创建 iOS、iPadOS 和 macOS 的增强现实(AR)应用，以及 visionOS 应用等。在 visionOS 上，RealityKit 是应用空间功能的基础。
 
-在本 Session 中，我们将以[空间绘画 App ](https://developer.apple.com/documentation/RealityKit/creating-a-spatial-drawing-app-with-realitykit#Configure-the-sample-code-project)为例，介绍 RealityKit 的全新功能。通过使用 RealityKit，配合 SwiftUl，打造炫目的空间体验。
+在本 Session 中，我们将以[空间绘画 App](https://developer.apple.com/documentation/RealityKit/creating-a-spatial-drawing-app-with-realitykit#Configure-the-sample-code-project)为例，介绍 RealityKit 的全新功能。通过使用 RealityKit，配合 SwiftUl，打造炫目的空间体验。
 
 ![RealityKit Drawing App](./images/reality_kit_drawing_app.gif)
 
@@ -33,7 +33,7 @@ session_ids: [10104]
 |  三  | 构建画笔几何 | 我们将深入研究网格在 RealityKit 中的工作原理，高效地生成画笔几何图形。 |
 |  四  | 构建启动画面 | 我们将构建独特的启动画面，其中包含空间 UI 元素和动态纹理。   |
 
-# 一、设置空间跟踪
+## 一、设置空间跟踪
 
 在 visionOS 中，App 可以将 SwiftUI 或 RealityKit 内容放置在 Window、Volune 和 Space 中：
 
@@ -56,7 +56,7 @@ session_ids: [10104]
 当 App 使用 Space 时，可以通过锚点(Anchor)接收空间跟踪信息。包括通过世界锚点(World Anchor)和平面锚点(Plane Anchor)获取场景理解信息(Scene Understanding Information)，用手部锚点(Hand Anchor)获取姿势信息(Pose Information)等。
 
 ![通过锚点接收空间跟踪信息](./images/receive_spatial_tracking_information.png)在 visionOS 1.0 中，我们可以使用 ARKit 访问此数据。在 visionOS 2.0 中，Apple 引入了一种更简单的方法，让我们可以直接在 RealityKit 中使用空间跟踪。
-## 获取空间跟踪数据权限
+### 获取空间跟踪数据权限
 
 在 RealityKit 中，我们使用 `AnchorEntity` 将 RealityKit Entity 固定到 AR 锚点上。绘图 App 可以为每只手创建两个 `AnchorEntitiey`。分别锚定在拇指尖、食指尖，如下左 1 图所示：
 
@@ -104,7 +104,7 @@ if let unapprovedCapabilities, unapprovedCapabilities.anchor.contains(.hand) {
 
 综上，在 Space 下，可以使用 `AnchorEntity` 来设置 RealityKit 锚定的内容；可以使用 `SpatialTrackingSession` 访问 `AnchorEntity` 的 `transform` 数据；使用 `SpatialTrackingSession`， `AnchorEntity` 可以与 RealityKit 的物理系统交互。
 
-# 二、构建空间界面
+## 二、构建空间界面
 
 用户点击启动画面上的“Start”后，将进入沉浸式体验(Immersive Experience)，绘图画布将展示在用户眼前：
 
@@ -117,7 +117,7 @@ if let unapprovedCapabilities, unapprovedCapabilities.anchor.contains(.hand) {
 
 画布通过两个元素构建：地面的 3D 形状勾勒出画布的边缘、手柄来更改画布的位置。
 
-## 将 2D 矢量内容转换为 3D 模型
+### 将 2D 矢量内容转换为 3D 模型
 
 首先，我们来看边界网格。此网格是实时生成的，可以通过拖动视图中的滑块来修改边界的大小。网格由两个圆圈定义，如左 2 图所示，外圆为绿色，内圆为红色：
 
@@ -174,7 +174,7 @@ return try MeshResource(extruding: path, extrusionOptions: extrusionOptions)
 
 > 更多有关空间内容混叠的信息，可以参考 WWDC2023 [Explore rendering for spatial computing](https://developer.apple.com/videos/play/wwdc2023/10095/)。
 
-## 聚光灯和高亮悬停效果
+### 聚光灯和高亮悬停效果
 
 在 visionOS 上，当用户查看实体或直接触摸实体时，实体被视为悬停(Hovered)。具体实现上，[`HoverEffectComponent`](https://developer.apple.com/documentation/realitykit/hovereffectcomponent?changes=_3) 会在用户注视 RealityKit 内容时添加视觉效果。在 visionOS 1.0 中，`HoverEffectComponent` 使用聚光灯(Spotlight)效果。今年，Apple  引入了另外两种悬停效果：
 
@@ -221,7 +221,7 @@ material.color = UnlitMaterial.BaseColor(tint: UIColor(/* ... */))
 
 > 更多有关材质的信息，可以参考 [Materials and shaders](https://developer.apple.com/documentation/realitykit/realitykit-materials-shaders)。
 
-## 着色器悬停效果
+### 着色器悬停效果
 
 当用户设置好画布，调色板视图就会出现，用户可以开始设置他们的画笔。绘画 App 允许用户自定义画笔类型和样式。在调色板的底部，有一组预设画笔可供用户选择：
 
@@ -282,9 +282,9 @@ let material = try await ShaderGraphMaterial(named: "/Root/SolidPresetBrushMater
 entity.components.set(ModelComponent(mesh: /* ... */, materials: [material]))
 ```
 
-# 三、构建画笔几何
+## 三、构建画笔几何
 
-## 自定义缓冲区布局
+### 自定义缓冲区布局
 
 我们已经为用户构建了一种配置画笔的方法，现在是讨论为每个笔触生成几何图形。广义上讲，网格是顶点(Vertex)和连接它们的图元(Primitive)的集合。每个顶点都与许多属性相关联，例如该顶点的位置或纹理坐标。这些属性由数据描述，例如每个顶点位置都是一个三维向量：
 
@@ -472,7 +472,7 @@ mesh.withUnsafeMutableIndices { buffer in
 }
 ```
 
-## 使用 GPU 支持顶点或索引缓冲区更新
+### 使用 GPU 支持顶点或索引缓冲区更新
 
  `LowLevelMesh` 不仅可以加速网格处理管道，还允许我们使用 GPU 支持顶点或索引缓冲区更新。如下图所示，是绘图 App 中的闪光笔刷，它会生成一个跟随笔触的粒子场，此粒子场每帧都会动态更新。由于网格更新的频率和复杂性，使用 GPU 是有意义的。
 
@@ -583,9 +583,9 @@ commandBuffer.commit()
 
 得益于快速且响应迅速的笔触生成，绘画 App 看起来很棒。
 
-# 四、构建启动画面
+## 四、构建启动画面
 
-## 构建  3D 文字和标志
+### 构建  3D 文字和标志
 
 启动画面来可以为 App 增添不一样的色彩，是欢迎用户进入 App 的好方法、展示 App 视觉风格的好机会。绘画 App 的启动画面包含四个视觉元素：
 
@@ -684,7 +684,7 @@ let graphicMesh = try await MeshResource(extruding: graphic
 
 > 要了解有关 SwiftUI Path 的更多信息，请查看 SwiftUI 教程 [Drawing paths and shapes](https://developer.apple.com/tutorials/swiftui/drawing-paths-and-shapes)。
 
-## 使用自定义格式创建和更新网格
+### 使用自定义格式创建和更新网格
 
 现在让我们来看看启动画面的背景。为了构建它，我们使用了一个名为 [`LowLevelTexture`](https://developer.apple.com/documentation/realitykit/lowleveltexture?language=_2) 的全新 API。`LowLevelTexture` 提供与 `LowLevelMesh` 相同的快速资源更新能力，但仅适用于纹理资源。
 
@@ -748,7 +748,7 @@ commandBuffer.commit()
 
 至此，独特的背景与个性化的 3D 几何图形相结合，使绘画 App 具有独特的外观。
 
-# 五、总结
+## 五、总结
 
 在本 Session 中，介绍了构建了一个交互式空间绘图 App 时使用的 RealityKit 新 API 。
 
