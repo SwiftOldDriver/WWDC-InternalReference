@@ -19,7 +19,6 @@ session_ids: [10104]
 
 1. 如上左 1 图所示，当用户启动 App 后，会看到独特的启动画面，接着需要用户进行画布位置的设置；
 2. 如上左 2 图所示，用户在完成设置后，即可开始空间绘画，只需在空中捏合手指即可绘制内容；
-
 3. 如上左 3 图所示，用户可以使用调色板更改笔触，支持实心笔刷、闪光笔刷，同时可以自定义笔触的颜色和粗细。
 
 > 示例项目可以从 [Sample Code](https://developer.apple.com/documentation/RealityKit/creating-a-spatial-drawing-app-with-realitykit#Configure-the-sample-code-project) 获取。运行此示例代码，需要搭载 visionOS 2 及更高版本的 Apple Vision Pro，Xcode 16 及更高版本。由于此示例 App 在 visionOS 上使用 ARKit 手部追踪，因此在 visionOS 模拟器中无法完整体验。
@@ -56,6 +55,7 @@ session_ids: [10104]
 当 App 使用 Space 时，可以通过锚点(Anchor)接收空间跟踪信息。包括通过世界锚点(World Anchor)和平面锚点(Plane Anchor)获取场景理解信息(Scene Understanding Information)，用手部锚点(Hand Anchor)获取姿势信息(Pose Information)等。
 
 ![通过锚点接收空间跟踪信息](./images/receive_spatial_tracking_information.png)在 visionOS 1.0 中，我们可以使用 ARKit 访问此数据。在 visionOS 2.0 中，Apple 引入了一种更简单的方法，让我们可以直接在 RealityKit 中使用空间跟踪。
+
 ### 获取空间跟踪数据权限
 
 在 RealityKit 中，我们使用 `AnchorEntity` 将 RealityKit Entity 固定到 AR 锚点上。绘图 App 可以为每只手创建两个 `AnchorEntitiey`。分别锚定在拇指尖、食指尖，如下左 1 图所示：
@@ -141,12 +141,9 @@ let path = SwiftUI.Path { path in
 2. 使用 [`normalized(eoFill:)`](https://developer.apple.com/documentation/swiftui/path/normalized(eofill:)) 的奇偶规则填充，从而得到我们想要创建的形状。
 
 > 在二维计算机图形学中，曲线根据两个规则进行填充：[奇偶规则](https://en.wikipedia.org/wiki/Even–odd_rule)(下左 1 图)和[非零缠绕规则](https://en.wikipedia.org/wiki/Nonzero-rule)(下左 2 图)。在每种情况下，箭头表示从点 P 发出的射线延伸出曲线：
->
 > 1. 在奇偶情况下，射线与两条线相交，即偶数；因此，P 被断定为曲线“外部”。
->2. 根据非零缠绕规则，射线沿顺时针方向相交两次，每次都为缠绕分数贡献 -1：因为总数 -2 不为零，所以 P 被断定为曲线“内部”。
-> 
+> 2. 根据非零缠绕规则，射线沿顺时针方向相交两次，每次都为缠绕分数贡献 -1：因为总数 -2 不为零，所以 P 被断定为曲线“内部”。
 > ![奇偶规则和非零缠绕规则](./images/even_odd_rule_non_zero_winding_rule.png)
->
 > 更多有关路径的填充的信息可以参阅[Quartz 2D 编程指南](https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/Introduction/Introduction.html)中的[填充路径](https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_paths/dq_paths.html#//apple_ref/doc/uid/TP30001066-CH211-TPXREF106)。
 
 RealityKit 的新 API [`MeshResource`](https://developer.apple.com/documentation/realitykit/meshresource) ，[`init(extruding:extrusionOptions:)`](https://developer.apple.com/documentation/realitykit/meshresource/init(extruding:extrusionoptions:)-3h21u) 可以帮助我们快速生成网格，将 2D 矢量内容转换为 3D 模型。我们需要做的就是指定形状所需的分辨率 [`boundaryResolution`](https://developer.apple.com/documentation/realitykit/meshresource/shapeextrusionoptions/boundaryresolution) 和深度 [`extrusionMethod`](https://developer.apple.com/documentation/realitykit/meshresource/shapeextrusionoptions/extrusionmethod-swift.property)：
@@ -434,12 +431,12 @@ return mesh
 
 1. 声明顶点和索引缓冲区所需的容量 `vertexBufferSize` 和 `indexBufferSize`；
 2. 传递顶点属性列表 `SolidBrushVertex.vertexAttributes`；
-3. 列出顶点布局，每个顶点属性都使用其中一种布局。`LowLevelMesh` 为我们的顶点数据提供最多 4 个Matal 缓冲区。缓冲区索引 `bufferIndex` 声明应使用哪个缓冲区；
+3. 列出顶点布局，每个顶点属性都使用其中一种布局。`LowLevelMesh` 为我们的顶点数据提供最多 4 个 Matal 缓冲区。缓冲区索引 `bufferIndex` 声明应使用哪个缓冲区；
 4. 提供缓冲区偏移量 `bufferOffset` 和每个顶点的步幅 `bufferStride`。大多数情况下，我们只会使用一个缓冲区。
 
 5. 使用 `descriptor` 构造 `LowLevelMesh`；
 6. 然后是填充 `parts` 列表，每个 `parts` 都跨越索引缓冲区的一个区域，我们可以为每个网格 `parts` 分配不同的 RealityKit 材质索引；
-7.  App 使用三角形带状拓扑结构 `.triangleStrip` 来提高内存效率。
+7. App 使用三角形带状拓扑结构 `.triangleStrip` 来提高内存效率。
 
 最后，可以从 `LowLevelMesh` 创建 `MeshResource` 并将其分配给实体的 `ModelComponent`：
 
@@ -637,7 +634,7 @@ textString.mergeAttributes(centerAttributes)
 let textMesh = try await MeshResource(extruding: textString)
 ```
 
->  要了解有关如何使用 AttributedString 设置文本样式的更多信息，可以参考 [WWDC2021 What's new in Foundation](https://developer.apple.com/videos/play/wwdc2021/10109)。
+> 要了解有关如何使用 AttributedString 设置文本样式的更多信息，可以参考[WWDC2021 What's new in Foundation](https://developer.apple.com/videos/play/wwdc2021/10109)。
 
 现在文字看起来有点不够立体，我们可以通过将 [`ShapeExtrudingOptions`](https://developer.apple.com/documentation/realitykit/meshresource/shapeextrusionoptions?language=_2) 传递给 MeshResource：
 
