@@ -749,16 +749,11 @@ commandBuffer.commit()
 
 ## 五、总结
 
-在本 Session 中，介绍了构建了一个交互式空间绘图 App 时使用的 RealityKit 新 API 。
+在本 Session 中，介绍了构建了一个交互式空间绘图 App 时使用的 RealityKit 新 API 。RealityKit 新 API 为开发者提供了更强大的工具和功能。利用这些工具可以创造出更真实、引人入胜的空间绘图体验。技术的不断进步将带来更出色的交互和视觉效果。未来，我们期待出现更多创新的空间应用。
 
-1. 我们使用了 RealityKit 空间跟踪 API，以便应用程序可以检测用户在其空间中绘制的位置。
-2. 我们使用 SwiftUI 和高级悬停效果来构建交互式空间 UI 以自定义画笔和样式。
-3. 我们了解了 RealityKit 中的资源更新工作原理，并使用低级 API 以交互方式生成网格和纹理。
-4. 我们使用新 API 导入 2D 矢量图形并使其具有空间感。
+Session 与 Apple 文档中，对于更底层的 API 如 `LowLevelMesh` 和 `LowLevelTexture`等，需要有 Metal 相关技术基础，且由于 API 处于 Beta 阶段，其介绍和可供参考的内容极为有限。欢迎各位读者更深入的阅读 Apple 提供的示例项目，共同探讨和分享 RealityKit 的新功能。
 
-
-
-> 此外，欢迎查看以下 Session 以详细了解今年 RealityKit 中的新功能。
+> 此外，欢迎查看以下 Session 以详细了解今年 RealityKit 中的新功能：
 >
 > 1. [Discover RealityKit APIs for iOS, macOS and visionOS](https://developer.apple.com/videos/play/wwdc2024/10103/)；
 > 2. [Enhance your spatial computing app with RealityKit audio](https://developer.apple.com/videos/play/wwdc2024/111801/)。
