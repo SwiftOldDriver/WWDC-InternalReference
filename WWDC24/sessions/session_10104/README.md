@@ -141,8 +141,10 @@ let path = SwiftUI.Path { path in
 2. 使用 [`normalized(eoFill:)`](https://developer.apple.com/documentation/swiftui/path/normalized(eofill:)) 的奇偶规则填充，从而得到我们想要创建的形状。
 
 > 在二维计算机图形学中，曲线根据两个规则进行填充：[奇偶规则](https://en.wikipedia.org/wiki/Even–odd_rule)(下左 1 图)和[非零缠绕规则](https://en.wikipedia.org/wiki/Nonzero-rule)(下左 2 图)。在每种情况下，箭头表示从点 P 发出的射线延伸出曲线：
+>
 > 1. 在奇偶情况下，射线与两条线相交，即偶数；因此，P 被断定为曲线“外部”。
 > 2. 根据非零缠绕规则，射线沿顺时针方向相交两次，每次都为缠绕分数贡献 -1：因为总数 -2 不为零，所以 P 被断定为曲线“内部”。
+>
 > ![奇偶规则和非零缠绕规则](./images/even_odd_rule_non_zero_winding_rule.png)
 > 更多有关路径的填充的信息可以参阅[Quartz 2D 编程指南](https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/Introduction/Introduction.html)中的[填充路径](https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_paths/dq_paths.html#//apple_ref/doc/uid/TP30001066-CH211-TPXREF106)。
 
@@ -371,7 +373,7 @@ extension SolidBrushVertex {
 
 1. 首先声明位置属性。第一步是定义一个语义，它指示 `LowLevelMesh` 如何解释属性。在示例中使用 `.position`；
 
-2.  接下来为该属性定义 Metal 顶点格式。在示例中选择 `MTLVertexFormat.float3`；
+2. 接下来为该属性定义 Metal 顶点格式。在示例中选择 `MTLVertexFormat.float3`；
 3. 接下来提供属性的字节偏移量 `MemoryLayout.offset(of: \Self.position)!`；
 4. 最后将提供布局索引 `layoutIndex: 0`。这将索引到顶点布局列表中，绘图 App 仅使用单个布局，因此使用 `0`。
 
