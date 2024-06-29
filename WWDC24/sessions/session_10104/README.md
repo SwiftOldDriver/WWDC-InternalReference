@@ -6,9 +6,13 @@ session_ids: [10104]
 
 ---
 
-# Session 10104 使用 RealityKit 构建空间绘画 App
 
-本文基于 [Session 10104](https://developer.apple.com/videos/play/wwdc2024/10104/) 梳理。
+
+# Session 10104 - 使用 RealityKit 构建空间绘画 App
+
+
+
+本文基于[Session 10104](https://developer.apple.com/videos/play/wwdc2024/10104/)梳理。
 
 [RealityKit](https://developer.apple.com/documentation/realitykit) 提供高性能的 3D 模拟和渲染功能，通过利用 [ARKit](https://developer.apple.com/documentation/arkit)，将虚拟对象集成到现实世界中。可用于创建 iOS、iPadOS 和 macOS 的增强现实(AR)应用，以及 visionOS 应用等。在 visionOS 上，RealityKit 是应用空间功能的基础。
 
