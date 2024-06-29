@@ -50,13 +50,9 @@ dependencies: [
 ```
 
 > 值得注意的是，随着 Swift 6.0 ， Swift 团队还带来了大量的 VSCode 插件更新。新插件第一时间支持了 Swift Testing ，支持在测试面板中运行、查看、调试单元测试。
->
 > ![Test panel in VSCode](https://global.discourse-cdn.com/swift/original/3X/f/6/f6889576850130fa9837e1f9e47762910e608969.png)
-> 
 > 不仅如此，VSCode 现在也支持展示测试代码覆盖率。
-> 
 > ![Test coverage in VSCode](https://global.discourse-cdn.com/swift/original/3X/f/c/fc333c847c2cc5fb2e414737c6981a8614ebee71.png)
->
 > 有关 VSCode Swift 插件的更多信息，请阅读 [Improvements to Swift in Visual Studio Code coming with Swift 6](https://forums.swift.org/t/improvements-to-swift-in-visual-studio-code-coming-with-swift-6/72708) 。
 
 ### 定义测试方法
@@ -91,6 +87,7 @@ import Testing
 @Test("Food truck exists")
 func foodTruckExists() { ... }
 ```
+
 > 细心的同学会发现，此处的关键字使用了 `@` 符号进行标记。这其实是 Swift 的宏语法， `@` 符号表明这个 Test 是一个关联宏（attached macro）。 Swift 还有另一种宏叫独立宏（freestanding macro），我们一会儿就会见到。
 
 #### `@Suite`
