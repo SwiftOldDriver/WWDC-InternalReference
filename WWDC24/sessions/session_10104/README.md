@@ -1,16 +1,8 @@
-
-
 ---
-
 session_ids: [10104] 
-
 ---
-
-
 
 # Session 10104 - 使用 RealityKit 构建空间绘画 App
-
-
 
 本文基于[Session 10104](https://developer.apple.com/videos/play/wwdc2024/10104/)梳理。
 
