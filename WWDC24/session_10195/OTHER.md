@@ -10,7 +10,7 @@
 
 ## 审核介绍
 
-这篇文章根据建议，合并了 Meet Swift Testing（10179） 和 Go further with Swift Testing（10195）两个讲座。文章主要翻译了这两个讲座内容，以及 Swift Testing 文档。同时还结合了我自己对于单元测试以及 Swift Testing 的理解。
+Dylan Yang，iOS 开发者，目前就职于字节跳动国际化社区部门，业务爱好二次元 & 游戏。
 
 ## 文章简介
 
