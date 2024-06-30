@@ -2,7 +2,7 @@
 session_ids: [10195]
 ---
 
-# WWDC24: Session 10195 - Go further with Swift Testing
+# WWDC24 10195 - Go further with Swift Testing
 
 ## 简介
 
