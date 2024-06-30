@@ -1,5 +1,6 @@
 
 ---
+
 session_ids: [10125]
 ---
 
@@ -10,11 +11,13 @@ session_ids: [10125]
 审核：
 
 ## Passkey 简介
+
 PassKey 是 Web 行业通用无密码登录标准 WebAuthn 的 iOS 和 Android 系统内的实现，通过创建公私钥对和生物识别技术结合，来替换现有的互联网行业通行的「用户名 + 密码」登录逻辑。创建 Passkey 时，App 和网站传入域名和用户名，设备创建公私钥对，公钥回传给 App 并保存于服务器上，私钥保存在操作系统内；之后每次登陆时，App 或网站传入一个 challenge 随机字符串以供私钥签名，操作系统回传签名结果，服务端使用先前保存的公钥进行验证，验证通过，即视为正确的用户登录。由于没有密码，也不暴露私钥，安全性更高，每次登陆流程都无法重放攻击，因此完全没有钓鱼攻击风险。
 
 
 
 ## 本文主题简介
+
 - 在 iOS18 中从网站和 App 为用户自动化的创建 Passkey
 - 三方密码管理器的一些新 API 和新功能
 - 如何在 iOS18 中的「密码」App 中，清晰明了的展示网站名称、网站图标等信息
@@ -37,8 +40,10 @@ Passkey 既不能被忘记，也一般无需重置，假设一个账户创建时
 
 ![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-06-30-17197382889619.jpg)
 
-为了帮助开发者加速让用户更快的迁移至更安全的 Passkey，iOS18 中提供了全新的静默自动化创建 Passkey 的 API，该 API 包括 iOS18 原生 API和浏览器 API
+为了帮助开发者加速让用户更快的迁移至更安全的 Passkey，iOS18 中提供了全新的静默自动化创建 Passkey 的 API，该 API 包括 iOS18 原生 API 和浏览器 API
+
 ### 在 App 内静默创建 Passkey
+
 ![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-06-30-17197424728461.jpg)
 
 有了这个新 API， 你讲无需引导用户或弹出任何界面或验证用户生物识别，来创建 Passkey
@@ -49,12 +54,13 @@ Passkey 既不能被忘记，也一般无需重置，假设一个账户创建时
 4.用户必需在 iCloud KeyChain 中已经保存了其对应域名的账户名和密码信息
 5.该 API 必须在用户调用 iCloud KeyChain 生物识别并填充密码之后方可被调用
 
-截止本文发稿时，1Password 尚未适配，Demo 代码均基于 iCloud KeyChain 进行测试，请注意，如果 1Password 适配了 iOS18，配置了其项目中 Info.plist的 `SupportsConditionalPasskeyRegistration` 为 `true`，那么理论上 1Password 也可以支持该静默创建，上述的限制逻辑就可以放宽至用户使用第三方密码管理器。
+截止本文发稿时，1Password 尚未适配，Demo 代码均基于 iCloud KeyChain 进行测试，请注意，如果 1Password 适配了 iOS18，配置了其项目中 Info.plist 的 `SupportsConditionalPasskeyRegistration` 为 `true`，那么理论上 1Password 也可以支持该静默创建，上述的限制逻辑就可以放宽至用户使用第三方密码管理器。
 如果这些条件都得到满足那么你就可以获得成功创建的 Passkey 的公钥，这种静默创建的执行方式与之前生成 Passkey 的调用没有不同，只是新增了 requestStyle 作为选填参数，默认值为 `.standard` 。该 API 执行成功时，iOS 会发出一条通知，告知用户成功创建 Passkey，如果创建失败，iOS 系统不会有任何 UI 提醒，只会在 API 层面抛出异常。因此如果自动化静默创建失败，你可以降级回现有的 Passkey 创建逻辑，弹出提示并引导用户完成创建；当然你也可以在下次用户登陆时，重新调用此 API 进行重试。
 ![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-06-30-17197440260050.jpg)
 
 
 ### 在浏览器内静默为用户创建 Passkey
+
 浏览器内创建也只需新增一个参数 mediation 为 conditional ，在执行新的创建逻辑之前，检查浏览器环境是否支持（最低 iOS18）
 ![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-06-30-17197437450302.jpg)
 
@@ -62,6 +68,7 @@ Passkey 既不能被忘记，也一般无需重置，假设一个账户创建时
 上文提到过，要想最终消除账户登录被钓鱼和泄露攻击的不安全性，需要完全移除不安全的登录因子，如静态密码。因此当用户升级至 Passkey 之后，开发者可以考虑关闭单纯静态的密码登录，只保留多因子验证登录，甚至完全移除静态密码因子，如静态密码。当所有不安全因子都被移除，账户安全就会被实质性的提高，从根本上抵御钓鱼和泄露的攻击。但这个过程需要开发者进行深思熟虑，结合自身的账户登录环境，建议是如果所有渠道的登录都可以基于 Passkey 进行，那么就可以考虑采取激进的升级策略。
 
 ## 三方密码管理器的新能力
+
 针对第三方的密码管理器（如 1Password），iOS18 提供了新的能力，具体而言有三个：
 
 - 支持静默创建 Passkey 功能 `SupportConditionalPasskeyRegistration`
@@ -69,11 +76,12 @@ Passkey 既不能被忘记，也一般无需重置，假设一个账户创建时
 - 支持自动插入填充其他文本字段（如用户名，用户在文本框长按后点击插入按钮，可以唤起密码填充器） `ProvidesTextToInsert`
 
 ## 全新的密码 App
+
 ![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-06-30-17197457556311.jpg)
 
-全新设计的「密码」App，界面上分为全部、Passkey、2FA验证码、WiFi、安全提示、已删除
+全新设计的「密码」App，界面上分为全部、Passkey、2FA 验证码、WiFi、安全提示、已删除
 密码 App 会将同个域名且同个用户名的所有信息都整理展示在单个项内，包括用户名、密码、域名信息、网站名称、网站 Icon、2FA 验证码、Passkey、备忘、分享情况等。
-针对弱密码和有风险的密码项，会在安全提示内进行提示，并引导用户修改密码，修改密码按钮的默认网址为 https://example.com/.well-known/change-password ，网站开发者需要适配该链接才能正确修改密码。
+针对弱密码和有风险的密码项，会在安全提示内进行提示，并引导用户修改密码，修改密码按钮的默认网址为 <https://example.com/.well-known/change-password> ，网站开发者需要适配该链接才能正确修改密码。
 为了能在密码 App 中展示的更加精美，网站开发者需要适配 OpenGraph 标签，OpenGraph 中的网站名称和高分辨率图表是密码 App 中单个项的标题和图标；如果网站没有适配 OpenGraph，那密码 App 会基于 App 内提供的名称或网站域名进行展示。
 ![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-06-30-17197492340456.jpg)
 
@@ -84,6 +92,7 @@ Passkey 既不能被忘记，也一般无需重置，假设一个账户创建时
 在 iOS18 中，App 和网站可以一键创建 2FA 验证码，直接打开一个 `optauth:` 的 URL 就可以实现，后续行为会被密码管理器托管。此外苹果建议 App 开发者在 iOS18 之后，向用户建议，将 2FA 验证码配置在 iOS18 自带的密码 App 中，相较于谷歌验证器，多了一个选择。
 
 ## 总结
+
 - 即刻起开始部署更加简单易用，更加安全的 Passkey
 - 基于自动静默创建 Passkey API，加速用户迁移至 Passkey 登录
 - 更新网站的 OpenGraph 元数据，以确保网站密码信息在 iOS18 密码 App 内精美展示
