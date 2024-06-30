@@ -32,7 +32,7 @@ Passkey 既不能被忘记，也一般无需重置，假设一个账户创建时
 但现今的大部分已存在账户往往基于可被钓鱼攻击的秘钥因子，例如密码、短信验证码、邮箱验证码、App 推送验证码、2FA 验证码，讲这些因子组合起来，使用多因子验证，可以提高账户的防钓鱼安全性，但仍然无法根本性解决面对钓鱼攻击的脆弱性根本，因为账户的整体安全性取决于账户最脆弱的因子。
 目前整个互联网行业正处在以往就得账户安全因子往新的 Passkey 上迁移的过程中，从所有秘钥因子都有被钓鱼风险，逐步转换为部分秘钥因子有钓鱼风险（Passkey 混合现有登陆方式），最终移除所有有风险秘钥因子后，只保留诸如 Passkey 之类的无风险秘钥因子，此时的账户登录更安全，且完全没有钓鱼风险。
 ![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-06-30-17197382889619.jpg)
-为了帮助开发者加速让用户更快的迁移至更安全的 Passkey，iOS18 中提供了全新的静默自动化创建 Passkey 的 API，该 API 包括 iOS18 原生 API和浏览器 API
+为了帮助开发者加速让用户更快的迁移至更安全的 Passkey，iOS18 中提供了全新的静默自动化创建 Passkey 的 API，该 API 包括 iOS18 原生 API 和浏览器 API
 
 ### 在 App 内静默创建 Passkey
 
@@ -44,9 +44,10 @@ Passkey 既不能被忘记，也一般无需重置，假设一个账户创建时
 3.使用 iCloud KeyChain 作为唯一的密码填充来源（例如不能使用 1Password）
 4.用户必需在 iCloud KeyChain 中已经保存了其对应域名的账户名和密码信息
 5.该 API 必须在用户调用 iCloud KeyChain 生物识别并填充密码之后方可被调用
-截止本文发稿时，1Password 尚未适配，Demo 代码均基于 iCloud KeyChain 进行测试，请注意，如果 1Password 适配了 iOS18，配置了其项目中 Info.plist的 `SupportsConditionalPasskeyRegistration` 为 `true`，那么理论上 1Password 也可以支持该静默创建，上述的限制逻辑就可以放宽至用户使用第三方密码管理器。
+截止本文发稿时，1Password 尚未适配，Demo 代码均基于 iCloud KeyChain 进行测试，请注意，如果 1Password 适配了 iOS18，配置了其项目中 Info.plist 的 `SupportsConditionalPasskeyRegistration` 为 `true`，那么理论上 1Password 也可以支持该静默创建，上述的限制逻辑就可以放宽至用户使用第三方密码管理器。
 如果这些条件都得到满足那么你就可以获得成功创建的 Passkey 的公钥，这种静默创建的执行方式与之前生成 Passkey 的调用没有不同，只是新增了 requestStyle 作为选填参数，默认值为 `.standard` 。该 API 执行成功时，iOS 会发出一条通知，告知用户成功创建 Passkey，如果创建失败，iOS 系统不会有任何 UI 提醒，只会在 API 层面抛出异常。因此如果自动化静默创建失败，你可以降级回现有的 Passkey 创建逻辑，弹出提示并引导用户完成创建；当然你也可以在下次用户登陆时，重新调用此 API 进行重试。
 ![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-06-30-17197440260050.jpg)
+
 ### 在浏览器内静默为用户创建 Passkey
 
 浏览器内创建也只需新增一个参数 mediation 为 conditional ，在执行新的创建逻辑之前，检查浏览器环境是否支持（最低 iOS18）
@@ -57,6 +58,7 @@ Passkey 既不能被忘记，也一般无需重置，假设一个账户创建时
 ## 三方密码管理器的新能力
 
 针对第三方的密码管理器（如 1Password），iOS18 提供了新的能力，具体而言有三个：
+
 - 支持静默创建 Passkey 功能 `SupportConditionalPasskeyRegistration`
 - 支持自动填充 2FA 验证码 `ProvidesOneTimeCodes`
 - 支持自动插入填充其他文本字段（如用户名，用户在文本框长按后点击插入按钮，可以唤起密码填充器） `ProvidesTextToInsert`
@@ -64,7 +66,7 @@ Passkey 既不能被忘记，也一般无需重置，假设一个账户创建时
 ## 全新的密码 App
 
 ![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-06-30-17197457556311.jpg)
-全新设计的「密码」App，界面上分为全部、Passkey、2FA验证码、WiFi、安全提示、已删除。
+全新设计的「密码」App，界面上分为全部、Passkey、2FA 验证码、WiFi、安全提示、已删除。
 密码 App 会将同个域名且同个用户名的所有信息都整理展示在单个项内，包括用户名、密码、域名信息、网站名称、网站 Icon、2FA 验证码、Passkey、备忘、分享情况等。
 针对弱密码和有风险的密码项，会在安全提示内进行提示，并引导用户修改密码，修改密码按钮的默认网址为 <https://example.com/.well-known/change-password> ，网站开发者需要适配该链接才能正确修改密码。
 为了能在密码 App 中展示的更加精美，网站开发者需要适配 OpenGraph 标签，OpenGraph 中的网站名称和高分辨率图表是密码 App 中单个项的标题和图标；如果网站没有适配 OpenGraph，那密码 App 会基于 App 内提供的名称或网站域名进行展示。
