@@ -24,10 +24,37 @@ UIKit 作为老牌的UI框架在很多应用场景中依然有着不可替代的
 2. UIKit 与 SwiftUI 交互
 3. 常规功能增强
 
-
 ## UIKit 核心功能更新 - key features
 
 ### 重设计的文档启动体验 - Document lanunch experience
+对于文档类的修改其实在WWDC23中的[What's new in UIKit](https://developer.apple.com/videos/play/wwdc2023/10055/)也有提及到，在iPadOS 17中，Apple改进了对文档应用程序的支持，UIKit提供了一个新的`UIDocumentViewController`作为内容视图控制器的基类，具体可以回看下[WWDC23 Build better document-based apps](https://developer.apple.com/videos/play/wwdc2023/10056)。
+
+在WWDC24中Apple将基于`UIDocumentmentViewController`的文档启动页进行了新的设计，将文档类启动页进行了结构化的设计。
+![Document lanunch experience_1](./images/Document%20lanunch%20experience_1.png)
+> 页面样式的头部分可以添加前景资源与后景资源
+
+![Document lanunch experience_6](./images/Document%20lanunch%20experience_6.png)
+> 同时页面样式的头部分可以添加背景色，设置包括背景色、渐变色、图片等
+
+![Document lanunch experience_2](./images/Document%20lanunch%20experience_2.png)
+> 页面样式的中间部分为标题部分
+
+![Document lanunch experience_3](./images/Document%20lanunch%20experience_3.png)
+> 页面样式标题下面的部分为主Button，标示着文档应用想要表达的首要行为
+
+![Document lanunch experience_4](./images/Document%20lanunch%20experience_4.png)
+> 页面样式主Button下面的部分为次Button，标示着文档应用想要表达的次要行为
+
+![Document lanunch experience_5](./images/Document%20lanunch%20experience_5.png)
+> 页面样式最下面的部分为文档浏览区域
+
+想要使用新的启动页样式，则需要将`UIDocumentViewController`设置为根视图，将原本设置为根视图的`UIDocumentBrowserViewController`替换掉。
+![Document lanunch experience_7](./images/Document%20lanunch%20experience_7.png)
+
+当然也可以通过iOS 18更新的API来完成更多自定义的样式，具体的细节可以阅读以下两个Session
+[WWDC23 Build better document-based apps](https://developer.apple.com/videos/play/wwdc2023/10056)。
+[Evolve your document launch experience](https://developer.apple.com/videos/play/wwdc2024/10132/)
+
 
 ### 标签栏和侧边栏的视觉更新 - Tab and sidebar refresh
 
