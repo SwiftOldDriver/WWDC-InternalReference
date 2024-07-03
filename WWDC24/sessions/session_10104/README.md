@@ -25,12 +25,16 @@ session_ids: [10104]
 
 本文将分为以下四个主题：
 
-| 序号 |     主题     | 内容概述                                                     |
-| :--: | :----------: | ------------------------------------------------------------ |
-|  一  | 设置空间跟踪 | 我们将介绍如何设置空间跟踪，以便 App 能够理解用户的手部和环境数据。 |
-|  二  | 构建空间界面 | 我们将构建画布 UI，介绍如何自定义 UI 在悬停时的外观。        |
-|  三  | 构建画笔几何 | 我们将深入研究网格在 RealityKit 中的工作原理，高效地生成画笔几何图形。 |
-|  四  | 构建启动画面 | 我们将构建独特的启动画面，其中包含空间 UI 元素和动态纹理。   |
+1. **设置空间跟踪**，我们将介绍如何设置空间跟踪，以便 App 能够理解用户的手部和环境数据。
+   - 使用 RealityKit 的 `SpatialTrackingSession` 来获取空间跟踪数据，更便捷的 API 将开发者从手动订阅 ARKit 的更新中解放出来。
+2. **构建空间界面**，我们将构建画布 UI，介绍如何自定义 UI 在悬停时的外观。
+   - 围绕 `MeshResource`，将 2D 矢量内容转换为 3D 模型，例如立方体、球体和平面等，这极大方便了各类调试和开发目的的形状基元制作。
+   - 介绍新的用户注释悬停效果——`HoverEffectComponent` 提供的高亮效果、着色器效果，让用户交互体验更加丰富。对于着色器效果，我们将深入着色器图讲解其实现流程。
+3. **构建画笔几何**，我们将深入研究网格在 RealityKit 中的工作原理，高效地生成画笔几何图形。
+   - 介绍非标准网格布局优化，通过定制的几何处理管道最大限度地减少延迟。使用 `LowLevelMesh` 扩展了向 RealityKit 提供网格数据的可能性。
+   - 配合 Metal，介绍 `LowLevelMesh`  使用 GPU 支持顶点或索引缓冲区更新。对于网格高更新频率和复杂的场景，使用 GPU 有助于性能的提升。
+4. **构建启动画面**，我们将构建独特的启动画面，其中包含空间 UI 元素和动态纹理。
+   - 使用 `MeshResource`，快速构建 3D 的文字和标志。同时介绍 `LowLevelTexture` 提供的适用于纹理资源的快速更新能力。
 
 ## 一、设置空间跟踪
 
@@ -349,7 +353,7 @@ struct SolidBrushVertex {
 
 `LowLevelMesh` 扩展了向 RealityKit 提供网格数据的可能性。也许我们的自定义布局的网格数据来自二进制文件，现在，我们可以将该数据直接传输到 RealityKit，无需任何转换开销。或者，我们正在将现有的网格处理管道及其预定义缓冲区布局(如在数字内容创建工具或 CAD 应用程序中看到的布局)桥接到 RealityKit。我们甚至可以使用 `LowLevelMesh` 作为一种将游戏引擎中的网格数据桥接到 RealityKit 的高效方法。
 
-| ![二进制文件](./images/sourced_from_a_binary_file.png) | ![桥接现有的网格处理管道及其预定义缓冲区布局](./images/bridging_mesh_processing_pipeline.png) | ![桥接游戏引擎中的网格数据](./images/ bridge_from_game_engine.png) |
+| ![二进制文件](./images/sourced_from_a_binary_file.png) | ![桥接现有的网格处理管道及其预定义缓冲区布局](./images/bridging_mesh_processing_pipeline.png) | ![桥接游戏引擎中的网格数据](./images/bridge_from_game_engine.png) |
 | ------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
 
 绘画 App 可以按原样将其顶点缓冲区提供给 `LowLevelMesh`，而无需任何额外的转换或不必要的复制。绘画 App 在 `SolidBrushVertex` 结构的扩展中设置属性列表。首先声明位置属性：
@@ -534,7 +538,7 @@ extension SparkleBrushVertex {
 
 ![在 GPU 上填充 LowLevelMesh](./images/populate_lowlevelmesh_gpu.png)
 
-当缓冲区完成工作后，RealityKit 会自动应用更改。正如之前提到的，App 使用 Metal 缓冲区进行粒子模拟，使用 LowLevelMesh 作为顶点缓冲区：
+当缓冲区完成工作后，RealityKit 会自动应用更改。正如之前提到的，App 使用 Metal 缓冲区进行粒子模拟，使用 `LowLevelMesh` 作为顶点缓冲区：
 
 ```swift
 let inputParticleBuffer: MTLBuffer
