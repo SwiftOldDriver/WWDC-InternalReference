@@ -55,10 +55,29 @@ UIKit 作为老牌的UI框架在很多应用场景中依然有着不可替代的
 [WWDC23 Build better document-based apps](https://developer.apple.com/videos/play/wwdc2023/10056)。
 [Evolve your document launch experience](https://developer.apple.com/videos/play/wwdc2024/10132/)
 
-
 ### 标签栏和侧边栏的视觉更新 - Tab and sidebar refresh
+标签栏和侧边栏的应用更多是在iPadOS上，在[WWDC23 What's new in UIKit](https://developer.apple.com/videos/play/wwdc2023/10055/)中也有对于侧边栏的更新，在WWDC23 iOS17中为侧边栏提供了新的行为，侧边栏可以自动，当页面宽度减小时，会根据需要隐藏侧边栏，如果在点击侧边栏按钮时没有足够的空间进行平铺，会以覆盖或者位移方式显示次要列与侧边栏，开发者可以使用`preferedDisplayMode`和`preferredSplitBehavior`在应用程序中覆盖此行为。
+![WWDC23 New sidebar behavior](./images/WWDC23%20New%20sidebar%20behavior.gif)
+
+在WWDC24中，Apple不但针对于侧边栏进行了优化增加了新的自定义能力同时对于标签栏的UI样式进行了优化。新的标签栏采用了更紧凑的外观，减少了垂直和水平的空白空间，并将其整体浮于应用上。
+![tab_sidebar_1](./images/tab_sidebar_1.png)
+
+对于侧边栏来说，现有的侧边栏应用可以采用新的`UITabBarController`API来获取组合标签栏和侧边栏的新体验。这种组合标签栏与侧边栏在开发中是常见的需求，具体来说是在最小化侧边栏的时候侧边栏会以动画的形式变成选项卡栏展示，从功能上通过侧边栏可以访问应用的更多功能，标签栏可以对应用主要的功能进行快速切换，从体验上在侧边栏变为标签栏展示时可以让应用的主体内容更加突出。
+![tab_sidebar_2](./images/tab_sidebar_2.gif)
+
+
+使用新的侧边栏API还提供了自定义的能力，可以通过拖拽的方式来自定义的展示侧边栏和标签栏具体功能项的位置。
+![tab_sidebar_3](./images/tab_sidebar_3.png)
+
+要使用上述功能需要使用新的`UITab`和`UITabGroup` API，通过这些API可以将应用中标签栏与侧边栏进行结构化的描述。此外这些API还兼容了多平台，包括了Mac Catalyst和VisionOS，想要了解更多内容可以阅读[Elevate your tab and sidebar experience in iPadOS](https://developer.apple.com/videos/play/wwdc2024/10147/)。
+![tab_sidebar_4](./images/tab_sidebar_4.png)
+
+> 在这篇Session中以iPad中的时钟应用介绍了标签栏的新样式，以iPadOS上的Apple TV介绍了侧边栏与标签栏的结合，同时在这篇Session也给出了关于使用Tab bar 与 sidebar 的一些实践推荐
+![tab_sidebar_5](./images/tab_sidebar_5.png)
 
 ### 全新的转场效果: 缩放转场 - Fluid transitions
+
+
 
 ## UIKit 与 SwiftUI 交互 - UIKit and SwiftUI interoperability
 
@@ -75,4 +94,10 @@ UIKit 作为老牌的UI框架在很多应用场景中依然有着不可替代的
 ### 文本格式化拓展 - Text improvements
 ### 菜单操作 - Menu actions
 ### Apple 触控笔 Apple Pencil
+
+## 总结
+
+
+## Ref
+
 
