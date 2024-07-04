@@ -65,12 +65,18 @@ UIKit 作为老牌的UI框架在很多应用场景中依然有着不可替代的
 对于侧边栏来说，现有的侧边栏应用可以采用新的`UITabBarController`API来获取组合标签栏和侧边栏的新体验。这种组合标签栏与侧边栏在开发中是常见的需求，具体来说是在最小化侧边栏的时候侧边栏会以动画的形式变成选项卡栏展示，从功能上通过侧边栏可以访问应用的更多功能，标签栏可以对应用主要的功能进行快速切换，从体验上在侧边栏变为标签栏展示时可以让应用的主体内容更加突出。
 ![tab_sidebar_2](./images/tab_sidebar_2.gif)
 
-
 使用新的侧边栏API还提供了自定义的能力，可以通过拖拽的方式来自定义的展示侧边栏和标签栏具体功能项的位置。
 ![tab_sidebar_3](./images/tab_sidebar_3.png)
 
-要使用上述功能需要使用新的`UITab`和`UITabGroup` API，通过这些API可以将应用中标签栏与侧边栏进行结构化的描述。此外这些API还兼容了多平台，包括了Mac Catalyst和VisionOS，想要了解更多内容可以阅读[Elevate your tab and sidebar experience in iPadOS](https://developer.apple.com/videos/play/wwdc2024/10147/)。
+要使用上述功能需要使用新的`UITab`和`UITabGroup` API
+![tab_sidebar_7](./images/tab_sidebar_7.png)
+
+通过这些API可以将应用中标签栏与侧边栏进行结构化的描述。此外这些API还兼容了多平台，包括了Mac Catalyst和VisionOS，想要了解更多内容可以阅读[Elevate your tab and sidebar experience in iPadOS](https://developer.apple.com/videos/play/wwdc2024/10147/)。
 ![tab_sidebar_4](./images/tab_sidebar_4.png)
+
+在这篇Session具体介绍了在Tab bar 和 sidebar在UIKit中的更新，以及Sidebar中一些新的API。
+![tab_sidebar_6](./images/tab_sidebar_6.png)
+![tab_sidebar_8](./images/tab_sidebar_8.png)
 
 > 在这篇Session中以iPad中的时钟应用介绍了标签栏的新样式，以iPadOS上的Apple TV介绍了侧边栏与标签栏的结合，同时在这篇Session也给出了关于使用Tab bar 与 sidebar 的一些实践推荐
 ![tab_sidebar_5](./images/tab_sidebar_5.png)
