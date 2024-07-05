@@ -158,6 +158,9 @@ ViewController会经历以下几个步骤
 
 其中`viewIsAppearing`这是在[WWDC23](https://developer.apple.com/videos/play/wwdc2023/10055/)中What's new in UIKit介绍的ViewController生命周期中的新API，`viewIsAppearing`是在`viewWillAppear`与`viewDidAppear`之间新增的一个生命周期回调，`viewIsAppearing`是每次视图出现执行操作的最佳位置，也就是操作依赖于视图的初始集合属性(包括大小、位置等)的最佳回调时机，因为在此时ViewController已经完成了初始化，View也已经添加到了视图层级结构体中并由父视图进行了布局。
 
+![fluid_transitions_9](./images/fluid_transitions_9.png)
+> 这里再补充下ViewControlle的视图出现的生命周期调用
+
 ![fluid_transitions_6](./images/fluid_transitions_6.png)
 当ViewController从导航堆栈中pop的时候，他会以出现状态开始，然后执行以下步骤
 1. 调用`viewWillDisappear`
@@ -182,13 +185,39 @@ ViewController会经历以下几个步骤
 
 
 ## UIKit 与 SwiftUI 交互 - UIKit and SwiftUI interoperability
-iOS18 增强了SwiftUI与UIKit的交互，
+iOS18 增强了SwiftUI与UIKit的交互，使得两者可以在开发中很容易的进行交互，这里将主要介绍两方面的更新，动画和手势。
+
 ### 动画 - Animations
+在iOS18 中可以使用SwiftUI的动画类型来设置UIKit视图的动画效果，其中的动画类型不但包括了全部的SwiftUI系统动画类型，也包括了SwiftUI自定义的动画。
+
+![swiftui_uikit_1](./images/swiftui_uikit_1.gif)
+
+通过SwiftUI的Spring动画，可以使得UIKit轻松构建出流畅的手势动画，为了使用这种手势动画需要在手势更改和结束时设置动画。
+
+![swiftui_uikit_3](./images/swiftui_uikit_3.gif)
+
+想要了解更多可以阅读[Enhance your UI animations and transitions](https://developer.apple.com/videos/play/wwdc2024/10145/)
+
+![swiftui_uikit_2](./images/swiftui_uikit_2.png)
+
+在这篇Session中其实也介绍了我们前面讲到的缩放转场，
 
 ### 手势 - Gesture recognizers
+动画通常与手势结合使用，在WWDC24中也将UIKit与SwiftUI中的手势进行了统一，现在它们将遵循统一的规则，在iOS18 中，可以跨越两个框架(SwiftUI与UIKit)定义手势之间的依赖关系，可以通过`name`在UIKit中引用SwiftUI中的手势。
+
+![swiftui_uikit_5](./images/swiftui_uikit_5.png)
+
+这是一个SwiftUI嵌套在UIKit的视图结构，在UIKit视图中绑定了单击事件，在SwiftUI中绑定了双击事件，想在想让UIKit中的手势与SwiftUI中的手势共存，但是不添加任何处理的话会发现，当点击SwiftUI的视图时UIKit的视图也响应了手势。为了避免这种情况的发生，采用如上代码设置，首先在SwiftUI中设置手势时指定一个name属性为SwiftUIDoubleTap，然后再UIKit的手势识别代理方法`gestureRecognizer(_ gestureRecognizer: shouldRequireFailureOf other:)`中判断手势是否为SwiftUI中的手势，从而达到两种手势共存的效果。
+
+ 
+在iOS18 中可以使用新的`UIGestureRecognizerRepresentable`协议将现用的UIKit手势迁移到SwiftUI中，关于更多的内容可以阅读[What's new in SwiftUI](https://developer.apple.com/videos/play/wwdc2024/10144/)，这里鉴于篇幅与其他作者对这个篇Session有讲解，就不过多展开了。
+// TODO：补充SwiftUI文章地址
 
 ## 常规功能增强 
+
 ### 自动特征跟踪 - Automatic trait tracking
+`Trait system`在WWDC23中也有过介绍，
+
 ### 列表视图改进 - List improvements
 ### 定期UI更新刷新 - Update link
 ### SF Symbol 动画 - Symbol animations
@@ -198,6 +227,13 @@ iOS18 增强了SwiftUI与UIKit的交互，
 ### Apple 触控笔 Apple Pencil
 
 ## 总结
+本文介绍了xxxx，
+1. 
+2. 
+3. 
+xxx
+下一步
+xxx
 
 
 ## Ref
