@@ -4,17 +4,11 @@ session_ids: [10144]
 
 ---
 
-
-
-# Session 10144 - What's New in SwfitUI
+# WWDC24 10144 - What's New in SwfitUI
 
 ![SwiftUI](./images/SwiftUI.png)
 
-
-
 本文基于[Session 10144](https://developer.apple.com/videos/play/wwdc2024/10144/) 梳理。
-
-
 
 基于今年 iOS 18，macOS 15，vision 2.0 的发布，SwiftUI 在各个平台也有相应的优化与更新。新的 Symbol Effect 动画，全新的 Preview 框架，更加深入的视图自定义操作，手势的补充和动画的展示等。接下来我们就一起具体了解一下今年苹果在 SwiftUI 能给我们带来哪些让我们开发效率更高的方法和功能。
 
