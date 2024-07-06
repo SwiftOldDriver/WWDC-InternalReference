@@ -31,7 +31,7 @@ session_ids: [10104]
    - 围绕 `MeshResource`，将 2D 矢量内容转换为 3D 模型，例如立方体、球体和平面等，这极大方便了各类调试和开发目的的形状基元制作。
    - 介绍新的用户注释悬停效果——`HoverEffectComponent` 提供的高亮效果、着色器效果，让用户交互体验更加丰富。对于着色器效果，我们将深入着色器图讲解其实现流程。
 3. **构建画笔几何**，我们将深入研究网格在 RealityKit 中的工作原理，高效地生成画笔几何图形。
-   - 介绍非标准网格布局优化，通过定制的几何处理管道最大限度地减少延迟。使用 `LowLevelMesh` 扩展了向 RealityKit 提供网格数据的可能性。
+   - 介绍非标准网格布局的优化，通过定制的几何处理管道最大限度地减少延迟。使用 `LowLevelMesh` 扩展了向 RealityKit 提供网格数据的可能性。
    - 配合 Metal，介绍 `LowLevelMesh`  使用 GPU 支持顶点或索引缓冲区更新。对于网格高更新频率和复杂的场景，使用 GPU 有助于性能的提升。
 4. **构建启动画面**，我们将构建独特的启动画面，其中包含空间 UI 元素和动态纹理。
    - 使用 `MeshResource`，快速构建 3D 的文字和标志。同时介绍 `LowLevelTexture` 提供的适用于纹理资源的快速更新能力。
@@ -753,11 +753,19 @@ commandBuffer.commit()
 
 ## 五、总结
 
-在本 Session 中，介绍了构建了一个交互式空间绘图 App 时使用的 RealityKit 新 API 。RealityKit 新 API 为开发者提供了更强大的工具和功能。利用这些工具可以创造出更真实、引人入胜的空间绘图体验。技术的不断进步将带来更出色的交互和视觉效果。未来，我们期待出现更多创新的空间应用。
+在本 Session 中，介绍了构建了一个交互式空间绘图 App 时使用的 RealityKit 新 API 。
+
+`SpatialTrackingSession` 等相关 API 的加入，使 visionOS 上的开发更为简便和易于上手；`MeshResource` 为 3D 内容的生成提供了更大的便利；`LowLevelMesh` 等 API 就更接近 CPU/GPU，其核心理念是希望自定义的顶点缓冲区布局，更新 `MeshResource` 的内容时不必重新创建它或将数据打包成规定的 `MeshBuffers` 格式，并使用 Metal 在 CPU 或 GPU 上重新生成网格内容，性能和体验都有极大的提升，减少了 ModelIO 内部转化的开销，更像是 `MeshDescriptor` 的替代方案。
+
+RealityKit 新 API 为开发者提供了更强大的工具和功能。利用这些工具可以创造出更真实、引人入胜的空间绘图体验。技术的不断进步将带来更出色的交互和视觉效果。未来，我们期待出现更多创新的空间应用。
 
 文章主要对 RealityKit 新 API 设计背景和理念做了详细描述。在 Session 与 Apple 文档中，对于更底层的 API 如 `LowLevelMesh` 和 `LowLevelTexture` 等，由于需要 Metal 相关技术基础，且 API 处于 Beta 阶段，其介绍和可供参考的内容极为有限。欢迎各位读者更深入的阅读 Apple 提供的示例项目，共同探讨和分享 RealityKit 的新功能。
 
-> 此外，欢迎查看以下 Session 以详细了解今年 RealityKit 中的新功能：
+>  有关 `LowLevelMesh` 的更多内容，可以参考 [Dynamic RealityKit Meshes with LowLevelMesh](Dynamic RealityKit Meshes with LowLevelMesh)。
 >
-> 1. [Discover RealityKit APIs for iOS, macOS and visionOS](https://developer.apple.com/videos/play/wwdc2024/10103/)；
-> 2. [Enhance your spatial computing app with RealityKit audio](https://developer.apple.com/videos/play/wwdc2024/111801/)。
+> ![Dynamic RealityKit Meshes with LowLevelMesh](./images/dynamic_meshes_lowlevemesh.gif)
+
+此外，欢迎查看以下 Session 以详细了解今年 RealityKit 中的新功能：
+
+1. [Discover RealityKit APIs for iOS, macOS and visionOS](https://developer.apple.com/videos/play/wwdc2024/10103/)；
+1. [Enhance your spatial computing app with RealityKit audio](https://developer.apple.com/videos/play/wwdc2024/111801/)。
