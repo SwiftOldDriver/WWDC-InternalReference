@@ -28,9 +28,11 @@ session_ids: [10074]
 
 ## 如何使用动态字体
 
+使用动态字体的代码非常简单，以下是在 SwiftUI 和 UIKit 中使用动态字体的示例。
+
 ### SwiftUI
 
-在 SwiftUI 中，可以通过 `font` 修饰符设置字体，如下所示：
+在 SwiftUI 中，可以通过 `func font(_ font: Font?) -> Text` 设置动态字体，如下所示：
 
 ```swift
 import SwiftUI
@@ -44,9 +46,13 @@ struct ContentView: View {
 }
 ```
 
+![scaledtext-swiftui-large](./images/scaledtext-swiftui-large.png)
+
+![scaledtext-swiftui-accessibility4](./images/scaledtext-swiftui-accessibility4.png)
+
 ### UIKit
 
-在 UIKit 中，可以通过 `UIFont.TextStyle` 设置字体，如下所示：
+在 UIKit 中，可以通过 `class func preferredFont(forTextStyle style: UIFont.TextStyle) -> UIFont` 设置动态字体，如下所示：
 
 ```swift
 import UIKit
@@ -56,7 +62,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let label = UILabel(frame: .zero)
+        let label = UILabel()
         label.text = "Hello, World!"
         label.adjustsFontForContentSizeCategory = true
         label.font = .preferredFont(forTextStyle: .body)
@@ -68,11 +74,15 @@ class ViewController: UIViewController {
 }
 ```
 
+![scaledtext-uikit-large](./images/scaledtext-uikit-large.png)
+
+![scaledtext-uikit-accessibility4](./images/scaledtext-uikit-accessibility4.png)
+
 > 在 UIKit 中，需要设置 `adjustsFontForContentSizeCategory` 为 `true`，才能自动适配动态字体的效果，设置 `numberOfLines` 为 `0`，可以让 `UILabel` 自动换行。
 
 ### 动态字体对应关系
 
-在 iOS 中，动态字体对应关系如下：
+在 iOS 中，动态字体与文字样式的字体大小关系并不是简单的等差数列，而是一种特殊的调整逻辑，对应关系如下：
 
 | UIFont.TextStyle / DynamicTypeSize | xSmall | small | medium | large | xLarge | xxLarge | xxxLarge | accessibility1 | accessibility2 | accessibility3 | accessibility4 | accessibility5 |
 | ---------------------------------- | ------ | ----- | ------ | ----- | ------ | ------- | -------- | -------------- | -------------- | -------------- | -------------- | -------------- |
