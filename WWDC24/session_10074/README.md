@@ -1,0 +1,335 @@
+---
+session_ids: [10074]
+---
+
+# WWDC24 10074 - 动态字体体验入门
+
+> 摘要：使用动态字体实现一个旅行交流 App，对比 UIKit 与 SwiftUI 在实现上的异同点。
+
+本文基于 Session [10074](https://developer.apple.com/videos/play/wwdc2024/10074/)、Xcode 16.0 beta 2 (16A5171r) 撰写，简析在 App 中使用 SwiftUI 和 UIKit 实现动态字体功能，后续版本可能存在 API 变更，请读者朋友们留意。可在 [nuomi1/TestDynamicType](https://github.com/nuomi1/TestDynamicType) 仓库中获取本文的全部代码。
+
+> 本文采用系统内建的动态字体功能进行讲解，如希望在 App 中提供设置项单独处理，可参考微信 App。
+
+## 为什么需要使用动态字体
+
+用户的视力不同，有的用户视力较好，有的用户视力较差（年龄增长或者疾病），固定字体大小不利于视力较差的用户，因此需要调整字体大小以适应视力需求。在 iOS 中，用户可以在「设置」-「显示与亮度」-「文字大小」中调整字体大小。动态字体的使用可以提高 App 的可访问性，让更多的用户能够更好地使用 App。
+
+> 默认情况下，文本以大尺寸（large）显示。
+
+## 如何使用动态字体
+
+### SwiftUI
+
+在 SwiftUI 中，可以通过 `font` 修饰符设置字体，如下所示：
+
+```swift
+import SwiftUI
+
+struct ContentView: View {
+
+    var body: some View {
+        Text("Hello, World!")
+            .font(.body)
+    }
+}
+```
+
+### UIKit
+
+在 UIKit 中，可以通过 `UIFont.TextStyle` 设置字体，如下所示：
+
+```swift
+import UIKit
+
+class ViewController: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        let label = UILabel(frame: .zero)
+        label.text = "Hello, World!"
+        label.adjustsFontForContentSizeCategory = true
+        label.font = .preferredFont(forTextStyle: .body)
+        label.numberOfLines = 0
+
+        view.addSubview(label)
+        setupConstraints()
+    }
+}
+```
+
+> 在 UIKit 中，需要设置 `adjustsFontForContentSizeCategory` 为 `true`，才能自动适配动态字体的效果，设置 `numberOfLines` 为 `0`，可以让 `UILabel` 自动换行。
+
+### 动态字体对应关系
+
+在 iOS 中，动态字体对应关系如下：
+
+| UIFont.TextStyle / DynamicTypeSize | xSmall | small | medium | large | xLarge | xxLarge | xxxLarge | accessibility1 | accessibility2 | accessibility3 | accessibility4 | accessibility5 |
+| ---------------------------------- | ------ | ----- | ------ | ----- | ------ | ------- | -------- | -------------- | -------------- | -------------- | -------------- | -------------- |
+| extraLargeTitle(bold)              | 33     | 34    | 35     | 36    | 38     | 40      | 42       | 44             | 46             | 48             | 50             | 52             |
+| extraLargeTitle2(bold)             | 25     | 26    | 27     | 28    | 30     | 32      | 34       | 36             | 38             | 40             | 42             | 44             |
+| largeTitle                         | 31     | 32    | 33     | 34    | 36     | 38      | 40       | 44             | 48             | 52             | 56             | 60             |
+| title1                             | 25     | 26    | 27     | 28    | 30     | 32      | 34       | 38             | 43             | 48             | 53             | 58             |
+| title2                             | 19     | 20    | 21     | 22    | 24     | 26      | 28       | 34             | 39             | 44             | 50             | 56             |
+| title3                             | 17     | 18    | 19     | 20    | 22     | 24      | 26       | 31             | 37             | 43             | 49             | 55             |
+| headline                           | 14     | 15    | 16     | 17    | 19     | 21      | 23       | 28             | 33             | 40             | 47             | 53             |
+| subheadline(bold)                  | 12     | 13    | 14     | 15    | 19     | 19      | 21       | 25             | 30             | 36             | 42             | 49             |
+| body                               | 14     | 15    | 16     | 17    | 19     | 21      | 23       | 28             | 33             | 40             | 47             | 53             |
+| callout                            | 13     | 14    | 15     | 16    | 18     | 20      | 22       | 26             | 32             | 38             | 44             | 51             |
+| caption1                           | 11     | 11    | 11     | 12    | 14     | 16      | 18       | 22             | 26             | 32             | 37             | 43             |
+| caption2                           | 11     | 11    | 11     | 11    | 13     | 15      | 17       | 20             | 24             | 29             | 34             | 40             |
+| footnote                           | 12     | 12    | 12     | 13    | 15     | 17      | 19       | 23             | 27             | 33             | 38             | 44             |
+
+> 可参照此表选择合适的文字样式。
+
+## 如何使用动态布局
+
+在使用动态字体时，需要考虑字体大小的变化对布局的影响。
+
+### SwiftUI
+
+在 SwiftUI 中，可以通过 `@Environment(\.dynamicTypeSize)` 获取动态字体大小，如果字体大小为辅助字体大小，可以使用 `HStackLayout` 布局，否则使用 `VStackLayout` 布局，如下所示：
+
+```swift
+import SwiftUI
+
+struct FigureCell: View {
+
+    let systemImageName: String
+    let imageTitle: String
+
+    @Environment(\.dynamicTypeSize)
+    private var dynamicTypeSize
+
+    var body: some View {
+        dynamicLayout {
+            FigureImage(systemImageName: systemImageName)
+            FigureTitle(imageTitle: imageTitle)
+        }
+    }
+
+    private var dynamicLayout: AnyLayout {
+        dynamicTypeSize.isAccessibilitySize ? AnyLayout(HStackLayout()) : AnyLayout(VStackLayout())
+    }
+}
+```
+
+`HStackLayout` 和 `VStackLayout` 默认使用 `.center` 对齐方式，可以通过 `alignment` 参数设置对齐方式，如下所示：
+
+```swift
+import SwiftUI
+
+struct FigureContentView: View {
+
+    @Environment(\.dynamicTypeSize)
+    private var dynamicTypeSize
+
+    var body: some View {
+        dynamicLayout {
+            FigureCell(systemImageName: "figure.stand", imageTitle: "Standing Figure")
+            FigureCell(systemImageName: "figure.wave", imageTitle: "Waving Figure")
+            FigureCell(systemImageName: "figure.walk", imageTitle: "Walking Figure")
+            FigureCell(systemImageName: "figure.roll", imageTitle: "Rolling Figure")
+        }
+    }
+
+    private var dynamicLayout: AnyLayout {
+        dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading)) : AnyLayout(HStackLayout(alignment: .top))
+    }
+}
+```
+
+### UIKit
+
+在 UIKit 中，可以通过 `UIContentSizeCategory.didChangeNotification` 监听动态字体大小的变化，根据字体大小的变化调整布局，如下所示：
+
+```swift
+import Combine
+import UIKit
+
+class ViewController: UIViewController {
+
+    private let mainStackView = UIStackView()
+    private var cancellables: Set<AnyCancellable> = []
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        setupStackView()
+        setupConstraints()
+
+        NotificationCenter.default
+            .publisher(for: UIContentSizeCategory.didChangeNotification)
+            .sink { [weak self] notification in
+                self?.sizeCategoryDidChange(notification)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func sizeCategoryDidChange(_ notification: Notification) {
+        let sizeCategory = notification.userInfo![UIContentSizeCategory.newValueUserInfoKey]! as! UIContentSizeCategory
+        mainStackView.axis = sizeCategory.isAccessibilityCategory ? .vertical : .horizontal
+        setupConstraints()
+    }
+}
+```
+
+## 如何使用图像与符号
+
+在图文混排中，需要考虑大字体下图文的对齐问题。例如「设置」中的选项，文本在换行之后会和图标对齐，而不是和第一行文本对齐。
+
+### SwiftUI
+
+在 SwiftUI 中，可以通过 `Label` 控件实现图文混排，如下所示：
+
+```swift
+import SwiftUI
+
+struct ContentView: View {
+
+    var body: some View {
+        List {
+            FigureListCell(
+                figureName: "Standing Figure",
+                systemImage: "figure.stand"
+            )
+            FigureListCell(
+                figureName: "Rolling Figure",
+                systemImage: "figure.roll"
+            )
+            FigureListCell(
+                figureName: "Waving Figure",
+                systemImage: "figure.wave"
+            )
+            FigureListCell(
+                figureName: "Walking Figure",
+                systemImage: "figure.walk"
+            )
+        }
+    }
+}
+
+struct FigureListCell: View {
+
+    let figureName: String
+    let systemImage: String
+
+    var body: some View {
+        Label {
+            Text(figureName)
+                .font(.body)
+        } icon: {
+            Image(systemName: systemImage)
+        }
+    }
+}
+```
+
+### UIKit
+
+在 UIKit 中，可以通过 `NSTextAttachment` 实现图文混排，如下所示：
+
+```swift
+import UIKit
+
+class ViewController: UIViewController {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        let label = UILabel(frame: .zero)
+        label.attributedText = attributedText(figureName: "Standing Figure", systemImage: "figure.stand")
+        label.numberOfLines = 0
+
+        view.addSubview(label)
+        setupConstraints()
+    }
+
+    private func attributedText(figureName: String, systemImage: String) -> NSAttributedString {
+        let attachment = NSTextAttachment()
+        attachment.image = UIImage(systemName: systemImage)
+
+        let attributedString = NSMutableAttributedString(attachment: attachment)
+        attributedString.append(NSAttributedString(string: figureName))
+
+        return attributedString
+    }
+}
+```
+
+## 如何使用大型内容查看器
+
+在必须使用小字体的情况下，可以使用大型内容查看器，让用户可以查看更多的内容。
+
+### SwiftUI
+
+在 SwiftUI 中，可以通过 `accessibilityShowsLargeContentViewer` 修饰符设置大型内容查看器，如下所示：
+
+```swift
+import SwiftUI
+
+struct FigureBar: View {
+    @Binding var selectedFigure: Figure
+
+    var body: some View {
+       HStack {
+            ForEach(Figure.allCases) { figure in
+                FigureButton(figure: figure, isSelected: selectedFigure == figure)
+                    .onTapGesture {
+                        selectedFigure = figure
+                    }
+                    .accessibilityShowsLargeContentViewer {
+                        Label(figure.imageTitle, systemImage: figure.systemImage)
+                    }
+            }
+        }
+    }
+}
+```
+
+### UIKit
+
+在 UIKit 中，可以通过 `UILargeContentViewerInteraction` 设置大型内容查看器，如下所示：
+
+```swift
+import UIKit
+
+import UIKit
+
+class FigureCell: UIStackView {
+    var systemImageName: String!
+    var imageTitle: String!
+    var imageLabel: UILabel!
+    var titleImageView: UIImageView!
+
+    init(systemImageName: String, imageTitle: String) {
+        super.init(frame: .zero)
+
+        systemImageName = systemImageName
+        imageTitle = imageTitle
+
+        setupFigureCell()
+
+        addInteraction(UILargeContentViewerInteraction())
+        showsLargeContentViewer = true
+        largeContentImage = UIImage(systemName: systemImageName)
+        scalesLargeContentImage = true
+        largeContentTitle = imageTitle
+    }
+
+    @available(*, unavailable)
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+```
+
+## 总结
+
+本文简析了在 App 中使用 SwiftUI 和 UIKit 实现动态字体功能，通过对比两者的异同点，希望读者朋友们能够更好地理解动态字体的使用方法。在实际开发中，可以根据需求选择合适的技术方案，提高 App 的可访问性。
+
+## 参考
+
+1. [Apple - Get started with Dynamic Type](https://developer.apple.com/videos/play/wwdc2024/10074/)
+2. [Apple - Enhancing the accessibility of your SwiftUI app](https://developer.apple.com/documentation/Accessibility/enhancing-the-accessibility-of-your-swiftui-app)
+3. [Moving Parts - SwiftUI under the Hood: Fonts](https://movingparts.io/fonts-in-swiftui)
