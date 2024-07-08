@@ -382,6 +382,8 @@ ViewController中的
 
 ### 文本格式化拓展 - Text improvements
 
+在iOS17中也有一章节介绍了文本的提升，在 iOS 17 中，更多的是提升`UITextView`文本的交互。iOS17 Apple 对文本光标和文本选择的用户界面进行了一些重大改进，包括全新设计的选择放大镜等。应用中具有自定义文本视图（例如文字处理器）的开发者可以使用系统提供的 UI 视图，而无需采用完整的 UITextInteraction。
+
 在iOS18中，扩展了文本的格式化功能，利用新的文本格式化面板为提供文本格式化的应用提供了一致的，可定义的体验。
 
 `UITextView`允许编辑文本属性，通过设置`allowsEditingTextAttributes`为true，在使用`UITextView`编辑文本时，会有一个新的编辑菜单选项，点击该菜单可以打开格式化面板，并附带一组默认的选项。通过格式化面板可以设置文本格式、字体与字体大小，以及添加列表等。
@@ -403,13 +405,51 @@ ViewController中的
 
 ![textview_4](./images/textview_4.png)
 
-
 ### 菜单操作 - Menu actions
 
+菜单栏提供了MacOS、iPadOS以及VisionOS中键盘快捷菜单中应用的所有命令。在iOS 18中对菜单栏在iPhone中的表现做了优化。
+
+主要是为了适配`iPhone Mirroring`，在iOS应用中去添加`UICommand`、`UIKeyCommand`、`UIAction`来适配系统的调用。
+
+![menu_1](./images/menu_1.png)
+
+更多细节可以阅读[Take your iPad apps to the next level](https://developer.apple.com/videos/play/wwdc2021/10057/)
+ 
 ### Apple 触控笔 Apple Pencil
+在iPadOS 17.5中，UIKit支持所有Apple Pencil Pro的新特性。
+
+1. 挤压手势是快速切换工具或在需要时显示选择器的一种方式
+
+![pencil_2](./images/pencil_2.png)
+
+2. 更新的反馈生成器与Apple Pencil Pro配合得很好，提升了绘图和书写的体验。
+
+![pencil_3](./images/pencil_3.png)
+
+3. UITouch和UIHoverGestureRecognizer提供滚轮角度，帮助你的应用的绘图工具更具表现力。
+
+![pencil_4](./images/pencil_4.gif)
+
+5. 对于所有支持撤销的应用，挤压Apple Pencil Pro会显示撤销滑块，这是浏览撤销历史记录的最快方式。
+
+![pencil_5](./images/pencil_5.gif)
+
+如果需要继续了解Pencil相关的更新与API可以阅读
+[Squeeze the most out of Apple Pencil](https://developer.apple.com/videos/play/wwdc2024/10214/)
+
+![pencil_1](./images/pencil_1.png)
 
 ## 总结
 
+![summary](./images/summary.png)
+
+在iOS 18的众多改进中，SwiftUI与UIKit的结合显著推进了SwiftUI的使用，特征系统的改进展示了Apple在推动包括VisionOS在内的整个UI系统的统一性。这些改进不仅为UIKit带来了新功能，还增强了它与其他系统的结合度。可以预见，未来Apple的UI系统将会更加统一。
+
+接下里要做什么呢！
+- 使用iOS 18 SDK编译你的应用。
+- 采用新的UIKit特性
+- 利用改进的过渡和动画、标签栏以及新的文档启动体验
+- 并继续尝试新的方法来集成UIKit和SwiftUI在你的应用中！
 
 
 ## 相关Session以及Docs
