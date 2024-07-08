@@ -364,8 +364,22 @@ ViewController中的
 
 ![symbols_1](./images/symbols_1.png)
 
-
 ### 感官反馈 - Sensory feedback
+
+在iPadOS 17.5中，感官反馈已经通过Apple Pencil Pro 和 妙控键盘拓展到了iPad上。
+
+对于这种新的反馈方式，UIFeedbackGenerator现在提供了支持并且可以作为交互添加到View中，提供反馈时现在应该传递该View反馈触发操作的位置，同时提供了新的`UICanvasFeedbackGenerator`其非常适合绘画或者画板视图的iPad应用。
+
+![feedback_1](./images/feedback_1.png)
+
+对于`UICanvasFeedbackGenerator`提供了一下的例子
+
+当形状被拖动并与参考线对齐时产生反馈，在创建反馈器后将其与View进行关联，当反馈触发时传递触发的位置
+![feedback_2](./images/feedback_2.png)
+
+当使用Apple Pencil Pro拖动形状与对齐线对齐时，Apple Pencil Pro会提供触觉反馈。
+![feedback_3](./images/feedback_3.png)
+
 
 ### 文本格式化拓展 - Text improvements
 
@@ -377,8 +391,24 @@ ViewController中的
 
 
 
-## Ref
+## 相关Session以及Docs
 
 [Enhancing your app with fluid transitions](https://developer.apple.com/documentation/uikit/animation_and_haptics/view_controller_transitions/enhancing_your_app_with_fluid_transitions?language=objc)
 
 [Unleash the UlKit trait system](https://developer.apple.com/videos/play/wwdc2023/10057/)
+
+[Elevate your tab and sidebar experience in iPadOS](https://developer.apple.com/videos/play/wwdc2024/10147/)
+
+[Enhance your UI animations and transitions](https://developer.apple.com/videos/play/wwdc2024/10145/)
+
+[What’s new in SwiftUI](https://developer.apple.com/videos/play/wwdc2024/10144/)
+
+[What’s new in SF Symbols 6](https://developer.apple.com/videos/play/wwdc2024/10188/)
+
+[Symbols](https://developer.apple.com/documentation/symbols?language=objc)
+
+[Animate symbols in your app](https://developer.apple.com/videos/play/wwdc2023/10258/)
+
+[Take your iPad apps to the next level](https://developer.apple.com/videos/play/wwdc2021/10057/)
+
+[Squeeze the most out of Apple Pencil](https://developer.apple.com/videos/play/wwdc2024/10214/)
