@@ -380,8 +380,29 @@ ViewController中的
 当使用Apple Pencil Pro拖动形状与对齐线对齐时，Apple Pencil Pro会提供触觉反馈。
 ![feedback_3](./images/feedback_3.png)
 
-
 ### 文本格式化拓展 - Text improvements
+
+在iOS18中，扩展了文本的格式化功能，利用新的文本格式化面板为提供文本格式化的应用提供了一致的，可定义的体验。
+
+`UITextView`允许编辑文本属性，通过设置`allowsEditingTextAttributes`为true，在使用`UITextView`编辑文本时，会有一个新的编辑菜单选项，点击该菜单可以打开格式化面板，并附带一组默认的选项。通过格式化面板可以设置文本格式、字体与字体大小，以及添加列表等。
+
+![textview_1](./images/textview_1.png)
+
+格式化面板还支持文本的高亮显示，其通过应用两个新属性来工作
+
+- `textHighlightStyle`用于设置高亮显示的文本范围
+- `textHighlightColorScheme`用于设置渲染高亮部分的颜色
+
+![textview_2](./images/textview_2.png)
+
+使用`UITextView`的`textFormattingConfiguration`属性设置`UITextFormattingViewController.Congiguration`来自定义格式化面板的可用控件与布局。
+
+![textview_3](./images/textview_3.png)
+
+书写工具提供了高级文本编辑体验，`UITextView`默认使用了新的书写工具UI，同时`UITextView`提供了额外新的API用于跟踪、修改书写工具的体验。
+
+![textview_4](./images/textview_4.png)
+
 
 ### 菜单操作 - Menu actions
 
