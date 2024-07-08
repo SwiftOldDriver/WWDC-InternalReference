@@ -232,7 +232,7 @@ class FigureItemView: UIStackView {
 
 ## 如何使用图像与符号
 
-在图文混排中，需要考虑大字体下图文的对齐问题。例如「设置」中的选项，文本在换行之后会和图标对齐，而不是和第一行文本对齐。
+在图文混排中，需要考虑大字体下图文的对齐问题。例如「设置」中的选项，文本在换行之后应和图标对齐，而不是和第一行文本对齐。
 
 ### SwiftUI
 
@@ -241,45 +241,36 @@ class FigureItemView: UIStackView {
 ```swift
 import SwiftUI
 
-struct ContentView: View {
+struct FigureContentView: View {
+
+    let figures: [Figure]
 
     var body: some View {
-        List {
-            FigureListCell(
-                figureName: "Standing Figure",
-                systemImage: "figure.stand"
-            )
-            FigureListCell(
-                figureName: "Rolling Figure",
-                systemImage: "figure.roll"
-            )
-            FigureListCell(
-                figureName: "Waving Figure",
-                systemImage: "figure.wave"
-            )
-            FigureListCell(
-                figureName: "Walking Figure",
-                systemImage: "figure.walk"
-            )
+        List(figures) { figure in
+            FigureItemView(figure: figure)
         }
     }
 }
 
-struct FigureListCell: View {
+struct FigureItemView: View {
 
-    let figureName: String
-    let systemImage: String
+    let figure: Figure
 
     var body: some View {
         Label {
-            Text(figureName)
+            Text(figure.figureName)
                 .font(.body)
         } icon: {
-            Image(systemName: systemImage)
+            Image(systemName: figure.systemImage)
+                .font(.body)
         }
     }
 }
 ```
+
+![symbols-swiftui-large](./images/symbols-swiftui-large.png)
+
+![symbols-swiftui-accessibility4](./images/symbols-swiftui-accessibility4.png)
 
 ### UIKit
 
@@ -290,28 +281,40 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    let figure: Figure
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let label = UILabel(frame: .zero)
-        label.attributedText = attributedText(figureName: "Standing Figure", systemImage: "figure.stand")
+        let label = UILabel()
+        label.attributedText = attributedText(figure: figure)
+        label.adjustsFontForContentSizeCategory = true
+        label.font = .preferredFont(forTextStyle: .body)
         label.numberOfLines = 0
 
         view.addSubview(label)
         setupConstraints()
     }
 
-    private func attributedText(figureName: String, systemImage: String) -> NSAttributedString {
+    private func attributedText(figure: Figure) -> NSAttributedString {
         let attachment = NSTextAttachment()
-        attachment.image = UIImage(systemName: systemImage)
+        attachment.image = UIImage(
+            systemName: figure.systemImage,
+            withConfiguration: UIImage.SymbolConfiguration(font: .preferredFont(forTextStyle: .body))
+        )
 
         let attributedString = NSMutableAttributedString(attachment: attachment)
-        attributedString.append(NSAttributedString(string: figureName))
+        attributedString.append(NSAttributedString(string: "    "))
+        attributedString.append(NSAttributedString(string: figure.figureName))
 
         return attributedString
     }
 }
 ```
+
+![symbols-uikit-large](./images/symbols-uikit-large.png)
+
+![symbols-uikit-accessibility4](./images/symbols-uikit-accessibility4.png)
 
 ## 如何使用大型内容查看器
 
