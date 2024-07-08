@@ -104,27 +104,29 @@ class ViewController: UIViewController {
 
 ## 如何使用动态布局
 
-在使用动态字体时，需要考虑字体大小的变化对布局的影响。
+在使用动态字体时，需要考虑字体大小的变化对布局的影响。开启辅助功能字体后，字体会变得非常大，此时原有的布局可能无法满足需求，需要切换成新的布局。
 
 ### SwiftUI
 
-在 SwiftUI 中，可以通过 `@Environment(\.dynamicTypeSize)` 获取动态字体大小，如果字体大小为辅助字体大小，可以使用 `HStackLayout` 布局，否则使用 `VStackLayout` 布局，如下所示：
+在 SwiftUI 中，可以通过 `@Environment(\.dynamicTypeSize)` 获取动态字体大小，如果字体大小为辅助功能字体大小，可以使用 `HStackLayout` 布局，否则使用 `VStackLayout` 布局，如下所示：
 
 ```swift
 import SwiftUI
 
-struct FigureCell: View {
+struct FigureItemView: View {
 
-    let systemImageName: String
-    let imageTitle: String
+    let figure: Figure
 
     @Environment(\.dynamicTypeSize)
     private var dynamicTypeSize
 
     var body: some View {
         dynamicLayout {
-            FigureImage(systemImageName: systemImageName)
-            FigureTitle(imageTitle: imageTitle)
+            Image(systemName: figure.systemImage)
+                .font(.body)
+
+            Text(figure.figureName)
+                .font(.body)
         }
     }
 
@@ -141,15 +143,16 @@ import SwiftUI
 
 struct FigureContentView: View {
 
+    let figures: [Figure]
+
     @Environment(\.dynamicTypeSize)
     private var dynamicTypeSize
 
     var body: some View {
         dynamicLayout {
-            FigureCell(systemImageName: "figure.stand", imageTitle: "Standing Figure")
-            FigureCell(systemImageName: "figure.wave", imageTitle: "Waving Figure")
-            FigureCell(systemImageName: "figure.walk", imageTitle: "Walking Figure")
-            FigureCell(systemImageName: "figure.roll", imageTitle: "Rolling Figure")
+            ForEach(figures) { figure in
+                FigureItemView(figure: figure)
+            }
         }
     }
 
@@ -158,6 +161,10 @@ struct FigureContentView: View {
     }
 }
 ```
+
+![dynamiclayouts-swiftui-large](./images/dynamiclayouts-swiftui-large.png)
+
+![dynamiclayouts-swiftui-accessibility4](./images/dynamiclayouts-swiftui-accessibility4.png)
 
 ### UIKit
 
@@ -169,7 +176,7 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    private let mainStackView = UIStackView()
+    private var mainStackView: UIStackView!
     private var cancellables: Set<AnyCancellable> = []
 
     override func viewDidLoad() {
@@ -189,10 +196,39 @@ class ViewController: UIViewController {
     private func sizeCategoryDidChange(_ notification: Notification) {
         let sizeCategory = notification.userInfo![UIContentSizeCategory.newValueUserInfoKey]! as! UIContentSizeCategory
         mainStackView.axis = sizeCategory.isAccessibilityCategory ? .vertical : .horizontal
-        setupConstraints()
+        mainStackView.alignment = sizeCategory.isAccessibilityCategory ? .leading : .center
+    }
+}
+
+class FigureItemView: UIStackView {
+
+    let figure: Figure
+
+    private var cancellables: Set<AnyCancellable> = []
+
+    init(figure: Figure) {
+        self.figure = figure
+        super.init(frame: .zero)
+        setupStackView()
+
+        NotificationCenter.default
+            .publisher(for: UIContentSizeCategory.didChangeNotification)
+            .sink { [weak self] notification in
+                self?.sizeCategoryDidChange(notification)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func sizeCategoryDidChange(_ notification: Notification) {
+        let sizeCategory = notification.userInfo![UIContentSizeCategory.newValueUserInfoKey]! as! UIContentSizeCategory
+        axis = sizeCategory.isAccessibilityCategory ? .horizontal : .vertical
     }
 }
 ```
+
+![dynamiclayouts-uikit-large](./images/dynamiclayouts-uikit-large.png)
+
+![dynamiclayouts-uikit-accessibility4](./images/dynamiclayouts-uikit-accessibility4.png)
 
 ## 如何使用图像与符号
 
