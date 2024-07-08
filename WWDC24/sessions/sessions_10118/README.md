@@ -267,6 +267,38 @@ ViewController中的
 
 
 ### 列表视图改进 - List improvements
+在iOS18中`UITableView`和`UICollection`的API得到了更新使得更新Cell的操作变得更加简单，在`UITableView`和`UICollection`的所有视图中都具备了列表特征集(List environment trait)。列表特征描述了视图所在列表的样式信息，使用特征可以保证Cell在任意给定的列表中样式都是正确的。
+
+![list_0](./images/list_0.png)
+
+`UIListContentConfiguration`和`UIBackgroundConfiguration`现在都使用了特征，当更新状态时它们会调整其属性以匹配列表特征集中的特征。通过`UIListContentConfiguration`和`UIBackgroundConfiguration`Cell并不需要关心其在列表中的样式信息，只需要关注其所展示的内容信息。
+
+> 这里补充一些关于`UIListContentConfiguration`和`UIBackgroundConfiguration`的内容，这两个类是在iOS14提供的，一个负责样式的配置，一个负责内容的配置。
+![list_7](./images/list_7.png)
+![list_8](./images/list_8.png)
+
+
+![list_1](./images/list_1.png)
+
+这里以文件App的浏览选项为例，在竖屏状态下浏览列表使用了`insetGrouped`样式，在横屏状态下浏览列表显示在侧边栏中，在配置`UICollectionView`的布局时使用了侧边栏样式。
+
+![list_2](./images/list_2.png)
+
+![list_2.2](./images/list_2.2.png)
+
+
+下面的代码是文件App浏览列表在iOS 17`configuration`方法的实现，首先方法中对于当前是否是侧边栏进行了判断并将结果存储在了`isSidebar`变量当中，然后根据`isSidebar`的值选择`contentConfiguration`与`backgroundConfiguration`，由于是手动设置的两个配置，所以在设备横竖切换时需要手动重新赋值。
+![list_3](./images/list_3.png)
+
+在iOS18中这个操作得到了简化，在同样的方法中使用`cell`和`listCell`构造函数进行初始化，当配置应用于cell时会针对于cell的配置状态进行更新，得益于新的列表特征集，cell的配置会根据特征进行适配。
+![list_4](./images/list_4.png)
+
+对于`UIListContentConfiguration`，在iOS18中会自动根据列表特征来更新样式。
+
+![list_5](./images/list_5.png)
+
+对于`UIBackgroundConfiguration`有三个新的构造函数，其也会根据列表特征来更新样式，使用这些特性来更新列表的cell将会大大减少工作量。
+![list_6](./images/list_6.png)
 
 ### 定期 UI 更新刷新 - Update link
 
