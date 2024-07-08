@@ -4,7 +4,7 @@ session_ids: [10144]
 
 ---
 
-# WWDC24 10144 - What's New in SwfitUI
+# WWDC24 10144 - What's New in SwiftUI
 
 ![SwiftUI](./images/SwiftUI.png)
 
