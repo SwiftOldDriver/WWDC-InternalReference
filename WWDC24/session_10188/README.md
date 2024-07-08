@@ -491,7 +491,7 @@ options: .speed(1),
 
 在往年的文章中，也有其他一些定制 symbols 的例子供参考：
 
-* 利用可变模版定制符号 - [WWDC 2021 内参：定制属于你的 Symbols](https://xiaozhuanlan.com/topic/4807632591) 
+* 利用可变模版定制符号 - [WWDC 2021 内参：定制属于你的 Symbols](https://xiaozhuanlan.com/topic/4807632591)
 
 * 制作和调整可变颜色 - [WWDC 2022 内参：SF Symbols 4 使用指南](https://xiaozhuanlan.com/topic/8712590364)
 
