@@ -302,6 +302,19 @@ ViewController中的
 
 ### 定期 UI 更新刷新 - Update link
 
+`UIUpdateLink`是iOS18中新增的功能，使用它可以轻松的实现需要定期更新的复杂UI动画，其与`CADisplayLink`有些类似，但具有更多的功能例如
+- 自动视图跟踪
+- 使用低延迟模式
+- 具有更好的性能与电池效率
+
+这是一个使用`UIUpdateLink`的例子，可以看到当创建一个`UIUpdateLink`时，指定了一个UIView的实例，并指定了其更新的方法。当这个View添加到可见窗口时`UIUpdateLink`自动激活，当View从可见窗口移除`UIUpdateLink`将会停用。
+在本例中还可以看到设置了`requiresContinousUpdates`来设置其是否循环执行以及使用`UIUpdateInfo`中的`modelTime`，对于这些细节以及`UIUpdateLink`的高级用法可以阅读[UIUpdateLink](https://developer.apple.com/documentation/uikit/uiupdatelink)
+
+![uiupdatelink_1](./images/uiupdatelink_1.gif)
+
+> [!IMPORTANT]
+> 由于`UIUpdateLink`涉及到了UI的渲染，所以在使用时需要确保在主线程中进行操作
+
 ### SF Symbol 动画 - Symbol animations
 
 ### 感官反馈 - Sensory feedback
