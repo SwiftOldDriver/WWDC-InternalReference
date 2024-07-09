@@ -473,19 +473,19 @@ ViewController 中的
 
 在 iPadOS 17.5 中，UIKit 支持所有 Apple Pencil Pro 的新特性。
 
-1. 挤压手势是快速切换工具或在需要时显示选择器的一种方式
+- 挤压手势是快速切换工具或在需要时显示选择器的一种方式
 
 ![pencil_2](./images/pencil_2.png)
 
-2. 更新的反馈生成器与 Apple Pencil Pro 配合得很好，提升了绘图和书写的体验。
+- 更新的反馈生成器与 Apple Pencil Pro 配合得很好，提升了绘图和书写的体验。
 
 ![pencil_3](./images/pencil_3.png)
 
-3. UITouch 和 UIHoverGestureRecognizer 提供滚轮角度，帮助你的应用的绘图工具更具表现力。
+- UITouch 和 UIHoverGestureRecognizer 提供滚轮角度，帮助你的应用的绘图工具更具表现力。
 
 ![pencil_4](./images/pencil_4.gif)
 
-5. 对于所有支持撤销的应用，挤压 Apple Pencil Pro 会显示撤销滑块，这是浏览撤销历史记录的最快方式。
+- 对于所有支持撤销的应用，挤压 Apple Pencil Pro 会显示撤销滑块，这是浏览撤销历史记录的最快方式。
 
 ![pencil_5](./images/pencil_5.gif)
 
