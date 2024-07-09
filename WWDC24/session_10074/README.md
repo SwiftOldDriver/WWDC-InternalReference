@@ -318,7 +318,7 @@ class ViewController: UIViewController {
 
 ## 如何使用大型内容查看器
 
-在必须使用小字体的情况下，可以使用大型内容查看器，让用户可以查看更多的内容。
+在必须使用小字体的情况下，可以使用大型内容查看器，让用户更好地查看核心内容。
 
 ### SwiftUI
 
@@ -327,24 +327,46 @@ class ViewController: UIViewController {
 ```swift
 import SwiftUI
 
-struct FigureBar: View {
-    @Binding var selectedFigure: Figure
+struct FigureContentView: View {
+
+    let figures: [Figure]
+
+    @State
+    private var selectedFigure: Figure?
 
     var body: some View {
-       HStack {
-            ForEach(Figure.allCases) { figure in
-                FigureButton(figure: figure, isSelected: selectedFigure == figure)
+        HStack {
+            ForEach(figures) { figure in
+                FigureItemView(figure: figure)
                     .onTapGesture {
                         selectedFigure = figure
                     }
-                    .accessibilityShowsLargeContentViewer {
-                        Label(figure.imageTitle, systemImage: figure.systemImage)
-                    }
             }
+        }
+        .sheet(item: $selectedFigure) { figure in
+            FigureItemView(figure: figure)
+        }
+    }
+}
+
+struct FigureItemView: View {
+
+    let figure: Figure
+
+    var body: some View {
+        Label {
+            Text(figure.figureName)
+        } icon: {
+            Image(systemName: figure.systemImage)
+        }
+        .accessibilityShowsLargeContentViewer {
+            Label(figure.figureName, systemImage: figure.systemImage)
         }
     }
 }
 ```
+
+![largecontentviewer-swiftui-accessibility4](./images/largecontentviewer-swiftui-accessibility4.png)
 
 ### UIKit
 
@@ -353,39 +375,34 @@ struct FigureBar: View {
 ```swift
 import UIKit
 
-import UIKit
+class FigureItemView: UIStackView {
 
-class FigureCell: UIStackView {
-    var systemImageName: String!
-    var imageTitle: String!
-    var imageLabel: UILabel!
-    var titleImageView: UIImageView!
+    let figure: Figure
 
-    init(systemImageName: String, imageTitle: String) {
+    init(figure: Figure) {
+        self.figure = figure
         super.init(frame: .zero)
-
-        systemImageName = systemImageName
-        imageTitle = imageTitle
-
-        setupFigureCell()
-
-        addInteraction(UILargeContentViewerInteraction())
-        showsLargeContentViewer = true
-        largeContentImage = UIImage(systemName: systemImageName)
-        scalesLargeContentImage = true
-        largeContentTitle = imageTitle
+        setupStackView()
+        setupInteraction()
     }
 
-    @available(*, unavailable)
-    required init(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    private func setupInteraction() {
+        addInteraction(UILargeContentViewerInteraction())
+        largeContentImage = UIImage(systemName: figure.systemImage)
+        largeContentTitle = figure.figureName
+        scalesLargeContentImage = true
+        showsLargeContentViewer = true
     }
 }
 ```
 
+![largecontentviewer-uikit-accessibility4](./images/largecontentviewer-uikit-accessibility4.png)
+
+> 需要注意的是，大型内容查看器的功能仅在使用「更大的辅助功能字体」时有效。同时该功能的触发方式为长按，需要处理与长按手势识别器的互斥逻辑。
+
 ## 总结
 
-本文简析了在 App 中使用 SwiftUI 和 UIKit 实现动态字体功能，通过对比两者的异同点，希望读者朋友们能够更好地理解动态字体的使用方法。在实际开发中，可以根据需求选择合适的技术方案，提高 App 的可访问性。
+本文简析了在 App 中使用 SwiftUI 和 UIKit 实现动态字体功能，通过对比两者的异同点，希望读者朋友们能够更好地理解动态字体的使用方法。在实际开发中，可以根据需求选择合适的技术方案，提高 App 的使用体验。
 
 ## 参考
 
