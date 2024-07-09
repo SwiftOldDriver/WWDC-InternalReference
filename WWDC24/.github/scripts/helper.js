@@ -52,9 +52,13 @@ function getSessionIds(files) {
   const sessionIds = [];
   for (const file of files) {
     const str = readFileSync(file, "utf8");
-    const fm = parse(str);
-    if (fm.session_ids) {
-      sessionIds.push(...fm.session_ids);
+    try {
+      const fm = parse(str);
+      if (fm.session_ids) {
+        sessionIds.push(...fm.session_ids);
+      }
+    } catch (error) {
+      console.warn(`无法解析 ${file} 文件的 Front Matter: ${error}`);
     }
   }
   return sessionIds;
