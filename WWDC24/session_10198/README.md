@@ -9,11 +9,12 @@ session_ids: [10198]
 ## 概述
 
 本文基于[Session 10198](https://developer.apple.com/videos/play/wwdc2024/10198/) 为主线，综合了 WWDC19-24 期间多个和调试主题相关的 Session，其中包含
+
 - [WWDC23 10226](https://developer.apple.com/videos/play/wwdc2023/10226/)
 - [WWDC22 110370](https://developer.apple.com/videos/play/wwdc2022/110370/)
 - [WWDC21 10209](https://developer.apple.com/videos/play/wwdc2021/10209)
 - [WWDC21 10211](https://developer.apple.com/videos/play/wwdc2021/10211)
-- [WWDC19 429 ](https://developer.apple.com/videos/play/wwdc2019/429/)
+- [WWDC19 429](https://developer.apple.com/videos/play/wwdc2019/429/)
 
 向大家介绍如何使用 Xcode IDE
 和 LLDB 的最新能力，进行有效和高效的调试。同时还介绍了如何处理使用相关工具碰到的常见问题和一些高级技巧。
@@ -43,8 +44,8 @@ session_ids: [10198]
 
 处理崩溃问题时，通常从解析崩溃日志开始。LLDB 的代码回溯能力可以读取并解析崩溃日志，根据符号信息直接定位方法调用链和发生崩溃的代码行。为了让 LLDB 调试器定位到正确的代码行，需要满足以下两个条件：
 
-1. 本地包含崩溃版本的 dSYM 符号文件；
-2. 本地包含崩溃版本的源代码。
+1. 本地包含崩溃版本的 dSYM 符号文件
+2. 本地包含崩溃版本的源代码
    
 在 Xcode 中打开 Destination video 的崩溃日志，通过代码回溯能力，我们获得了一些崩溃相关的初始信息：崩溃发生在加载 JSON 文件的代码位置，调用堆栈显示 APP 当时正在加载视频的元信息。
 ![](images/截屏2024-07-07%2021.50.01.png)
@@ -209,10 +210,10 @@ int main(int argc, const char * argv[]) {
 在分析 OC 代码时，我们会使用 po 命令，它的流程如下
 ![](images/截屏2024-07-08%2015.03.28.png)
 
-1. 创建第一个临时方法，用于包含并计算表达式的值；
-2. 编译并执行这个方法，返回表达式的计算结果；
-3. 创建第二个临时方法，方法内调用之前返回的结果对象的 `description` 方法，如果是 Objective-C 或者 Swift 对象，这个调用就能够成功；
-4. 编译并执行第二个方法，返回 `description` 方法的字符串，并打印结果。
+1. 创建第一个临时方法，用于包含并计算表达式的值
+2. 编译并执行这个方法，返回表达式的计算结果
+3. 创建第二个临时方法，方法内调用之前返回的结果对象的 `description` 方法，如果是 Objective-C 或者 Swift 对象，这个调用就能够成功
+4. 编译并执行第二个方法，返回 `description` 方法的字符串，并打印结果
    
 其实 `po` 和 `p` 两个命令都是 `expr` 命令的别名，如下所示：
 
@@ -246,6 +247,7 @@ let cruise: Activity = Trip(..)
     }
 }
 ```
+
 如果要访问动态类型的字段 `name` 或者 `destinations`，也需要先类型转换再访问。需要指出的是，使用 `p` 命令，直接写 `p trip.name` 的方式也会报错，这是因为 `p` 的动态命令推导只作用于表达式的最终结果，而不是中间值。
 
 我们再来看看和它们完全不同的命令 `v`，它的流程如下：
@@ -294,6 +296,7 @@ p [NSString stringWithFormat:@"The count of array is %ld", array.count]
 ### 技巧 2 - 利用断点插入代码，实时改变代码的行为
 
 我们之前提到 LLDB 还是一个编译器，利用 `expr` 命令，可以在断点 Action 插入多段可编译的代码。因此我们除了打印程序状态外，甚至可以改变程序的行为。假设有如下代码：
+
 ```
 #include <stdio.h>
 
@@ -402,8 +405,10 @@ ld … -add_ast_path /path/to/Some3rdParty.swiftmodule
 
 当获取了新的 `swiftmodule` 时，重新编译链接后，我们可以使用下面的命令来验证 dSYM 是否包含了相关的类型信息：
 
+
 ```lldb
 dsymutils -s MyApp | grep Some3rdParty.swiftmodule
 ```
+
 ---
 希望这篇文章能帮助你更好地理解和使用 LLDB 进行调试。Happy Debugging!
