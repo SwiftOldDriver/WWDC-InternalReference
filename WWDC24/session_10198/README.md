@@ -1,10 +1,21 @@
+---
+session_ids: [10198]
+---
+
 # Session 10198 运行、暂停、检查：探索如何使用 LLDB 进行有效调试
 
 ![](images/截屏2024-07-07%2017.36.06.png)
 
 ## 概述
 
-本文以 WWDC24-10198 为主线，综合了 WWDC19-24 期间多个和调试主题相关的 Session，向大家介绍如何使用 Xcode IDE
+本文基于[Session 10198](https://developer.apple.com/videos/play/wwdc2024/10198/) 为主线，综合了 WWDC19-24 期间多个和调试主题相关的 Session，其中包含
+- [WWDC23 10226](https://developer.apple.com/videos/play/wwdc2023/10226/)
+- [WWDC22 110370](https://developer.apple.com/videos/play/wwdc2022/110370/)
+- [WWDC21 10209](https://developer.apple.com/videos/play/wwdc2021/10209)
+- [WWDC21 10211](https://developer.apple.com/videos/play/wwdc2021/10211)
+- [WWDC19 429 ](https://developer.apple.com/videos/play/wwdc2019/429/)
+
+向大家介绍如何使用 Xcode IDE
 和 LLDB 的最新能力，进行有效和高效的调试。同时还介绍了如何处理使用相关工具碰到的常见问题和一些高级技巧。
 
 整个文章分为三个部分。第一部分是定义调试的一般模型；第二部分重点介绍 LLDB 多个不同的调试能力，包含代码回溯、断点和变量表达式
