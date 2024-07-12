@@ -2,7 +2,7 @@
 session_ids: [10135]
 ---
 
-# WWDC24: Session 10135 - What's new in Xcode 16
+# WWDC24 10135 - What's new in Xcode 16
 
 ## 简介
 

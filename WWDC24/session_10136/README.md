@@ -2,7 +2,7 @@
 session_ids: [10136]
 ---
 
-# WWDC24 10136 - Swift 的新功能
+# WWDC24 10136 - What’s new in Swift
 
 摘要：
 
