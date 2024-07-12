@@ -9,3 +9,5 @@
 [WWDC24 10136 - What’s new in Swift](./session_10136/README.md)
 
 [WWDC24 10135 - What's new in Xcode 16](./session_10135/README.md)
+
+[WWDC24 10188 - SF Symbols 6 使用指南](./session_10188/README.md)
