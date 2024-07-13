@@ -14,4 +14,4 @@ nuomi1，SHEIN 高级研发工程师，Swift with iOS，果粉 / 米家粉。
 
 ## 文章简介
 
-待补充。
+使用动态字体功能实现一个演示 App，对比 SwiftUI 与 UIKit 在实现上的异同点。

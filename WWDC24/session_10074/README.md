@@ -16,21 +16,21 @@ session_ids: [10074]
 
 在 iOS 中，用户可以在「设置」-「显示与亮度」-「文字大小」中调整字体大小。默认情况下，有 8 种尺寸可供选择，初始时文本以大尺寸（large）显示。开启「更大的辅助功能字体」后，共有 13 种尺寸可供选择。
 
+不同于在「设置」中调整 App 的首选语言会导致 App 重启，调整动态字体不会导致 App 重启，用户可以实时查看调整后的效果，这对于用户来说是一种非常好的体验。从图片可以看到，原本单行的「更大的辅助功能字体」自动变成了多行，同时用户仍然可以通过上下滑动查看页面的所有内容。
+
 ![settings-largertext-large](./images/settings-largertext-large.png)
 
 ![settings-largertext-accessibility](./images/settings-largertext-accessibility.png)
 
-> 尺寸与字号的对应关系可参考 [动态字体对应关系](#动态字体对应关系)。
+> 尺寸与字号的对应关系可在后续表格中查看。
 
 除了在「设置」中调整动态字体，还可以在「控制中心」中调整动态字体。
 
-> iOS 模拟器的「控制中心」无法调整动态字体，需要在真机上测试。
+> iOS 模拟器的「控制中心」无法调整动态字体，需要在真机上测试，因此暂无截图提供。
 
 ## 如何使用动态字体
 
-使用动态字体的代码非常简单，以下是在 SwiftUI 和 UIKit 中使用动态字体的示例。
-
-### SwiftUI
+在 App 中，应该尽量使用系统提供的文字样式来设置字体，而不是通过固定字号来设置字体，这样才能自动适配动态字体功能。系统内置的文字样式可以有效地区分标题、正文、脚注等不同内容，确保版面的层次关系，有助于提供出色的阅读体验。使用动态字体的代码非常简单，以下是在 SwiftUI 和 UIKit 中使用动态字体的示例。
 
 在 SwiftUI 中，可以通过 `func font(_ font: Font?) -> Text` 设置动态字体，如下所示：
 
@@ -49,8 +49,6 @@ struct ContentView: View {
 ![scaledtext-swiftui-large](./images/scaledtext-swiftui-large.png)
 
 ![scaledtext-swiftui-accessibility4](./images/scaledtext-swiftui-accessibility4.png)
-
-### UIKit
 
 在 UIKit 中，可以通过 `class func preferredFont(forTextStyle style: UIFont.TextStyle) -> UIFont` 设置动态字体，如下所示：
 
@@ -80,8 +78,6 @@ class ViewController: UIViewController {
 
 > 在 UIKit 中，需要设置 `adjustsFontForContentSizeCategory` 为 `true`，才能自动适配动态字体的效果，设置 `numberOfLines` 为 `0`，可以让 `UILabel` 自动换行。
 
-### 动态字体对应关系
-
 在 iOS 中，动态字体与文字样式的字体大小关系并不是简单的等差数列，而是一种特殊的调整逻辑，对应关系如下：
 
 | UIFont.TextStyle / DynamicTypeSize | xSmall | small | medium | large | xLarge | xxLarge | xxxLarge | accessibility1 | accessibility2 | accessibility3 | accessibility4 | accessibility5 |
@@ -104,9 +100,7 @@ class ViewController: UIViewController {
 
 ## 如何使用动态布局
 
-在使用动态字体时，需要考虑字体大小的变化对布局的影响。开启辅助功能字体后，字体会变得非常大，此时原有的布局可能无法满足需求，需要切换成新的布局。
-
-### SwiftUI
+在使用动态字体时，需要考虑字体大小的变化对布局的影响。开启「更大的辅助功能字体」后，字体会变得非常大，此时原有的布局可能无法满足需求，需要切换成新的布局。以下图为例，原本的布局是图标和文字垂直排列，四个图标和文字水平排列，开启「更大的辅助功能字体」后，原本的布局因为文字变得巨大难以展示较好的效果，可以改为图标和文字水平排列，四个图标和文字垂直排列。
 
 在 SwiftUI 中，可以通过 `@Environment(\.dynamicTypeSize)` 获取动态字体大小，如果字体大小为辅助功能字体大小，可以使用 `HStackLayout` 布局，否则使用 `VStackLayout` 布局，如下所示：
 
@@ -165,8 +159,6 @@ struct FigureContentView: View {
 ![dynamiclayouts-swiftui-large](./images/dynamiclayouts-swiftui-large.png)
 
 ![dynamiclayouts-swiftui-accessibility4](./images/dynamiclayouts-swiftui-accessibility4.png)
-
-### UIKit
 
 在 UIKit 中，可以通过 `UIContentSizeCategory.didChangeNotification` 监听动态字体大小的变化，根据字体大小的变化调整布局，如下所示：
 
@@ -232,9 +224,7 @@ class FigureItemView: UIStackView {
 
 ## 如何使用图像与符号
 
-在图文混排中，需要考虑大字体下图文的对齐问题。例如「设置」中的选项，文本在换行之后应和图标对齐，而不是和第一行文本对齐。
-
-### SwiftUI
+在图文混排中，需要考虑大字体下图文的对齐问题。例如「设置」中的选项，图标和文字是水平对齐的，开启「更大的辅助功能字体」后，文字会变为多行展示，此时如果仍然使用常规的水平布局，图标的下方则会显得空白。此时需要调整图标和文字的对齐方式，令文字的第二行行首对齐图标，以保证图文的整体美观。
 
 在 SwiftUI 中，可以通过 `Label` 控件实现图文混排，如下所示：
 
@@ -271,8 +261,6 @@ struct FigureItemView: View {
 ![symbols-swiftui-large](./images/symbols-swiftui-large.png)
 
 ![symbols-swiftui-accessibility4](./images/symbols-swiftui-accessibility4.png)
-
-### UIKit
 
 在 UIKit 中，可以通过 `NSTextAttachment` 实现图文混排，如下所示：
 
@@ -318,9 +306,7 @@ class ViewController: UIViewController {
 
 ## 如何使用大型内容查看器
 
-在必须使用小字体的情况下，可以使用大型内容查看器，让用户更好地查看核心内容。
-
-### SwiftUI
+在导航栏和底部栏等视图中，文字不会像常规的辅助字体那样变得特别巨大，而是需要考虑版面的整体效果，限制在一定的高度。此时可以使用大型内容查看器，让用户更好地查看核心内容。
 
 在 SwiftUI 中，可以通过 `accessibilityShowsLargeContentViewer` 修饰符设置大型内容查看器，如下所示：
 
@@ -367,8 +353,6 @@ struct FigureItemView: View {
 ```
 
 ![largecontentviewer-swiftui-accessibility4](./images/largecontentviewer-swiftui-accessibility4.png)
-
-### UIKit
 
 在 UIKit 中，可以通过 `UILargeContentViewerInteraction` 设置大型内容查看器，如下所示：
 
