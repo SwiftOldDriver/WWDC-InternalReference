@@ -11,7 +11,7 @@ session_ids: [10118]
 
 > 作者:
 >
-> 北京，丰台，Sharker，SKR ~，目前在小厂负责支付 iOS SDK 相关研发，对于 UI 展现与编译较为感兴趣，[Github](https://github.com/AkaShark)
+> 北京，丰台，Sharker，SKR ~，目前在负责支付 iOS SDK 相关研发，对于 UI 展现与编译较为感兴趣，[Github](https://github.com/AkaShark)
 >
 >
 > 审核:
