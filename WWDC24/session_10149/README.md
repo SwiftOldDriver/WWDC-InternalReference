@@ -1,9 +1,13 @@
-# WWDC24 - 在 SwiftUI 中设计窗口 
+--- session_ids: [10149] ---
+
+
+
+# Session 10149 - 在 SwiftUI 中设计窗口 
+
+本文基于 WWDC24 -  Session 10149 [Work with windows in SwiftUI](https://developer.apple.com/videos/play/wwdc2024/10149/) 梳理
 
 
 > 摘要：Window（窗口） 是承载 App 内容的最重要的容器，尤其是在 macOS 和 VisionOS 平台上更是需要优雅地设计和使用窗口。本文将介绍 Windows 组件，并且基于一个 Demo（BOT-anist）从实战角度进行教学。
-
-本文基于 WWDC24 -  Session 10149 [Work with windows in SwiftUI](https://developer.apple.com/videos/play/wwdc2024/10149/) 梳理
 
 
 
