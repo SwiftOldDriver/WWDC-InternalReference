@@ -1,702 +1,409 @@
 ---
 session_ids: [10146]
 ---
+# # WWDC24: Session 10146 - Demystify SwiftUI containers
 
-# WWDC24: Session 10146 - Demystify SwiftUI containers
+## 为自定义容器视图添加更多的能力
 
-## 前言
+本文基于[Session 10146](https://developer.apple.com/videos/play/wwdc2024/10146/ "Session 10146")梳理
 
-Swift UI 在其 API 中提供了许多功能完备的容器。比如 `List` 容器，它可以使用尾视图构建闭包（Trailing View Builder Closure）来构建它们的内容。它允许以静态方式定义内容，就像这个包含硬编码内容的 `List` 容器
+### 前言
+
+在自定义容器中，我们一般会采取传入一个数据集合的方式来动态的填充容器内容，比如我有一个展示今日Todo事项的自定义容器`TodoListContainer`，一般我会这么写:
 
 ```swift
-List {
-  Text("Scrolling in the Deep")
-  Text("Born to Build & Run")
-  Text("Some Body Like View")
+let data = [
+    TodoData(title: "写作业"),
+    TodoData(title: "打球")
+]
+
+TodoListContainer(data: data) { item in
+    Text(item.title)
 }
 ```
 
+而在`TodoListContainer`的内部实现里，我将`Text`转换成`ItemView`
+
+```swift
+// TodoListContainer内部实现
+
+var data: Data
+    @ViewBuilder let content: (Data.Element) -> Content
+    
+    var body: some View {
+        List {
+            ForEach(data) { item in
+                ItemView {
+                  content(item)
+              }
+            }
+        }
+    }
+```
+
+这是一种我们常用的方式，通过这种方式我们可以通过数据集合动态的为视图容器填充内容。整个流程是这样的
+
+```mermaid
+flowchart LR
+      A(开始)-->B[TodoList数据集合]
+      B--ForEach转换-->C[Text视图]
+      C--ForEach转换-->D[ItemView]
 
 
-但也可以动态定义内容，例如使用 `ForEach` 视图根据数据集合生成文本视图，视图构建器支持在同一个容器内组合任何类型的内容。
+```
+
+那如果我希望在容器里同时也能展示一些静态的内容呢？比如像SwiftUI 提供的 `List`容器一样：
 
 ```swift
 List {
+//静态内容
   Text("Scrolling in the Deep")
   Text("Born to Build & Run")
   Text("Some Body Like View")
 
+//动态内容
   ForEach(otherSongs) { song in
     Text(song.title)
   }
 }
 ```
 
+想象一个场景，假设我希望在用户没有添加任何数据的时候，为用户的列表里添加一条示范性的Todo Item，用户点击它可以进行修改。而当用户已有数据的时候，则不展示这条示范性的Todo Item。
+
+面对这样的需求，常见的做法就是当数据集合中没有数据的时候，往数据集合中添加一条Fake Item。而如果自定义容器有可以像List容器那样的灵活性，我就可以在容器初始化的时候传入这条示范性的Todo Item，而不是往数据集合中添加Fake data。
+
+接下来，我们会使用新的API来添加这样的能力。
 
 
-它支持更高级的功能，例如将内容分组到具有可配置 Header 和 Footer 的不同 Section，以及针对容器进行定制的修饰符，就像在这个示例中我使用 `.listRowSeparator` 隐藏了 `List` 视图每行之间的分隔符。
+
+
+
+那我就可以写成
 
 ```swift
-List {
-  Section("Favorite Songs") {
-    Text("Scrolling in the Deep")
-    Text("Born to Build & Run")
-    Text("Some Body Like View")
+TodoListContainer {
+//没有数据时展示示范性的todoItem
+  if todoLists.empty {
+    TextView("添加一条今日的Todo事项吧～")    
   }
 
-  Section("Other Songs") {
-    ForEach(otherSongs) { song in
-      Text(song.title)
-        .listRowSeparator(.hidden)
-    }
+//正常展示
+  ForEach(data) { item in
+    TextView(todoData)    
   }
 }
 ```
 
 
 
-## 背景
+### 新增API  ForEach(subviewOf:)&#x20;
 
-正巧我最近刚接到了一个庆祝 WWDC 成功举行的卡拉 OK 的邀请，要回复请帖，我必须要提交我计划唱的歌曲名字，而我还没想好唱什么歌。
+新的`ForEach(subviewOf:)` API 能够对视图的Subview进行遍历，并对每一个Subview进行处理。
 
-我打算使用 SwiftUI 的新 API 所带来的灵活性来帮助我解决这个问题。首先我会把我的想法都列在展示板(DisplayBoard)上。
+通过这个新API，我们可以修改我们的代码，来实现我们刚刚设想需求：在没有数据的时候，添加一条静态数据，并且不是通过在传入的数据集合中添加Fake Data的方式。
 
-
-
-![展示板DisplayBoard](./images/display_board_UVlPWNFZUn.png "展示板DisplayBoard")
-
-
-
-我初始化了一个 DisplayBoard 来展示我的歌曲选项集合，它会将我数据集合中的歌曲名字映射到 `Text` 视图上，而这些视图被写在卡片上并被钉在展示板（DisplayBoard）上。
+我们将入参改为一个取名`content`的`ViewBuilder`，并使用`ForEach(subviewOf:)`在内部对content的Subview进行处理
 
 ```swift
-// Data-Driven DispalyBoard
 
-@State private var songs: [Song] = [
-  Song("Scrolling in the Deep"),
-  Song("Born to Build & Run"),
-  Song("Some Body Like View"),
-]
-
+// TodoListContainer 内部实现
+@ViewBuilder let content: Content
 var body: some View {
-  DisplayBoard(songs) { song in
-    Text(song.title)
-  }
-}
-```
-
-
-
-而在 DisplayBoard 的代码实现中，我采用了自定义的样式，让卡片被随机地钉在整个 DisplayBoard 上。通过一个 `ForEach` 视图对数据集合进行遍历，通过每一项数据来初始化 CardView。
-
-```swift
-// DisplayBoard implementation
-
-var data: Data
-@ViewBuilder var content: (Data.Element) -> Content
-
-var body: some View {
-  DisplayBoardCardLayout {
-    ForEach(data) { item in
-      CardView {
-        content(item)
-      }
-    }
-  }
-  .background { BoardBackgroundView() }
-}
-```
-
-这是一个好的开始，但是我的 DisplayBoard 容器限制了我的创造，它只允许通过一个单一的数据集合进行构造。
-
-## Composition
-
-我可以通过添加一些对更多种类的 Composition 的支持来使我的容器更加具有灵活性。但首先，我们得弄明白什么是 Composition。
-
-想象一个 SwiftUI 的 `List` 视图，展示一串别人给我推荐的歌曲。这个 List 视图通过一个数据集合进行初始化，就像我的 DisplayBoard。
-
-```swift
-List(songsFromSam) { song in
-  Text(song.title)
-}
-```
-
-
-
-但是 SwiftUI 也支持用其他的方法创建 `List`。比如我可以手动编写一连串 `Text` 视图。
-
-```swift
-List {
-  Text("Scrolling in the Deep")
-  Text("Born to Build & Run")
-  Text("Some Body Like View")
-}
-```
-
-
-
-SwiftUI 通过提供新的 API 来将这两种方式结合在一起，新的 API 可以将两种内容进行组合。比如，我可以直接将两种方式结合起来初始化 `List`，这样一个组合的 `List` 就是一个 Composition 的例子。在同一个 List 中，我可以用硬编码方式静态的定义前三行内容，同时用数据集合动态的生成剩下的内容。
-
-```swift
-// List Composition
-
-List {
-  Text("Scrolling in the Deep")
-  Text("Born to Build & Run")
-  Text("Some Body Like View")
-
-  ForEach(songsFromSam) { song in
-    Text(song.title)
-  }
-}
-```
-
-
-
-### 新 API ForEach(subviewOf:)
-
-我希望我的 DisplayBoard 容器也能够支持类似的灵活构建，为了达到这个目的，我需要修改我的实现。
-
-第一步就是重构我的容器，使它可以通过一个 View Builder 来进行初始化。我将单一的数据集合参数替换成一个 ViewBuilder 视图对象。
-
-通过添加这个 ViewBuilder 属性，我默认的初始化器可以自动的通过一个尾视图创建闭包来构建内容。
-
-```swift
-// DisplayBoard implementation
-
- @ViewBuilder var content: Content
- 
-var body: some View {
-  DisplayBoardCardLayout {
-    ForEach(data) { item in
-      CardView {
-        content(item)
-      }
-    }
-  }
-  .background { BoardBackgroundView() }
-}
-
-// Use Trailing View Builder Closure To Init DisplayBoard
-
-DisplayBoard {
-  Text("Scrolling in the Deep")
-  Text("Born to Build & Run")
-  Text("Some Body Like View")
-}
-
-DisplayBoard {
-  ForEach(songsFromSam) { song in
-    Text(song.title)
-  }
-}
-```
-
-
-
-接下来，我需要使用我的新的 content 视图来更新我的 view body，我可以通过使用一个新的 API`ForEach(subviewOf:)`, 这个 `ForEach` 视图接受一个单独的 view 作为输入参数，并返回 view 中的每一个 subview 给到 trailing closure。通过这样的方式可以将每一个 subview 转换成其他类型的视图，比如我的 CardView。
-
-```swift
-// Use New API: ForEach(subviewOf:)
-
-@ViewBuilder var content: Content
-
-var body: some View {
-  DisplayBoardCardLayout {
-     ForEach(subviewOf: content) { subview in
-       CardView {
-        subview
-      }
-    }
-  }
-  .background { BoardBackgroundView() }
-}
-```
-
-
-
-最后我们更新 DisplayBoard 的初始化，传入之前用在 `List` 视图中的组合数据，将每一个 `Text` 视图转为 展示板上的 CardView。
-
-```swift
-// Update DisplayBoard Initializer
-
-DisplayBoard {
-  Text("Scrolling in the Deep")
-  Text("Born to Build & Run")
-  Text("Some Body Like View")
-
-  ForEach(songsFromSam) { song in
-    Text(song.title)
-  }
-}
-```
-
-
-
-这是一个巨大的进步，但是中间是如何运作的呢？。我们来仔细看看新 API `ForEach(subviewOf:)`, 到底什么是 subview？
-
-一个 subview 简单的说就是被包含在另外一个 view 中的 view。看看代码，这里面有多少个 subview 呢？
-
-```swift
-DisplayBoard {
-  Text("Scrolling in the Deep")
-  Text("Born to Build & Run")
-  Text("Some Body Like View")
-
-  ForEach(songsFromSam) { song in
-    Text(song.title)
-  }
-}
-```
-
-
-
-这里面有 3 个 `Text` 视图和 1 个 `ForEach` 视图。但是 `ForEach` 视图不仅仅只是一个视图，它是一个包含了 9 个视图的集合。因此这里一共有 12 个视图，也就是有 12 个卡片展示在展示板上。
-
-![](./images/image_Ab8Af5-B3Z.png)
-
-
-
-很重要的一点是要明白两种不同的 subview 的差异性。在 DisplayBoard 的初始化器中，用橙色方框标记出的是 `Declared subviews`。 而用蓝色方框标记出来的，则是最终展现在屏幕上的 view，被称为 `Resolved subviews`，其中包含 3 个手动声明的 `Text` 视图以及 9 个通过 `ForEach` 生成的 `Text` 视图。
-
-![](./images/image_fSHiwlWWTb.png)
-
-![](./images/image_-11K5akQfG.png)
-
-
-
-在 SwiftUI 的声明式系统中，`Declared subviews` 定义了生成 `Resolved subviews` 的配置。
-
-![](./images/image_Jenof2J38k.png)
-
-
-
-举个例，一个 `ForEach` 视图是一个并不会在界面上有任何具体展现或动作的 `Declared subview`。 但是，`ForEach` 视图的目的是生成一连串的 `Resolved subviews`。
-
-```swift
-// 1 declared view
-ForEach(songsFromSam) { song in
-  Text(song.title)
-}
-
-// 9 resolved subviews
-Text("I Container Multitudes")
-…
-Text("Love Stack")
-```
-
-
-
-`Group` 视图也是另外一个内建容器的例子，它包含了一连串 `Resolved subviews`。 比如 一个包含了 3 个 `Text` 视图的 `Group` 视图，最终会解析为 3 个对应的 subview。
-
-```swift
-// 1 declared view
-Group {
-  Text("Scrolling in the Deep")
-  Text("Born to Build & Run")
-  Text("Some Body Like View")
-}
-
-// 3 resolved subviews
-Text("Scrolling in the Deep")
-
-Text("Born to Build & Run")
-
-Text("Some Body Like View")
-```
-
-
-
-对于某些 `Declared subview`，甚至可能产生 0 个 `Resolved subview`，比如 `EmptyView`。或者在某些条件下会转换成不同数量的 subview，比如在不同的条件判断下。
-
-```swift
-// 1 declared view
-EmptyView()  
-
-// Zero resolved subviews
-```
-
-
-
-而新的 `ForEach(subviewOf:)`接口，会遍历其中所有的 `Resolved subviews`。这使得我的容器可以支持任意的视图内容，不管 subview 是如何声明的，SwiftUI 都会将其转为 `Resovled subview` 进行处理。
-
-
-
-### 新 API Group(subviewsOf:)
-
-支持灵活的视图构成，使得添加新的歌曲到面板上非常容易。除了 Sam 的歌曲外，Sommer 也慷慨地推荐了一些她喜欢的歌。我可以用另外一个 ForEach 来添加她推荐的歌曲。
-
-```swift
-DisplayBoard {
-  Text("Scrolling in the Deep")
-  Text("Born to Build & Run")
-  Text("Some Body Like View")
-
-  ForEach(songsFromSam) { song in
-    Text(song.title)
-  }
-
-  ForEach(songsFromSommer) { song in
-    Text(song.title)
-  }
-}
-```
-
-
-
-现在我们发现，这个展示板已经有点拥挤了。
-
-![](./images/image_V-zVm30z4w.png)
-
-
-
-我想在卡片数量超过 15 个的时候，缩小卡片的大小。为了计算卡片数量，我们可以使用另外一个新 API：`Group(subviewsOf:)`,  我们可以在代码中用它包裹住 `ForEach`。就像 `ForEach(subviewOf:)`一样, 它也会通过传入一个 view 来解析出他的所有 subviews。 `Group(subviewsOf:)` 会返回一个包含了所有 `Resolved subviews` 的集合，而不是进行遍历。
-
-```swift
-// Use New API: Group(subviewsOf:)
-
-@ViewBuilder var content: Content
-
-var body: some View {
-  DisplayBoardCardLayout {
-     Group(subviewsOf: content) { subviews in
-       ForEach(subviews) { subview in
-        CardView {
-          subview
+    List {
+        ForEach(subviewOf: content) { subview in
+            ItemView {
+                subview
+            }
         }
-      }
     }
+}
+
+
+```
+
+最后我们修改一下调用逻辑，在`ViewBuilder`中加入“没有数据时展示示范性的TodoItem”的逻辑即可。
+
+```swift
+// 使用TodoListContainer
+TodoListContainer {
+//没有数据时展示示范性的todoItem
+  if data.isEmpty {
+    TextView("添加一条今日的Todo事项吧～")    
   }
-  .background { BoardBackgroundView() }
+
+//正常展示
+  ForEach(data) { item in
+    TextView(todoData)    
+  }
 }
 ```
 
 
 
-接下来我就可以使用集合的 `count` 属性来检查 subview 视图的总数，以在其数量超过 15 个的时候，缩小卡片视图的大小。
+### 新增API Group(subviewOf:)
+
+相比 `ForEach(subviewOf:)`，新的`Group(subviewOf:)` API不会对所有Subview进行遍历，只会把所有的Subview组成一个集合。
+
+比如我们希望在容器的最后添加一条“共有x条数据”的提示，那么就正好可以通过这个新API来获取到传入的 Subview 的个数并进行相应的逻辑处理
 
 ```swift
-@ViewBuilder var content: Content
-
+@ViewBuilder let content: Content
 var body: some View {
-  DisplayBoardCardLayout {
-    Group(subviewsOf: content) { subviews in
-       ForEach(subviews) { subview in
-         CardView(
-           scale: subviews.count > 15 ? .small : .normal
-         ) {
-          subview
+    List {
+        Group(subviewsOf: content) { subviewList in
+            ForEach(subviewOf: content) { subview in
+                ItemView {
+                    subview
+                }
+            }
+            ItemView {
+                // 获取subview的数量并展示
+                Text("共有\(subviewList.count)条数据")
+            }
         }
-      }
+
     }
-  }
-  .background { BoardBackgroundView() }
 }
 ```
 
+`ForEach(subviewOf:)` 和 `Group(subviewOf:)`这两个新API大大加强了我们在 SwiftUI 中对 Subview 的操控能力，使得更多的UI逻辑可以在SwiftUI中直接完成。
 
 
-完成代码后当我再次运行 app，卡片缩小了也更加易读了。但还是感觉有点凌乱，所以下一步我们会添加对 Section 的支持。
 
-![](./images/image_jf3fBVKidz.png)
+### Declared View 和 Resolved View以及SubView结构体
 
-****
+对这两个新API，大家一定会想了解更多，比如大家一定好奇`ForEach(subviewOf:)` 和 `Group(subviewOf:)` 是如何运作的，会对什么 样的Subview生效？`Group(subviewOf:)` 所返回的Subview数组是什么类型，可以用来做什么？
 
-## Sections
+苹果这次提出了`Declared View`和`Resolved View`的概念，我理解 Declared 指的是声明的 View，而Resolved则指的是最终解析出来用来真正展示的View。比如声明的ForEach，Group这些`Declared View`，最终会解析出他们真正包含的View，里面可能是`Text`、`Image`之类的。苹果也给出了一些示例来解释什么是`Declared View`和`Resolved View`
 
-List 是一个支持 Setion，使用 SwiftUI 的 `Section` 视图的典型容器。一个 `Section` 视图很像一个 `Group` 视图，但有着更多的 Section 特定的数据，比如可选的 Header 和 Footer。
+![](./images/image_9sBsaAhke9.png)
+
+![](./images/image_1GvDxW9R_E.png)
+
+
+
+而`ForEach(subviewOf:)` 和 `Group(subviewOf:)` API所处理的Subview指的正是`Resolved View`，也就是解析后的Subview。
+
+
+
+我们看看`ForEach(subviewOf:)`的源代码：
 
 ```swift
-List {
-  Section("Favorite Songs") {
-    Text("Scrolling in the Deep")
-    Text("Born to Build & Run")
-    Text("Some Body Like View")
-  }
-
-  Section("Other Songs") {
-    ForEach(otherSongs) { song in
-      Text(song.title)
-    }
-  }
+extension ForEach{
+    public init<V>(subviewOf view: V, 
+    @ViewBuilder content: @escaping (Subview) -> Content))
 }
+
 ```
 
-对于我的 DisplayBoard，我的目标是为每一个人推荐的歌曲创建一个单独的 Section。 但是自定义的容器默认并不支持 Section，因此我需要做一些多余的工作。
+其`ViewBuilder`闭包的类型是 `(Subview) -> Content`，没错，这次苹果新添加了一个取名为`Subview`的新结构体，它遵循`View`和 `Identifiable` 协议
+
+![](./images/image_PIy0GTd3Dv.png)
+
+
+
+而在`Group(subviewOf:)`中，其`ViewBuilder`闭包的声明是`@ViewBuilder transform: @escaping (SubviewsCollection) -> Result)`，也就是说这个API返回了一个`SubviewsCollection`的类型，我们仔细看一下`SubviewsCollection`的一部分声明
 
 ```swift
-// Custom Container do not support Section for now
-DisplayBoard {
-  Section("Matt's Favorites") {
-    Text("Scrolling in the Deep")
-    Text("Born to Build & Run")
-    Text("Some Body Like View")
-  }
-  Section("Sam's Favorites") {
-    ForEach(songsFromSam) { song in
-      Text(song.title)
-    }
-  }
-  Section("Sommer's Favorites") {
-    ForEach(songsFromSommer) { song in
-      Text(song.title)
-    }
-  }
+public struct SubviewsCollection : RandomAccessCollection {
+    // 数据类型
+    public typealias Element = Subview
+    public typealias SubSequence = SubviewsCollectionSlice
+    public typealias Index = Int
+    public typealias Indices = Range<Int>
+
+    // Method
+    public subscript(index: Int) -> Subview { get }
+    public subscript(bounds: Range<Int>) -> SubviewsCollectionSlice { get }
+    ...
 }
+
+
 ```
 
+我们发现这个新的结构体`SubviewsCollection`遵循`RandomAccessCollection`协议，也就是和我们常用的`Array`有一部分同样的能力，但同时也有不同的能力，比如`SubviewsCollection`还遵循了`View`协议。通过`SubviewsCollection`我们可以对容器里的视图作进一步的操作，这里我们用一张图来比较一下它和Array能力上的差异
 
+![](./images/image_xEEzvrEfya.png)
 
-这是我预想的设计简图，将界面分割成 3 个垂直的 Section，而 Header 展示在每个 Section 最上面。
+在`SubviewsCollection`中，`SubSequence`类型则是和`ArraySlice`类似的`SubviewsCollectionSlice`，而`Element`类型正是刚刚介绍的`Subview`结构体。
 
-![](./images/image_Dd7MRPbU9z.png)
+Apple在文档中特别指出这个`Subview`是真实展现的`Resolved View`的一个Proxy，`modifier`在它上面的应用会晚于原视图。我们可以写点代码专门验证一下。
 
-
-
-在我的实现中，首先我会将现有的卡片视图的样式逻辑抽离出去。
-
-```swift
-// DisplayBoard Implemention
-
-@ViewBuilder var content: Content
-
-var body: some View {
-   DisplayBoardSectionContent {
-    content
-  } 
-  .background { BoardBackgroundView() }
-}
-
- struct DisplayBoardSectionContent<Content: View>: View {
-  @ViewBuilder var content: Content
-  ...
-}
-```
-
-
-
-### 新 API ForEach(sectionOf:)
-
-下一步，为了将展示板分成多列，我会用 `HStack` 包裹 Section 的内容。为了构建这些列，我需要访问每个 Section 的内容。为了达到这个目的，我们可以使用 ForEach 的新 API：`ForEach(sectionOf:)`. 它和 `ForEach(subviewOf:)`类似，接受一个 view 作为传入参数。
-
-而在这个 API 中，它会遍历所有传入的 view 中的 Section 视图，传递 Section 配置给他的 view builder 闭包。每一个 Section 都有一个它的 content 视图的属性，我可以将它传给之前抽离出的工具方法。
+首先我们在TodoListContainer的内部实现中，对`Subview`应用background(.red)来设置背景颜色。然后在外部调用时对原视图`Text`添加padding。
 
 ```swift
-// Use New API: ForEach(sectionOf:)
-@ViewBuilder var content: Content
-
-var body: some View {
-   HStack(spacing: 80) {
-     ForEach(sectionOf: content) { section in
-      DisplayBoardSectionContent {
-        section.content
-      }
-    }
-  }
-  .background { BoardBackgroundView() }
-}
-```
-
-
-
-最后再进行一些润色，给每一个 Section 添加一个背景，使他们能够视觉上区分开来。
-
-```swift
-@ViewBuilder var content: Content
-
-var body: some View {
-  HStack(spacing: 80) {
-    ForEach(sectionOf: content) { section in
-      DisplayBoardSectionContent {
-        section.content
-      }
-       .background { BoardSectionBackgroundView() }
-     }
-  }
-  .background { BoardBackgroundView() }
-}
-```
-
-再次运行 app，通过 Section 现在我可以更好的辨识出各种卡片了。接下来我要添加对 Section Header 的支持。
-
-
-
-![](./images/image_XE73GpoALK.png)
-
-
-
-我会首先把每一个 Section 用 `VStack` 包裹，并添加 Header 和内容样式。接下来，通过 `isEmpty` 属性，我可以判断这个 Section 是否需要展示 Header。如果需要展示 Header，那么他会展示一个我之前写的自定义 Header 视图。
-
-```swift
-@ViewBuilder var content: Content
-
-var body: some View {
-  HStack(spacing: 80) {
-    ForEach(sectionOf: content) { section in
-      VStack(spacing: 20) {
-         if !section.header.isEmpty {  // 检查是否要展示Header
-          DisplayBoardSectionHeaderCard { section.header }  // 展示自定义的Header视图
-        } 
-         DisplayBoardSectionContent { 
-          section.content
+// TodoListContainer 实现
+struct TodoListContainer<Content: View>: View  {
+    @ViewBuilder let content: Content
+    var body: some View {
+        List {
+            ForEach(subviewOf: content) { subview in
+                ItemView {
+                    // 设置背景颜色
+                    subview.background(.red)
+                }
+            }
         }
-        .background { BoardSectionBackgroundView() }
-      }
     }
-  }
-  .background { BoardBackgroundView() }
+}
+
+#Preview {
+    let data: [TodoData] = [
+        TodoData(title: "写作业"),
+        TodoData(title: "打球")
+    ]
+    TodoListContainer() {
+        if data.isEmpty {
+            Text("添加一条今日的Todo事项吧～")
+        }
+        
+        ForEach(data) {item in
+             // 此处设置padding
+            Text(item.title).padding()
+        }
+    }
+}
+
+
+```
+
+![](./images/image_lpWpHLaLZ2.png)
+
+最后的效果验证了的确是先应用了padding，再应用了设置background。`Subview`应用modifer晚于原视图。
+
+
+
+### 新API ForEach(sectionOf:)
+
+这次更新中还新添加了`ForEach(sectionOf:) `API，这个API顾名思义，是用来处理`ViewBuilder`中传入的`Section`的，在之前除了SwfitUI官方的容器之外，是没有办法处理`Section`的，而在这个API加入之后，自定义容器也有了处理`Section`的能力。
+
+我们看看这个API
+
+```swift
+extension ForEach {
+  public init<V>(sectionOf view: V, 
+                 @ViewBuilder content: @escaping (SectionConfiguration) -> Content)
+}
+
+```
+
+这个API的`ViewBuilder`闭包, 会返回一个`SectionConfiguration`的结构体
+
+```swift
+public struct SectionConfiguration : Identifiable {
+    public var containerValues: ContainerValues { get } // ContainerValues后面会介绍
+    public var header: SubviewsCollection { get }
+    public var footer: SubviewsCollection { get }
+    public var content: SubviewsCollection { get }
 }
 ```
 
-再重新跑 App，现在每一个 Section 上方都有一个 Header 视图了。
+可以看出，从`SectionConfiguration`中我们可以获得`Section`中`header`、`footer`、`content`和`containerValues`信息, 由于`SubviewsCollection` 遵循 `View`协议，因此可以直接拿来用以展示，而`containerValues`我们在后面会介绍到。通过使用这个API，我们就可以为自定义容器添加处理`Section`的能力。
 
-![](./images/image_UcD4NoF5Bs.png)
-
-
-
-## Customization
-
-为了开始选一首歌，我需要能够划掉我舍弃的选项。我可以通过修改我的容器来支持这样的能力。在前言里，我展示了一个使用`.listRowSparator()` modifier 的例子。即使这个 modifier 是应用于这个 `List` 中的一个视图，这个 `List` 容器自身也有义务实现在每行之间添加分割线的样式。
+我们修改一下TodoListView的实现
 
 ```swift
-List {
-  Section("Favorite Songs") {
-    Text("Scrolling in the Deep")
-    Text("Born to Build & Run")
-    Text("Some Body Like View")
-  }
-
-  Section("Other Songs") {
-    ForEach(otherSongs) { song in
-      Text(song.title)
-        .listRowSeparator(.hidden)
+// TodoListContainer 实现
+@ViewBuilder let content: Content
+var body: some View {
+    HStack {
+        ForEach(sectionOf: content) { sections in
+        // 遍历Section
+            VStack {
+                // 展示Section的Header
+                sections.header
+                // 展示Section的内容
+                List {
+                    ForEach(subviewOf: sections.content) { subview in
+                        ItemView {
+                            subview
+                        }
+                    }
+                }
+            }
+        }
     }
-  }
 }
 ```
 
-在 DisplayBoard 中，我想添加能够把我不想要的歌曲划掉的功能。有一个新的 API 专门用于建设这类容器专有能力的 modifier，被称为 `Container Values`.
+接下来我们传入`Section`信息，并设置`header`，便可以看到效果了
+
+![](./images/image_8Fo6LkyGkU.png)
 
 
 
-### 新 API Container Values
+### ContianerValues
 
-`Container Values` 是一种新的 Key-Value 存储，在概念上和 `Environment` 和 `Preferences` 很类似。
+`Container Values`是一种新的数据存储框架，一个`Resolved View`的`Container Values`只能被它的直接容器所访问，因此它很适合被用来实现容器特定的自定义能力。容器可以通过`Subview`结构体或 `SectionConfiguration` 结构体来访问所存储的`Container Values`。
 
-但是和 `Environment Values` 不同在于，`Environment Values` 会通过整个视图树向下传递。
+它和`Environment Values`以及`Preference Values`相似，但不同的是`Environment Values`会通过整个视图树向下传递，而`Preference Values`则会通过整个视图树向上传递。
 
-![](./images/image_H-0asBv3UO.png)
-
-
-
-而 `Preference Values`，则会通过整个视图树向上传递。
-
-![](./images/image_w4lh2c2NWF.png)
+![](./images/image_NS8UmjB97T.png)
 
 
 
-一个 `Resolved Subview` 的 `Container Values` 只能被它的直接容器所访问，这使得 `Container Values` 成为理想的工具来实现容器特定的自定义能力。
-
-![](./images/image_aZYw6iZLZ-.png)
-
-
-
-在我的 DisplayBoard 中，我会使用 `Container Values` 去创建一个自定义的视图 modifier 来划掉卡片。定义一个新的 `Container Value` 只需要几行代码。
-
-第一步，我会创建一个 `ContainerValues` 的 extension，这是一个 SwiftUI 的新类型。
+我们可以尝试用`Container Values`给`TodoListContainer`添加把已完成的项目划掉的功能。首先，我们先创建一个`ContainerValues`的`Extension`，在其中添加我们的配置项
 
 ```swift
-// Declare Container value
-
 extension ContainerValues {
-  @Entry var isDisplayBoardCardRejected: Bool = false
+  @Entry var isTodoItemDone: Bool = false
 }
 ```
 
-在这个 extension 中，我会声明一个使用[@Entry 宏](https://developer.apple.com/documentation/swiftui/entry\(\)/ "@Entry 宏")标记的新属性，它存储了一个 Bool 值来跟踪卡片是否被划掉。
+在这个extension中，我会声明一个使用[@Entry 宏](https://developer.apple.com/documentation/swiftui/entry\(\)/ "@Entry 宏")标记的新属性，它存储了一个Bool值来跟踪卡片是否被划掉。
 
-这个[@Entry 宏](https://developer.apple.com/documentation/swiftui/entry\(\)/ "@Entry 宏")是一个新的 API，它提供了简便的语法来给 SwiftUI 的 存储添加新值，包括 Environment Values，Focused Values 等等。
+> 这个[@Entry 宏](https://developer.apple.com/documentation/swiftui/entry\(\)/ "@Entry 宏")是一个新的API，它提供了简便的语法来给SwiftUI的 存储添加新值，包括Environment Values，Focused Values等等。
 
-下一步，我会声明一个自定义的视图 modifier 以方便设置我声明的 `Container Value` 值。这个 modifier 会将传入的值通过 key path 设置到 `Container Value`。
+下一步，我会声明一个自定义的`modifier`以方便设置我声明的`Container values` 值。这个`modifier`会将传入的值通过key path设置到`Container values`。
 
 ```swift
 extension View {
-  func displayBoardCardRejected(_ isRejected: Bool) -> some View {
-    containerValue(\.isDisplayBoardCardRejected, isRejected)
+  func displayItemDone(_ isDone: Bool) -> some View {
+    containerValue(\.isTodoItemDone, isDone)
   }
 }
 ```
 
-
-
-好了，现在我会给我的容器添加这个能力。在我们 Section 的实现中，我需要给我自定义的 CardView 添加 isRejected 参数来表明这个内容是否被拒绝。而通过新添加的 `Container Values` 属性我可以达到这样的目的，`Container Values` 的属性可以通过 `Resolved subview` 或者 Section 获取到。
-
-我会将我自定义的值传到 CardView 的 isRejected 参数中，当 CardView 的 isRejected 是 true 时，CardView 会显示一个自定义的划掉样式。
+最后我们在`TodoListContainer`的实现中读取这个Section`上`的`containerValues`，并传给`ItemView`，对于已完成的项目，`ItemValue`会降低透明度进行显示
 
 ```swift
-struct DisplayBoardSectionContent<Content: View>: View {
-  @ViewBuilder var content: Content
-
-  var body: some View {
-    DisplayBoardCardLayout {
-      Group(subviewsOf: content) { subviews in
-        ForEach(subviews) { subview in
-           let values = subview.containerValues 
-          CardView(
-            scale: (subviews.count > 15) ? .small : .normal,
-             isRejected: values.isDisplayBoardCardRejected 
-          ) {
-            subview
-          }
+  @ViewBuilder let content: Content
+    var body: some View {
+        HStack {
+            ForEach(sectionOf: content) { sections in
+                // 从section中读取containerValues
+                let sectionValues = sections.containerValues
+                VStack {
+                    sections.header
+                    List {
+                        ForEach(subviewOf: sections.content) { subview in
+                            ItemView(content: {
+                                subview
+                            }, isDone: sectionValues.isTodoItemDone)
+                            // 将其中的是否完成的值传给ItemView；
+                            // 若已完成，则会降低透明度显示
+                        }
+                    }
+                }
+            }
         }
-      }
     }
-  }
-}
 ```
 
-通过这个 Modifier，我就可以实现我划掉歌曲的能力。 我虽然喜欢歌曲*Scrolling in the Deep*，但我不确定我能唱得好，因此我划掉它。这个时候在 DisplayBoard 上就会展示一个大大的红色斜杠。
+最后我们修改一下传入的代码，设置已完成的项目，并看看效果
 
-Sam 优先选择了一些歌曲，所以我也会划掉这些 Sam 已选则的歌曲。
+![](./images/image_cNoce7y8pq.png)
 
-而对于 Sommer，我不太确定他打算唱什么，所以为了保险起见，我会划掉所有他的歌曲。通过将 modifier 应用到整个 Section，这个 Section 下的所有 subview 都会被设置这个值。也就是所有 Sommer 的歌曲都被划掉了。
+已完成的骑车项目现在会用低透明度展示了。
 
-```swift
-DisplayBoard {
-  Section("Matt's Favorites") {
-    Text("Scrolling in the Deep")
-       .displayBoardCardRejected(true)  // 划掉我唱不好的歌曲
-     Text("Born to Build & Run")
-    Text("Some Body Like View")
-  }
-  Section("Sam's Favorites") {
-    ForEach(songsFromSam) { song in
-      Text(song.title)
-         .displayBoardCardRejected(song.samHasDibs) // 划掉Sam已决定唱的歌曲
-     }
-  }
-  Section("Sommer's Favorites") {
-    ForEach(songsFromSommer) { Text($0.title) }}}
-  }
-   .displayBoardCardRejected(true) // 对整个Section设置，划掉Sommer所有的推荐歌曲
- }
-```
+> ContainerValues被规定为只能被直接父容器进行获取，这个直接父容器应该如何定义呢？苹果在文档中特别指出`Unlike preferences, however, container values don’t have merging behavior because they don’t escape their closest container.` 我们测试了一下，在`VStack`、`HStack`、`ZStack`这些包裹下，都无法在外部再获取到`Container Values`，但是在`Group`下却可以。
 
-![](./images/image_rDr6rzFvVm.png)
+### 总结
 
+![](./images/image_g-IeaN7WdU.png)
 
+我们总结一下本篇Session中所介绍的新添加的API吧。 `Group(subviewOf:)`和`ForEach(subviewOf:)`给了我们读取甚至操作UI的能力，而`ForEach(sectionOf:)`更是把Section能力带给了自定义容器，最后ContainerValue的加入，对于自定义容器的UI自定义提供了更方便的办法。
 
-好的，我们已经朝着选到一首完美的卡拉 OK 歌曲迈进了一大步了，不过我还是要做出最终的选择。 在此期间，我们可以总结一下：
+新添加的结构体`Subview`和`SubviewsCollection`则成为操控容器内视图的重要媒介，虽然它们的能力还没有特别多，但是相信苹果未来还会给它们添加更多的能力。
 
-- 将 `ForEach` 和 `Group` 使用在初始化器上，去遍历，或者转换 `Resolved subview` 和 Section 视图
-- 如果你的容器设计需要，那么你可以使用 Section 为其提供更多的能力
-- 可以采用 `Container Values` 来自定义每一块单独的内容
-
-
-
-
-
-
-
-
-
+这些新的API大大加强了SwiftUI中操控UI的能力，而在这之前一些简单的UI逻辑我们都只能通过修改数据来使UI变化，而现在我们可以把更多逻辑放到UI里，使UI逻辑和业务逻辑更好的分离。预感到苹果未来应该会继续逐渐加强SwiftUI的操控UI能力，使得自定义的UI容器更加灵活和强大。
