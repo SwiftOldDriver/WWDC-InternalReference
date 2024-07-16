@@ -96,7 +96,7 @@ TodoListContainer {
 
 
 
-### 新增 API  ForEach(subviewOf:) ;
+### 新增 API  ForEach(subviewOf:)
 
 新的`ForEach(subviewOf:)` API 能够对视图的 Subview 进行遍历，并对每一个 Subview 进行处理。
 
