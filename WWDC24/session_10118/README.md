@@ -17,7 +17,7 @@ session_ids: [10118]
 > 审核:
 >
 
-UIKit 作为老牌的 UI 框架在很多应用场景中依然有着不可替代的作用，在 iOS 18 中 UIKit 也迎来了一些新的改变，在观看完[Session 10118](https://developer.apple.com/videos/play/wwdc2024/10118/)后对我印象最大的新特性包括了新的缩放转场效果，UIKit 与 SwiftUI 在动画与手势中的交互以及`UITextView`富文本的支持等等。
+UIKit 作为老牌的 UI 框架在很多应用场景中依然有着不可替代的作用，在 iOS 18 中 UIKit 也迎来了一些新的改变，在观看完[Session 10118](https://developer.apple.com/videos/play/wwdc2024/10118/)后我印象最大的新特性包括了新的缩放转场效果，UIKit 与 SwiftUI 在动画与手势中的交互以及`UITextView`富文本的支持等等。
 
 从 Apple iOS 18 的更新中不难看出来，UIKit 除了常规的更新外越来越注重其与 SwiftUI 的交互以及整个 UI 系统的统一。本文将按照[Session 10118](https://developer.apple.com/videos/play/wwdc2024/10118/)中新特性的顺序逐一的进行介绍，当然读者也可按照兴趣程度选择性阅读，每年的 What's new in UIKit 其实更像是一个"Index"文件，其中会大概介绍涉及 UIKit 的更新，然后引出一篇新的 Session ，在文章中我将尽可能的去补充引入的 Session，但是因为篇幅和时间的原因可能介绍的并不是很完善，感兴趣的读者可以选择继续阅读对应的 Session 当然更推荐选择关注老司机的公众号，最近会不定期推送 WWDC24 中 Session 的介绍。
 
@@ -152,7 +152,7 @@ navigationController?.pushViewController(detailViewController, animated: true)
 >
 > 由于缩放转场过程中需要对缩放视图不断进行放大与缩小与状态的变换，因此需要使用稳定的(不会轻易随着程序状态而改变的)标识符在闭包中查找视图，而不是捕获 UIVIew 或者 IndexPath 实例。
 
-还有一点需要注意的是假如我们的入口页面是一个轮播图，在我们点击任意一个项进入详情页后，我们上一个页面的轮播图还在滚动，这时我们回退当前的页面，可能会导致想要缩放回的项发生变化，为了找到了正确的项，我们可以闭包中的上下文参数来做对应的处理。
+还有一点需要注意的是假如我们的入口页面是一个轮播图，在我们点击任意一个项进入详情页后，我们上一个页面的轮播图还在滚动，这时我们回退当前的页面，可能会导致想要缩放回的项发生变化，为了找到了正确的项，我们可以使用闭包中的上下文参数来做对应的处理。
 
 ``` swift
 
