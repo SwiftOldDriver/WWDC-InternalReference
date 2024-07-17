@@ -26,7 +26,11 @@ session_ids: [10074]
 
 除了在「设置」中调整动态字体，还可以在「控制中心」中调整动态字体。
 
-> iOS 模拟器的「控制中心」无法调整动态字体，需要在真机上测试，因此暂无截图提供。
+![controlcenter-app](./images/controlcenter-app.png)
+
+![controlcenter-all](./images/controlcenter-all.png)
+
+> iOS 模拟器的「控制中心」无法调整动态字体，需要在真机上测试.
 
 ## 如何使用动态字体
 
