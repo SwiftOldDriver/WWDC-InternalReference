@@ -382,6 +382,10 @@ class FigureItemView: UIStackView {
 
 ![largecontentviewer-uikit-accessibility4](./images/largecontentviewer-uikit-accessibility4.png)
 
+以下是动图示意：
+
+![largecontentviewer-longpress](./images/largecontentviewer-longpress.gif)
+
 > 需要注意的是，大型内容查看器的功能仅在使用「更大的辅助功能字体」时有效。同时该功能的触发方式为长按，需要处理与长按手势识别器的互斥逻辑。
 
 ## 总结
