@@ -199,7 +199,7 @@ public struct SubviewsCollection : RandomAccessCollection {
 
 ```
 
-我们发现这个新的结构体`SubviewsCollection`遵循`RandomAccessCollection`协议，也就是和我们常用的`Array`有一部分同样的能力，但同时也有不同的能力，比如`SubviewsCollection`还遵循了`View`协议。通过`SubviewsCollection`我们可以对容器里的视图作进一步的操作，这里我们用一张图来比较一下它和 Array 能力上的差异
+我们发现这个新的结构体`SubviewsCollection`遵循`RandomAccessCollection`协议，也就是和我们常用的`Array`有一部分同样的能力，但同时也有不同的能力，比如`SubviewsCollection`还遵循了`View`协议，也就是说它还可以直接用来展示。 通过`SubviewsCollection`我们可以对容器里的视图作进一步的操作，这里我们用一张图来比较一下它和 Array 能力上的差异
 
 ![](./images/image_xEEzvrEfya.png)
 
@@ -247,13 +247,13 @@ struct TodoListContainer<Content: View>: View  {
 
 ![](./images/image_lpWpHLaLZ2.png)
 
-最后的效果验证了的确是先应用了 padding，再应用了设置 background。`Subview`应用 modifer 晚于原视图。
+最后的效果验证了的确是先应用了 padding，再应用了设置 background。`Subview`应用 modifer 晚于原视图，和苹果文档的描述吻合。
 
 
 
 ### 新 API ForEach(sectionOf:)
 
-这次更新中还新添加了`ForEach(sectionOf:)`API，这个 API 顾名思义，是用来处理`ViewBuilder`中传入的`Section`的，在之前除了 SwfitUI 官方的容器之外，是没有办法处理`Section`的，而在这个 API 加入之后，自定义容器也有了处理`Section`的能力。
+这次更新中还新添加了`ForEach(sectionOf:)`API，这个 API 顾名思义，是用来处理`ViewBuilder`中传入的`Section`的，在这之前除了 SwfitUI 官方的容器之外，是没有办法处理`Section`的，而在这个 API 加入之后，自定义容器也有了处理`Section`的能力。
 
 我们看看这个 API
 
@@ -320,7 +320,7 @@ var body: some View {
 
 
 
-我们可以尝试用`Container Values`给`TodoListContainer`添加把已完成的项目划掉的功能。首先，我们先创建一个`ContainerValues`的`Extension`，在其中添加我们的配置项
+我们可以尝试用`Container Values`给`TodoListContainer`添加把已完成的项目隐去的功能。首先，我们先创建一个`ContainerValues`的`Extension`，在其中添加我们的配置项
 
 ```swift
 extension ContainerValues {
@@ -328,7 +328,7 @@ extension ContainerValues {
 }
 ```
 
-在这个 extension 中，我会声明一个使用[@Entry 宏](https://developer.apple.com/documentation/swiftui/entry\(\)/ "@Entry 宏")标记的新属性，它存储了一个 Bool 值来跟踪卡片是否被划掉。
+在这个 extension 中，我会声明一个使用[@Entry 宏](https://developer.apple.com/documentation/swiftui/entry\(\)/ "@Entry 宏")标记的新属性，它存储了一个 Bool 值来跟踪卡片是否被隐去。
 
 > 这个[@Entry 宏](https://developer.apple.com/documentation/swiftui/entry\(\)/ "@Entry 宏")是一个新的 API，它提供了简便的语法来给 SwiftUI 的 存储添加新值，包括 Environment Values，Focused Values 等等。
 
@@ -372,7 +372,7 @@ extension View {
 
 ![](./images/image_cNoce7y8pq.png)
 
-已完成的骑车项目现在会用低透明度展示了。
+已完成的骑车项目现在被隐去了。
 
 > ContainerValues 被规定为只能被直接父容器进行获取，这个直接父容器应该如何定义呢？苹果在文档中特别指出`Unlike preferences, however, container values don’t have merging behavior because they don’t escape their closest container.` 我们测试了一下，在`VStack`、`HStack`、`ZStack`这些包裹下，都无法在外部再获取到`Container Values`，但是在`Group`下却可以。
 
