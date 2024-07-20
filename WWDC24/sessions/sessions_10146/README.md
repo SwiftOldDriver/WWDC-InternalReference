@@ -1,7 +1,7 @@
 ---
 session_ids: [10146]
 ---
-# # WWDC24: Session 10146 - Demystify SwiftUI containers
+# WWDC24: Session 10146 - Demystify SwiftUI containers
 
 ## 为自定义容器视图添加更多的能力
 
@@ -28,17 +28,17 @@ TodoListContainer(data: data) { item in
 // TodoListContainer内部实现
 
 var data: Data
-    @ViewBuilder let content: (Data.Element) -> Content
-    
-    var body: some View {
-        List {
-            ForEach(data) { item in
-                ItemView {
-                  content(item)
-              }
+@ViewBuilder let content: (Data.Element) -> Content
+
+var body: some View {
+    List {
+        ForEach(data) { item in
+            ItemView {
+                content(item)
             }
         }
     }
+}
 ```
 
 这是一种我们常用的方式，通过这种方式我们可以通过数据集合动态的为视图容器填充内容。整个流程是这样的
@@ -56,12 +56,12 @@ flowchart LR
 
 ```swift
 List {
-//静态内容
+// 静态内容
   Text("Scrolling in the Deep")
   Text("Born to Build & Run")
   Text("Some Body Like View")
 
-//动态内容
+// 动态内容
   ForEach(otherSongs) { song in
     Text(song.title)
   }
@@ -73,28 +73,6 @@ List {
 面对这样的需求，常见的做法就是当数据集合中没有数据的时候，往数据集合中添加一条 Fake Item。而如果自定义容器有可以像 List 容器那样的灵活性，我就可以在容器初始化的时候传入这条示范性的 Todo Item，而不是往数据集合中添加 Fake data。
 
 接下来，我们会使用新的 API 来添加这样的能力。
-
-
-
-
-
-那我就可以写成
-
-```swift
-TodoListContainer {
-//没有数据时展示示范性的todoItem
-  if todoLists.empty {
-    TextView("添加一条今日的Todo事项吧～")    
-  }
-
-//正常展示
-  ForEach(data) { item in
-    TextView(todoData)    
-  }
-}
-```
-
-
 
 ### 新增 API  ForEach(subviewOf:)
 
@@ -126,14 +104,14 @@ var body: some View {
 ```swift
 // 使用TodoListContainer
 TodoListContainer {
-//没有数据时展示示范性的todoItem
+// 没有数据时展示示范性的TodoItem
   if data.isEmpty {
-    TextView("添加一条今日的Todo事项吧～")    
+    Text("添加一条今日的Todo事项吧～")    
   }
 
-//正常展示
+// 正常展示
   ForEach(data) { item in
-    TextView(todoData)    
+    Text(item.title)    
   }
 }
 ```
