@@ -351,7 +351,7 @@ The "nudge" command has been installed, type "help nudge" for detailed help.
 
 这样我们就可以在运行时，实时调整元素位置了！
 
-[ Facebook Chisel 库](https://github.com/facebook/chisel/)包含了很多方便页面及其他调试的自定义命令，例如可以通过 caflush 命令强制刷新当前的页面，这样通过 expr 设置的视图的位置或者其他属性改动就可以立即生效。这样可以一定程度达到不重新编译代码，即时查看布局调整后的效果。其他细节，大家可以按照官方的指引，安装以后体验下。
+[Facebook Chisel](https://github.com/facebook/chisel/)包含了很多方便页面及其他调试的自定义命令，例如可以通过 caflush 命令强制刷新当前的页面，这样通过 expr 设置的视图的位置或者其他属性改动就可以立即生效。这样可以一定程度达到不重新编译代码，即时查看布局调整后的效果。其他细节，大家可以按照官方的指引，安装以后体验下。
 
 ### 技巧 4 - 如何编写 Python 脚本增强 LLDB 调试能力
 
