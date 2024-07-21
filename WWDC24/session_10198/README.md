@@ -16,11 +16,9 @@ session_ids: [10198]
 - [WWDC21 10211](https://developer.apple.com/videos/play/wwdc2021/10211)
 - [WWDC19 429](https://developer.apple.com/videos/play/wwdc2019/429/)
 
-向大家介绍如何使用 Xcode IDE
-和 LLDB 的最新能力，进行有效和高效的调试。同时还介绍了如何处理使用相关工具碰到的常见问题和一些高级技巧。
+向大家介绍如何使用 Xcode IDE 和 LLDB 的最新能力，进行有效和高效的调试。同时还介绍了如何处理使用相关工具碰到的常见问题和一些高级技巧。
 
-整个文章分为三个部分。第一部分是定义调试的一般模型；第二部分重点介绍 LLDB 多个不同的调试能力，包含代码回溯、断点和变量表达式
-值打印( p 命令)等能力，我们会深入讨论如调试中常见的技巧，例如打印程序状态和处理高频埋点等，然后还会深入探讨变量表达式评估背后的运作机制以及不同打印命令的异同；
+整个文章分为三个部分。第一部分是定义调试的一般模型；第二部分重点介绍 LLDB 多个不同的调试能力，包含代码回溯、断点和变量表达式值打印( p 命令)等能力，我们会深入讨论如调试中常见的技巧，例如打印程序状态和处理高频埋点等，然后还会深入探讨变量表达式评估背后的运作机制以及不同打印命令的异同；
 第三部分我们将讨论一些很有用的高级技巧和调试中碰到的恼人问题的处理方法。
 
 ## 调试的模型
@@ -29,7 +27,7 @@ session_ids: [10198]
 
 1. **使用代码打印的日志**：通过日志定位错误发生的时间节点和对应的代码行。这依赖开发人员的预见性来决定要记录哪些有用的信息。如果日志记录偏少，或者关键节点缺乏日志，或者因为性能原因关闭了高频的调试日志，就可能导致搜索范围过大，无法高效地定位问题。
 2. **打印调试**：在代码中插入打印语句，重新编译代码，运行程序，通过打印信息检查程序的状态是否符合预期。这种方法效率较低，因为需要不断地重新编译和运行程序，并且在 Release 版本中还需要移除打印语句。
-![](images/截屏2024-07-07%2020.01.55.png)
+![](images/截屏2024-07-21%2020.33.59.png)
 
 好在 LLDB 调试器可以优化这个流程，不需要重新编译程序，就可以在程序运行中断时检查上下文的状态。调试模型将使用接下来要介绍的 LLDB 的两个关键调试能力：断点和变量表达式评估。
 ![](images/截屏2024-07-07%2020.06.57.png)
@@ -61,19 +59,20 @@ session_ids: [10198]
 2. 按钮事件响应函数执行时；
 3. 按钮构造函数的尾随闭包被执行时。
 
-为了进一步理解创建按钮时的程序状态，我们禁用#2，#3 两个断点，通过 p 命令检查“Watch Later”列表大小（之后我们会详细介绍这个命令）。顺便说一句，如果我们想在尾随闭包执行时中断，Xcode13 开始提供了一个更简便的方式，直接在对应闭包代码列位置前设置*列断点*，调试器可以精确的在执行到列对应的那个尾随闭包时停下来。
+为了进一步理解创建按钮时的程序状态，我们禁用#2，#3 两个断点，通过 p 命令检查“Watch Later”列表最新加入的视频的名字（之后我们会详细介绍这个命令）。顺便说一句，如果我们想在尾随闭包执行时中断，Xcode13 开始提供了一个更简便的方式，直接在对应闭包代码列位置前设置*列断点*，调试器可以精确的在执行到列对应的那个尾随闭包时停下来。
 
 #### 为断点关联自动触发动作
 
-每次断点触发时，在 LLDB console 通过 p 命令手动查看变量状态较为低效，有没有办法自动化这个流程呢？我们可以通过定义断点的触发 Action，把 `p watchItemList.count` 加入到 Action 中去，自动化这个流程。有两种方法来设置：
+每次断点触发时，在 LLDB console 通过 p 命令手动查看变量状态较为低效，有没有办法自动化这个流程呢？我们可以通过定义断点的触发 Action，把 `p watchItemList.last!.name` 加入到 Action 中去，自动化这个流程。有两种方法来设置：
 
-1. 通过在断点的面板设置动作栏，注意要全选 Continue After Action，这样执行完动作后就会继续执行代码；
+![](images/截屏2024-07-21%2020.41.12.png)
+1. 在断点的面板的动作 Action 栏，设置打印命令，注意要同时勾选 Continue After Action，这样执行完动作后就会继续执行代码；
 2. 在 LLDB console 通过命令行来设置，代码如下：
 
 ```
 (lldb) break command add
 (lldb) Enter your debugger command(s). Type 'DONE' to end.
-> p "current watch item list count is \(watchItemList.count)"
+> p "current watch item list count is \(watchItemList.last!.name)"
 > continue
 > DONE
 ```
@@ -349,16 +348,81 @@ The "nudge" command has been installed, type "help nudge" for detailed help.
 (lldb) nudge 0 -5 0x7fc04a60fff0
 ```
 
-这样我们就可以在运行时，实时调整元素位置了！关于如何编写 Python 脚本和 LLDB 进行互操作，可以查看 [LLDB 官方文档](https://lldb.llvm.org/use/python.html)。
+这样我们就可以在运行时，实时调整元素位置了！
 
+[Facebook的Chisel库](https://github.com/facebook/chisel/)包含了很多方便页面及其他调试的自定义命令，例如可以通过caflush命令强制刷新当前的页面，这样通过 expr 设置的视图的位置或者其他属性改动就可以立即生效。这样可以一定程度达到不重新编译代码，即时查看布局调整后的效果。其他细节，大家可以按照官方的指引，安装以后体验下。
 
-### 技巧 4 -  在汇编调用栈中打印方法实参
+### 技巧 4 - 如何编写 Python 脚本增强 LLDB 调试能力
+刚才提到了可以使用脚本来增强 LLDB 调试能力，我们用一个例子来简单说一下如何编写一个 Python 脚本。
+
+假设我们想要遍历打印某个 ViewController 下的子视图的信息，可以编写如下的 Python 脚本
+
+``` Python
+
+import lldb
+def print_view_hierarchy(debugger, command, result, internal_dict):
+    # 获取当前调试目标、进程、线程和帧
+    target = debugger.GetSelectedTarget()
+    process = target.GetProcess()
+    thread = process.GetSelectedThread()
+    frame = thread.GetSelectedFrame()
+    
+    # 查找变量
+    value = frame.FindVariable(command.strip())
+    if not value.IsValid():
+        result.PutCString("Invalid variable")
+        return
+    
+    # 打印视图层次结构
+    print_views_recursive(value, result, 0)
+
+def print_views_recursive(view, result, level):
+    indent = '  ' * level
+    view_class = view.GetObjectDescription()
+    
+    result.PutCString(f"{indent}{view_class}")
+    
+    subviews = view.GetChildMemberWithName("subviews")
+    subviews_count = subviews.GetNumChildren()
+    
+    for i in range(subviews_count):
+        subview = subviews.GetChildAtIndex(i)
+        print_views_recursive(subview, result, level + 1)
+
+def __lldb_init_module(debugger, internal_dict):
+    debugger.HandleCommand('command script add -f view_hierarchy_printer.print_view_hierarchy print_view_hierarchy')
+    print("The 'print_view_hierarchy' command has been installed. Usage: print_view_hierarchy <view_variable>")
+```
+
+解释下以上的代码
+
+1. 通过 `import lldb`来引入 LLDB 库
+2. 在`__lldb_init_module`方法注册自定义命令，命令的名字是`print_view_hierarchy`
+3. 在`print_view_hierarchy`方法中执行逻辑流程，注意到它通过 LLDB debugger 的能力先找到当前栈帧的变量信息，然后调用`print_views_recursive`执行具体遍历打印子视图的逻辑。在这个方法里，注意到调用一个对象实例的方法是通过`GetChildMemberWithName`，获取数组元素数和访问数组元素分别是通过`GetNumChildren`和`GetChildAtIndex`来做
+
+这样就可以在 LLDB 调试器加载使用了，如下所示
+
+``` LLDB
+(lldb) command script import /path/to/view_hierarchy_printer.py
+(lldb) break set -n viewDidLoad
+Breakpoint 1: where = MyApp`-[ViewController viewDidLoad] at ViewController.m:6, address = 0x0000000100000f4a
+(lldb) run
+(lldb) print_view_hierarchy self.view
+<UIView: 0x7fa1d070b610; frame = (0 0; 375 667); layer = <CALayer: 0x60000022e160>>
+  <UIView: 0x7fa1d070c290; frame = (50 50; 200 200); layer = <CALayer: 0x60000022e960>>
+    <UIView: 0x7fa1d070c7b0; frame = (10 10; 50 50); layer = <CALayer: 0x60000022ec60>>
+    <UIView: 0x7fa1d070ca90; frame = (70 70; 50 50); layer = <CALayer: 0x60000022f0a0>>
+```
+
+如果想要了解更多 Python LLDB API的信息，可以查看[LLDB Python API References](https://lldb.llvm.org/python_api.html)
+
+### 技巧 5 -  在汇编调用栈中打印方法实参
 
 在第二章，我们提到了符号断点（Symbolic Breakpoint），当我们不知道具体代码位置，只知道和某个方法调用或者某个变量的访问有关，就会用到它。例如，我们设置了符号断点 `[UILabel setText:]`，当所有页面下的 UILabel 类型对象在设置 `text` 属性的时候都会执行该断点。如果我们想知道哪个 Label 设置了什么 Text，该怎么做呢？
 
 注意到，断点触发会停在以汇编码显示的方法调用的入口位置。在方法调用时，LLDB 提供了预定义的变量，可以访问用作方法参数传递的寄存器的值。在 Objective-C 里，`$arg1` 存储调用方法的对象本身，`$arg2` 是方法 SEL 的地址，`$arg3` 是第一个参数的对象地址，这个例子也就是设置的 `text` 的 NSString 对象地址，直接 `po` 就可以显示 `text` 的内容。
 
-### 技巧 5 - Swift 调用栈中在 LLDB 调试器使用 Obj-C 代码命令
+### 技巧 6 - Swift 调用栈中在 LLDB 调试器使用 Obj-C 代码命令
 
 在日常调试中，使用 LLDB 命令 `po [self.view recursiveDescription]` 命令来输出页面视图结构是非常方便的，然而我们在 Swift 调用栈中使用这个命令的时候将打印以下错误：
 
@@ -369,7 +433,7 @@ self.view.recursiveDescription()
 ~~~~~^~~~ ~~~~~~~~~~~~~~~~~~~~
 ```
 
-其实我们可以通过 `expression -l objc -O --` 命令来使用 Objective-C 代码来输出我们想要的视图结构，记得 `self.view` 两边一定要加上 `\`` 符号。
+其实我们可以通过 `expression -l objc -O --` 命令来使用 Objective-C 代码来输出我们想要的视图结构，记得 `self.view` 两边一定要加上 ` 符号。
 
 ```
 expression -l objc -O -- [`self.view` recursiveDescription]
