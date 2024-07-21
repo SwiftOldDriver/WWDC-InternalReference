@@ -66,6 +66,7 @@ session_ids: [10198]
 每次断点触发时，在 LLDB console 通过 p 命令手动查看变量状态较为低效，有没有办法自动化这个流程呢？我们可以通过定义断点的触发 Action，把 `p watchItemList.last!.name` 加入到 Action 中去，自动化这个流程。有两种方法来设置：
 
 ![](images/截屏2024-07-21%2020.41.12.png)
+
 1. 在断点的面板的动作 Action 栏，设置打印命令，注意要同时勾选 Continue After Action，这样执行完动作后就会继续执行代码；
 2. 在 LLDB console 通过命令行来设置，代码如下：
 
@@ -350,9 +351,10 @@ The "nudge" command has been installed, type "help nudge" for detailed help.
 
 这样我们就可以在运行时，实时调整元素位置了！
 
-[Facebook的Chisel库](https://github.com/facebook/chisel/)包含了很多方便页面及其他调试的自定义命令，例如可以通过caflush命令强制刷新当前的页面，这样通过 expr 设置的视图的位置或者其他属性改动就可以立即生效。这样可以一定程度达到不重新编译代码，即时查看布局调整后的效果。其他细节，大家可以按照官方的指引，安装以后体验下。
+[Facebook的Chisel库](https://github.com/facebook/chisel/)包含了很多方便页面及其他调试的自定义命令，例如可以通过 caflush 命令强制刷新当前的页面，这样通过 expr 设置的视图的位置或者其他属性改动就可以立即生效。这样可以一定程度达到不重新编译代码，即时查看布局调整后的效果。其他细节，大家可以按照官方的指引，安装以后体验下。
 
 ### 技巧 4 - 如何编写 Python 脚本增强 LLDB 调试能力
+
 刚才提到了可以使用脚本来增强 LLDB 调试能力，我们用一个例子来简单说一下如何编写一个 Python 脚本。
 
 假设我们想要遍历打印某个 ViewController 下的子视图的信息，可以编写如下的 Python 脚本
@@ -414,7 +416,7 @@ Breakpoint 1: where = MyApp`-[ViewController viewDidLoad] at ViewController.m:6,
     <UIView: 0x7fa1d070ca90; frame = (70 70; 50 50); layer = <CALayer: 0x60000022f0a0>>
 ```
 
-如果想要了解更多 Python LLDB API的信息，可以查看[LLDB Python API References](https://lldb.llvm.org/python_api.html)
+如果想要了解更多 Python LLDB API 的信息，可以查看[LLDB Python API References](https://lldb.llvm.org/python_api.html)
 
 ### 技巧 5 -  在汇编调用栈中打印方法实参
 
