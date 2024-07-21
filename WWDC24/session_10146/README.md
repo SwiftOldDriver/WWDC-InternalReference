@@ -1,7 +1,7 @@
 ---
 session_ids: [10146]
 ---
-# WWDC24: Session 10146 - Demystify SwiftUI containers
+# WWDC24 10146 - Demystify SwiftUI containers
 
 ## 为自定义容器视图添加更多的能力
 
