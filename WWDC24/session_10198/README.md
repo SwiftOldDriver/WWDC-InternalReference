@@ -63,7 +63,7 @@ session_ids: [10198]
 
 #### 为断点关联自动触发动作
 
-每次断点触发时，在 LLDB console 通过 p 命令手动查看变量状态较为低效，有没有办法自动化这个流程呢？我们可以通过定义断点的触发 Action，把 `p watchItemList.last!.name` 加入到 Action 中去，自动化这个流程。有两种方法来设置：
+每次断点触发时，在 LLDB console 通过 p 命令手动查看变量状态较为低效，有没有办法自动化这个流程呢？我们可以通过定义断点的触发 Action，把 `p watchLater.last!.name` 加入到 Action 中去，自动化这个流程。有两种方法来设置：
 
 ![](images/截屏2024-07-21%2020.41.12.png)
 
@@ -73,7 +73,7 @@ session_ids: [10198]
 ```
 (lldb) break command add
 (lldb) Enter your debugger command(s). Type 'DONE' to end.
-> p "current watch item list count is \(watchItemList.last!.name)"
+> p "current watch item list count is \(watchLater.last!.name)"
 > continue
 > DONE
 ```
