@@ -56,15 +56,15 @@ flowchart LR
 
 ```swift
 List {
-  // 静态内容
-  Text("Scrolling in the Deep")
-  Text("Born to Build & Run")
-  Text("Some Body Like View")
+    // 静态内容
+    Text("Scrolling in the Deep")
+    Text("Born to Build & Run")
+    Text("Some Body Like View")
 
-  // 动态内容
-  ForEach(otherSongs) { song in
-    Text(song.title)
-  }
+    // 动态内容
+    ForEach(otherSongs) { song in
+        Text(song.title)
+    }
 }
 ```
 
@@ -104,18 +104,17 @@ var body: some View {
 ```swift
 // 使用TodoListContainer
 TodoListContainer {
-  // 没有数据时展示示范性的TodoItem
-  if data.isEmpty {
-    Text("添加一条今日的Todo事项吧～")    
-  }
+    // 没有数据时展示示范性的TodoItem
+    if data.isEmpty {
+        Text("添加一条今日的Todo事项吧～")    
+    }
 
-  // 正常展示
-  ForEach(data) { item in
-    Text(item.title)    
-  }
+    // 正常展示
+    ForEach(data) { item in
+        Text(item.title)    
+    }
 }
 ```
-
 
 
 ### 新增 API Group(subviewOf:)
@@ -147,7 +146,6 @@ var body: some View {
 `ForEach(subviewOf:)` 和 `Group(subviewOf:)`这两个新 API 大大加强了我们在 SwiftUI 中对 Subview 的操控能力，使得更多的 UI 逻辑可以在 SwiftUI 中直接完成。
 
 
-
 ### Declared View 和 Resolved View 以及 SubView 结构体
 
 对这两个新 API，大家一定会想了解更多，比如大家一定好奇`ForEach(subviewOf:)` 和 `Group(subviewOf:)` 是如何运作的，会对什么 样的 Subview 生效？`Group(subviewOf:)` 所返回的 Subview 数组是什么类型，可以用来做什么？
@@ -159,9 +157,7 @@ var body: some View {
 ![](./images/image_1GvDxW9R_E.png)
 
 
-
 而`ForEach(subviewOf:)` 和 `Group(subviewOf:)` API 所处理的 Subview 指的正是`Resolved View`，也就是解析后的 Subview。
-
 
 
 我们看看`ForEach(subviewOf:)`的源代码：
@@ -259,8 +255,8 @@ struct TodoListContainer<Content: View>: View  {
 
 ```swift
 extension ForEach {
-  public init<V>(sectionOf view: V, 
-                 @ViewBuilder content: @escaping (SectionConfiguration) -> Content)
+    public init<V>(sectionOf view: V, 
+                   @ViewBuilder content: @escaping (SectionConfiguration) -> Content)
 }
 
 ```
@@ -324,7 +320,7 @@ var body: some View {
 
 ```swift
 extension ContainerValues {
-  @Entry var isTodoItemDone: Bool = false
+    @Entry var isTodoItemDone: Bool = false
 }
 ```
 
@@ -336,16 +332,16 @@ extension ContainerValues {
 
 ```swift
 extension View {
-  func displayItemDone(_ isDone: Bool) -> some View {
-    containerValue(\.isTodoItemDone, isDone)
-  }
+    func displayItemDone(_ isDone: Bool) -> some View {
+        containerValue(\.isTodoItemDone, isDone)
+    }
 }
 ```
 
 最后我们在`TodoListContainer`的实现中读取这个 Section`上`的`containerValues`，并传给`ItemView`，对于已完成的项目，`ItemValue`会降低透明度进行显示
 
 ```swift
-  @ViewBuilder let content: Content
+    @ViewBuilder let content: Content
     var body: some View {
         HStack {
             ForEach(sectionOf: content) { sections in
