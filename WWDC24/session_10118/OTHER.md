@@ -4,11 +4,13 @@ session_ids: [10118]
 
 ## 个人介绍
 
-北京，丰台，Sharker，SKR ~，目前在负责支付 iOS SDK 相关研发，对于 UI 展现与编译较为感兴趣，[Github](https://github.com/AkaShark)
+北京，丰台，Sharker，SKR ~，目前在负责支付 iOS SDK 相关研发，对于 UI 展现与编译较为感兴趣，[Github](https://github.com/AkaShark)。
 
 ## 审核介绍
 
-Vong，iOS 开发者，擅长 App 性能调优，目前从事直播领域研发
+Vong，iOS 开发者，擅长 App 性能调优，目前从事直播领域研发。
+
+黄骋志，老司机技术成员，周报轮值主编。目前就职于字节跳动。
 
 ## 文章简介
 
