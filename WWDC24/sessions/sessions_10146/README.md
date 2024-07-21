@@ -56,12 +56,12 @@ flowchart LR
 
 ```swift
 List {
-// 静态内容
+  // 静态内容
   Text("Scrolling in the Deep")
   Text("Born to Build & Run")
   Text("Some Body Like View")
 
-// 动态内容
+  // 动态内容
   ForEach(otherSongs) { song in
     Text(song.title)
   }
@@ -104,12 +104,12 @@ var body: some View {
 ```swift
 // 使用TodoListContainer
 TodoListContainer {
-// 没有数据时展示示范性的TodoItem
+  // 没有数据时展示示范性的TodoItem
   if data.isEmpty {
     Text("添加一条今日的Todo事项吧～")    
   }
 
-// 正常展示
+  // 正常展示
   ForEach(data) { item in
     Text(item.title)    
   }
@@ -236,7 +236,7 @@ struct TodoListContainer<Content: View>: View  {
         }
         
         ForEach(data) {item in
-             // 此处设置padding
+            // 此处设置padding
             Text(item.title).padding()
         }
     }
@@ -286,7 +286,7 @@ public struct SectionConfiguration : Identifiable {
 var body: some View {
     HStack {
         ForEach(sectionOf: content) { sections in
-        // 遍历Section
+            // 遍历Section
             VStack {
                 // 展示Section的Header
                 sections.header
