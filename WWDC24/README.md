@@ -21,3 +21,5 @@
 [WWDC24 10146 - Demystify SwiftUI containers](./session_10146/README.md)
 
 [WWDC24 10136 - Swift 的新功能](./session_10136/README.md)
+
+[WWDC24 10198 - 运行、暂停、检查：探索如何使用 LLDB 进行有效调试](./session_10198/README.md)
