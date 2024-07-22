@@ -5,7 +5,7 @@
 
 ### 审核介绍
 
-李卓立(@dreampiggy)，7年 iOS 领域开发经验，开源项目SDWeblmage 维护者，Swift/LLVM 项目贡献者，现就职于字节跳动。如果对 Swift Compiler Toolchain，比如二进制大小优化，性能和启动优化，LLVM Pass，PGO插桩等有感兴趣的同学，欢迎通过社交媒体如 [Twitter](https://twitter.com/DreamingPiggy) /[GitHub](https://github.com/dreampiggy) / [Email](lizhuoli1126@126.com) 交流。
+李卓立(@dreampiggy)，7 年 iOS 领域开发经验，开源项目 SDWeblmage 维护者，Swift/LLVM 项目贡献者，现就职于字节跳动。如果对 Swift Compiler Toolchain，比如二进制大小优化，性能和启动优化，LLVM Pass，PGO插桩等有感兴趣的同学，欢迎通过社交媒体如 [Twitter](https://twitter.com/DreamingPiggy) /[GitHub](https://github.com/dreampiggy) / [Email](lizhuoli1126@126.com) 交流。
 
 黄骋志，老司机技术成员，周报轮值主编。目前就职于字节跳动。
 
