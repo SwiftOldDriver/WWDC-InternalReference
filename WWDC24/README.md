@@ -19,3 +19,5 @@
 [WWDC24 10118 - UIKit 新功能](./session_10118/README.md)
 
 [WWDC24 10146 - Demystify SwiftUI containers](./session_10146/README.md)
+
+[WWDC24 10136 - Swift 的新功能](./session_10136/README.md)
