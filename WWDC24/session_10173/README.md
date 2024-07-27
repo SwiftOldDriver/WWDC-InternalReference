@@ -22,7 +22,7 @@ session_ids: [1073]
 
 刚才说的“不同类型”的内存，实质是关注这块内存的 REGION TYPE 是什么。如果我们关注 __TEXT 这种类型的内存，还会发现同一个类型的虚拟内存也不是连续的。
 
-正如 REGION TYPE 里的 REGION 所表述的，某一种类型的内存是以 REGION 作为一个单位进行管理的，而每个 REGION 中会管理个数不一的 PAGE，PAGE 是内存管理的最小单位。因而 REGION 大小、某中类型内存的大小都是 PAGE 的倍数，或者说是 16 KB对齐的（64 bit 系统的 PAGE 大小通常是 16 KB）。
+正如 REGION TYPE 里的 REGION 所表述的，某一种类型的内存是以 REGION 作为一个单位进行管理的，而每个 REGION 中会管理个数不一的 PAGE，PAGE 是内存管理的最小单位。因而 REGION 大小、某中类型内存的大小都是 PAGE 的倍数，或者说是 16 KB 对齐的（64 bit 系统的 PAGE 大小通常是 16 KB）。
 
 而每种 pages 有三个状态：clean、compressed、dirty，递进的分类关系如下图所示。
 
@@ -31,6 +31,7 @@ session_ids: [1073]
 被申请了但没有被修改过的是 clean pages。dirty pages 则是被修改过的内存页。compressed pages 是 dirty pages 被系统策略进行了压缩的 pages，它们实际的物理内存占用更小，但是访问时需要解压缩。
 
 但在进行 App 优化时，我们究竟要关注什么呢？
+
 - 虚拟内存占用 == 所有 page 的数量 * page 的大小（16 KB）
 - 常规意义的内存占用 == dirty + compressed page 数量 * page 大小
 
@@ -42,18 +43,19 @@ session_ids: [1073]
 
 理解了这些概念后，我们举个例子来理解这三种 page 状态的转变：比如你 malloc 了 1 MB 内存，但没有对它进行后续操作，那么这部分的占用的内存都是 clean 的状态，而如果你通过 memset 对它们赋值则将导致这些内存从 clean 变成 dirty，被纳入 app footprint 的计算。而在后续的过程中，系统可能会将 dirty 的 page 压缩成 compressed 状态，但 app 并不需要关心这类转换操作。
 
-最后我们来简单了解一下各类 iPhone 机型 app 可以使用的虚拟、物理内存大小，这里引用一下掘金一篇文章的数据 [iOS APP虚拟内存用量初探](https://juejin.cn/post/7196931784328626234)：
+最后我们来简单了解一下各类 iPhone 机型 app 可以使用的虚拟、物理内存大小，这里引用一下掘金一篇文章的数据 [iOS APP 虚拟内存用量初探](https://juejin.cn/post/7196931784328626234)：
 
-- iPhone13Pro	
+- iPhone13Pro 
   - 可用虚拟内存 = 11.30 G
-  - 可用footprint = 3.00 G
+  - 可用 footprint = 3.00 G
 
 而使用 apple 提供的[虚拟内存扩充](https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_kernel_extended-virtual-addressing)、[物理扩充能力](https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_developer_kernel_increased-memory-limit)，我们可以将 app 可使用的虚拟、物理内存扩展到更大的值。
 
 扩充后：
-- iPhone13Pro	
+
+- iPhone13Pro 
   - 可用虚拟内存 = 59 G
-  - 可用footprint = 4.00 G
+  - 可用 footprint = 4.00 G
 
 需要注意不同的机型可用的内存值会有些差异，大家通过自己测试，得到更加详尽的数据列表。
 
