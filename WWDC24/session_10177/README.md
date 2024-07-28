@@ -48,7 +48,7 @@ let imageView = UIImageView(image: image)
 imageView.preferredImageDynamicRange = .high
 ```
 
-与 ISO HDR 相对应的概念，是苹果一直以来在自己的相机和照片 App 中使用的 Gain Map HDR，以往 Gain Map HDR 图片只能在照片 App 中以 HDR 形态显示，从iOS17开始开发者可以通过最新提供的 API （例如 UIKit 中的 UIImageReader）来获取 Gain Map HDR 图片并在自己的 App 中展示。开发者一般无需关心图片本身是否是 HDR 的，但如果想对于不同动态范围的图像做更精细化的操作，也可以通过例如  ```isHighDynamicRange``` 等 API 来查询。
+与 ISO HDR 相对应的概念，是苹果一直以来在自己的相机和照片 App 中使用的 Gain Map HDR，以往 Gain Map HDR 图片只能在照片 App 中以 HDR 形态显示，从 iOS17 开始开发者可以通过最新提供的 API （例如 UIKit 中的 UIImageReader）来获取 Gain Map HDR 图片并在自己的 App 中展示。开发者一般无需关心图片本身是否是 HDR 的，但如果想对于不同动态范围的图像做更精细化的操作，也可以通过例如  ```isHighDynamicRange``` 等 API 来查询。
 
 ```swift
 var config = UIImageReader.Configuration()
