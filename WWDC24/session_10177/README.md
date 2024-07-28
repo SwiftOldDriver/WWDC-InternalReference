@@ -11,23 +11,16 @@ WWDC24 主要介绍了苹果新推出的 HDR 图片标准：自适应 HDR （Ada
 
 ## HDR 基本概念
 
-HDR（High Dynamic Range 高动态范围）是一系列硬件和软件技术的集合，从拍摄、后处理到最终的显示，与传统的 SDR （Standard Dynamic Range 标准动态范围）相比，它能够表达更大的亮度范围，从而更贴近人眼的体验，实现对现实世界高保真的还原。
+HDR（High Dynamic Range 高动态范围）是一系列硬件和软件技术的集合，包括拍摄、后处理到最终的显示。与传统的 SDR （Standard Dynamic Range 标准动态范围）相比，它能够表达更大的亮度范围。如下图所示，人眼能够感知 10^6 尼特的阳光，传统的 SDR 所能表达的最大亮度只有 100 尼特，该亮度在 HDR 技术中被视为基线，称为 reference white。
 
 ![brightness comparison](./images/hdr_comparison.png)
 
-以下图的落日场景为例，人眼能够同时捕获暗部（草地）和亮部（天空）的细节，但使用相机拍摄时，由于传感器可捕获的动态范围远远小于人眼，总会有一些细节因为曝光不足或曝光过度而丢失。
+HDR 能够表达的亮度范围远超 SDR，其最大亮度与 reference white 之间的距离被称为 headroom，反映了表达 HDR 内容的能力。不同的显示设备拥有不同的 headroom。
 
-![underexpose](./images/underexpose.avif)![overexpose](./images/overexpose.avif)
+![headroom](./images/headroom.png)
+![display_headroom](./images/hdr_display_support.png)
 
-通过 HDR 拍摄技术，拍摄者可以捕捉多张不同曝光度的图像，最终通过软件进行合成，在拍摄设备不变的情况下，这个图片集合相比于单张图片，实际上扩大了捕获的亮度范围，从而给最终还原更多细节留下了空间。
-
-![wellexpose](./images/wellexpose.avif)
-
-完成 HDR 图片的拍摄后，也依赖显示设备和渲染技术，来还原其所记录的高亮度范围的信息。标准 SDR 的最大亮度通常被称为 reference white，在苹果的 EDR （Extened Dynamic Range 扩展动态范围）渲染技术中，当前显示设备的峰值亮度为 EDR Max，其与 reference white 之间的距离，被称为 headroom。Headroom 的大小一般使用 EDR Max 与 reference white 之间的比例或比例的对数来度量，反映了展示 HDR 内容的能力，通常与设备的峰值亮度以及设备当前的亮度设置有关。
-
-![edr_headroom](./images/edr_headroom.png)
-
-HDR 图片也有 headroom 的概念，反映了图片中最大亮度与 reference white 之间的距离，当显示设备当前的 headroom 小于图片的 headroom 时，超出的部分就面临裁剪（clipping），无论其亮度值为多少，都以当前的最大亮度显示，这样的做法显然会造成这部分信息的丢失。
+除了显示设备外，HDR 图片也有 headroom 的概念，反映了图片中最大亮度与 reference white 之间的距离，当显示设备当前的 headroom 小于图片的 headroom 时，超出的部分就面临裁剪（clipping），无论其亮度值为多少，都以当前设备的最大亮度显示，这样的做法显然会造成这部分信息的丢失。
 
 ![clipping](./images/clipping.png)
 
@@ -35,9 +28,17 @@ HDR 图片也有 headroom 的概念，反映了图片中最大亮度与 referenc
 
 ![tone mapping](./images/tone_mapping.png)
 
+下面的落日场景是 HDR 技术的典型体现。人眼能够同时捕获暗部（草地）和亮部（天空）的细节，但使用相机拍摄时，由于传感器可捕获的动态范围远远小于人眼，总会有一些细节因为曝光不足或曝光过度而丢失。
+
+![underexpose](./images/underexpose.avif)![overexpose](./images/overexpose.avif) |
+
+通过 HDR 拍摄技术，拍摄者可以捕捉多张不同曝光度的图像，通过软件进行合成，在拍摄设备不变的情况下，这个图片集合相比于单张图片，实际上扩大了捕获的亮度范围，最终在 HDR 设备上能够进行更保真的还原。
+
+![wellexpose](./images/wellexpose.avif)
+
 ## 往年 WWDC HDR 相关内容回顾
 
-WWDC21 首先在 MacOS 上引入了 EDR，提供对 HDR 内容的渲染支持。在 WWDC22 上进一步将这种技术扩展到 iOS/iPadOS 中，并增加了参考模式（Reference Mode），为专业工作者提供更好的支持，同时也介绍了如何借助 Core Image、Metal 和 SwiftUI 显示 EDR 内容以及如何利用 AVFoundation 和 Metal 显示 HDR 视频，可以阅读 [WWDC22 内参](https://xiaozhuanlan.com/topic/1874509623)了解详细情况。
+WWDC21 首先在 MacOS 上引入了 EDR（Extended Dynamic Range）技术，提供对 HDR 内容的渲染支持。在 WWDC22 上进一步将这种技术扩展到 iOS/iPadOS 中，并增加了参考模式（Reference Mode），为专业工作者提供更好的支持，同时也介绍了如何借助 Core Image、Metal 和 SwiftUI 显示 EDR 内容以及如何利用 AVFoundation 和 Metal 显示 HDR 视频，可以阅读 [WWDC22 内参](https://xiaozhuanlan.com/topic/1874509623)了解详细情况。
 
 WWDC23 介绍了苹果推动建设的 HDR 图片技术标准：[ISO/TS 22028-5](https://www.iso.org/standard/81863.html)。该标准定义了一种无损编码 HDR 内容的方式，遵循这种标准的 HDR 图片，也被苹果称为 ISO HDR。SwiftUI、UIKit 和 AppKit 能够以极简的 API 显示 ISO HDR 内容，并且通过设置 DynamicRange，将复杂的 色调映射工作交给系统来完成。
 
@@ -53,6 +54,8 @@ imageView.preferredImageDynamicRange = .high
 var config = UIImageReader.Configuration()
 config.prefersHighDynamicRange = true
 let image = reader.image(fileURL: url)
+
+let isHighDynamicRange = image.isHighDynamicRange
 ```
 
 Gain Map HDR 与当今 WWDC24 的主角 Adaptive HDR 有着相同的理念，后者正是苹果在尝试对前者进行标准化时的产物，下面将在介绍 Adaptive HDR 的过程中，简单叙述它们的理念以及两者的不同。
