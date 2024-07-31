@@ -23,3 +23,7 @@
 [WWDC24 10136 - Swift 的新功能](./session_10136/README.md)
 
 [WWDC24 10198 - 运行、暂停、检查：探索如何使用 LLDB 进行有效调试](./session_10198/README.md)
+
+[WWDC24 10162 - 多次拍摄保持色彩一致](./session_10162/README.md)
+
+[WWDC24 10149 - 在 SwiftUI 中设计窗口](./session_10149/README.md)
