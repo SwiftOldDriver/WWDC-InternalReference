@@ -5,7 +5,7 @@ session_ids: [10149]
 
 ---
 
-# Session 10149 - 在 SwiftUI 中设计窗口
+# WWDC24 10149 - 在 SwiftUI 中设计窗口
 
 本文基于 WWDC24 -  Session 10149 [Work with windows in SwiftUI](https://developer.apple.com/videos/play/wwdc2024/10149/) 梳理
 
