@@ -10,11 +10,22 @@ Accessibility (无障碍辅助功能，后续文章中简称为可访问性) 是
 
 接下来，我们将讨论开发者可能需要向 SwiftUI 提供更多信息以提高应用中视图的可访问性的地方。最后，我们将探索如何构建丰富的交互，其中涉及到点击和拖放。
 
-但在此之前先来了解一下什么是可访问性。
+但在此之前先来回顾一下什么是可访问性。
 
 ## 什么是可访问性
 
-主要聚焦VoiceOver
+在 iOS 开发中，**Accessibility（可访问性）** 指的是一系列特性、服务和 API，它们使得苹果的设备和操作系统能够为更广泛的人群提供服务，包括那些有视觉、听觉、物理或认知障碍的用户。可访问性的目标是确保每个人都能够使用和享受技术带来的好处，无论他们的个人能力如何。
+
+以下是一些主要的可访问性特性和概念：
+1. **VoiceOver**：又称为旁白，它是一个屏幕阅读器，为视力受限的用户提供音频反馈。它可以朗读屏幕上的文本、按钮和控件等信息。
+2. **Switch Control**：允许用户使用一个或多个切换（如外部开关设备）来控制 iOS 设备，这对于运动受限的用户来说非常有用。
+3. **Voice Control**：通过语音命令控制设备，无需使用触摸屏幕或物理按钮。
+4. **Closed Captions（闭路字幕）**：为视频内容提供文字描述，帮助听力受限的用户理解对话和重要的声音提示。
+5. **AssistiveTouch（辅助触控）**：为那些无法使用物理按钮的用户在屏幕上提供虚拟的按钮和控件。
+
+其中 VoiceOver 是被广泛使用的可访问性特性之一，可以参考以下官网链接进行体验 VoiceOver 的操作方式和功能：
+1. [在 iPhone 上打开和练习“旁白”](https://support.apple.com/zh-cn/guide/iphone/iph3e2e415f/ios)
+2. [在 iPhone 上使用“旁白”手势](https://support.apple.com/zh-cn/guide/iphone/iph3e2e2281/ios)
 
 ## 前言
 
@@ -27,11 +38,17 @@ SwiftUI 从一开始就内置了对视图的可访问性支持，提供额外信
 SwiftUI 的主要输出之一就是创建可访问性元素（Accessibility Element）。可访问性元素是用来呈现和与应用程序内容交互的基本构建单元，它包括 VoiceOver、Voice Control 和 Switch Control 等。一个可访问性元素代表一个或多个视图，并提供属性（Attributes）来描述视图的内容，以及从点击到复杂手势的交互方式（Actions）。
 ![accessibility_elements](./images/accessibility_elements.png)
 
-【todo：根据另外一个session补充讲解可访问性元素s以及Accessibility tree】
-
 像 VoiceOver 这样的可访问性技术，它只能通过可访问性元素才能与应用程序交互。所以，视图内容中必须要包含可访问性元素才能被 VoiceOver 访问到。
 
-【todo：补充描述 voice over就是整合信息进行朗读，下面会举例】
+## 可访问性树
+
+为了更好地理解后续的内容，在这里补充说明一下可访问性树(Accessibility Tree)的概念。
+
+可访问性树是 SwiftUI 为所有的可访问性元素创建的树状数据结构，它可以帮助可访问性系统在不同可访问性元素之间进行导航。
+![accessibility_tree_ui](./images/accessibility_tree_ui.png)
+
+并且，它只会提取 SwiftUI 视图 body 中有可访问性元素的视图对象，如下图所示中的一个 Text 和两个 Button 对象。其中灰色的 Spacer 和 HStack 并不会被加入到可访问性树种。更多关于可访问性树的资料，请参考：[Accessibility in SwiftUI](https://developer.apple.com/videos/play/wwdc2019/238/)
+![accessibility_tree_valid_elements](./images/accessibility_tree_valid_elements.png)
   
 ## 可访问性标签
 接下来讲解应用程序中 Toggle 视图，它用来控制用户的朋友们是否可以评论用户发布的旅行日记。
