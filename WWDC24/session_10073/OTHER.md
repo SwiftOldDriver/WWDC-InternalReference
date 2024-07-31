@@ -6,7 +6,7 @@
 
 ## 自我介绍
 
-Jason，JXCategoryView 的作者，希望能做 iOS 开发直到退休^_^
+Jason，[JXCategoryView](https://github.com/pujiaxin33/JXCategoryView) 的作者，希望能做 iOS 开发直到退休^_^
 
 ## 审核介绍
 
