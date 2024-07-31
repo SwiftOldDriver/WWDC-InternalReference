@@ -2,7 +2,9 @@
 session_ids: [10073]
 ---
 
-# WWDC24 10073 - SwiftUI 中的无障碍辅助功能更新
+# WWDC24 10073 - Catch up on accessibility in SwiftUI
+
+本文基于 [Session 10073](https://developer.apple.com/videos/play/wwdc2024/10073/) 梳理。
 
 Accessibility (无障碍辅助功能，后续文章中简称为可访问性) 是任何优秀应用程序的基本组成部分，它允许每个人创建、连接和体验开发者构建的功能。SwiftUI 会帮助开发者在苹果平台上实现这些体验。
 
