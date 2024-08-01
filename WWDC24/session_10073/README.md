@@ -42,6 +42,7 @@ SwiftUI 从一开始就内置了对视图的可访问性支持，提供额外信
 用户甚至可以为不同朋友的回复创建自定义声音！让我们继续探索 SwiftUI 如何实现这些功能所对应的可访问性特性。
 
 SwiftUI 的主要输出之一就是创建可访问性元素（Accessibility Element）。可访问性元素是用来呈现和与应用程序内容交互的基本构建单元，它包括 VoiceOver、Voice Control 和 Switch Control 等。一个可访问性元素代表一个或多个视图，并提供属性（Attributes）来描述视图的内容，以及从点击到复杂手势的交互方式（Actions）。
+
 ![accessibility_elements](./images/accessibility_elements.png)
 
 像 VoiceOver 这样的可访问性技术，它只能通过可访问性元素才能与应用程序交互。所以，视图内容中必须要包含可访问性元素才能被 VoiceOver 访问到。
@@ -51,9 +52,11 @@ SwiftUI 的主要输出之一就是创建可访问性元素（Accessibility Elem
 为了更好地理解后续的内容，在这里补充说明一下可访问性树(Accessibility Tree)的概念。
 
 可访问性树是 SwiftUI 为所有的可访问性元素创建的树状数据结构，它可以帮助可访问性系统在不同可访问性元素之间进行导航。
+
 ![accessibility_tree_ui](./images/accessibility_tree_ui.png)
 
 并且，它只会提取 SwiftUI 视图 body 中有可访问性元素的视图对象，如下图所示中的一个 Text 和两个 Button 对象。其中灰色的 Spacer 和 HStack 并不会被加入到可访问性树种。更多关于可访问性树的资料，请参考：[Accessibility in SwiftUI](https://developer.apple.com/videos/play/wwdc2019/238/)
+
 ![accessibility_tree_valid_elements](./images/accessibility_tree_valid_elements.png)
   
 ## 可访问性标签
@@ -61,17 +64,21 @@ SwiftUI 的主要输出之一就是创建可访问性元素（Accessibility Elem
 接下来讲解应用程序中 Toggle 视图，它用来控制用户的朋友们是否可以评论用户发布的旅行日记。
 
 Toggle 视图被声明在 view 的 body 中，SwiftUI 使用它来形成输出，包括屏幕上显示的内容和可访问性元素。
+
 ![toggle_view](./images/toggle_view.png)
 
 对于可访问性元素，"Comments" 文本被作为标签（Label）。`isToggle` 和 `isSelected` 特性(Traits)被应用于元素。并提供了一个按压操作来切换设置。
+
 ![toggle_attributes](./images/toggle_attributes.png)
 
 当 VoiceOver 聚焦于 Toggle 视图时，它的描述信息会被朗读，如果双击屏幕将会执行按压操作。VoiceOver 会将 Toggle 视图朗读为 "Settings, heading, comments, switch button off, on"，SwiftUI 将 "Comments" 文本和 Toggle 视图组合成了一个单一元素。
+
 ![toggle_one_element](./images/toggle_one_element.png)
 
 多个视图表示为一个可访问性元素，以简化导航（在 VoiceOver 中，用户通过左滑或者右滑来切换聚焦目标。），并将相关信息连接在一起。在改变视图视觉外观的同时，又不会失去系统内置的可访问性的支持，SwiftUI 强大的视图样式系统是其中的关键。
 
 即使在改变视图的视觉样式（View styles）时，可访问性元素的 Attributes 和 Actions 也会应用于视图，并且不会被改变。换言之，VoiceOver 并不会关心 UI 的具体样式，而是关心它的可被理解的信息和交互。
+
 ![toggle_view_style](./images/toggle_view_style.png)
 
 视觉样式在许多不同类型的控件上得到支持，比如控件类的 Button 和 Toggle ，分组类的 Label 和 LabeledContent ，以及指示器类的如 Progress 和 Gauge 。尽可能去使用视觉样式系统而不是创建自定义视图，否则，开发者将失去系统默认自动配置的可访问性元素，并不得不重新配置这些可访问性元素到自定义视图上。使用视觉样式和内置视图将在应用程序中提供良好的可访问性体验。并且，向 SwiftUI 提供的可访问性信息越多，体验就会越好。开发者可以使用可访问性修饰符（Accessibility Modifier）提供这些信息。
@@ -120,6 +127,7 @@ var body: some View {
 ![combine_merge_into_one](./images/combine_merge_into_one.png)
 
 优化之后，整个评论卡片视图会被 VoiceOver 朗读为 "Unread, Looks like a wonderful time, Nick, button"。然后向上滑动切换 Action 的时候会依次朗读 "Favorite, reply"。
+
 ![comment_card](./images/comment_card.png)
 
 ### 条件性可访问性标签
@@ -127,6 +135,7 @@ var body: some View {
 第三个优化点是当收藏按钮的状态发生变化的时候，可访问性元素的标签也需要跟着一同更新。让我们看看在优化之前都有哪些问题点。
 
 当双击收藏评论按钮时，它变成了超级收藏。超级收藏使用一个新 Symbol 来表示它们的重要性。但这个变化引起了一个新问题，现在 VoiceOver 朗读了新 Symbol 的名字 sparkle，而不是它所代表的超级收藏含义。
+
 ![super_favorite_ui](./images/super_favorite_ui.png)
 
 当在视图中使用 Symbol 时，可访问性系统会默认使用它的名字当做可访问性标签。我们可以使用如下图所示的修饰符去覆盖掉默认的可访问性标签，以提供更明确的定义。
@@ -152,6 +161,7 @@ var body: some View {
 下面将在 macOS 系统上展示如何优化悬停交互，当鼠标悬停在旅行日记图像上时，位置、录音和海滩评级的按钮将会出现。
 
 像悬停视图这样动态出现的内容，可能需要更长的时间才能通过可访问性技术或触摸以外的替代输入源导航到，如键盘（Keyboard）或开关（Switch）。
+
 ![hover_trip_ui](./images/hover_trip_ui.png)
 
 但 VoiceOver 必须执行很多步骤才能导航到这个视图：
@@ -162,6 +172,7 @@ var body: some View {
 ![hover_in_voiceover](./images/hover_in_voiceover.png)
 
 这种交互可以通过将悬停视图的可访问性 Attributes 和 Actions 作为主视图的一部分来进行简化。
+
 ![hover_into_trip_view](./images/hover_into_trip_view.png)
 
 为了让悬浮控件更容易被访问，可以将它们变成 Trip View 上的自定义 Action 。
@@ -180,6 +191,7 @@ var body: some View {
 ```
 
 上图中 `accessibilityActions` 修饰符接受在 `overlay` 修饰符同样的 `MessageAttachments` 视图，它提取相同的控件并将它们转换为旅行视图上的自定义 Action。现在，悬停覆盖层和旅行视图的自定义 Action 可以共享相同的逻辑。有了这个改变，VoiceOver 现在可以在不显示悬浮视图的情况，去支持自定义的 Action。
+
 ![hover_message_attachments](./images/hover_message_attachments.png)
 
 ### 可访问性标签（可更新）
@@ -192,6 +204,7 @@ var body: some View {
 比如把评级信息附加到旅行视图元素的标签上，以简化使用 VoiceOver 找到它。
 
 在下图中的可访问性标签修饰器中，现在也可以接受一个视图，并将从视图中提取文本并将其设置在现有元素的标签上。也就是说，它允许根据实际情况去动态地拼接额外的信息到最终的标签上。
+
 ![label_optimize_append](./images/label_optimize_append.png)
 
 优化之后，在 VoiceOver 朗读旅行视图的时候，会在有评级信息的情况下，一同朗读评级信息："Half star, Saturday, It was a beautiful weekend! The waves were calm, the sun was shining on the bridge, and there wasn't a cloud in the sky.Image" 
@@ -206,6 +219,7 @@ var body: some View {
 接下来，我们要实现使用拖放为朋友们创建自定义提示音，当他们评论时就会播放对应的自定义提示音。
 
 让我们用 VoiceOver 试试，我可以拖动多达三种声音为联系人创建提示音。
+
 ![drag_ui](./images/drag_ui.png)
 
 可访问性拖放点修饰符定义了开发者视图中可以拖或放的点。在评论提示音视图上，我定义了三个下放点，描述了我可以为提示音设置的三种不同声音。
@@ -228,6 +242,7 @@ var body: some View {
 可访问性交互可以扩展到开发者的应用程序之外，比如交互式 Widget 。在 Widget 视图中不会实时更新，所以，之前介绍的可访问性交互修饰符不会起作用。
 
 应用程序意图（App Intent）允许 Widget 创建像 Buttons 和 Toggles 这样的交互视图，但可能有一些地方可以通过额外的自定义操作来提升 Widget 的体验。下面会在 Widget 中实现一个功能，让用户可以快速评价和发布去过的海滩日记。只需点击一下，用户甚至可以更新我最喜欢的海滩的排名。每个按钮都由 SwiftUI 标记，并且可以由 VoiceOver 激活。
+
 ![widget_ui](./images/widget_ui.png)
 
 `accessibilityAction` 修饰符现在可以接受一个应用程序意图，当修饰符被调用时将执行该意图并更新开发者的 Widget。
