@@ -10,7 +10,7 @@ Jason，[JXCategoryView](https://github.com/pujiaxin33/JXCategoryView) 的作者
 
 ## 审核介绍
 
-
+士土 Edmond 木，对 Rust 和 Swift 比较感兴趣，目前主要专注 Flutter 渲染上。[Github Page](https://looseyi.github.io/)
 
 ## 文章简介
 
