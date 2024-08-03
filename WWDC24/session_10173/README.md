@@ -20,7 +20,7 @@ session_ids: [1073]
 
 ![图片](./images/1.5.jpg)
 
-刚才说的“不同类型”的内存，实质是关注这块内存的 REGION TYPE 是什么。如果我们关注 __TEXT 这种类型的内存，还会发现同一个类型的虚拟内存也不是连续的。
+刚才说的“不同类型”的内存，实质是关注这块内存的 REGION TYPE 是什么。
 
 正如 REGION TYPE 里的 REGION 所表述的，某一种类型的内存是以 REGION 作为一个单位进行管理的，而每个 REGION 中会管理个数不一的 PAGE，PAGE 是内存管理的最小单位。因而 REGION 大小、某中类型内存的大小都是 PAGE 的倍数，或者说是 16 KB 对齐的（64 bit 系统的 PAGE 大小通常是 16 KB）。
 
@@ -61,7 +61,7 @@ session_ids: [1073]
 
 ### Heap memory 是什么
 
-在编写代码时，我们开发着最常交互的内存区域就是堆和栈，今天我们关注的是堆内存的分析。我们在使用 `malloc`或者使用 `new`等方法时，实际上都会在 Heap 中申请内存。相对应的，如果我们直接使用 `mmap`或者 `vm_allocation`申请虚拟内存，则和 Heap 关系就不大了。
+在编写代码时，我们开发着最常交互的内存区域就是堆和栈，今天我们关注的是堆内存的分析。我们在使用 `malloc`或者使用 `new`等方法时，实际上都会在 Heap 中申请内存。相对应的，如果我们直接使用 `mmap`或者 `vm_allocation`申请内存，则和 Heap 关系就不大了。
 
 因此，本文的主题 Analyze Heap Memory 可以简单理解为涵盖了除 `mmap` 和  `vm_allocation` 之外大部内存操作。
 
@@ -78,21 +78,21 @@ session_ids: [1073]
 
 ### Memory Graph
 
-在 Xcode 中可以随时暂停 App 的运行，使用 memory graph 工具创建当前内存的快照，通过 memory graph 工具可以分析内存节点之间的引用关系，帮助我们定位为什么某一块内存没有被释放。
+在 Xcode 中可以随时暂停 App 的运行，使用 Memory Graph 工具创建当前内存的快照，通过 Memory Graph 工具可以分析内存节点之间的引用关系，帮助我们定位为什么某一块内存没有被释放。
 
 ![图片](./images/image_4.png)
 
 
-并且，如果在 Xcode 的 scheme -> diagnostics 中勾选了 MallocStackLogging，memory graph 还能显示处每个内存节点创建堆栈。本文接下来利用 memory graph 的内容默认都开启了 MallocStackLogging 选项（位置如下图），而更细节的配置选项中，一般选择 `Live Allocations Only` 即可。
+并且，如果在 Xcode 的 scheme -> diagnostics 中勾选了 MallocStackLogging，Memory Graph 还能显示处每个内存节点创建堆栈。本文接下来利用 Memory Graph 的内容默认都开启了 MallocStackLogging 选项（位置如下图），而更细节的配置选项中，一般选择 `Live Allocations Only` 即可。
 
 ![图片](./images/image_5.png)
 
 
-利用 memory graph 虽然可以探明具体节点的引用关系，但针对分析全局内存占用的需求而言，它不能直观的排序展示出哪块内存占用较多，这时需要引处第三个工具 Allocations。
+利用 Memory Graph 虽然可以探明具体节点的引用关系，但针对分析全局内存占用的需求而言，它不能直观的排序展示出哪块内存占用较多，这时需要引处第三个工具 Allocations。
 
 ### Instruments - Allocations
 
-在 Instruments 中选择 Allocations 模板，或者将 memory graph 分享保存的 `.graph` 文件（File -> Export Memory Graph）利用 Instruments 打开，我们可以看到如下的数据：
+在 Instruments 中选择 Allocations 模板，或者将 Memory Graph 分享保存的 `.graph` 文件（File -> Export Memory Graph）利用 Instruments 打开，我们可以看到如下的数据：
 
 ![图片](./images/image_6.png)
 
