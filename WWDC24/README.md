@@ -29,3 +29,5 @@
 [WWDC24 10149 - 在 SwiftUI 中设计窗口](./session_10149/README.md)
 
 [WWDC24 10177 - 用 HDR 图片点亮你的 App](./session_10177/README.md)
+
+[WWDC24 10073 - Catch up on accessibility in SwiftUI](./session_10073/README.md)
