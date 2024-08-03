@@ -2,7 +2,7 @@
 session_ids: [10177]
 ---
 
-# WWDC24 10177 - Use HDR for dynamic image experiences in your app
+# WWDC24 10177 - 用 HDR 图片点亮你的 App
 
 本文基于 [Session 10177](https://developer.apple.com/videos/play/wwdc2024/10177/) 整理
 
