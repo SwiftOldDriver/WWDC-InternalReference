@@ -27,3 +27,5 @@
 [WWDC24 10162 - 多次拍摄保持色彩一致](./session_10162/README.md)
 
 [WWDC24 10149 - 在 SwiftUI 中设计窗口](./session_10149/README.md)
+
+[WWDC24 10177 - Use HDR for dynamic image experiences in your app](./session_10177/README.md)

@@ -4,7 +4,6 @@ session_ids: [10177]
 
 # WWDC24 10177 - Use HDR for dynamic image experiences in your app
 
-![banner](./images/cover.png)
 本文基于 [Session 10177](https://developer.apple.com/videos/play/wwdc2024/10177/) 整理
 
 WWDC24 主要介绍了苹果新推出的 HDR 图片标准：自适应 HDR （Adaptive HDR）。自适应 HDR 技术通过在同一文件中存储 SDR 基线图以及 HDR 显示所需要的元数据（metadata）和增益图（Gain Map），实现向前兼容 SDR 系统、解码器和应用程序的能力，且有助于在不同的显示环境下进行色调映射（tone mapping）。在介绍如何在自适应 HDR 标准下实现对 HDR 图片的读写和处理前，文本将简要介绍 HDR 的基本概念并回顾往年 WWDC 中与 HDR 有关的内容。
