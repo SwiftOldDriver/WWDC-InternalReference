@@ -10,7 +10,57 @@ session_ids: [10125]
 
 ## Passkey 简介
 
+### Passkey 概览
 PassKey 是 Web 行业通用无密码登录标准 WebAuthn 的 iOS 和 Android 系统内的实现，通过创建公私钥对和生物识别技术结合，来替换现有的互联网行业通行的「用户名 + 密码」登录逻辑。创建 Passkey 时，App 和网站传入域名和用户名，设备创建公私钥对，公钥回传给 App 并保存于服务器上，私钥保存在操作系统内；之后每次登陆时，App 或网站传入一个 challenge 随机字符串以供私钥签名，操作系统回传签名结果，服务端使用先前保存的公钥进行验证，验证通过，即视为正确的用户登录。由于没有密码，也不暴露私钥，安全性更高，每次登陆流程都是基于公私钥验签，因此完全没有钓鱼攻击风险。
+### 什么是 WebAuthn
+`WebAuthn`（Web Authentication）是一种现代的网络认证标准，由全球互联网技术标准化组织 World Wide Web Consortium (W3C) 和 FIDO Alliance（Fast Identity Online）共同开发。其目标是为网络提供一个安全、可靠且无密码的身份验证方法。
+1. 无密码登录：WebAuthn 允许用户使用生物识别（如指纹或面部识别）或物理安全密钥设备（如 NFC Key 或蓝牙物理秘钥）来进行身份验证，而不是传统的用户名和密码。
+2. 公私密钥对：`WebAuthn` 使用公私密钥对的方式进行身份验证。当用户首次注册时，会生成一个私钥和一个公钥。私钥存储在用户的设备上并保持私密，而公钥则发送给服务器。在后续的登录过程中，服务器会向用户的设备发起一个随机字符串，用户的设备使用私钥对其进行签名，然后签名结果返回给服务器进行验证。
+3. 防范各种攻击：由于身份验证是基于设备或生物识别，而不是可以被窃取的密码，且验证包括证书链、域名验证等机制，因此 `WebAuthn` 提供了对抗钓鱼攻击的能力。
+4. 跨平台：`WebAuthn` 是一个跨平台的标准，这意味着它可以在各种设备、操作系统和浏览器中使用，包括桌面、手机和其他设备。
+5. 与其他技术兼容：尽管 WebAuthn 旨在提供无密码的体验，但它也可以与传统的用户名和密码或其他认证方法（如短信验证码）结合使用，以提供多因素认证。
+
+### Passkey 的流程与实现
+
+- 生成逻辑
+    1. 在生成 Passkey 时，需要提供一个网站域名、用户名、UserID，然后交付给 iOS 系统，系统会弹窗
+    2. 用户点击「继续」之后， iOS 系统会验证用户 FaceID 或 TouchID 的生物验证信息，并返回公钥，私钥则存储在iCloud KeyChain。
+![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-08-04-17227560169823.jpg)
+
+
+- 签名逻辑
+    1. 签名（登陆）时，服务器向 iOS 提供一个任意随机字符串，然后请求 iOS 执行登录操作
+    2. 提交登录申请后， iOS 会要求用户选择对应账户，并验证用户 FaceID 或 TouchID 生物识别信息
+    3. 生物识别验证完成后，App 就会获得私钥的签名信息，该公私钥验证签名的算法是ES256  secp256r1 曲线
+![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-08-04-17227560543909.jpg)
+
+![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-08-04-17227560604532.jpg)
+- Passkey 实际操作演示视频
+[193_1698245161.mp4](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/193_1698245161.mp4)
+- 安全与同步
+    1. Passkey 存储在  iCloud KeyChain  内，而 iCloud KeyChain 实现了安全信息的跨设备同步:
+一台设备想要同步并访问一个用户的 iCloud KeyChain 需要拥有用户的 AppleID、已有设备的锁屏密码、2FA 或短信验证码验证和独立的 iCloud 安全码，整个 iCloud KeyChain 内容托管在硬件安全模块 HSM 集群上，集群中每个成员都有独立秘钥用于对托管内容进行加密。
+- 备份逻辑
+    1. Passkey 的私钥始终对开发者不可见，所以 Passkey 无法针对私钥备份。
+-  跨设备扫码 PassKey 登录，如何在临近设备上登录
+    1. Passkey 跨设备的登录方案，补全了用户在陌生设备上完成登录的诉求。
+    2. 跨设备扫描时会使用蓝牙协议创建一个透明的中继服务器，然后进行签名操作，私钥没有从原始设备中流出，仍然保证了安全性，且蓝牙的物理近场限制，伪造钓鱼攻击是不可行的；
+    3. 对于整个登录过程而言，参与方只有设备和网络浏览器或 iOS App，登录方并不参与这其中的任何一个环节，因此确保了 passkey 在跨端登录时的安全性；
+    4. 当密钥确认完成后，这两个设备会使用刚刚确认的密钥来完成一个标准的 CTAP(Client to Authenticator Protocol, 客户端到身份验证器协议) 操作；
+
+![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-08-04-17227561899105.jpg)
+![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-08-04-17227561939577.jpg)
+![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-08-04-17227562000523.jpg)
+
+### 目前现行 iOS 17 的Passkey 具体的创建与登录代码
+1. 创建 Passkey
+![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-08-04-17227566304154.jpg)
+1. 使用 Passkey 完成用户登录
+![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-08-04-17227567007868.jpg)
+
+2. ASAuthorizationControllerDelegate 回调处理
+ ![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-08-04-17227566873089.jpg)
+
 
 ## 本文主题简介
 
@@ -74,6 +124,14 @@ Passkey 既不能被忘记，也一般无需重置，假设一个帐户创建时
 在 Mac OS 中，用户可以从通知栏快速访问密码，该特性类似于现行流行的三方 1Password 密码管理器
 ![](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-06-30-17197475467585.jpg)
 在 iOS18 中，App 和网站可以一键创建 2FA 验证码，直接打开一个 `optauth:` 的 URL 就可以实现，后续行为会被密码管理器托管。此外苹果建议 App 开发者在 iOS18 之后，向用户建议，将 2FA 验证码配置在 iOS18 自带的密码 App 中，相较于谷歌验证器，多了一个选择。
+
+### iOS18 官方 密码管理器 Password App 与 1Password 第三方密码管理的对比
+- 在 iOS18 中苹果官方提供的密码 App 与 1Password 基本功能已对齐，针对单个账户，官方密码 App 可以保存邮箱、手机号、Passkey、2FA、额外备注
+![img_v3_02de_74872859-d7ed-4381-9404-6a30bf6532ch](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-08-04-imgv302de74872859d7ed438194046a30bf6532ch.png)
+- 官方密码 App 与第三方 App 都支持提供 Passkey 快速扫脸登录
+![img_v3_02de_4a6a3eb4-08a9-48da-bedf-324716c3a60h](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-08-04-imgv302de4a6a3eb408a948dabedf324716c3a60h.png)
+![img_v3_02de_8509e86b-c43b-42f8-8009-139e1f0e19fh](http://wwdc24.oss-cn-hangzhou.aliyuncs.com/2024-08-04-imgv302de8509e86bc43b42f88009139e1f0e19fh.png)
+
 
 ## 总结
 
