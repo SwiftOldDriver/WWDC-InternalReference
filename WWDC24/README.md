@@ -30,4 +30,4 @@
 
 [WWDC24 10177 - 用 HDR 图片点亮你的 App](./session_10177/README.md)
 
-[WWDC24 10073 - Catch up on accessibility in SwiftUI](./session_10073/README.md)
+[WWDC24 10073 - 提升 SwiftUI 的可访问性体验](./session_10073/README.md)

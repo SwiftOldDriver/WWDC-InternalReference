@@ -2,7 +2,7 @@
 session_ids: [10073]
 ---
 
-# WWDC24 10073 - Catch up on accessibility in SwiftUI
+# WWDC24 10073 - 提升 SwiftUI 的可访问性体验
 
 本文基于 [Session 10073](https://developer.apple.com/videos/play/wwdc2024/10073/) 梳理。
 
