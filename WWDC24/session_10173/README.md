@@ -45,7 +45,7 @@ session_ids: [1073]
 
 最后我们来简单了解一下各类 iPhone 机型 app 可以使用的虚拟、物理内存大小，这里引用一下掘金一篇文章的数据 [iOS APP 虚拟内存用量初探](https://juejin.cn/post/7196931784328626234)：
 
-- iPhone 13 Pro 
+- iPhone 13 Pro
   - 可用虚拟内存 = 11.30 G
   - 可用 footprint = 3.00 G
 
@@ -53,7 +53,7 @@ session_ids: [1073]
 
 扩充后：
 
-- iPhone 13 Pro 
+- iPhone 13 Pro
   - 可用虚拟内存 = 59 G
   - 可用 footprint = 4.00 G
 
