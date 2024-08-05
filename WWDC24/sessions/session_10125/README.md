@@ -174,10 +174,10 @@ Passkey 既不能被忘记，也一般无需重置，假设一个帐户创建时
 
 **有关 Passkey 的其他实践，您可以参考**
 
-[WWDC23 Deploy passkeys at work](https://developer.apple.com/videos/play/wwdc2023/10263)
+- [WWDC23 Deploy passkeys at work](https://developer.apple.com/videos/play/wwdc2023/10263)
 
-[WWDC22 Meet passkeys](https://developer.apple.com/videos/play/wwdc2022/10092)
+- [WWDC22 Meet passkeys](https://developer.apple.com/videos/play/wwdc2022/10092)
 
-[WWDC22 遇见 Passkey](https://xiaozhuanlan.com/topic/8042173596)
+- [WWDC22 遇见 Passkey](https://xiaozhuanlan.com/topic/8042173596)
 
-[WWDC21 Secure login with iCloud Keychain verification codes](https://developer.apple.com/videos/play/wwdc2021/10105)
+- [WWDC21 Secure login with iCloud Keychain verification codes](https://developer.apple.com/videos/play/wwdc2021/10105)
