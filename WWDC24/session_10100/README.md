@@ -2,7 +2,7 @@
 session_ids: [10100]
 ---
 
-# Session 10100 - ARKit 新功能介绍
+# WWDC24 10100 - ARKit 新功能介绍
   
 本文是介绍 2024 年 ARKit 的新增内容，基于[Session 10100](https://developer.apple.com/videos/play/wwdc2024/10100)梳理。
 
