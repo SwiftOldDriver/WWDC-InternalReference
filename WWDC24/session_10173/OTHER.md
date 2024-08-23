@@ -16,4 +16,4 @@
 
 ## 公众号/小专栏图文头图
 
-![banner](./images/header.png)
+![banner](./images/header.jpg)
