@@ -184,6 +184,7 @@ extension AnyTransition {
 ## Transition 协议
 
 Transition 协议是 iOS 17+ 才开放的新接口，和 AnyTransition 有几乎相同的功能和用法，但存在以下三点区别：
+
 1. **直观的自定义**：Transition 是协议，自定义时需要实现该协议，更符合直觉；而 AnyTransition 是结构体，自定义时需要借助 `.modifier(active:identity:)` 方法。
 2. **过渡阶段控制**: Transition 协议开放了 `TransitionPhase`，开发者可以利用该特性知道当前过渡效果所处的阶段 (`identity`, `willAppear`, `didDisappear`)。从而代替了 AnyTransition 的 `.asymmetric` 和 `.modifier` 描述符。
 3. **新增过渡效果**: Transition 新增了 `blurReplace` 和 `symbolEffect` 两个过渡效果，进一步丰富了动画的表现力。
@@ -713,6 +714,7 @@ NavigationLink {
 希望通过本文的介绍和示例，你能掌握 SwiftUI 过渡效果的实现技巧，提升界面交互的视觉美感和用户体验，为应用增添更多动感和趣味。
 
 ## 参考资料
+
 - [WWDC24 10151][10151]
 - [WWDC24 10145][10145]
 - [SwiftUI 动画篇][SwiftUI_Animation]
