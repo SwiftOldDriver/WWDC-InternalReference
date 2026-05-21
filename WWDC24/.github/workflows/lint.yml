@@ -1,0 +1,25 @@
+name: Lint Format
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+
+permissions: write-all
+
+env:
+  PULL_REQUEST_URL: ${{ github.event.pull_request.html_url || github.event.issue.pull_request.html_url }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  lint:
+    runs-on: self-hosted
+    steps:
+    - run: cat $GITHUB_EVENT_PATH
+    - uses: actions/checkout@v4
+    - name: Install Node.js dependencies
+      run: npm ci
+    - name: Lint
+      run: node .github/scripts/ci_lint.js
