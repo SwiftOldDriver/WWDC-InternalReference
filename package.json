@@ -1,0 +1,15 @@
+{
+  "name": "wwdc-internal-reference-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "GitHub Pages static site for WWDC21-24 Chinese session reference",
+  "scripts": {
+    "build": "node scripts/build-site.mjs",
+    "preview": "npx http-server .site -p 4173 -c-1"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "marked": "^12.0.2"
+  }
+}
